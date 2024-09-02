@@ -47,6 +47,7 @@ class KeyboardToolPop(
     private val binding = PopupKeyboardToolBinding.inflate(LayoutInflater.from(context))
     private val adapter = Adapter(context)
     private var mIsSoftKeyBoardShowing = false
+    var initialPadding = 0
 
     init {
         contentView = binding.root
@@ -76,13 +77,13 @@ class KeyboardToolPop(
         val preShowing = mIsSoftKeyBoardShowing
         if (abs(keyboardHeight) > screenHeight / 5) {
             mIsSoftKeyBoardShowing = true // 超过屏幕五分之一则表示弹出了输入法
-            rootView.setPadding(0, 0, 0, contentView.measuredHeight)
+            rootView.setPadding(0, 0, 0, initialPadding + contentView.measuredHeight)
             if (!isShowing) {
                 showAtLocation(rootView, Gravity.BOTTOM, 0, 0)
             }
         } else {
             mIsSoftKeyBoardShowing = false
-            rootView.setPadding(0, 0, 0, 0)
+            //rootView.setPadding(0, 0, 0, 0)
             if (preShowing) {
                 dismiss()
             }

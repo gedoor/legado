@@ -7,6 +7,8 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
 import androidx.activity.viewModels
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -18,6 +20,7 @@ import io.legado.app.utils.GSON
 import io.legado.app.utils.sendToClip
 import io.legado.app.utils.showHelp
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import splitties.views.bottomPadding
 
 /**
  * 编辑替换规则
@@ -54,11 +57,9 @@ class ReplaceEditActivity :
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         softKeyboardTool.attachToWindow(window)
+        initView()
         viewModel.initData(intent) {
             upReplaceView(it)
-        }
-        binding.ivHelp.setOnClickListener {
-            showHelp("regexHelp")
         }
     }
 
@@ -73,6 +74,7 @@ class ReplaceEditActivity :
                 setResult(RESULT_OK)
                 finish()
             }
+
             R.id.menu_copy_rule -> sendToClip(GSON.toJson(getReplaceRule()))
             R.id.menu_paste_rule -> viewModel.pasteRule {
                 upReplaceView(it)
@@ -84,6 +86,19 @@ class ReplaceEditActivity :
     override fun onDestroy() {
         super.onDestroy()
         softKeyboardTool.dismiss()
+    }
+
+    private fun initView() {
+        binding.ivHelp.setOnClickListener {
+            showHelp("regexHelp")
+        }
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, windowInsets ->
+            val typeMask = WindowInsetsCompat.Type.navigationBars() or WindowInsetsCompat.Type.ime()
+            val insets = windowInsets.getInsets(typeMask)
+            binding.root.bottomPadding = insets.bottom
+            softKeyboardTool.initialPadding = insets.bottom
+            windowInsets
+        }
     }
 
     private fun upReplaceView(replaceRule: ReplaceRule) = binding.run {

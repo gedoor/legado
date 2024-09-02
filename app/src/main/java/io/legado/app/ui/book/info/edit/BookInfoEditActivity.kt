@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.BookType
@@ -29,6 +31,7 @@ import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import splitties.init.appCtx
+import splitties.views.bottomPadding
 import java.io.FileOutputStream
 
 class BookInfoEditActivity :
@@ -51,6 +54,7 @@ class BookInfoEditActivity :
                 viewModel.loadBook(it)
             }
         }
+        initView()
         initEvent()
     }
 
@@ -64,6 +68,15 @@ class BookInfoEditActivity :
             R.id.menu_save -> saveData()
         }
         return super.onCompatOptionsItemSelected(item)
+    }
+
+    private fun initView() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, windowInsets ->
+            val typeMask = WindowInsetsCompat.Type.navigationBars() or WindowInsetsCompat.Type.ime()
+            val insets = windowInsets.getInsets(typeMask)
+            binding.root.bottomPadding = insets.bottom
+            windowInsets
+        }
     }
 
     private fun initEvent() = binding.run {

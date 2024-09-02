@@ -6,6 +6,8 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
 import androidx.activity.viewModels
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.tabs.TabLayout
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
@@ -42,6 +44,7 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import splitties.views.bottomPadding
 
 class RssSourceEditActivity :
     VMBaseActivity<ActivityRssSourceEditBinding, RssSourceEditViewModel>(),
@@ -185,6 +188,13 @@ class RssSourceEditActivity :
                 setEditEntities(tab?.position)
             }
         })
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, windowInsets ->
+            val typeMask = WindowInsetsCompat.Type.navigationBars() or WindowInsetsCompat.Type.ime()
+            val insets = windowInsets.getInsets(typeMask)
+            binding.root.bottomPadding = insets.bottom
+            softKeyboardTool.initialPadding = insets.bottom
+            windowInsets
+        }
     }
 
     private fun setEditEntities(tabPosition: Int?) {

@@ -21,6 +21,8 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.addCallback
 import androidx.activity.viewModels
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.size
 import androidx.lifecycle.lifecycleScope
 import com.script.rhino.RhinoScriptEngine
@@ -60,6 +62,7 @@ import io.legado.app.utils.visible
 import kotlinx.coroutines.launch
 import org.apache.commons.text.StringEscapeUtils
 import org.jsoup.Jsoup
+import splitties.views.bottomPadding
 import java.io.ByteArrayInputStream
 import java.net.URLDecoder
 import java.util.regex.PatternSyntaxException
@@ -91,6 +94,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         viewModel.upStarMenuData.observe(this) { upStarMenu() }
         viewModel.upTtsMenuData.observe(this) { upTtsMenu(it) }
         binding.titleBar.title = intent.getStringExtra("title")
+        initView()
         initWebView()
         initLiveData()
         viewModel.initData(intent)
@@ -173,6 +177,15 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
     @JavascriptInterface
     fun isNightTheme(): Boolean {
         return AppConfig.isNightTheme
+    }
+
+    private fun initView() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, windowInsets ->
+            val typeMask = WindowInsetsCompat.Type.navigationBars() or WindowInsetsCompat.Type.ime()
+            val insets = windowInsets.getInsets(typeMask)
+            binding.root.bottomPadding = insets.bottom
+            windowInsets
+        }
     }
 
     @SuppressLint("SetJavaScriptEnabled")

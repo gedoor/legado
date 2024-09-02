@@ -7,6 +7,8 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
 import androidx.activity.viewModels
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
@@ -53,6 +55,7 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import splitties.views.bottomPadding
 
 class BookSourceEditActivity :
     VMBaseActivity<ActivityBookSourceEditBinding, BookSourceEditViewModel>(),
@@ -197,6 +200,13 @@ class BookSourceEditActivity :
                 setEditEntities(tab?.position)
             }
         })
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, windowInsets ->
+            val typeMask = WindowInsetsCompat.Type.navigationBars() or WindowInsetsCompat.Type.ime()
+            val insets = windowInsets.getInsets(typeMask)
+            binding.root.bottomPadding = insets.bottom
+            softKeyboardTool.initialPadding = insets.bottom
+            windowInsets
+        }
     }
 
     override fun finish() {
