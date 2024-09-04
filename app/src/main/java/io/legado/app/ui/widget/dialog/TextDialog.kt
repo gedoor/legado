@@ -70,14 +70,16 @@ class TextDialog() : BaseDialogFragment(R.layout.dialog_text_view) {
             val content = IntentData.get(it.getString("content")) ?: ""
             when (it.getString("mode")) {
                 Mode.MD.name -> viewLifecycleOwner.lifecycleScope.launch {
-                    binding.textView.text = withContext(IO) {
-                        Markwon.builder(requireContext())
+                    val markwon: Markwon
+                    val markdown = withContext(IO) {
+                        markwon = Markwon.builder(requireContext())
                             .usePlugin(GlideImagesPlugin.create(requireContext()))
                             .usePlugin(HtmlPlugin.create())
                             .usePlugin(TablePlugin.create(requireContext()))
                             .build()
-                            .toMarkdown(content)
+                        markwon.toMarkdown(content)
                     }
+                    markwon.setParsedMarkdown(binding.textView, markdown)
                 }
 
                 Mode.HTML.name -> binding.textView.setHtml(content)
