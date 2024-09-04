@@ -227,24 +227,26 @@ class AudioPlayActivity :
     }
 
     override fun finish() {
-        AudioPlay.book?.let {
-            if (!AudioPlay.inBookshelf) {
-                if (!AppConfig.showAddToShelfAlert) {
-                    viewModel.removeFromBookshelf { super.finish() }
-                } else {
-                    alert(title = getString(R.string.add_to_bookshelf)) {
-                        setMessage(getString(R.string.check_add_bookshelf, it.name))
-                        okButton {
-                            AudioPlay.inBookshelf = true
-                            setResult(Activity.RESULT_OK)
-                        }
-                        noButton { viewModel.removeFromBookshelf { super.finish() } }
-                    }
+        val book = AudioPlay.book ?: return super.finish()
+
+        if (AudioPlay.inBookshelf) {
+            return super.finish()
+        }
+
+        if (!AppConfig.showAddToShelfAlert) {
+            viewModel.removeFromBookshelf { super.finish() }
+        } else {
+            alert(title = getString(R.string.add_to_bookshelf)) {
+                setMessage(getString(R.string.check_add_bookshelf, book.name))
+                okButton {
+                    AudioPlay.book?.removeType(BookType.notShelf)
+                    AudioPlay.book?.save()
+                    AudioPlay.inBookshelf = true
+                    setResult(Activity.RESULT_OK)
                 }
-            } else {
-                super.finish()
+                noButton { viewModel.removeFromBookshelf { super.finish() } }
             }
-        } ?: super.finish()
+        }
     }
 
     override fun onDestroy() {
