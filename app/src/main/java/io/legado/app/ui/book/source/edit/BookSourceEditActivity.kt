@@ -200,10 +200,10 @@ class BookSourceEditActivity :
                 setEditEntities(tab?.position)
             }
         })
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, windowInsets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.recyclerView) { _, windowInsets ->
             val typeMask = WindowInsetsCompat.Type.navigationBars() or WindowInsetsCompat.Type.ime()
             val insets = windowInsets.getInsets(typeMask)
-            binding.root.bottomPadding = insets.bottom
+            binding.recyclerView.bottomPadding = insets.bottom
             softKeyboardTool.initialPadding = insets.bottom
             windowInsets
         }
