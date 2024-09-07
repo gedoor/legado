@@ -8,7 +8,6 @@ import android.view.MenuItem
 import android.widget.EditText
 import androidx.activity.viewModels
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -17,10 +16,10 @@ import io.legado.app.databinding.ActivityReplaceEditBinding
 import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.ui.widget.keyboard.KeyboardToolPop
 import io.legado.app.utils.GSON
+import io.legado.app.utils.imeHeight
 import io.legado.app.utils.sendToClip
 import io.legado.app.utils.showHelp
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import splitties.views.bottomPadding
 
 /**
  * 编辑替换规则
@@ -93,10 +92,7 @@ class ReplaceEditActivity :
             showHelp("regexHelp")
         }
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, windowInsets ->
-            val typeMask = WindowInsetsCompat.Type.navigationBars() or WindowInsetsCompat.Type.ime()
-            val insets = windowInsets.getInsets(typeMask)
-            binding.root.bottomPadding = insets.bottom
-            softKeyboardTool.initialPadding = insets.bottom
+            softKeyboardTool.initialPadding = windowInsets.imeHeight
             windowInsets
         }
     }

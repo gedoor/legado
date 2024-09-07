@@ -83,7 +83,7 @@ class KeyboardToolPop(
             }
         } else {
             mIsSoftKeyBoardShowing = false
-            //rootView.setPadding(0, 0, 0, 0)
+            rootView.setPadding(0, 0, 0, 0)
             if (preShowing) {
                 dismiss()
             }
