@@ -54,6 +54,8 @@ class AnalyzeRule(
         private set
     var baseUrl: String? = null
         private set
+    var optionStr: String = "{}"
+        private set
     var redirectUrl: URL? = null
         private set
     private var isJSON: Boolean = false
@@ -91,6 +93,11 @@ class AnalyzeRule(
         baseUrl?.let {
             this.baseUrl = baseUrl
         }
+        return this
+    }
+
+    fun setOption(option: String): AnalyzeRule {
+        optionStr = option
         return this
     }
 
@@ -747,6 +754,7 @@ class AnalyzeRule(
             bindings["book"] = book
             bindings["result"] = result
             bindings["baseUrl"] = baseUrl
+            bindings["baseUrlWithOptions"] = "$baseUrl,$optionStr"
             bindings["chapter"] = chapter
             bindings["title"] = chapter?.title
             bindings["src"] = content

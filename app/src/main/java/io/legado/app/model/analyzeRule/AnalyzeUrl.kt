@@ -76,6 +76,7 @@ class AnalyzeUrl(
     var type: String? = null
         private set
     val headerMap = HashMap<String, String>()
+    var optionStr: String = ""
     private var urlNoQuery: String = ""
     private var queryStr: String? = null
     private val fieldMap = LinkedHashMap<String, String>()
