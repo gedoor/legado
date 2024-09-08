@@ -19,8 +19,8 @@ object SourceVerificationHelp {
 
     private val waitTime = 1.minutes.inWholeNanoseconds
 
-    private fun getKey(source: BaseSource) = getKey(source.getKey())
-    private fun getKey(sourceKey: String) = "${sourceKey}_verificationResult"
+    private fun getVerificationResultKey(source: BaseSource) = getVerificationResultKey(source.getKey())
+    private fun getVerificationResultKey(sourceKey: String) = "${sourceKey}_verificationResult"
 
     /**
      * 获取书源验证结果
@@ -42,7 +42,7 @@ object SourceVerificationHelp {
                 putExtra("imageUrl", url)
                 putExtra("sourceOrigin", source.getKey())
                 putExtra("sourceName", source.getTag())
-                IntentData.put(getKey(source), Thread.currentThread())
+                IntentData.put(getVerificationResultKey(source), Thread.currentThread())
             }
         } else {
             startBrowser(source, url, title, true)
@@ -75,7 +75,6 @@ object SourceVerificationHelp {
         saveResult: Boolean? = false
     ) {
         source ?: throw NoStackTraceException("startBrowser parameter source cannot be null")
-        val key = getKey(source)
         appCtx.startActivity<WebViewActivity> {
             putExtra("title", title)
             putExtra("url", url)
@@ -83,26 +82,26 @@ object SourceVerificationHelp {
             putExtra("sourceName", source.getTag())
             putExtra("sourceVerificationEnable", saveResult)
             IntentData.put(url, source.getHeaderMap(true))
-            IntentData.put(key, Thread.currentThread())
+            IntentData.put(getVerificationResultKey(source), Thread.currentThread())
         }
     }
 
 
     fun checkResult(sourceKey: String) {
         getResult(sourceKey) ?: setResult(sourceKey, "")
-        val thread = IntentData.get<Thread>(getKey(sourceKey))
+        val thread = IntentData.get<Thread>(getVerificationResultKey(sourceKey))
         LockSupport.unpark(thread)
     }
 
     fun setResult(sourceKey: String, result: String?) {
-        CacheManager.putMemory(getKey(sourceKey), result ?: "")
+        CacheManager.putMemory(getVerificationResultKey(sourceKey), result ?: "")
     }
 
     fun getResult(sourceKey: String): String? {
-        return CacheManager.get(getKey(sourceKey))
+        return CacheManager.get(getVerificationResultKey(sourceKey))
     }
 
     fun clearResult(sourceKey: String) {
-        CacheManager.delete(getKey(sourceKey))
+        CacheManager.delete(getVerificationResultKey(sourceKey))
     }
 }
