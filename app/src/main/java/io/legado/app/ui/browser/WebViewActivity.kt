@@ -82,7 +82,7 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
             R.id.menu_copy_url -> sendToClip(viewModel.baseUrl)
             R.id.menu_ok -> {
                 if (viewModel.sourceVerificationEnable) {
-                    viewModel.saveVerificationResult(intent) {
+                    viewModel.saveVerificationResult(binding.webView) {
                         finish()
                     }
                 } else {
@@ -224,7 +224,7 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
                     if (it == "true") {
                         isCloudflareChallenge = true
                     } else if (isCloudflareChallenge && viewModel.sourceVerificationEnable) {
-                        viewModel.saveVerificationResult(intent) {
+                        viewModel.saveVerificationResult(binding.webView) {
                             finish()
                         }
                     }

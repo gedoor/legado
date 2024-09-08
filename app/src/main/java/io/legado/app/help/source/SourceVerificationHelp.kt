@@ -30,7 +30,8 @@ object SourceVerificationHelp {
         source: BaseSource?,
         url: String,
         title: String,
-        useBrowser: Boolean
+        useBrowser: Boolean,
+        refetchAfterSuccess: Boolean = true
     ): String {
         source
             ?: throw NoStackTraceException("getVerificationResult parameter source cannot be null")
@@ -45,7 +46,7 @@ object SourceVerificationHelp {
                 IntentData.put(getVerificationResultKey(source), Thread.currentThread())
             }
         } else {
-            startBrowser(source, url, title, true)
+            startBrowser(source, url, title, true, refetchAfterSuccess)
         }
 
         var waitUserInput = false
@@ -72,7 +73,8 @@ object SourceVerificationHelp {
         source: BaseSource?,
         url: String,
         title: String,
-        saveResult: Boolean? = false
+        saveResult: Boolean? = false,
+        refetchAfterSuccess: Boolean? = true
     ) {
         source ?: throw NoStackTraceException("startBrowser parameter source cannot be null")
         appCtx.startActivity<WebViewActivity> {
@@ -81,6 +83,7 @@ object SourceVerificationHelp {
             putExtra("sourceOrigin", source.getKey())
             putExtra("sourceName", source.getTag())
             putExtra("sourceVerificationEnable", saveResult)
+            putExtra("refetchAfterSuccess", refetchAfterSuccess)
             IntentData.put(url, source.getHeaderMap(true))
             IntentData.put(getVerificationResultKey(source), Thread.currentThread())
         }

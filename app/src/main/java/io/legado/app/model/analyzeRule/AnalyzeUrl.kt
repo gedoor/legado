@@ -193,8 +193,10 @@ class AnalyzeUrl(
             baseUrl = it
         }
         if (urlNoOption.length != ruleUrl.length) {
-            GSON.fromJsonObject<UrlOption>(ruleUrl.substring(urlMatcher.end())).getOrNull()
+            val optionStr = ruleUrl.substring(urlMatcher.end())
+            GSON.fromJsonObject<UrlOption>(optionStr).getOrNull()
                 ?.let { option ->
+                    this.optionStr = optionStr
                     option.getMethod()?.let {
                         if (it.equals("POST", true)) method = RequestMethod.POST
                     }
