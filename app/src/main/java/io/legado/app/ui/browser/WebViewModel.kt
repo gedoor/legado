@@ -11,7 +11,6 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppConst
 import io.legado.app.data.appDb
 import io.legado.app.exception.NoStackTraceException
-import io.legado.app.help.CacheManager
 import io.legado.app.help.IntentData
 import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
@@ -97,7 +96,7 @@ class WebViewModel(application: Application) : BaseViewModel(application) {
 
     fun saveVerificationResult(webView: WebView, success: () -> Unit) {
         if (!sourceVerificationEnable) {
-            execute { success.invoke() }
+            return success.invoke()
         }
         if (refetchAfterSuccess) {
             execute {
@@ -109,6 +108,7 @@ class WebViewModel(application: Application) : BaseViewModel(application) {
                     source = source
                 ).getStrResponseAwait(useWebView = false).body
                 SourceVerificationHelp.setResult(sourceOrigin, html ?: "")
+            }.onSuccess {
                 success.invoke()
             }
         } else {
@@ -116,6 +116,7 @@ class WebViewModel(application: Application) : BaseViewModel(application) {
                 execute {
                     html = StringEscapeUtils.unescapeJson(it).trim('"')
                     SourceVerificationHelp.setResult(sourceOrigin, html ?: "")
+                }.onSuccess {
                     success.invoke()
                 }
             }
