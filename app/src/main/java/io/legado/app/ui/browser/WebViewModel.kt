@@ -31,7 +31,6 @@ class WebViewModel(application: Application) : BaseViewModel(application) {
     val headerMap: HashMap<String, String> = hashMapOf()
     var sourceVerificationEnable: Boolean = false
     var sourceOrigin: String = ""
-    var key = ""
 
     fun initData(
         intent: Intent,
@@ -41,7 +40,6 @@ class WebViewModel(application: Application) : BaseViewModel(application) {
             val url = intent.getStringExtra("url")
                 ?: throw NoStackTraceException("url不能为空")
             sourceOrigin = intent.getStringExtra("sourceOrigin") ?: ""
-            key = SourceVerificationHelp.getKey(sourceOrigin)
             sourceVerificationEnable = intent.getBooleanExtra("sourceVerificationEnable", false)
             val headerMapF = IntentData.get<Map<String, String>>(url)
             val analyzeUrl = AnalyzeUrl(url, headerMapF = headerMapF)
@@ -96,13 +94,12 @@ class WebViewModel(application: Application) : BaseViewModel(application) {
             if (sourceVerificationEnable) {
                 val url = intent.getStringExtra("url")!!
                 val source = appDb.bookSourceDao.getBookSource(sourceOrigin)
-                val key = "${sourceOrigin}_verificationResult"
                 html = AnalyzeUrl(
                     url,
                     headerMapF = headerMap,
                     source = source
                 ).getStrResponseAwait(useWebView = false).body
-                CacheManager.putMemory(key, html ?: "")
+                SourceVerificationHelp.setResult(sourceOrigin, html ?: "")
             }
         }.onSuccess {
             success.invoke()

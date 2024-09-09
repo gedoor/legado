@@ -158,7 +158,7 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
     }
 
     override fun finish() {
-        SourceVerificationHelp.checkResult(viewModel.key)
+        SourceVerificationHelp.checkResult(viewModel.sourceOrigin)
         super.finish()
     }
 
