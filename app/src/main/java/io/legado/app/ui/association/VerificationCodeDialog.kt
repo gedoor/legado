@@ -57,7 +57,6 @@ class VerificationCodeDialog() : BaseDialogFragment(R.layout.dialog_verification
     }
 
     private var sourceOrigin: String? = null
-    private var key = ""
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?): Unit = binding.run {
         initMenu()
@@ -65,7 +64,6 @@ class VerificationCodeDialog() : BaseDialogFragment(R.layout.dialog_verification
         toolBar.setBackgroundColor(primaryColor)
         toolBar.subtitle = arguments.getString("sourceName")
         sourceOrigin = arguments.getString("sourceOrigin")
-        key = SourceVerificationHelp.getKey(sourceOrigin!!)
         val imageUrl = arguments.getString("imageUrl") ?: return@run
         loadImage(imageUrl, sourceOrigin)
         verificationCodeImageView.setOnClickListener {
@@ -119,7 +117,7 @@ class VerificationCodeDialog() : BaseDialogFragment(R.layout.dialog_verification
         when (item.itemId) {
             R.id.menu_ok -> {
                 val verificationCode = binding.verificationCode.text.toString()
-                CacheManager.putMemory(key, verificationCode)
+                SourceVerificationHelp.setResult(sourceOrigin!!, verificationCode)
                 dismiss()
             }
         }
@@ -127,7 +125,7 @@ class VerificationCodeDialog() : BaseDialogFragment(R.layout.dialog_verification
     }
 
     override fun onDestroy() {
-        SourceVerificationHelp.checkResult(key)
+        SourceVerificationHelp.checkResult(sourceOrigin!!)
         super.onDestroy()
         activity?.finish()
     }

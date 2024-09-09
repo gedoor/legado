@@ -54,6 +54,8 @@ class AnalyzeRule(
         private set
     var baseUrl: String? = null
         private set
+    var optionStr: String = "{}"
+        private set
     var redirectUrl: URL? = null
         private set
     private var isJSON: Boolean = false
@@ -62,10 +64,6 @@ class AnalyzeRule(
     private var analyzeByXPath: AnalyzeByXPath? = null
     private var analyzeByJSoup: AnalyzeByJSoup? = null
     private var analyzeByJSonPath: AnalyzeByJSonPath? = null
-
-    private var objectChangedXP = false
-    private var objectChangedJS = false
-    private var objectChangedJP = false
 
     private val stringRuleCache = hashMapOf<String, List<SourceRule>>()
 
@@ -80,9 +78,9 @@ class AnalyzeRule(
             else -> content.toString().isJson()
         }
         setBaseUrl(baseUrl)
-        objectChangedXP = true
-        objectChangedJS = true
-        objectChangedJP = true
+        analyzeByXPath = null
+        analyzeByJSoup = null
+        analyzeByJSonPath = null
         return this
     }
 
@@ -95,6 +93,11 @@ class AnalyzeRule(
         baseUrl?.let {
             this.baseUrl = baseUrl
         }
+        return this
+    }
+
+    fun setOption(option: String): AnalyzeRule {
+        optionStr = option
         return this
     }
 
@@ -114,9 +117,8 @@ class AnalyzeRule(
         return if (o != content) {
             AnalyzeByXPath(o)
         } else {
-            if (analyzeByXPath == null || objectChangedXP) {
+            if (analyzeByXPath == null) {
                 analyzeByXPath = AnalyzeByXPath(content!!)
-                objectChangedXP = false
             }
             analyzeByXPath!!
         }
@@ -129,9 +131,8 @@ class AnalyzeRule(
         return if (o != content) {
             AnalyzeByJSoup(o)
         } else {
-            if (analyzeByJSoup == null || objectChangedJS) {
+            if (analyzeByJSoup == null) {
                 analyzeByJSoup = AnalyzeByJSoup(content!!)
-                objectChangedJS = false
             }
             analyzeByJSoup!!
         }
@@ -144,9 +145,8 @@ class AnalyzeRule(
         return if (o != content) {
             AnalyzeByJSonPath(o)
         } else {
-            if (analyzeByJSonPath == null || objectChangedJP) {
+            if (analyzeByJSonPath == null) {
                 analyzeByJSonPath = AnalyzeByJSonPath(content!!)
-                objectChangedJP = false
             }
             analyzeByJSonPath!!
         }
@@ -754,6 +754,7 @@ class AnalyzeRule(
             bindings["book"] = book
             bindings["result"] = result
             bindings["baseUrl"] = baseUrl
+            bindings["baseUrlWithOptions"] = "$baseUrl,$optionStr"
             bindings["chapter"] = chapter
             bindings["title"] = chapter?.title
             bindings["src"] = content

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.util.Base64
 import android.webkit.URLUtil
+import android.webkit.WebView
 import androidx.documentfile.provider.DocumentFile
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppConst
@@ -22,27 +23,30 @@ import io.legado.app.utils.isContentScheme
 import io.legado.app.utils.printOnDebug
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.writeBytes
+import org.apache.commons.text.StringEscapeUtils
 import java.io.File
 import java.util.Date
 
 class WebViewModel(application: Application) : BaseViewModel(application) {
+    var intent: Intent? = null
     var baseUrl: String = ""
     var html: String? = null
     val headerMap: HashMap<String, String> = hashMapOf()
     var sourceVerificationEnable: Boolean = false
+    var refetchAfterSuccess: Boolean = true
     var sourceOrigin: String = ""
-    var key = ""
 
     fun initData(
         intent: Intent,
         success: () -> Unit
     ) {
         execute {
+            this@WebViewModel.intent = intent
             val url = intent.getStringExtra("url")
                 ?: throw NoStackTraceException("url不能为空")
             sourceOrigin = intent.getStringExtra("sourceOrigin") ?: ""
-            key = SourceVerificationHelp.getKey(sourceOrigin)
             sourceVerificationEnable = intent.getBooleanExtra("sourceVerificationEnable", false)
+            refetchAfterSuccess = intent.getBooleanExtra("refetchAfterSuccess", true)
             val headerMapF = IntentData.get<Map<String, String>>(url)
             val analyzeUrl = AnalyzeUrl(url, headerMapF = headerMapF)
             baseUrl = analyzeUrl.url
@@ -91,21 +95,30 @@ class WebViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun saveVerificationResult(intent: Intent, success: () -> Unit) {
-        execute {
-            if (sourceVerificationEnable) {
-                val url = intent.getStringExtra("url")!!
+    fun saveVerificationResult(webView: WebView, success: () -> Unit) {
+        if (!sourceVerificationEnable) {
+            execute { success.invoke() }
+        }
+        if (refetchAfterSuccess) {
+            execute {
+                val url = intent!!.getStringExtra("url")!!
                 val source = appDb.bookSourceDao.getBookSource(sourceOrigin)
-                val key = "${sourceOrigin}_verificationResult"
                 html = AnalyzeUrl(
                     url,
                     headerMapF = headerMap,
                     source = source
                 ).getStrResponseAwait(useWebView = false).body
-                CacheManager.putMemory(key, html ?: "")
+                SourceVerificationHelp.setResult(sourceOrigin, html ?: "")
+                success.invoke()
             }
-        }.onSuccess {
-            success.invoke()
+        } else {
+            webView.evaluateJavascript("document.documentElement.outerHTML") {
+                execute {
+                    html = StringEscapeUtils.unescapeJson(it).trim('"')
+                    SourceVerificationHelp.setResult(sourceOrigin, html ?: "")
+                    success.invoke()
+                }
+            }
         }
     }
 
