@@ -76,7 +76,6 @@ class AnalyzeUrl(
     var type: String? = null
         private set
     val headerMap = HashMap<String, String>()
-    var optionStr: String = ""
     private var urlNoQuery: String = ""
     private var queryStr: String? = null
     private val fieldMap = LinkedHashMap<String, String>()
@@ -194,10 +193,8 @@ class AnalyzeUrl(
             baseUrl = it
         }
         if (urlNoOption.length != ruleUrl.length) {
-            val optionStr = ruleUrl.substring(urlMatcher.end())
-            GSON.fromJsonObject<UrlOption>(optionStr).getOrNull()
+            GSON.fromJsonObject<UrlOption>(ruleUrl.substring(urlMatcher.end())).getOrNull()
                 ?.let { option ->
-                    this.optionStr = optionStr
                     option.getMethod()?.let {
                         if (it.equals("POST", true)) method = RequestMethod.POST
                     }

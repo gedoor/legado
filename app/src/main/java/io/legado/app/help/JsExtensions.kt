@@ -226,11 +226,15 @@ interface JsExtensions : JsEncodeUtils {
     /**
      * 使用内置浏览器打开链接，并等待网页结果
      */
-    fun startBrowserAwait(url: String, title: String, refetchAfterSuccess: Boolean = true): StrResponse {
-        return StrResponse(
-            url,
-            SourceVerificationHelp.getVerificationResult(getSource(), url, title, true, refetchAfterSuccess)
+    fun startBrowserAwait(url: String, title: String, refetchAfterSuccess: Boolean): StrResponse {
+        val body = SourceVerificationHelp.getVerificationResult(
+            getSource(), url, title, true, refetchAfterSuccess
         )
+        return StrResponse(url, body)
+    }
+
+    fun startBrowserAwait(url: String, title: String): StrResponse {
+        return startBrowserAwait(url, title, true)
     }
 
     /**

@@ -20,8 +20,7 @@
 |变量名|调用类|
 |------|-----|
 |java|当前类|
-|baseUrl|String，当前 url，如 `https://example.com/page/1`|
-|baseUrlWithOptions|String，带参数的当前 url，如 `https://example.com/page/1,{"webView": true}`|
+|baseUrl|当前url,String  |
 |result|上一步的结果|
 |book|[书籍类](https://github.com/gedoor/legado/blob/master/app/src/main/java/io/legado/app/data/entities/Book.kt)|
 |chapter|[章节类](https://github.com/gedoor/legado/blob/master/app/src/main/java/io/legado/app/data/entities/BookChapter.kt)|
