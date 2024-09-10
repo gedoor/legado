@@ -275,6 +275,7 @@ abstract class BaseReadAloudService : BaseService(),
         isRun = true
         pause = false
         needResumeOnAudioFocusGain = false
+        needResumeOnCallStateIdle = false
         upReadAloudNotification()
         postEvent(EventBus.ALOUD_STATE, Status.PLAY)
     }
@@ -302,6 +303,8 @@ abstract class BaseReadAloudService : BaseService(),
     @CallSuper
     open fun resumeReadAloud() {
         pause = false
+        needResumeOnAudioFocusGain = false
+        needResumeOnCallStateIdle = false
         upReadAloudNotification()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
         postEvent(EventBus.ALOUD_STATE, Status.PLAY)
