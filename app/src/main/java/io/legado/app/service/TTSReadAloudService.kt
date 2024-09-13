@@ -93,37 +93,41 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
             LogUtils.d(TAG, "朗读列表大小 ${contentList.size}")
             LogUtils.d(TAG, "朗读页数 ${textChapter?.pageSize}")
             val tts = textToSpeech ?: throw NoStackTraceException("tts is null")
-            var result = tts.runCatching {
-                speak("", TextToSpeech.QUEUE_FLUSH, null, null)
-            }.getOrElse {
-                AppLog.put("tts出错\n${it.localizedMessage}", it, true)
-                TextToSpeech.ERROR
-            }
-            if (result == TextToSpeech.ERROR) {
-                AppLog.put("tts出错 尝试重新初始化")
-                clearTTS()
-                initTts()
-                return@execute
-            }
-            val contentList = contentList
             for (i in nowSpeak until contentList.size) {
-                ensureActive()
                 var text = contentList[i]
+                ensureActive()
                 if (paragraphStartPos > 0 && i == nowSpeak) {
                     text = text.substring(paragraphStartPos)
                 }
                 if (text.matches(AppPattern.notReadAloudRegex)) {
                     continue
                 }
-                result = tts.runCatching {
-                    speak(text, TextToSpeech.QUEUE_ADD, null, AppConst.APP_TAG + i)
-                }.getOrElse {
-                    AppLog.put("tts出错\n${it.localizedMessage}", it, true)
-                    TextToSpeech.ERROR
+                if (i == nowSpeak) {
+                    val result = tts.runCatching {
+                        speak(text, TextToSpeech.QUEUE_FLUSH, null, AppConst.APP_TAG + i)
+                    }.getOrElse {
+                        AppLog.put("tts出错\n${it.localizedMessage}", it, true)
+                        TextToSpeech.ERROR
+                    }
+                    if (result == TextToSpeech.ERROR) {
+                        AppLog.put("tts出错 尝试重新初始化")
+                        clearTTS()
+                        initTts()
+                        return@execute
+                    }
+                } else {
+                    val result = tts.runCatching {
+                        speak(text, TextToSpeech.QUEUE_ADD, null, AppConst.APP_TAG + i)
+                    }.getOrElse {
+                        AppLog.put("tts出错\n${it.localizedMessage}", it, true)
+                        TextToSpeech.ERROR
+                    }
+                    if (result == TextToSpeech.ERROR) {
+                        AppLog.put("tts朗读出错:$text")
+                    }
                 }
-                if (result == TextToSpeech.ERROR) {
-                    AppLog.put("tts朗读出错:$text")
-                }
+
+
             }
             LogUtils.d(TAG, "朗读内容添加完成")
         }.onError {
