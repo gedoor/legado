@@ -140,7 +140,7 @@ java.webViewGetSource(html: String?, url: String?, js: String?, sourceRegex: Str
 java.startBrowser(url: String, title: String)
 
 * 使用内置浏览器打开链接，并等待网页结果 .body()获取网页内容
-java.startBrowserAwait(url: String, title: String): StrResponse
+java.startBrowserAwait(url: String, title: String, refetchAfterSuccess: Boolean? = true): StrResponse
 ```
 * 调试
 ```js
