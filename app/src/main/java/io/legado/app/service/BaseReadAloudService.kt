@@ -313,7 +313,7 @@ abstract class BaseReadAloudService : BaseService(),
     abstract fun upSpeechRate(reset: Boolean = false)
 
     fun upTtsProgress(progress: Int) {
-        postEvent(EventBus.TTS_PROGRESS, progress)
+        postEvent(EventBus.TTS_PROGRESS, Pair(progress,pageIndex))
     }
 
     private fun prevP() {
@@ -328,8 +328,7 @@ abstract class BaseReadAloudService : BaseService(),
                     if (!paragraphs[nowSpeak].isParagraphEnd) readAloudNumber++
                 }
                 if (readAloudNumber < it.getReadLength(pageIndex)) {
-                    pageIndex--
-                    ReadBook.moveToPrevPage()
+                    ReadBook.moveToPrevPage(pageIndex--)
                 }
             }
             upTtsProgress(readAloudNumber + 1)
@@ -352,8 +351,7 @@ abstract class BaseReadAloudService : BaseService(),
                     if (!paragraphs[nowSpeak].isParagraphEnd) readAloudNumber--
                 }
                 if (readAloudNumber >= it.getReadLength(pageIndex + 1)) {
-                    pageIndex++
-                    ReadBook.moveToNextPage()
+                    ReadBook.moveToNextPage(pageIndex++)
                 }
             }
             upTtsProgress(readAloudNumber + 1)

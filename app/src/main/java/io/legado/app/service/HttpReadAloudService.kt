@@ -474,11 +474,11 @@ class HttpReadAloudService : BaseReadAloudService(),
             val start = speakTextLength * exoPlayer.currentPosition / exoPlayer.duration
             for (i in start..contentList[nowSpeak].length) {
                 if (readAloudNumber + i > textChapter.getReadLength(pageIndex + 1)) {
-                    pageIndex++
                     if (pageIndex < textChapter.pageSize) {
                         ReadBook.moveToNextPage(pageIndex)
                         upTtsProgress(readAloudNumber + i.toInt())
                     }
+                    pageIndex++
                 }
                 delay(sleep)
             }
