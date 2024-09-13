@@ -90,7 +90,7 @@
     <string name="offline_cache_s">cache (các) chương đã chọn vào bộ lưu trữ</string>
     <string name="change_origin">Thay đổi nguồn gốc</string>
     <string name="about_description">Đây là phần mềm đọc mã nguồn mở mới được phát triển bởi Kotlin, chào mừng bạn tham gia cùng chúng tôi. </string>
-    <string name="app_share_description">\n Liên kết tải xuống Legado (YueDu 3.0):\\n https://play.google.com/store/apps/details?id=io.legado.play.release\n</string>
+    <string name="app_share_description">\n Liên kết tải xuống Legado (YueDu 3.0):\\n https://github.com/gedoor/legado/releases\n</string>
     <string name="version_name">Phiên bản %s</string>
     <string name="pt_background_verification">Xác minh lý lịch</string>
     <string name="ps_background_verification">bạn có thể tự do thao tác khi xác thực nguồn sách</string>

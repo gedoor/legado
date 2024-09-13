@@ -94,7 +94,7 @@
         \u3000\u3000 Este é um App de leitura de software livre, desenvolvido em Kotlin, você é bem-vindo a participar em projeto.
     </string>
     <string name="app_share_description">
-        Legado (YueDu 3.0) link de download：\n https://play.google.com/store/apps/details?id=io.legado.play.release
+        Legado (YueDu 3.0) link de download：\n https://github.com/gedoor/legado/releases
     </string>
     <string name="version_name">Versão %s</string>
     <string name="pt_background_verification">Verificação em segundo plano</string>
