@@ -476,7 +476,7 @@ class HttpReadAloudService : BaseReadAloudService(),
                 if (readAloudNumber + i > textChapter.getReadLength(pageIndex + 1)) {
                     pageIndex++
                     if (pageIndex < textChapter.pageSize) {
-                        ReadBook.moveToNextPage()
+                        ReadBook.moveToNextPage(pageIndex)
                         upTtsProgress(readAloudNumber + i.toInt())
                     }
                 }

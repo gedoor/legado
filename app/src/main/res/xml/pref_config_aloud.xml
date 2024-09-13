@@ -14,6 +14,13 @@
             android:summary="@string/ignore_audio_focus_summary"
             android:title="@string/ignore_audio_focus_title" />
 
+
+        <io.legado.app.lib.prefs.SwitchPreference
+            android:defaultValue="false"
+            android:key="followReadAloudFocus"
+            android:summary="@string/follow_read_aloud_focus_summary"
+            android:title="@string/follow_read_aloud_focus_title" />
+
         <io.legado.app.lib.prefs.SwitchPreference
             android:defaultValue="false"
             android:key="pauseReadAloudWhilePhoneCalls"

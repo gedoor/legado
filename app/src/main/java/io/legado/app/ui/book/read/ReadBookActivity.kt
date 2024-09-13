@@ -63,6 +63,7 @@ import io.legado.app.model.localBook.EpubFile
 import io.legado.app.model.localBook.MobiFile
 import io.legado.app.receiver.TimeBatteryReceiver
 import io.legado.app.service.BaseReadAloudService
+import io.legado.app.service.TTSReadAloudService
 import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.book.audio.AudioPlayActivity
 import io.legado.app.ui.book.bookmark.BookmarkDialog
@@ -802,6 +803,7 @@ class ReadBookActivity : BaseReadBookActivity(),
                 1 -> lifecycleScope.launch {
                     binding.readView.aloudStartSelect()
                 }
+
                 else -> speak(binding.readView.getSelectText())
             }
 
@@ -1579,15 +1581,35 @@ class ReadBookActivity : BaseReadBookActivity(),
                 }
             }
         }
-        observeEventSticky<Int>(EventBus.TTS_PROGRESS) { chapterStart ->
+        var cacheChapterStart = 0
+        var cacheReadPage = 0
+        observeEvent<Boolean>(EventBus.PAGE_CHANGE) {
+            if (BaseReadAloudService.isPlay() &&
+                !getPrefBoolean(PreferKey.followReadAloudFocus, true)) {
+                ReadBook.curTextChapter?.let { textChapter ->
+                    val pageIndex = ReadBook.durPageIndex
+                    if (pageIndex == cacheReadPage) {
+                        val aloudSpanStart =
+                            cacheChapterStart - textChapter.getReadLength(pageIndex)
+                        textChapter.getPage(pageIndex)
+                            ?.upPageAloudSpan(aloudSpanStart)
+                    }
+                }
+            }
+        }
+        observeEventSticky<Pair<Int, Int>>(EventBus.TTS_PROGRESS) { (chapterStart, readPageIndex) ->
             lifecycleScope.launch(IO) {
+                cacheChapterStart = chapterStart
+                cacheReadPage = readPageIndex
                 if (BaseReadAloudService.isPlay()) {
                     ReadBook.curTextChapter?.let { textChapter ->
                         val pageIndex = ReadBook.durPageIndex
-                        val aloudSpanStart = chapterStart - textChapter.getReadLength(pageIndex)
-                        textChapter.getPage(pageIndex)
-                            ?.upPageAloudSpan(aloudSpanStart)
-                        upContent()
+                        if (pageIndex == readPageIndex) {
+                            val aloudSpanStart = chapterStart - textChapter.getReadLength(pageIndex)
+                            textChapter.getPage(pageIndex)
+                                ?.upPageAloudSpan(aloudSpanStart)
+                            upContent()
+                        }
                     }
                 }
             }

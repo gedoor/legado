@@ -628,7 +628,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
         val line = selectStartPos.lineIndex
         val column = selectStartPos.columnIndex
         while (pagePos > 0) {
-            if (!ReadBook.moveToNextPage()) {
+            if (!ReadBook.moveToNextPage(pageIndex)) {
                 ReadBook.moveToNextChapterAwait(false)
             }
             pagePos--

@@ -123,12 +123,13 @@ data class TextChapter(
         */
     }
 
+
     /**
      * @param length 当前页面文字在章节中的位置
+     * @param pageIndex 当前页码
      * @return 下一页位置,如果没有下一页返回-1
      */
-    fun getNextPageLength(length: Int): Int {
-        val pageIndex = getPageIndexByCharIndex(length)
+    fun getNextPageLength(length: Int, pageIndex: Int): Int {
         if (pageIndex + 1 >= pageSize) {
             return -1
         }
@@ -137,10 +138,10 @@ data class TextChapter(
 
     /**
      * @param length 当前页面文字在章节中的位置
+     * @param pageIndex 当前页码
      * @return 上一页位置,如果没有上一页返回-1
      */
-    fun getPrevPageLength(length: Int): Int {
-        val pageIndex = getPageIndexByCharIndex(length)
+    fun getPrevPageLength(length: Int, pageIndex: Int): Int {
         if (pageIndex - 1 < 0) {
             return -1
         }

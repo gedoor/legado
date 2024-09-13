@@ -7,6 +7,7 @@ import io.legado.app.R
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern
+import io.legado.app.constant.PreferKey
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.MediaHelp
 import io.legado.app.help.config.AppConfig
@@ -17,6 +18,7 @@ import io.legado.app.model.ReadBook
 import io.legado.app.utils.GSON
 import io.legado.app.utils.LogUtils
 import io.legado.app.utils.fromJsonObject
+import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.servicePendingIntent
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.ensureActive
@@ -31,6 +33,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
     private val ttsUtteranceListener = TTSUtteranceListener()
     private var speakJob: Coroutine<*>? = null
     private val TAG = "TTSReadAloudService"
+    private var maxRetryCount = 0
 
     override fun onCreate() {
         super.onCreate()
@@ -93,18 +96,9 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
             LogUtils.d(TAG, "朗读列表大小 ${contentList.size}")
             LogUtils.d(TAG, "朗读页数 ${textChapter?.pageSize}")
             val tts = textToSpeech ?: throw NoStackTraceException("tts is null")
-            var result = tts.runCatching {
-                speak("", TextToSpeech.QUEUE_FLUSH, null, null)
-            }.getOrElse {
-                AppLog.put("tts出错\n${it.localizedMessage}", it, true)
-                TextToSpeech.ERROR
-            }
-            if (result == TextToSpeech.ERROR) {
-                AppLog.put("tts出错 尝试重新初始化")
-                clearTTS()
-                initTts()
-                return@execute
-            }
+
+            tts.stop()
+
             val contentList = contentList
             for (i in nowSpeak until contentList.size) {
                 ensureActive()
@@ -115,15 +109,23 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
                 if (text.matches(AppPattern.notReadAloudRegex)) {
                     continue
                 }
-                result = tts.runCatching {
-                    speak(text, TextToSpeech.QUEUE_ADD, null, AppConst.APP_TAG + i)
-                }.getOrElse {
-                    AppLog.put("tts出错\n${it.localizedMessage}", it, true)
-                    TextToSpeech.ERROR
+                var retryCount = 0
+                var result = TextToSpeech.ERROR_OUTPUT
+                while(result != TextToSpeech.SUCCESS || retryCount > maxRetryCount) {
+                    result = tts.runCatching {
+                        speak(text, TextToSpeech.QUEUE_ADD, null, AppConst.APP_TAG + i)
+                    }.getOrElse {
+                        AppLog.put("tts出错\n${it.localizedMessage}", it, true)
+                        TextToSpeech.ERROR
+                    }
+                    if (result == TextToSpeech.ERROR) {
+                        retryCount ++
+                        AppLog.put("tts出错 尝试重新初始化")
+                        clearTTS()
+                        initTts()
+                    } else retryCount = 0
                 }
-                if (result == TextToSpeech.ERROR) {
-                    AppLog.put("tts朗读出错:$text")
-                }
+
             }
             LogUtils.d(TAG, "朗读内容添加完成")
         }.onError {
@@ -182,8 +184,10 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
             LogUtils.d(TAG, "onStart nowSpeak:$nowSpeak pageIndex:$pageIndex utteranceId:$s")
             textChapter?.let {
                 if (readAloudNumber + 1 > it.getReadLength(pageIndex + 1)) {
-                    pageIndex++
-                    ReadBook.moveToNextPage()
+                    if (ReadBook.durPageIndex == pageIndex
+                        || getPrefBoolean(PreferKey.followReadAloudFocus,true)) {
+                        ReadBook.moveToNextPage(pageIndex++)
+                    }
                 }
                 upTtsProgress(readAloudNumber + 1)
             }
@@ -201,8 +205,8 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
             LogUtils.d(TAG, msg)
             textChapter?.let {
                 if (readAloudNumber + start > it.getReadLength(pageIndex + 1)) {
+                    ReadBook.moveToNextPage(pageIndex)
                     pageIndex++
-                    ReadBook.moveToNextPage()
                     upTtsProgress(readAloudNumber + start)
                 }
             }

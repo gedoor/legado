@@ -1,7 +1,9 @@
 package io.legado.app.model
 
 import io.legado.app.constant.AppLog
+import io.legado.app.constant.EventBus
 import io.legado.app.constant.PageAnim.scrollPageAnim
+import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
@@ -24,6 +26,8 @@ import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.book.read.page.provider.LayoutProgressListener
+import io.legado.app.utils.getPrefBoolean
+import io.legado.app.utils.postEvent
 import io.legado.app.utils.stackTraceStr
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.CoroutineScope
@@ -228,10 +232,10 @@ object ReadBook : CoroutineScope by MainScope() {
         }
     }
 
-    fun moveToNextPage(): Boolean {
+    fun moveToNextPage(curPage: Int): Boolean {
         var hasNextPage = false
         curTextChapter?.let {
-            val nextPagePos = it.getNextPageLength(durChapterPos)
+            val nextPagePos = it.getNextPageLength(durChapterPos,curPage)
             if (nextPagePos >= 0) {
                 hasNextPage = true
                 it.getPage(durPageIndex)?.removePageAloudSpan()
@@ -244,10 +248,10 @@ object ReadBook : CoroutineScope by MainScope() {
         return hasNextPage
     }
 
-    fun moveToPrevPage(): Boolean {
+    fun moveToPrevPage(curPage: Int): Boolean {
         var hasPrevPage = false
         curTextChapter?.let {
-            val prevPagePos = it.getPrevPageLength(durChapterPos)
+            val prevPagePos = it.getPrevPageLength(durChapterPos,curPage)
             if (prevPagePos >= 0) {
                 hasPrevPage = true
                 durChapterPos = prevPagePos
@@ -396,8 +400,10 @@ object ReadBook : CoroutineScope by MainScope() {
                 val scrollPageAnim = pageAnim() == 3
                 if (scrollPageAnim && pageChanged) {
                     ReadAloud.pause(appCtx)
-                } else {
+                } else if (appCtx.getPrefBoolean(PreferKey.followReadAloudFocus,true)){
                     readAloud(!BaseReadAloudService.pause)
+                } else {
+                    postEvent(EventBus.PAGE_CHANGE,true)
                 }
             }
         }
