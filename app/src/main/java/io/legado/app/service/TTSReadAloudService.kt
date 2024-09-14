@@ -93,9 +93,10 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
             LogUtils.d(TAG, "朗读列表大小 ${contentList.size}")
             LogUtils.d(TAG, "朗读页数 ${textChapter?.pageSize}")
             val tts = textToSpeech ?: throw NoStackTraceException("tts is null")
+            val contentList = contentList
             for (i in nowSpeak until contentList.size) {
-                var text = contentList[i]
                 ensureActive()
+                var text = contentList[i]
                 if (paragraphStartPos > 0 && i == nowSpeak) {
                     text = text.substring(paragraphStartPos)
                 }
@@ -126,8 +127,6 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
                         AppLog.put("tts朗读出错:$text")
                     }
                 }
-
-
             }
             LogUtils.d(TAG, "朗读内容添加完成")
         }.onError {
