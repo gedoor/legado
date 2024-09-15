@@ -2,7 +2,6 @@ package io.legado.app.model.analyzeRule
 
 import android.text.TextUtils
 import androidx.annotation.Keep
-import com.script.ScriptBindings
 import com.script.buildScriptBindings
 import com.script.rhino.RhinoScriptEngine
 import io.legado.app.constant.AppPattern.JS_PATTERN
@@ -31,7 +30,6 @@ import java.net.URL
 import java.util.regex.Pattern
 import kotlin.collections.component1
 import kotlin.collections.component2
-import kotlin.collections.set
 import kotlin.coroutines.ContinuationInterceptor
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
@@ -444,15 +442,10 @@ class AnalyzeRule(
     /**
      * getString 类规则缓存
      */
-    fun splitSourceRuleCacheString(ruleStr: String?): List<SourceRule> {
+    private fun splitSourceRuleCacheString(ruleStr: String?): List<SourceRule> {
         if (ruleStr.isNullOrEmpty()) return emptyList()
-        val cacheRule = stringRuleCache[ruleStr]
-        return if (cacheRule != null) {
-            cacheRule
-        } else {
-            val rules = splitSourceRule(ruleStr)
-            stringRuleCache[ruleStr] = rules
-            rules
+        return stringRuleCache.getOrPut(ruleStr) {
+            splitSourceRule(ruleStr)
         }
     }
 
