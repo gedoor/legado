@@ -111,7 +111,6 @@ import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.isTrue
 import io.legado.app.utils.launch
 import io.legado.app.utils.navigationBarGravity
-import io.legado.app.utils.navigationBarHeight
 import io.legado.app.utils.observeEvent
 import io.legado.app.utils.observeEventSticky
 import io.legado.app.utils.postEvent
@@ -297,7 +296,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         if (!ReadBook.inBookshelf) {
             viewModel.removeFromBookshelf(null)
         }
-        viewModel.initData(intent ?: return)
+        viewModel.initData(intent)
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -776,7 +775,7 @@ class ReadBookActivity : BaseReadBookActivity(),
     override fun showTextActionMenu() {
         val navigationBarHeight =
             if (!ReadBookConfig.hideNavigationBar && navigationBarGravity == Gravity.BOTTOM)
-                navigationBarHeight else 0
+                binding.navigationBar.height else 0
         textActionMenu.show(
             binding.textMenuPosition,
             binding.root.height + navigationBarHeight,
@@ -1341,7 +1340,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         }
         val navigationBarHeight =
             if (!ReadBookConfig.hideNavigationBar && navigationBarGravity == Gravity.BOTTOM)
-                navigationBarHeight else 0
+                binding.navigationBar.height else 0
         popupAction.showAtLocation(
             binding.readView, Gravity.BOTTOM or Gravity.LEFT, x.toInt(),
             binding.root.height + navigationBarHeight - y.toInt()
