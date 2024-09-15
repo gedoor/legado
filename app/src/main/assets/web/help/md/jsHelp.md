@@ -1,13 +1,13 @@
 # js变量和函数
 > 阅读使用[Rhino](https://github.com/mozilla/rhino)作为JavaScript引擎以便于[调用Java类和方法](https://m.jb51.net/article/92138.htm)，查看[ECMAScript兼容性表格](https://mozilla.github.io/rhino/compat/engines.html)
 
-> [Rhino运行时](https://github.com/mozilla/rhino/blob/master/src/org/mozilla/javascript/ScriptRuntime.java#L299)懒加载导入的Java类和方法
+> [Rhino运行时](https://github.com/mozilla/rhino/blob/master/rhino/src/main/java/org/mozilla/javascript/ScriptRuntime.java#L299)懒加载导入的Java类和方法
 
 |构造函数|函数|对象|调用类|简要说明|
 |------|-----|------|----|------|
-|JavaImporter|importClass importPackage| |[ImporterTopLevel](https://github.com/mozilla/rhino/blob/master/src/org/mozilla/javascript/ImporterTopLevel.java#L147-L190)|导入Java类到JavaScript|
-||getClass|Packages java javax ...|[NativeJavaTopPackage](https://github.com/mozilla/rhino/blob/master/src/org/mozilla/javascript/NativeJavaTopPackage.java#L66-L104)|默认导入JavaScript中的Java类|
-|JavaAdapter|||[JavaAdapter](https://github.com/mozilla/rhino/blob/master/src/org/mozilla/javascript/JavaAdapter.java)|继承Java类|
+|JavaImporter|importClass importPackage| |[ImporterTopLevel](https://github.com/mozilla/rhino/blob/master/rhino/src/main/java/org/mozilla/javascript/ImporterTopLevel.java#L147-L190)|导入Java类到JavaScript|
+||getClass|Packages java javax ...|[NativeJavaTopPackage](https://github.com/mozilla/rhino/blob/master/rhino/src/main/java/org/mozilla/javascript/NativeJavaTopPackage.java#L66-L104)|默认导入JavaScript中的Java类|
+|JavaAdapter|||[JavaAdapter](https://github.com/mozilla/rhino/blob/master/rhino/src/main/java//org/mozilla/javascript/JavaAdapter.java)|继承Java类|
 
 > 注意`java`变量指向已经被阅读修改，如果想要调用`java.*`下的包，请使用`Packages.java.*`
 
