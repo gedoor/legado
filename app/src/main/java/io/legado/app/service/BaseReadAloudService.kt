@@ -42,6 +42,7 @@ import io.legado.app.model.ReadBook
 import io.legado.app.receiver.MediaButtonReceiver
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.read.page.entities.TextChapter
+import io.legado.app.utils.LogUtils
 import io.legado.app.utils.activityPendingIntent
 import io.legado.app.utils.broadcastPendingIntent
 import io.legado.app.utils.getPrefBoolean
@@ -634,35 +635,41 @@ abstract class BaseReadAloudService : BaseService(),
         }
     }
 
-    @Suppress("DEPRECATION")
     private fun unregisterPhoneStateListener(l: PhoneStateListener) {
         if (registeredPhoneStateListener) {
-            registerPhoneStateListener(l, true)
+            withReadPhoneStatePermission {
+                telephonyManager.listen(l, PhoneStateListener.LISTEN_NONE)
+                registeredPhoneStateListener = false
+            }
         }
     }
 
-    @Suppress("DEPRECATION")
-    private fun registerPhoneStateListener(l: PhoneStateListener, unregister: Boolean = false) {
+    private fun registerPhoneStateListener(l: PhoneStateListener) {
+        withReadPhoneStatePermission {
+            telephonyManager.listen(l, PhoneStateListener.LISTEN_CALL_STATE)
+            registeredPhoneStateListener = true
+        }
+    }
+
+    private fun withReadPhoneStatePermission(block: () -> Unit) {
         try {
-            if (unregister) {
-                telephonyManager.listen(l, PhoneStateListener.LISTEN_NONE)
-                registeredPhoneStateListener = false
-            } else {
-                telephonyManager.listen(l, PhoneStateListener.LISTEN_CALL_STATE)
-                registeredPhoneStateListener = true
-            }
-        } catch (e: SecurityException) {
+            block.invoke()
+        } catch (_: SecurityException) {
             PermissionsCompat.Builder()
                 .addPermissions(Permissions.READ_PHONE_STATE)
                 .rationale(R.string.read_aloud_read_phone_state_permission_rationale)
                 .onGranted {
-                    registerPhoneStateListener(l, unregister)
+                    try {
+                        block.invoke()
+                    } catch (_: SecurityException) {
+                        LogUtils.d(TAG, "Grant read phone state permission fail.")
+                    }
                 }
                 .request()
         }
     }
 
-    @Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
+    @Suppress("OVERRIDE_DEPRECATION")
     inner class ReadAloudPhoneStateListener : PhoneStateListener() {
         override fun onCallStateChanged(state: Int, phoneNumber: String?) {
             super.onCallStateChanged(state, phoneNumber)
