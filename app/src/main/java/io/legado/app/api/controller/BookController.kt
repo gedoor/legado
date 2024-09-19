@@ -1,6 +1,7 @@
 package io.legado.app.api.controller
 
 import androidx.core.graphics.drawable.toBitmap
+import com.bumptech.glide.Glide
 import io.legado.app.api.ReturnData
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
@@ -63,11 +64,21 @@ object BookController {
     fun getCover(parameters: Map<String, List<String>>): ReturnData {
         val returnData = ReturnData()
         val coverPath = parameters["path"]?.firstOrNull()
-        val ftBitmap = ImageLoader.loadBitmap(appCtx, coverPath).submit()
+        val ftBitmap = ImageLoader.loadBitmap(appCtx, coverPath)
+            .override(84, 112)
+            .centerCrop()
+            .submit()
         return try {
             returnData.setData(ftBitmap.get())
         } catch (e: Exception) {
-            returnData.setData(BookCover.defaultDrawable.toBitmap())
+            val defaultBitmap = Glide.with(appCtx)
+                .asBitmap()
+                .load(BookCover.defaultDrawable.toBitmap())
+                .override(84, 112)
+                .centerCrop()
+                .submit()
+                .get()
+            returnData.setData(defaultBitmap)
         }
     }
 

@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy
 import com.bumptech.glide.request.RequestOptions
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -50,6 +52,9 @@ class PhotoDialog() : BaseDialogFragment(R.layout.dialog_photo_view) {
             if (file?.exists() == true) {
                 ImageLoader.load(requireContext(), file)
                     .error(R.drawable.image_loading_error)
+                    .dontTransform()
+                    .downsample(DownsampleStrategy.NONE)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(binding.photoView)
             } else {
                 ImageLoader.load(requireContext(), src).apply {
@@ -62,6 +67,8 @@ class PhotoDialog() : BaseDialogFragment(R.layout.dialog_photo_view) {
                         )
                     }
                 }.error(BookCover.defaultDrawable)
+                    .dontTransform()
+                    .downsample(DownsampleStrategy.NONE)
                     .into(binding.photoView)
             }
         }

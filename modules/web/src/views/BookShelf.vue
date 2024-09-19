@@ -186,7 +186,10 @@ const handleBookClick = async (book) => {
     durChapterIndex = 0,
     durChapterPos = 0,
   } = book;
-  await API.saveBook(book);
+  // 判断是否为 searchBook
+  if (book.durChapterIndex === undefined) {
+    await API.saveBook(book);
+  }
   toDetail(bookUrl, name, author, durChapterIndex, durChapterPos);
 };
 const toDetail = (bookUrl, bookName, bookAuthor, chapterIndex, chapterPos) => {
