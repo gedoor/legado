@@ -103,7 +103,7 @@ class ReadAloudConfigDialog : DialogFragment() {
 
         override fun onPreferenceTreeClick(preference: Preference): Boolean {
             when (preference.key) {
-                PreferKey.ttsEngine -> showDialogFragment(SpeakEngineDialog(this))
+                PreferKey.ttsEngine -> showDialogFragment(SpeakEngineDialog())
                 "sysTtsConfig" -> IntentHelp.openTTSSetting()
             }
             return super.onPreferenceTreeClick(preference)
