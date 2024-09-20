@@ -269,7 +269,7 @@ object CacheBook {
             if (BookHelp.hasContent(book, chapter)) {
                 Coroutine.async(executeContext = context) {
                     BookHelp.getContent(book, chapter)?.let {
-                        BookHelp.saveImages(bookSource, book, chapter, it)
+                        BookHelp.saveImages(bookSource, book, chapter, it, 1)
                     }
                 }.onSuccess {
                     onSuccess(chapter)

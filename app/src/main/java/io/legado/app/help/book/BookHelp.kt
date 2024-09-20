@@ -154,7 +154,8 @@ object BookHelp {
         bookSource: BookSource,
         book: Book,
         bookChapter: BookChapter,
-        content: String
+        content: String,
+        concurrency: Int = AppConfig.threadCount
     ) = coroutineScope {
         flow {
             val matcher = AppPattern.imgPattern.matcher(content)
@@ -163,7 +164,7 @@ object BookHelp {
                 val mSrc = NetworkUtils.getAbsoluteURL(bookChapter.url, src)
                 emit(mSrc)
             }
-        }.onEachParallel(AppConfig.threadCount) { mSrc ->
+        }.onEachParallel(concurrency) { mSrc ->
             saveImage(bookSource, book, mSrc, bookChapter)
         }.collect()
     }
