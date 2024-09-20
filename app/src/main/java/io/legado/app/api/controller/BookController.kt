@@ -28,6 +28,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import splitties.init.appCtx
 import java.io.File
+import java.util.concurrent.TimeUnit
 
 object BookController {
 
@@ -69,7 +70,7 @@ object BookController {
             .centerCrop()
             .submit()
         return try {
-            returnData.setData(ftBitmap.get())
+            returnData.setData(ftBitmap.get(3, TimeUnit.SECONDS))
         } catch (e: Exception) {
             val defaultBitmap = Glide.with(appCtx)
                 .asBitmap()
