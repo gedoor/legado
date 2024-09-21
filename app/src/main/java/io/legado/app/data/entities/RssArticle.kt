@@ -1,12 +1,14 @@
 package io.legado.app.data.entities
 
+import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.Ignore
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import kotlinx.parcelize.IgnoredOnParcel
+import kotlinx.parcelize.Parcelize
 
-
+@Parcelize
 @Entity(
     tableName = "rssArticles",
     primaryKeys = ["origin", "link"]
@@ -21,9 +23,10 @@ data class RssArticle(
     var description: String? = null,
     var content: String? = null,
     var image: String? = null,
+    var group: String? = null,
     var read: Boolean = false,
     override var variable: String? = null
-) : BaseRssArticle {
+) : BaseRssArticle, Parcelable {
 
     override fun hashCode() = link.hashCode()
 
@@ -49,6 +52,7 @@ data class RssArticle(
         description = description,
         content = content,
         image = image,
+        group = group,
         variable = variable
     )
 }
