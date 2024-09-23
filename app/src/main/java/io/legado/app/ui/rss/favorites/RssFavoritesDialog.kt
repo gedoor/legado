@@ -48,8 +48,8 @@ class RssFavoritesDialog() : BaseDialogFragment(R.layout.dialog_rssfavorites, tr
                 dismiss()
             }
             tvOk.setOnClickListener {
-                rssArticle.title = editTitle.text?.toString() ?: ""
-                rssArticle.group = editGroup.text?.toString() ?: ""
+                rssArticle.title = editTitle.text?.toString() ?: rssArticle.title
+                rssArticle.group = editGroup.text?.toString() ?: "默认分组"
                 lifecycleScope.launch {
                     callback?.setRssArticle(rssArticle, true)
                     dismiss()

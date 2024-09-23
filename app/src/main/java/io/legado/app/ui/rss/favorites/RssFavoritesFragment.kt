@@ -1,0 +1,84 @@
+package io.legado.app.ui.rss.favorites
+
+
+import android.os.Bundle
+import android.view.View
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import io.legado.app.R
+import io.legado.app.base.VMBaseFragment
+import io.legado.app.constant.AppLog
+import io.legado.app.data.appDb
+import io.legado.app.data.entities.RssStar
+import io.legado.app.databinding.FragmentRssArticlesBinding
+import io.legado.app.lib.theme.accentColor
+import io.legado.app.lib.theme.primaryColor
+import io.legado.app.ui.rss.read.ReadRssActivity
+import io.legado.app.ui.widget.recycler.VerticalDivider
+import io.legado.app.utils.setEdgeEffectColor
+import io.legado.app.utils.startActivity
+import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.launch
+
+class RssFavoritesFragment() : VMBaseFragment<RssFavoritesViewModel>(R.layout.fragment_rss_articles),
+    RssFavoritesAdapter.CallBack {
+
+    constructor(sortName: String) : this() {
+        arguments = Bundle().apply {
+            putString("sortName", sortName)
+        }
+    }
+
+    private val binding by viewBinding(FragmentRssArticlesBinding::bind)
+    override val viewModel by viewModels<RssFavoritesViewModel>()
+    private val adapter: RssFavoritesAdapter by lazy {
+        RssFavoritesAdapter(requireContext(), this@RssFavoritesFragment)
+    }
+    private var articlesFlowJob: Job? = null
+
+    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+        initView()
+    }
+
+    private fun initView() = binding.run {
+        refreshLayout.setColorSchemeColors(accentColor)
+        recyclerView.setEdgeEffectColor(primaryColor)
+        recyclerView.layoutManager = run {
+            recyclerView.addItemDecoration(VerticalDivider(requireContext()))
+            LinearLayoutManager(requireContext())
+        }
+        recyclerView.adapter = adapter
+        refreshLayout.setOnRefreshListener {
+            loadArticles()
+        }
+        refreshLayout.post {
+//            refreshLayout.isRefreshing = true
+            loadArticles()
+        }
+    }
+
+    private fun loadArticles() {
+        articlesFlowJob?.cancel()
+        articlesFlowJob = lifecycleScope.launch {
+            appDb.rssStarDao.getByGroup(arguments?.getString("sortName") ?: "").catch {
+                AppLog.put("订阅文章界面获取数据失败\n${it.localizedMessage}", it)
+            }.flowOn(IO).collect {
+                adapter.setItems(it)
+//                binding.refreshLayout.isRefreshing = false
+            }
+        }
+    }
+
+    override fun readRss(rssStar: RssStar) {
+        startActivity<ReadRssActivity> {
+            putExtra("title", rssStar.title)
+            putExtra("origin", rssStar.origin)
+            putExtra("link", rssStar.link)
+        }
+    }
+}
