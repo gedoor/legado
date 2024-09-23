@@ -41,7 +41,7 @@ rhino = "1.7.15"
 desugar = "2.0.4"
 
 activity = "1.9.1"
-kotlinxSerialization = "1.7.1"
+kotlinxSerialization = "1.7.3"
 swiperefreshlayout = "1.1.0"
 recyclerview = "1.2.0"
 viewpager2 = "1.0.0"
