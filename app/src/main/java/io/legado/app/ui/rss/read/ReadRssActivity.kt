@@ -181,9 +181,9 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         return super.onCompatOptionsItemSelected(item)
     }
 
-    override fun setRssArticle(rssArticle: RssArticle, edit: Boolean) {
+    override fun setRssArticle(rssArticle: RssArticle, editPos: Boolean) {
         viewModel.rssArticle = rssArticle
-        if(edit){
+        if(editPos){
             viewModel.updateFavorite()
         }else{
             viewModel.delFavorite()
