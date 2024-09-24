@@ -250,4 +250,10 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    fun deleteNotShelfBook() {
+        execute {
+            appDb.bookDao.deleteNotShelfBook()
+        }
+    }
+
 }
