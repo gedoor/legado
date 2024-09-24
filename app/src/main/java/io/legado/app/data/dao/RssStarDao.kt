@@ -16,9 +16,6 @@ interface RssStarDao {
     @Query("select * from rssStars where `group` = :group order by starTime desc")
     fun getByGroup(group: String): Flow<List<RssStar>>
 
-    @Query("update rssStars set `group` = '默认分组' where `group` is null or `group` = ''")
-    fun updateGroup()
-
     @Query("select * from rssStars where origin = :origin and link = :link")
     fun get(origin: String, link: String): RssStar?
 

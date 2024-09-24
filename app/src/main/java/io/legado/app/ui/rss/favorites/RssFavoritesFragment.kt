@@ -28,9 +28,9 @@ import kotlinx.coroutines.launch
 class RssFavoritesFragment() : VMBaseFragment<RssFavoritesViewModel>(R.layout.fragment_rss_articles),
     RssFavoritesAdapter.CallBack {
 
-    constructor(sortName: String) : this() {
+    constructor(group: String) : this() {
         arguments = Bundle().apply {
-            putString("sortName", sortName)
+            putString("group", group)
         }
     }
 
@@ -57,7 +57,7 @@ class RssFavoritesFragment() : VMBaseFragment<RssFavoritesViewModel>(R.layout.fr
             loadArticles()
         }
         refreshLayout.post {
-//            refreshLayout.isRefreshing = true
+            refreshLayout.isRefreshing = true
             loadArticles()
         }
     }
@@ -65,11 +65,12 @@ class RssFavoritesFragment() : VMBaseFragment<RssFavoritesViewModel>(R.layout.fr
     private fun loadArticles() {
         articlesFlowJob?.cancel()
         articlesFlowJob = lifecycleScope.launch {
-            appDb.rssStarDao.getByGroup(arguments?.getString("sortName") ?: "").catch {
+            val group = arguments?.getString("group") ?: "默认分组"
+            appDb.rssStarDao.getByGroup(group).catch {
                 AppLog.put("订阅文章界面获取数据失败\n${it.localizedMessage}", it)
             }.flowOn(IO).collect {
                 adapter.setItems(it)
-//                binding.refreshLayout.isRefreshing = false
+                binding.refreshLayout.isRefreshing = false
             }
         }
     }

@@ -24,8 +24,6 @@ class RssFavoritesActivity : BaseActivity<ActivityRssFavoritesBinding>(){
     override val binding by viewBinding(ActivityRssFavoritesBinding::inflate)
     private val adapter by lazy { TabFragmentPageAdapter() }
     private var groupList = mutableListOf<String>()
-    private val fragmentMap = hashMapOf<String, Fragment>()
-
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.viewPager.adapter = adapter
@@ -36,10 +34,11 @@ class RssFavoritesActivity : BaseActivity<ActivityRssFavoritesBinding>(){
 
     private fun upFragments() {
         lifecycleScope.launch {
-            appDb.rssStarDao.updateGroup()
             val groups = appDb.rssStarDao.groupList()
-            groupList.clear()
-            groupList.addAll(groups)
+            groups.let {
+                groupList.clear()
+                groupList.addAll(groups)
+            }
             if (groupList.size == 1) {
                 binding.tabLayout.gone()
             } else {
@@ -61,8 +60,8 @@ class RssFavoritesActivity : BaseActivity<ActivityRssFavoritesBinding>(){
         }
 
         override fun getItem(position: Int): Fragment {
-            val sort = groupList[position]
-            return RssFavoritesFragment(sort)
+            val group = groupList[position]
+            return RssFavoritesFragment(group)
         }
 
         override fun getCount(): Int {
@@ -71,7 +70,6 @@ class RssFavoritesActivity : BaseActivity<ActivityRssFavoritesBinding>(){
 
         override fun instantiateItem(container: ViewGroup, position: Int): Any {
             val fragment = super.instantiateItem(container, position) as Fragment
-            fragmentMap[groupList[position]] = fragment
             return fragment
         }
     }

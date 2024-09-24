@@ -31,7 +31,6 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.imagePathKey
 import io.legado.app.constant.AppLog
-import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssSource
 import io.legado.app.databinding.ActivityRssReadBinding
 import io.legado.app.help.config.AppConfig
@@ -181,13 +180,16 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         return super.onCompatOptionsItemSelected(item)
     }
 
-    override fun setRssArticle(rssArticle: RssArticle, editPos: Boolean) {
-        viewModel.rssArticle = rssArticle
-        if(editPos){
-            viewModel.updateFavorite()
-        }else{
-            viewModel.delFavorite()
-        }
+    override fun updateFavorite(title: String, group: String) {
+        viewModel.rssArticle?.title = title
+        viewModel.rssArticle?.group = group
+        viewModel.updateFavorite()
+    }
+
+    override fun deleteFavorite(title: String, group: String) {
+        viewModel.rssArticle?.title = title
+        viewModel.rssArticle?.group = group
+        viewModel.delFavorite()
 
     }
 
@@ -205,7 +207,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         }
     }
 
-    @SuppressLint("SetJavaScriptEnabled")
+    @SuppressLint("SetJavaScriptEnabled", "JavascriptInterface")
     private fun initWebView() {
         binding.progressBar.fontColor = accentColor
         binding.webView.webChromeClient = CustomWebChromeClient()

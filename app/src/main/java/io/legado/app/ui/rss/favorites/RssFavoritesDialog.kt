@@ -17,7 +17,8 @@ class RssFavoritesDialog() : BaseDialogFragment(R.layout.dialog_rssfavorites, tr
 
     constructor(rssArticle: RssArticle) : this() {
         arguments = Bundle().apply {
-            putParcelable("rssArticle", rssArticle)
+            putString("title", rssArticle.title)
+            putString("group", rssArticle.group)
         }
     }
 
@@ -35,29 +36,25 @@ class RssFavoritesDialog() : BaseDialogFragment(R.layout.dialog_rssfavorites, tr
             return
         }
 
-        @Suppress("DEPRECATION")
-        val rssArticle = arguments.getParcelable<RssArticle>("rssArticle")
-        rssArticle ?: let {
-            dismiss()
-            return
-        }
+        var title = arguments.getString("title") ?: "默认名称"
+        var group = arguments.getString("group") ?: "默认分组"
         binding.run {
-            editTitle.setText(rssArticle.title)
-            editGroup.setText(rssArticle.group ?: "默认分组")
+            editTitle.setText(title)
+            editGroup.setText(group)
             tvCancel.setOnClickListener {
                 dismiss()
             }
             tvOk.setOnClickListener {
-                rssArticle.title = editTitle.text?.toString() ?: rssArticle.title
-                rssArticle.group = editGroup.text?.toString() ?: "默认分组"
+                title = editTitle.text?.toString() ?: title
+                group = editGroup.text?.toString() ?: group
                 lifecycleScope.launch {
-                    callback?.setRssArticle(rssArticle, true)
+                    callback?.updateFavorite(title, group)
                     dismiss()
                 }
             }
             tvFooterLeft.setOnClickListener {
                 lifecycleScope.launch {
-                    callback?.setRssArticle(rssArticle, false)
+                    callback?.deleteFavorite(title, group)
                     dismiss()
                 }
             }
@@ -68,7 +65,9 @@ class RssFavoritesDialog() : BaseDialogFragment(R.layout.dialog_rssfavorites, tr
 
     interface Callback {
 
-        fun setRssArticle(rssArticle: RssArticle, editPos: Boolean)
+        fun updateFavorite(title: String, group: String)
+
+        fun deleteFavorite(title: String, group: String)
 
     }
 

@@ -137,7 +137,7 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application), J
 
     fun addFavorite() {
         execute {
-            rssArticle?.toStar()?.let {
+            rssStar ?: rssArticle?.toStar()?.let {
                 appDb.rssStarDao.insert(it)
                 rssStar = it
             }
