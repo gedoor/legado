@@ -186,11 +186,8 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         viewModel.updateFavorite()
     }
 
-    override fun deleteFavorite(title: String, group: String) {
-        viewModel.rssArticle?.title = title
-        viewModel.rssArticle?.group = group
+    override fun deleteFavorite() {
         viewModel.delFavorite()
-
     }
 
     @JavascriptInterface

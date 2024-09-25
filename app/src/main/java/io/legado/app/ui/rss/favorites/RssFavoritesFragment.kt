@@ -12,7 +12,6 @@ import io.legado.app.constant.AppLog
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssStar
 import io.legado.app.databinding.FragmentRssArticlesBinding
-import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.rss.read.ReadRssActivity
 import io.legado.app.ui.widget.recycler.VerticalDivider
@@ -46,20 +45,14 @@ class RssFavoritesFragment() : VMBaseFragment<RssFavoritesViewModel>(R.layout.fr
     }
 
     private fun initView() = binding.run {
-        refreshLayout.setColorSchemeColors(accentColor)
+        refreshLayout.setEnabled(false)
         recyclerView.setEdgeEffectColor(primaryColor)
         recyclerView.layoutManager = run {
             recyclerView.addItemDecoration(VerticalDivider(requireContext()))
             LinearLayoutManager(requireContext())
         }
         recyclerView.adapter = adapter
-        refreshLayout.setOnRefreshListener {
-            loadArticles()
-        }
-        refreshLayout.post {
-            refreshLayout.isRefreshing = true
-            loadArticles()
-        }
+        loadArticles()
     }
 
     private fun loadArticles() {
@@ -70,7 +63,6 @@ class RssFavoritesFragment() : VMBaseFragment<RssFavoritesViewModel>(R.layout.fr
                 AppLog.put("订阅文章界面获取数据失败\n${it.localizedMessage}", it)
             }.flowOn(IO).collect {
                 adapter.setItems(it)
-                binding.refreshLayout.isRefreshing = false
             }
         }
     }

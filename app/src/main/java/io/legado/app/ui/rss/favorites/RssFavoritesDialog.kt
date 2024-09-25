@@ -1,6 +1,7 @@
 package io.legado.app.ui.rss.favorites
 
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
@@ -45,8 +46,14 @@ class RssFavoritesDialog() : BaseDialogFragment(R.layout.dialog_rssfavorites, tr
                 dismiss()
             }
             tvOk.setOnClickListener {
-                title = editTitle.text?.toString() ?: title
-                group = editGroup.text?.toString() ?: group
+                val editTitle = editTitle.text.toString()
+                if(!TextUtils.isEmpty(editTitle)){
+                    title = editTitle
+                }
+                val editGroup = editGroup.text.toString()
+                if(!TextUtils.isEmpty(editGroup)){
+                    group = editGroup
+                }
                 lifecycleScope.launch {
                     callback?.updateFavorite(title, group)
                     dismiss()
@@ -54,7 +61,7 @@ class RssFavoritesDialog() : BaseDialogFragment(R.layout.dialog_rssfavorites, tr
             }
             tvFooterLeft.setOnClickListener {
                 lifecycleScope.launch {
-                    callback?.deleteFavorite(title, group)
+                    callback?.deleteFavorite()
                     dismiss()
                 }
             }
@@ -67,7 +74,7 @@ class RssFavoritesDialog() : BaseDialogFragment(R.layout.dialog_rssfavorites, tr
 
         fun updateFavorite(title: String, group: String)
 
-        fun deleteFavorite(title: String, group: String)
+        fun deleteFavorite()
 
     }
 

@@ -23,7 +23,7 @@ data class RssStar(
     var content: String? = null,
     var image: String? = null,
     @ColumnInfo(defaultValue = "默认分组")
-    var group: String? = "默认分组",
+    var group: String = "默认分组",
     override var variable: String? = null
 ) : BaseRssArticle {
 

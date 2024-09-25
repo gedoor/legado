@@ -1,5 +1,6 @@
 package io.legado.app.data.entities
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
 import io.legado.app.utils.GSON
@@ -20,7 +21,8 @@ data class RssArticle(
     var description: String? = null,
     var content: String? = null,
     var image: String? = null,
-    var group: String? = null,
+    @ColumnInfo(defaultValue = "默认分组")
+    var group: String = "默认分组",
     var read: Boolean = false,
     override var variable: String? = null
 ) : BaseRssArticle {

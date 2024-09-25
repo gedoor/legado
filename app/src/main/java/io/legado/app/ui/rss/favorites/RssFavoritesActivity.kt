@@ -8,12 +8,17 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.lifecycleScope
 import io.legado.app.base.BaseActivity
+import io.legado.app.constant.AppLog
 import io.legado.app.data.appDb
 import io.legado.app.databinding.ActivityRssFavoritesBinding
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.gone
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
 /**
@@ -24,6 +29,7 @@ class RssFavoritesActivity : BaseActivity<ActivityRssFavoritesBinding>(){
     override val binding by viewBinding(ActivityRssFavoritesBinding::inflate)
     private val adapter by lazy { TabFragmentPageAdapter() }
     private var groupList = mutableListOf<String>()
+    private var rssStarFlowJob: Job? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.viewPager.adapter = adapter
@@ -33,18 +39,20 @@ class RssFavoritesActivity : BaseActivity<ActivityRssFavoritesBinding>(){
     }
 
     private fun upFragments() {
-        lifecycleScope.launch {
-            val groups = appDb.rssStarDao.groupList()
-            groups.let {
+        rssStarFlowJob?.cancel()
+        rssStarFlowJob = lifecycleScope.launch {
+            appDb.rssStarDao.groupList().catch {
+                AppLog.put("订阅分组数据获取失败\n${it.localizedMessage}", it)
+            }.flowOn(IO).collect {
                 groupList.clear()
-                groupList.addAll(groups)
+                groupList.addAll(it)
+                if (groupList.size == 1) {
+                    binding.tabLayout.gone()
+                } else {
+                    binding.tabLayout.visible()
+                }
+                adapter.notifyDataSetChanged()
             }
-            if (groupList.size == 1) {
-                binding.tabLayout.gone()
-            } else {
-                binding.tabLayout.visible()
-            }
-            adapter.notifyDataSetChanged()
         }
     }
 
