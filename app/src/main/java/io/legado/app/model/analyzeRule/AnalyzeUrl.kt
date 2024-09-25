@@ -320,11 +320,16 @@ class AnalyzeUrl(
         val rateIndex = concurrentRate.indexOf("/")
         var fetchRecord = concurrentRecordMap[source.getKey()]
         if (fetchRecord == null) {
-            fetchRecord = ConcurrentRecord(rateIndex > 0, System.currentTimeMillis(), 1)
-            concurrentRecordMap[source.getKey()] = fetchRecord
-            return fetchRecord
+            synchronized(concurrentRecordMap) {
+                fetchRecord = concurrentRecordMap[source.getKey()]
+                if (fetchRecord == null) {
+                    fetchRecord = ConcurrentRecord(rateIndex > 0, System.currentTimeMillis(), 1)
+                    concurrentRecordMap[source.getKey()] = fetchRecord
+                    return fetchRecord
+                }
+            }
         }
-        val waitTime: Int = synchronized(fetchRecord) {
+        val waitTime: Int = synchronized(fetchRecord!!) {
             try {
                 if (!fetchRecord.isConcurrent) {
                     //并发控制非 次数/毫秒
