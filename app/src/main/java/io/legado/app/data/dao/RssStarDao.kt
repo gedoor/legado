@@ -10,6 +10,12 @@ interface RssStarDao {
     @get:Query("select * from rssStars order by starTime desc")
     val all: List<RssStar>
 
+    @Query("select `group` from rssStars group by `group` order by `group`")
+    fun groupList(): Flow<List<String>>
+
+    @Query("select * from rssStars where `group` = :group order by starTime desc")
+    fun getByGroup(group: String): Flow<List<RssStar>>
+
     @Query("select * from rssStars where origin = :origin and link = :link")
     fun get(origin: String, link: String): RssStar?
 
