@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 72,
-    "identityHash": "5b088782f93a925dc88fbedc08f27951",
+    "identityHash": "53d960f1fdc04a6f157a25b269a0d93b",
     "entities": [
       {
         "tableName": "books",
@@ -1297,7 +1297,7 @@
       },
       {
         "tableName": "rssArticles",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`origin` TEXT NOT NULL, `sort` TEXT NOT NULL, `title` TEXT NOT NULL, `order` INTEGER NOT NULL, `link` TEXT NOT NULL, `pubDate` TEXT, `description` TEXT, `content` TEXT, `image` TEXT, `group` TEXT, `read` INTEGER NOT NULL, `variable` TEXT, PRIMARY KEY(`origin`, `link`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`origin` TEXT NOT NULL, `sort` TEXT NOT NULL, `title` TEXT NOT NULL, `order` INTEGER NOT NULL, `link` TEXT NOT NULL, `pubDate` TEXT, `description` TEXT, `content` TEXT, `image` TEXT, `group` TEXT NOT NULL DEFAULT '默认分组', `read` INTEGER NOT NULL, `variable` TEXT, PRIMARY KEY(`origin`, `link`))",
         "fields": [
           {
             "fieldPath": "origin",
@@ -1357,7 +1357,8 @@
             "fieldPath": "group",
             "columnName": "group",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true,
+            "defaultValue": "'默认分组'"
           },
           {
             "fieldPath": "read",
@@ -1410,7 +1411,7 @@
       },
       {
         "tableName": "rssStars",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`origin` TEXT NOT NULL, `sort` TEXT NOT NULL, `title` TEXT NOT NULL, `starTime` INTEGER NOT NULL, `link` TEXT NOT NULL, `pubDate` TEXT, `description` TEXT, `content` TEXT, `image` TEXT, `group` TEXT DEFAULT '默认分组', `variable` TEXT, PRIMARY KEY(`origin`, `link`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`origin` TEXT NOT NULL, `sort` TEXT NOT NULL, `title` TEXT NOT NULL, `starTime` INTEGER NOT NULL, `link` TEXT NOT NULL, `pubDate` TEXT, `description` TEXT, `content` TEXT, `image` TEXT, `group` TEXT NOT NULL DEFAULT '默认分组', `variable` TEXT, PRIMARY KEY(`origin`, `link`))",
         "fields": [
           {
             "fieldPath": "origin",
@@ -1470,7 +1471,7 @@
             "fieldPath": "group",
             "columnName": "group",
             "affinity": "TEXT",
-            "notNull": false,
+            "notNull": true,
             "defaultValue": "'默认分组'"
           },
           {
@@ -1905,7 +1906,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5b088782f93a925dc88fbedc08f27951')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '53d960f1fdc04a6f157a25b269a0d93b')"
     ]
   }
 }
