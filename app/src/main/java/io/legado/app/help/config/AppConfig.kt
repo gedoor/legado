@@ -453,6 +453,9 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
 
     val mediaButtonOnExit get() = appCtx.getPrefBoolean("mediaButtonOnExit", true)
 
+    val readAloudByMediaButton
+        get() = appCtx.getPrefBoolean(PreferKey.readAloudByMediaButton, false)
+
     val replaceEnableDefault get() = appCtx.getPrefBoolean(PreferKey.replaceEnableDefault, true)
 
     val webDavDir get() = appCtx.getPrefString(PreferKey.webDavDir, "legado")

@@ -63,20 +63,11 @@ class MediaButtonReceiver : BroadcastReceiver() {
                             }
                         }
 
-                        KeyEvent.KEYCODE_MEDIA_PAUSE -> {
-                            pauseReadAloud(context)
-                        }
-
                         else -> readAloud(context)
                     }
                 }
             }
             return true
-        }
-
-        private fun pauseReadAloud(context: Context) {
-            ReadAloud.pause(context)
-            AudioPlay.pause(context)
         }
 
         fun readAloud(context: Context, isMediaKey: Boolean = true) {
@@ -97,6 +88,10 @@ class MediaButtonReceiver : BroadcastReceiver() {
                     } else {
                         AudioPlay.pause(context)
                     }
+                }
+
+                isMediaKey && !AppConfig.readAloudByMediaButton -> {
+                    // break
                 }
 
                 LifecycleHelp.isExistActivity(ReadBookActivity::class.java) ->
