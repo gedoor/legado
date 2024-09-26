@@ -54,6 +54,7 @@ class MediaButtonReceiver : BroadcastReceiver() {
                                 ReadAloud.prevParagraph(context)
                             }
                         }
+
                         KeyEvent.KEYCODE_MEDIA_NEXT -> {
                             if (context.getPrefBoolean("mediaButtonPerNext", false)) {
                                 ReadBook.moveToNextChapter(true)
@@ -61,11 +62,21 @@ class MediaButtonReceiver : BroadcastReceiver() {
                                 ReadAloud.nextParagraph(context)
                             }
                         }
+
+                        KeyEvent.KEYCODE_MEDIA_PAUSE -> {
+                            pauseReadAloud(context)
+                        }
+
                         else -> readAloud(context)
                     }
                 }
             }
             return true
+        }
+
+        private fun pauseReadAloud(context: Context) {
+            ReadAloud.pause(context)
+            AudioPlay.pause(context)
         }
 
         fun readAloud(context: Context, isMediaKey: Boolean = true) {
@@ -79,6 +90,7 @@ class MediaButtonReceiver : BroadcastReceiver() {
                         AudioPlay.resume(context)
                     }
                 }
+
                 AudioPlayService.isRun -> {
                     if (AudioPlayService.pause) {
                         AudioPlay.resume(context)
@@ -86,10 +98,13 @@ class MediaButtonReceiver : BroadcastReceiver() {
                         AudioPlay.pause(context)
                     }
                 }
+
                 LifecycleHelp.isExistActivity(ReadBookActivity::class.java) ->
                     postEvent(EventBus.MEDIA_BUTTON, true)
+
                 LifecycleHelp.isExistActivity(AudioPlayActivity::class.java) ->
                     postEvent(EventBus.MEDIA_BUTTON, true)
+
                 else -> if (AppConfig.mediaButtonOnExit || LifecycleHelp.activitySize() > 0 || !isMediaKey) {
                     ReadAloud.upReadAloudClass()
                     if (ReadBook.book != null) {
