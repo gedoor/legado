@@ -19,7 +19,6 @@ import io.legado.app.utils.setEdgeEffectColor
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
@@ -38,28 +37,26 @@ class RssFavoritesFragment() : VMBaseFragment<RssFavoritesViewModel>(R.layout.fr
     private val adapter: RssFavoritesAdapter by lazy {
         RssFavoritesAdapter(requireContext(), this@RssFavoritesFragment)
     }
-    private var articlesFlowJob: Job? = null
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         initView()
+        loadArticles()
     }
 
     private fun initView() = binding.run {
-        refreshLayout.setEnabled(false)
+        refreshLayout.isEnabled = false
         recyclerView.setEdgeEffectColor(primaryColor)
         recyclerView.layoutManager = run {
             recyclerView.addItemDecoration(VerticalDivider(requireContext()))
             LinearLayoutManager(requireContext())
         }
         recyclerView.adapter = adapter
-        loadArticles()
     }
 
     private fun loadArticles() {
-        articlesFlowJob?.cancel()
-        articlesFlowJob = lifecycleScope.launch {
+        lifecycleScope.launch {
             val group = arguments?.getString("group") ?: "默认分组"
-            appDb.rssStarDao.getByGroup(group).catch {
+            appDb.rssStarDao.flowByGroup(group).catch {
                 AppLog.put("订阅文章界面获取数据失败\n${it.localizedMessage}", it)
             }.flowOn(IO).collect {
                 adapter.setItems(it)

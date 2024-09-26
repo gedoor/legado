@@ -72,7 +72,8 @@ import java.util.regex.PatternSyntaxException
 /**
  * rss阅读界面
  */
-class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>(), RssFavoritesDialog.Callback {
+class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>(),
+    RssFavoritesDialog.Callback {
 
     override val binding by viewBinding(ActivityRssReadBinding::inflate)
     override val viewModel by viewModels<ReadRssViewModel>()
@@ -153,12 +154,14 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             R.id.menu_rss_refresh -> viewModel.refresh {
                 binding.webView.reload()
             }
+
             R.id.menu_rss_star -> {
                 viewModel.addFavorite()
                 viewModel.rssArticle?.let {
                     showDialogFragment(RssFavoritesDialog(it))
                 }
             }
+
             R.id.menu_share_it -> {
                 binding.webView.url?.let {
                     share(it)

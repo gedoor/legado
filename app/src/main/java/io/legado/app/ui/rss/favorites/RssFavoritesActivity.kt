@@ -3,7 +3,6 @@
 package io.legado.app.ui.rss.favorites
 
 import android.os.Bundle
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.lifecycleScope
@@ -16,34 +15,36 @@ import io.legado.app.utils.gone
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
 /**
  * 收藏夹
  */
-class RssFavoritesActivity : BaseActivity<ActivityRssFavoritesBinding>(){
+class RssFavoritesActivity : BaseActivity<ActivityRssFavoritesBinding>() {
 
     override val binding by viewBinding(ActivityRssFavoritesBinding::inflate)
     private val adapter by lazy { TabFragmentPageAdapter() }
     private var groupList = mutableListOf<String>()
-    private var rssStarFlowJob: Job? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        binding.viewPager.adapter = adapter
-        binding.tabLayout.setupWithViewPager(binding.viewPager)
-        binding.tabLayout.setSelectedTabIndicatorColor(accentColor)
+        initView()
         upFragments()
     }
 
+    private fun initView() {
+        binding.viewPager.adapter = adapter
+        binding.tabLayout.setupWithViewPager(binding.viewPager)
+        binding.tabLayout.setSelectedTabIndicatorColor(accentColor)
+    }
+
     private fun upFragments() {
-        rssStarFlowJob?.cancel()
-        rssStarFlowJob = lifecycleScope.launch {
-            appDb.rssStarDao.groupList().catch {
+        lifecycleScope.launch {
+            appDb.rssStarDao.flowGroups().catch {
                 AppLog.put("订阅分组数据获取失败\n${it.localizedMessage}", it)
-            }.flowOn(IO).collect {
+            }.distinctUntilChanged().flowOn(IO).collect {
                 groupList.clear()
                 groupList.addAll(it)
                 if (groupList.size == 1) {
@@ -76,9 +77,5 @@ class RssFavoritesActivity : BaseActivity<ActivityRssFavoritesBinding>(){
             return groupList.size
         }
 
-        override fun instantiateItem(container: ViewGroup, position: Int): Any {
-            val fragment = super.instantiateItem(container, position) as Fragment
-            return fragment
-        }
     }
 }
