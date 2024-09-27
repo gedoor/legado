@@ -82,7 +82,7 @@ class ExplosionView @JvmOverloads constructor(context: Context, attrs: Attribute
                     view.scaleX = 1f
                     view.scaleY = 1f
                     view.alpha = 1f
-                    view.setOnClickListener(mOnClickListener)//set event
+                    //view.setOnClickListener(mOnClickListener)//set event
                 }
             }
         })
