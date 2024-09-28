@@ -11,7 +11,7 @@ export const isInvaildSource: (source: Source) => boolean = (source) => {
             !isNullOrBlank(source.bookSourceType)
     }
     return !isNullOrBlank(source.sourceName) &&
-        !isNullOrBlank(source.sourceName)
+        !isNullOrBlank(source.sourceUrl)
 }
 
 export const getSourceUniqueKey = (source: Source) => isBookSource(source) ? source.bookSourceUrl : source.sourceUrl;
