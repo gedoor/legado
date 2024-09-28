@@ -11,6 +11,7 @@ import io.legado.app.R
 import io.legado.app.constant.AppConst.timeFormat
 import io.legado.app.data.entities.Bookmark
 import io.legado.app.databinding.ViewBookPageBinding
+import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.help.config.ReadTipConfig
 import io.legado.app.model.ReadBook
@@ -92,18 +93,20 @@ class PageView(context: Context) : FrameLayout(context) {
             vwTopDivider.backgroundColor = tipDividerColor
             vwBottomDivider.backgroundColor = tipDividerColor
             upStatusBar()
-            llHeader.setPadding(
-                it.headerPaddingLeft.dpToPx(),
-                it.headerPaddingTop.dpToPx(),
-                it.headerPaddingRight.dpToPx(),
-                it.headerPaddingBottom.dpToPx()
-            )
-            llFooter.setPadding(
-                it.footerPaddingLeft.dpToPx(),
-                it.footerPaddingTop.dpToPx(),
-                it.footerPaddingRight.dpToPx(),
-                it.footerPaddingBottom.dpToPx()
-            )
+            if (!AppConfig.isEInkMode) {
+                llHeader.setPadding(
+                    it.headerPaddingLeft.dpToPx(),
+                    it.headerPaddingTop.dpToPx(),
+                    it.headerPaddingRight.dpToPx(),
+                    it.headerPaddingBottom.dpToPx()
+                )
+                llFooter.setPadding(
+                    it.footerPaddingLeft.dpToPx(),
+                    it.footerPaddingTop.dpToPx(),
+                    it.footerPaddingRight.dpToPx(),
+                    it.footerPaddingBottom.dpToPx()
+                )
+            }
             vwTopDivider.gone(llHeader.isGone || !it.showHeaderLine)
             vwBottomDivider.gone(llFooter.isGone || !it.showFooterLine)
         }
@@ -146,8 +149,8 @@ class PageView(context: Context) : FrameLayout(context) {
             tvFooterRight.isGone = tipFooterRight == none
             tvFooterMiddle.isGone = tipFooterMiddle == none
         }
-        tvTitle = getTipView(ReadTipConfig.chapterTitle)?.apply {
-            tag = ReadTipConfig.chapterTitle
+        tvBookName = getTipView(ReadTipConfig.bookName)?.apply {
+            tag = ReadTipConfig.bookName
             isBattery = false
             typeface = ChapterProvider.typeface
             textSize = 12f
@@ -187,8 +190,8 @@ class PageView(context: Context) : FrameLayout(context) {
             typeface = ChapterProvider.typeface
             textSize = 12f
         }
-        tvBookName = getTipView(ReadTipConfig.bookName)?.apply {
-            tag = ReadTipConfig.bookName
+        tvTitle = getTipView(ReadTipConfig.chapterTitle)?.apply {
+            tag = ReadTipConfig.chapterTitle
             isBattery = false
             typeface = ChapterProvider.typeface
             textSize = 12f

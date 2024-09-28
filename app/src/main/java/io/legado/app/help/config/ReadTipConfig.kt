@@ -8,14 +8,14 @@ import splitties.init.appCtx
 object ReadTipConfig {
 
     const val none = 0
-    const val chapterTitle = 1
+    const val bookName = 1
     const val time = 2
     const val battery = 3
     const val batteryPercentage = 10
     const val page = 4
     const val totalProgress = 5
     const val pageAndTotal = 6
-    const val bookName = 7
+    const val chapterTitle = 7
     const val timeBattery = 8
     const val timeBatteryPercentage = 9
     const val totalProgress1 = 11
