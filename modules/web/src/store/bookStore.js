@@ -49,6 +49,9 @@ export const useBookStore = defineStore("book", {
         durChapterTitle: title,
       };
     },
+    theme: (state) => {
+      return state.config.theme
+    },
   },
   actions: {
     setConnectStatus(connectStatus) {
@@ -56,11 +59,6 @@ export const useBookStore = defineStore("book", {
     },
     setConnectType(connectType) {
       this.connectType = connectType;
-    },
-    resetConnect() {
-      this.connectStatus = "正在连接后端服务器……";
-      this.connectType = "";
-      this.clearBooks();
     },
     setNewConnect(newConnect) {
       this.newConnect = newConnect;
@@ -84,7 +82,7 @@ export const useBookStore = defineStore("book", {
       this.readingBook = readingBook;
     },
     setConfig(config) {
-      Object.assign(this.config, config);
+      this.config = Object.assign({}, this.config, config);
     },
     setReadSettingsVisible(visible) {
       this.readSettingsVisible = visible;

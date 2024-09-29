@@ -18,7 +18,8 @@
 </template>
 
 <script setup>
-import { getImageFromLegado, isLegadoUrl } from "@/utils/utils";
+import { isLegadoUrl } from "@/utils/utils";
+import API from "@api";
 import jump from "@/plugins/jump";
 
 const props = defineProps({
@@ -33,11 +34,11 @@ const props = defineProps({
 const getImageSrc = (content) => {
   const imgPattern = /<img[^>]*src="([^"]*(?:"[^>]+\})?)"[^>]*>/;
   const src = content.match(imgPattern)[1];
-  if (isLegadoUrl(src)) return getImageFromLegado(src);
+  if (isLegadoUrl(src)) return API.getProxyImageUrl(src, useBookStore().config.readWidth)
   return src;
 };
 const proxyImage = (event) => {
-  event.target.src = getImageFromLegado(event.target.src);
+  event.target.src = API.getProxyImageUrl(event.target.src, useBookStore().config.readWidth);
 };
 
 const calculateWordCount = (paragraph) => {

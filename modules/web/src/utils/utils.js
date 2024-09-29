@@ -1,5 +1,4 @@
 import { formatDate } from "@vueuse/shared";
-import { baseUrl } from "@/api/axios.js";
 
 export const isLegadoUrl = (/** @type {string} */ url) =>
   /,\s*\{/.test(url) ||
@@ -8,20 +7,7 @@ export const isLegadoUrl = (/** @type {string} */ url) =>
     url.startsWith("data:") ||
     url.startsWith("blob:")
   );
-/**
- * @param {string} src
- */
-export function getImageFromLegado(src) {
-  return (
-    baseUrl() +
-    "/image?path=" +
-    encodeURIComponent(src) +
-    "&url=" +
-    encodeURIComponent(sessionStorage.getItem("bookUrl")) +
-    "&width=" +
-    useBookStore().config.readWidth
-  );
-}
+
 // @ts-ignore
 export const dateFormat = (/** @type {number} */ t) => {
   let time = new Date().getTime();

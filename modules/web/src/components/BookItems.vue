@@ -12,6 +12,7 @@
             class="cover"
             :src="getCover(book.coverUrl)"
             :key="book.coverUrl"
+            @error.once="proxyImage"
             alt=""
             loading="lazy"
           />
@@ -49,16 +50,20 @@
   </div>
 </template>
 <script setup>
-import { dateFormat } from "../utils/utils";
-import { baseUrl } from "@/api/axios.js";
+import { dateFormat, isLegadoUrl } from "../utils/utils";
+import API from "@api";
+
 const props = defineProps(["books", "isSearch"]);
 const emit = defineEmits(["bookClick"]);
 const handleClick = (book) => emit("bookClick", book);
 const getCover = (coverUrl) => {
-  return /^data:/.test(coverUrl)
-    ? coverUrl
-    : baseUrl() + "/cover?path=" + encodeURIComponent(coverUrl);
+  return isLegadoUrl(coverUrl)
+    ? API.getProxyCoverUrl(coverUrl) : coverUrl
 };
+const proxyImage = (event) => {
+  event.target.src = API.getProxyCoverUrl(event.target.src);
+};
+
 
 const subJustify = computed(() =>
   props.isSearch ? "space-between" : "flex-start",

@@ -29,7 +29,7 @@
                   readingRecent.name,
                   readingRecent.author,
                   readingRecent.chapterIndex,
-                  readingRecent.chapterPos,
+                  readingRecent.chapterPos
                 )
               "
               :class="{ 'no-point': readingRecent.url == '' }"
@@ -40,65 +40,52 @@
         </div>
         <div class="setting-wrapper">
           <div class="setting-title">基本设定</div>
-          <div class="setting-ip">
-            <el-input
-              class="setting-input"
-              size="small"
-              :disabled="ipInput.disable"
-              v-model="ipInput.ip"
-              @keydown.enter="setIP"
-            />
-            <el-tag
-              type="primary"
-              class="setting-toggle"
-              @click="toggleIpConfig"
-            >
-              {{ ipInput.disable ? "修改" : "取消" }}
-            </el-tag>
-          </div>
-          <div class="setting-item">
-            <el-tag :type="connectType" size="large" class="setting-connect">
-              {{ connectStatus }}
-            </el-tag>
+            <div class="setting-item">
+              <el-tag
+                :type="connectType"
+                size="large"
+                class="setting-connect"
+                :class="{ 'no-point': newConnect }"
+                @click="setIP"
+              >
+                {{ connectStatus }}
+              </el-tag>
+            </div>
           </div>
         </div>
+        <div class="bottom-icons">
+          <a
+            href="https://github.com/gedoor/legado_web_bookshelf"
+            target="_blank"
+          >
+            <div class="bottom-icon">
+              <img :src="githubUrl" alt="" />
+            </div>
+          </a>
+        </div>
       </div>
-      <div class="bottom-icons">
-        <a
-          href="https://github.com/gedoor/legado_web_bookshelf"
-          target="_blank"
-        >
-          <div class="bottom-icon">
-            <img :src="githubUrl" alt="" />
-          </div>
-        </a>
+      <div class="shelf-wrapper" ref="shelfWrapper">
+        <book-items
+          :books="books"
+          @bookClick="handleBookClick"
+          :isSearch="isSearching"
+        ></book-items>
       </div>
-    </div>
-    <div class="shelf-wrapper" ref="shelfWrapper">
-      <book-items
-        :books="books"
-        @bookClick="handleBookClick"
-        :isSearch="isSearching"
-      ></book-items>
-    </div>
   </div>
 </template>
 
 <script setup>
+import "@/assets/bookshelf.css";
 import "@/assets/fonts/shelffont.css";
 import { useBookStore } from "@/store";
 import githubUrl from "@/assets/imgs/github.png";
 import { useLoading } from "@/hooks/loading";
 import { Search } from "@element-plus/icons-vue";
 import API from "@api";
-import { baseUrl, setRemoteIp } from "@/api/axios.js";
 
 const store = useBookStore();
-const { connectStatus, connectType, newConnect, shelf } = storeToRefs(store);
+const { connectStatus, connectType, newConnect, shelf, theme } = storeToRefs(store);
 
-const theme = computed(() => {
-  return store.config.theme;
-});
 const isNight = computed(() => theme.value == 6);
 
 const readingRecent = ref({
@@ -111,7 +98,7 @@ const readingRecent = ref({
 const shelfWrapper = ref(null);
 const { showLoading, closeLoading, loadingWrapper, isLoading } = useLoading(
   shelfWrapper,
-  "正在获取书籍信息",
+  "正在获取书籍信息"
 );
 
 const books = shallowRef([]);
@@ -159,22 +146,59 @@ const searchBook = () => {
       if (books.value.length == 0) {
         ElMessage.info("搜索结果为空");
       }
-    },
+    }
   );
 };
 
-const ipInput = reactive({
-  ip: baseUrl(),
-  disable: true,
-});
-const toggleIpConfig = () => {
-  ipInput.ip = baseUrl();
-  ipInput.disable = !ipInput.disable;
-};
 const setIP = () => {
-  setRemoteIp(ipInput.ip);
-  ipInput.disable = true;
-  loadShelf();
+  ElMessageBox.prompt(
+    "请输入 IP 和端口 ( 如：127.0.0.1:9527 或者通过内网穿透的地址)",
+    "提示",
+    {
+      confirmButtonText: "确定",
+      cancelButtonText: "取消",
+      inputPattern:
+        /^[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+\.?:([1-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-9][0-9][0-9][0-9]|[1-6][0-5][0-5][0-3][0-5])$/,
+      inputErrorMessage: "url 形式不正确",
+      beforeClose: (action, instance, done) => {
+        if (action === "confirm") {
+          store.setNewConnect(true);
+          instance.confirmButtonLoading = true;
+          instance.confirmButtonText = "校验中……";
+          // instance.inputValue
+          API.testLeagdoHttpUrlConnection("http://" + instance.inputValue)
+          //API.getBookShelf()
+            .then(function (response) {
+              instance.confirmButtonLoading = false;
+              // that.$store.commit(
+              // "increaseBookNum",
+              // response.data.data.length
+              // );
+              //store.addBooks(response.data.data);
+              const ip = instance.inputValue;
+              store.setConnectType("success");
+              store.setConnectStatus("已连接 " + ip);
+              store.clearSearchBooks();
+              store.setNewConnect(false);
+              API.setLeagdoHttpUrl("http://" + ip);
+              //持久化
+              localStorage.setItem("remoteIp", ip);
+              fetchBookShelfData()
+              done();
+            })
+            .catch(function (error) {
+              instance.confirmButtonLoading = false;
+              instance.confirmButtonText = "确定";
+              ElMessage.error("访问失败，请检查您输入的 url");
+              store.setNewConnect(false);
+              throw error;
+            });
+        } else {
+          done();
+        }
+      },
+    }
+  );
 };
 
 const router = useRouter();
@@ -221,16 +245,24 @@ onMounted(() => {
       readingRecent.value.chapterIndex = 0;
     }
   }
-  loadShelf();
+  API.testLeagdoHttpUrlConnection()
+  .then(loadReadConfig)
+  .then(loadShelf)
+  .catch(function (error) {
+      store.setConnectType("danger");
+      store.setConnectStatus("连接异常");
+      ElMessage.error("后端连接失败异常，请检查阅读WEB服务或者设置其它可用IP")
+      store.setNewConnect(false);
+      throw error;
+  });
 });
 
 const loadShelf = () => {
-  store.resetConnect();
   loadingWrapper(
     store
       .saveBookProgress()
       //确保各种网络情况下同步请求先完成
-      .finally(fetchBookShelfData),
+      .finally(fetchBookShelfData)
   );
 };
 
@@ -245,22 +277,29 @@ const fetchBookShelfData = () => {
             var x = a["durChapterTime"] || 0;
             var y = b["durChapterTime"] || 0;
             return y - x;
-          }),
+          })
         );
       } else {
-        ElMessage.error(response.data.errorMsg);
+        ElMessage.error(response.data.errorMsg ?? "后端返回格式错误！");
       }
-      store.setConnectStatus("已连接 ");
+      store.setConnectStatus("已连接 " + API.legado_http_origin);
       store.setNewConnect(false);
     })
-    .catch(function (error) {
-      store.setConnectType("danger");
-      store.setConnectStatus("连接失败");
-      ElMessage.error("后端连接失败");
-      store.setNewConnect(false);
-      throw error;
-    });
 };
+
+/**
+ * 加载阅读配置
+ */
+const loadReadConfig = () => {
+  return API.getReadConfig().then((res) => {
+    var data = res.data.data;
+    if (data) {
+      let config = JSON.parse(data);
+      store.setConfig(config);
+    }
+  });
+}
+
 </script>
 
 <style lang="scss" scoped>
@@ -340,31 +379,15 @@ const fetchBookShelfData = () => {
         font-family: FZZCYSK;
       }
 
-      .setting-ip {
-        margin-top: 16px;
-        white-space: nowrap;
-      }
-
-      .setting-input {
-        width: 216px;
-        margin-right: 4px;
-      }
-
       .no-point {
         pointer-events: none;
       }
 
-      .setting-toggle {
-        font-size: 10px;
-        cursor: pointer;
-        //margin-top: 4px;
-      }
-
       .setting-connect {
-        font-size: 10px;
-        margin-top: 4px;
+        font-size: 8px;
+        margin-top: 16px;
         // color: #6B7C87;
-        //cursor: pointer;
+        cursor: pointer;
       }
     }
 

@@ -5,6 +5,7 @@
     "ComputedRef": true,
     "EffectScope": true,
     "ElMessage": true,
+    "ElMessageBox": true,
     "InjectionKey": true,
     "PropType": true,
     "Ref": true,
@@ -78,8 +79,6 @@
     "watch": true,
     "watchEffect": true,
     "watchPostEffect": true,
-    "watchSyncEffect": true,
-    "toValue": true,
-    "WritableComputedRef": true
+    "watchSyncEffect": true
   }
 }
