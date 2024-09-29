@@ -166,7 +166,8 @@ const setIP = () => {
           instance.confirmButtonLoading = true;
           instance.confirmButtonText = "校验中……";
           // instance.inputValue
-          API.testLeagdoHttpUrlConnection("http://" + instance.inputValue)
+          const ip = instance.inputValue;
+          API.testLeagdoHttpUrlConnection("http://" + ip)
           //API.getBookShelf()
             .then(function (response) {
               instance.confirmButtonLoading = false;
@@ -175,7 +176,6 @@ const setIP = () => {
               // response.data.data.length
               // );
               //store.addBooks(response.data.data);
-              const ip = instance.inputValue;
               store.setConnectType("success");
               store.setConnectStatus("已连接 " + ip);
               store.clearSearchBooks();

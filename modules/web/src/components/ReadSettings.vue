@@ -45,14 +45,13 @@
 
           <el-popover
             placement="top"
-            width="180"
+            width="270"
             trigger="click"
             v-model:visible="customFontSavePopVisible"
           >
             <p>
-              请确认输入的字体名称完整无误，并且该字体已经安装在您的设备上。
+              已经安装在您的设备上的字体请确认输入的字体名称完整无误，或者从网络下载字体。
             </p>
-            <p>确定保存吗？</p>
             <div style="text-align: right; margin: 0">
               <el-button
                 size="small"
@@ -68,6 +67,12 @@
                   customFontSavePopVisible = false;
                 "
                 >确定</el-button
+              >
+              <el-button
+                type="primary"
+                size="small"
+                @click="loadFontFromURL"
+                >网络下载</el-button
               >
             </div>
             <template #reference>
@@ -180,6 +185,7 @@ import "../assets/fonts/popfont.css";
 import "../assets/fonts/iconfont.css";
 import settings from "../config/themeConfig";
 import API from "@api";
+
 const store = useBookStore();
 
 const theme = ref(0);
@@ -265,6 +271,53 @@ const setCustomFont = () => {
   config.value.customFontName = customFontName.value;
   saveConfig(config.value);
 };
+// 加载网络字体
+const loadFontFromURL = () => {
+  ElMessageBox.prompt(
+    "请输入 字体网络链接",
+    "提示",
+    {
+      confirmButtonText: "确定",
+      cancelButtonText: "取消",
+      inputPattern: /^https?:.+$/,
+      inputErrorMessage: "url 形式不正确",
+      beforeClose: (action, instance, done) => {
+        if (action === "confirm") {
+          instance.confirmButtonLoading = true;
+          instance.confirmButtonText = "下载中……";
+          // instance.inputValue
+          const url = instance.inputValue
+          if (typeof FontFace !== "function") {
+            ElMessage.error("浏览器不支持FontFace");
+            return done();
+          }
+          const fontface = new FontFace(
+            customFontName.value,
+            `url("${url}")`
+          )
+          //@ts-ignore
+          document.fonts.add(fontface);
+          fontface.load()
+          //API.getBookShelf()
+            .then(function () {
+              instance.confirmButtonLoading = false;
+              ElMessage.info("字体加载成功！");
+              setCustomFont();
+              done();
+            })
+            .catch(function (error) {
+              instance.confirmButtonLoading = false;
+              instance.confirmButtonText = "确定";
+              ElMessage.error("下载失败，请检查您输入的 url");
+              throw error;
+            });
+        } else {
+          done();
+        }
+      },
+    }
+  );
+}
 
 const fontSize = computed(() => {
   return store.config.fontSize;

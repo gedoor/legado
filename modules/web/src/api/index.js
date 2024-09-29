@@ -173,7 +173,7 @@ const getProxyCoverUrl = (coverUrl) => {
 /**
  * 从阅读获取需要特定处理的图片
  * @param {string} src
- * @param {`{number}`} width
+ * @param {number|`${number}`} width
  */
 const getProxyImageUrl = (src, width) => {
   if (src.startsWith(legado_http_origin)) return src
