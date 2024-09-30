@@ -211,18 +211,20 @@ const handleBookClick = async (book) => {
     durChapterPos = 0,
   } = book;
   // 判断是否为 searchBook
-  if (book.durChapterIndex === undefined) {
+  const isSeachBook = "respondTime" in book
+  if (isSeachBook) {
     await API.saveBook(book);
   }
-  toDetail(bookUrl, name, author, durChapterIndex, durChapterPos);
+  toDetail(bookUrl, name, author, durChapterIndex, durChapterPos, isSeachBook);
 };
-const toDetail = (bookUrl, bookName, bookAuthor, chapterIndex, chapterPos) => {
+const toDetail = (bookUrl, bookName, bookAuthor, chapterIndex, chapterPos, isSeachBook) => {
   if (bookName === "尚无阅读记录") return;
   sessionStorage.setItem("bookUrl", bookUrl);
   sessionStorage.setItem("bookName", bookName);
   sessionStorage.setItem("bookAuthor", bookAuthor);
   sessionStorage.setItem("chapterIndex", chapterIndex);
   sessionStorage.setItem("chapterPos", chapterPos);
+  sessionStorage.setItem("isSeachBook", isSeachBook);
   readingRecent.value = {
     name: bookName,
     author: bookAuthor,

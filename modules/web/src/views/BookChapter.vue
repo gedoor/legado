@@ -492,7 +492,7 @@ onMounted(() => {
       bookAuthor: bookAuthor,
       bookUrl: bookUrl,
       index: chapterIndex,
-      chapterPos: chapterPos,
+      chapterPos: chapterPos
     };
     localStorage.setItem(bookUrl, JSON.stringify(book));
   }
@@ -532,6 +532,7 @@ onMounted(() => {
   );
 });
 
+
 onUnmounted(() => {
   window.removeEventListener("keyup", handleKeyPress);
   window.removeEventListener("keydown", ignoreKeyPress);
@@ -541,6 +542,31 @@ onUnmounted(() => {
   readSettingsVisible.value = false;
   popCataVisible.value = false;
   scrollObserver?.disconnect();
+  scrollObserver = null;
+});
+
+onBeforeRouteLeave(async ()=> {
+  let bookUrl = sessionStorage.getItem("bookUrl");
+  let bookName = sessionStorage.getItem("bookName");
+  let isSeachBook = sessionStorage.getItem("isSeachBook");
+  var book = JSON.parse(localStorage.getItem(bookUrl));
+  // 阅读的是搜索的书籍 并未在书架
+  if (isSeachBook) {
+      await ElMessageBox.confirm(
+        `是否将《${bookName}》放入书架？`,
+        "放入书架",
+        {
+          confirmButtonText: "确认",
+          cancelButtonText: "否",
+          type: "info"
+        }
+      ).then(() => {
+        //选择是，无动作
+      }).catch(()=>{
+        //选择否，删除书籍
+        API.deleteBook(book);
+      })
+  }
 });
 </script>
 
