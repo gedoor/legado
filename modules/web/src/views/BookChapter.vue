@@ -545,13 +545,16 @@ onUnmounted(() => {
   scrollObserver = null;
 });
 
-onBeforeRouteLeave(async ()=> {
-  let bookUrl = sessionStorage.getItem("bookUrl");
-  let bookName = sessionStorage.getItem("bookName");
-  let isSeachBook = sessionStorage.getItem("isSeachBook");
-  var book = JSON.parse(localStorage.getItem(bookUrl));
+/**
+onBeforeRouteLeave(async (to, from, next) => {
+  按下返回键时不能触发 ElMessageBox.confirm
+  const bookUrl = sessionStorage.getItem("bookUrl");
+  const bookName = sessionStorage.getItem("bookName");
+  const isSeachBook = sessionStorage.getItem("isSeachBook");
+  const book = JSON.parse(localStorage.getItem(bookUrl));
+  sessionStorage.removeItem("isSeachBook");
   // 阅读的是搜索的书籍 并未在书架
-  if (isSeachBook) {
+  if (isSeachBook === "true") {
       await ElMessageBox.confirm(
         `是否将《${bookName}》放入书架？`,
         "放入书架",
@@ -562,12 +565,14 @@ onBeforeRouteLeave(async ()=> {
         }
       ).then(() => {
         //选择是，无动作
-      }).catch(()=>{
+      }).catch(async () => {
         //选择否，删除书籍
-        API.deleteBook(book);
+        await API.deleteBook(book);
       })
   }
+  next();
 });
+**/
 </script>
 
 <style lang="scss" scoped>
