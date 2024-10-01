@@ -109,7 +109,7 @@ const importSourceFile = () => {
   input.addEventListener("change", (e) => {
     // @ts-ignore
     const file = e.target.files[0];
-    var reader = new FileReader();
+    const reader = new FileReader();
     reader.readAsText(file);
     reader.onload = () => {
       try {
@@ -145,6 +145,7 @@ const outExport = () => {
   });
   exportFile.href = window.URL.createObjectURL(myBlob);
   exportFile.click();
+  window.URL.revokeObjectURL(exportFile.href); //avoid memory leak
 };
 </script>
 
