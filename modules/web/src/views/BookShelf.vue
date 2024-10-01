@@ -84,9 +84,9 @@ import { Search } from "@element-plus/icons-vue";
 import API from "@api";
 
 const store = useBookStore();
-const { connectStatus, connectType, newConnect, shelf, theme } = storeToRefs(store);
+const { connectStatus, connectType, newConnect, shelf, isDark } = storeToRefs(store);
 
-const isNight = computed(() => theme.value == 6);
+const isNight = computed(() => isDark.value);
 
 const readingRecent = ref({
   name: "尚无阅读记录",

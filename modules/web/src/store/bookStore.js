@@ -53,6 +53,7 @@ export const useBookStore = defineStore("book", {
     theme: (state) => {
       return state.config.theme
     },
+    isDark: (state) => state.config.theme == 6,
   },
   actions: {
     setConnectStatus(connectStatus) {
