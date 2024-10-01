@@ -14,28 +14,29 @@
     "lint:fix": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
   },
   "dependencies": {
-    "@element-plus/icons-svg": "^2.1.0",
-    "@element-plus/icons-vue": "^2.1.0",
-    "@vueuse/shared": "^10.1.2",
-    "axios": "^1.4.0",
-    "element-plus": "^2.3.4",
-    "hotkeys-js": "^3.10.2",
-    "pinia": "^2.0.36",
-    "vue": "^3.3.2",
-    "vue-router": "^4.2.0",
+    "@element-plus/icons-svg": "^2.3.1",
+    "@element-plus/icons-vue": "^2.3.1",
+    "@vueuse/core": "^11.1.0",
+    "@vueuse/shared": "^10.11.1",
+    "axios": "^1.7.7",
+    "element-plus": "^2.8.4",
+    "hotkeys-js": "^3.13.7",
+    "pinia": "^2.2.3",
+    "vue": "^3.5.10",
+    "vue-router": "^4.4.5",
     "vue3-virtual-scroll-list": "^0.2.1"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^5.0.4",
-    "eslint": "^8.40.0",
+    "@vitejs/plugin-vue": "^5.1.4",
+    "eslint": "^8.57.1",
     "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.0.0",
-    "eslint-plugin-vue": "^9.12.0",
-    "prettier": "^3.0.0",
-    "sass": "^1.62.1",
-    "unplugin-auto-import": "^0.17.5",
+    "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-vue": "^9.28.0",
+    "prettier": "^3.3.3",
+    "sass": "^1.79.4",
+    "unplugin-auto-import": "^0.17.8",
     "unplugin-icons": "^0.18.5",
     "unplugin-vue-components": "^0.26.0",
-    "vite": "^5.1.3"
+    "vite": "^5.4.8"
   }
 }

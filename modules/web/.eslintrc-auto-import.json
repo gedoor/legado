@@ -79,6 +79,18 @@
     "watch": true,
     "watchEffect": true,
     "watchPostEffect": true,
-    "watchSyncEffect": true
+    "watchSyncEffect": true,
+    "DirectiveBinding": true,
+    "ExtractDefaultPropTypes": true,
+    "ExtractPropTypes": true,
+    "ExtractPublicPropTypes": true,
+    "MaybeRef": true,
+    "MaybeRefOrGetter": true,
+    "WritableComputedRef": true,
+    "onWatcherCleanup": true,
+    "toValue": true,
+    "useId": true,
+    "useModel": true,
+    "useTemplateRef": true
   }
 }
