@@ -13,7 +13,7 @@
     v-model="printDebug"
     type="textarea"
     readonly
-    rows="29"
+    :rows="29"
     placeholder="这里用于输出调试信息"
   />
 </template>

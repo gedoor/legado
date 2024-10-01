@@ -5,7 +5,7 @@ export const useBookStore = defineStore("book", {
   state: () => {
     return {
       connectStatus: "正在连接后端服务器……",
-      connectType: "",
+      connectType: "primary",
       newConnect: true,
       /**@type {Array<{respondTime:number}>} */
       searchBooks: [],

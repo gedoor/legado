@@ -20,7 +20,7 @@
           <div class="recent-title">最近阅读</div>
           <div class="reading-recent">
             <el-tag
-              :type="readingRecent.name == '尚无阅读记录' ? 'warning' : ''"
+              :type="readingRecent.name == '尚无阅读记录' ? 'warning' : 'primary'"
               class="recent-book"
               size="large"
               @click="
