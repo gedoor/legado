@@ -1,6 +1,7 @@
 code {
-  background-color: #f2f1f1;
-  padding: .125rem .25rem;
-  border-radius: 0.25rem;
-  font-size: 0.835rem;
+  border-radius: 4px;
+  padding: .15rem .5rem;
+  background-color: var(--el-fill-color-light);
+  transition: color .25s, background-color .5s;
+  font-size: 14px;
 }

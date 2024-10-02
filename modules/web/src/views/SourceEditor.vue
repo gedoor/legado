@@ -8,7 +8,10 @@
 <script setup>
 import bookSourceConfig from "@/config/bookSourceEditConfig";
 import rssSourceConfig from "@/config/rssSourceEditConfig";
-import "@/assets/main.css";
+import "@/assets/sourceeditor.css"
+import { useDark } from "@vueuse/core";
+
+useDark();
 
 let config;
 
