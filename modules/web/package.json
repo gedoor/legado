@@ -16,7 +16,6 @@
   "dependencies": {
     "@element-plus/icons-svg": "^2.3.1",
     "@element-plus/icons-vue": "^2.3.1",
-    "@vueuse/core": "^11.1.0",
     "@vueuse/shared": "^10.11.1",
     "axios": "^1.7.7",
     "element-plus": "^2.8.4",
