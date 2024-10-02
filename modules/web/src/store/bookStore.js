@@ -5,6 +5,7 @@ export const useBookStore = defineStore("book", {
   state: () => {
     return {
       connectStatus: "正在连接后端服务器……",
+      /**@type {"primary" | "success" |"danger"} */
       connectType: "primary",
       newConnect: true,
       /**@type {Array<{respondTime:number}>} */
@@ -53,7 +54,7 @@ export const useBookStore = defineStore("book", {
     theme: (state) => {
       return state.config.theme
     },
-    isDark: (state) => state.config.theme == 6,
+    isNight: (state) => state.config.theme == 6,
   },
   actions: {
     setConnectStatus(connectStatus) {

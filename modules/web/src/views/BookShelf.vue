@@ -84,9 +84,7 @@ import { Search } from "@element-plus/icons-vue";
 import API from "@api";
 
 const store = useBookStore();
-const { connectStatus, connectType, newConnect, shelf, isDark } = storeToRefs(store);
-
-const isNight = computed(() => isDark.value);
+const isNight = computed(() => store.isNight);
 
 const readingRecent = ref({
   name: "尚无阅读记录",
@@ -101,8 +99,9 @@ const { showLoading, closeLoading, loadingWrapper, isLoading } = useLoading(
   "正在获取书籍信息"
 );
 
+// 书架书籍和在线书籍搜索
 const books = shallowRef([]);
-
+const shelf = computed(() => store.shelf);
 const search = ref("");
 const isSearching = ref(false);
 watchEffect(() => {
@@ -119,7 +118,7 @@ watchEffect(() => {
     );
   });
 });
-
+//搜索在线书籍
 const searchBook = () => {
   if (search.value == "") return;
   books.value = [];
@@ -150,6 +149,10 @@ const searchBook = () => {
   );
 };
 
+//连接状态
+const connectStatus = computed(() => store.connectStatus);
+const connectType = computed(() => store.connectType);
+const newConnect = computed(() => store.newConnect);
 const setIP = () => {
   ElMessageBox.prompt(
     "请输入 IP 和端口 ( 如：127.0.0.1:9527 或者通过内网穿透的地址)",

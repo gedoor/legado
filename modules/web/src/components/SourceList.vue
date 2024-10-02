@@ -54,7 +54,7 @@ import SourceItem from "./SourceItem.vue";
 const store = useSourceStore();
 const sourceUrlSelect = ref([]);
 const searchKey = ref("");
-const { sources, sourcesMap } = storeToRefs(store);
+const sources  = computed(() => store.sources);
 
 // 筛选源
 /** @type Ref<import('@/source').Source[]> */
@@ -74,7 +74,7 @@ const sourceSelect = computed(() => {
   if (urls.length == 0) return [];
   const sourcesFilteredMap =
     searchKey.value == ""
-      ? sourcesMap.value
+      ? store.sourcesMap
       : convertSourcesToMap(sourcesFiltered.value);
   return urls.reduce((sources, sourceUrl) => {
     const source = sourcesFilteredMap.get(sourceUrl);

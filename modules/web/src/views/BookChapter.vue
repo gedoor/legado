@@ -132,21 +132,21 @@ const {
   readSettingsVisible,
   miniInterface,
   showContent,
-  config,
-  readingBook,
   bookProgress,
+  theme,
+  isNight,
 } = storeToRefs(store);
+
 const chapterPos = computed({
-  get: () => readingBook.value.chapterPos,
-  set: (value) => (readingBook.value.chapterPos = value),
+  get: () => store.readingBook.chapterPos,
+  set: (value) => (store.readingBook.chapterPos = value),
 });
 const chapterIndex = computed({
-  get: () => readingBook.value.index,
-  set: (value) => (readingBook.value.index = value),
+  get: () => store.readingBook.index,
+  set: (value) => (store.readingBook.index = value),
 });
 
-const theme = computed(() => config.value.theme);
-const infiniteLoading = computed(() => config.value.infiniteLoading);
+const infiniteLoading = computed(() => store.config.infiniteLoading);
 
 // 字体
 const fontFamily = computed(() => {
@@ -208,7 +208,6 @@ const rightBarTheme = computed(() => {
     display: miniInterface.value && !showToolBar.value ? "none" : "block",
   };
 });
-const isNight = computed(() => theme.value == 6);
 
 /**
  * pc移动端判断 最大阅读宽度修正

@@ -23,6 +23,7 @@ const isSelected = (idx) => {
   return idx == props.currentChapterIndex;
 };
 
+// PC端 一个虚拟列表中有两个章节
 const catas = computed(() => {
   return props.source?.catas ?? [props.source];
 });

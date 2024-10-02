@@ -60,7 +60,7 @@
 <script setup>
 const store = useSourceStore();
 defineProps(["config"]);
-const { currentSource } = storeToRefs(store);
+const currentSource = store.currentSource;
 </script>
 
 <style lang="scss" scoped>

@@ -202,7 +202,7 @@ watch(
 
 //主题颜色
 const theme = computed(() => store.theme);
-const isNight = computed(() => store.isDark);
+const isNight = computed(() => store.isNight);
 const moonIcon = computed(() => theme.value == 6 ? "" : "");
 const themeColors = [
   {

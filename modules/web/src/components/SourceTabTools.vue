@@ -19,7 +19,7 @@ import { useSourceStore } from "@/store";
 
 const store = useSourceStore();
 
-const { currentTab: current_tab } = storeToRefs(store);
+const current_tab = store.currentTab;
 
 const tabData = ref([
   ["editTab", "编辑源"],

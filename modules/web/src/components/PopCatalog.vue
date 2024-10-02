@@ -27,23 +27,21 @@ import CatalogItem from "./CatalogItem.vue";
 
 const store = useBookStore();
 
-const isNight = computed(() => theme.value == 6);
-const { catalog, popCataVisible, miniInterface } = storeToRefs(store);
+const {
+  catalog,
+  popCataVisible, miniInterface
+} = storeToRefs(store);
 
-const theme = computed(() => {
-  return store.config.theme;
-});
+//主题
+const isNight = computed(() => store.theme);
+const theme = computed(() => store.theme);
 const popupTheme = computed(() => {
   return {
     background: settings.themes[theme.value].popup,
   };
 });
 
-const currentChapterIndex = computed({
-  get: () => store.readingBook.index,
-  set: (value) => (store.readingBook.index = value),
-});
-
+//虚拟列表 数据源
 const virtualListdata = computed(() => {
   let catalogValue = catalog.value;
   if (miniInterface.value) return catalogValue;
@@ -63,6 +61,25 @@ const virtualListdata = computed(() => {
   return virtualListDataSource;
 });
 
+//打开目录 计算当前章节对应的虚拟列表位置
+const virtualListRef = ref();
+const currentChapterIndex = computed({
+  get: () => store.readingBook.index,
+  set: (value) => (store.readingBook.index = value),
+});
+const virtualListIndex = computed(() => {
+  let index = currentChapterIndex.value;
+  if (miniInterface.value) return index;
+  // pc端 virtualListIitem有2个章节
+  return Math.floor(index / 2);
+});
+onUpdated(() => {
+  // dom更新触发ResizeObserver，更新虚拟列表内部的sizes Map
+  if (!popCataVisible.value) return;
+  virtualListRef.value.scrollToIndex(virtualListIndex.value);
+});
+
+// 点击加载对应章节内容
 const emit = defineEmits(["getContent"]);
 const gotoChapter = (note) => {
   const chapterIndex = catalog.value.indexOf(note);
@@ -73,18 +90,6 @@ const gotoChapter = (note) => {
   emit("getContent", chapterIndex);
 };
 
-const virtualListRef = ref();
-const virtualListIndex = computed(() => {
-  let index = currentChapterIndex.value;
-  if (miniInterface.value) return index;
-  return Math.floor(index / 2);
-});
-
-onUpdated(() => {
-  // dom更新触发ResizeObserver，更新虚拟列表内部的sizes Map
-  if (!popCataVisible.value) return;
-  virtualListRef.value.scrollToIndex(virtualListIndex.value);
-});
 </script>
 
 <style lang="scss" scoped>
