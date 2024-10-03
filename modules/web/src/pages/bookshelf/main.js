@@ -6,8 +6,6 @@ import "element-plus/theme-chalk/dark/css-vars.css";
 
 createApp(App).use(store).use(bookRouter).mount("#app");
 
-//读取阅读界面设置
-useBookStore().loadReadConfig();
 // 同步Element PLUS 夜间模式
 watch(
   () => useBookStore().isNight,
