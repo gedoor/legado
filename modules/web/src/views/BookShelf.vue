@@ -93,6 +93,7 @@ export default defineComponent({
         if (isSuccess) {
           next((vm) => {
             console.log("初始化加载阅读界面配置成功");
+            // @ts-ignore
             vm.saveReadConfig(data);
           });
         }
@@ -337,7 +338,7 @@ export default defineComponent({
       connectStatus,
       connectType,
       newConnect,
-      saveReadConfig,
+      saveReadConfig, //expose it so beforeRouteEnter next can access it
       readingRecent,
       searchBook,
       books,

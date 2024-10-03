@@ -8,7 +8,7 @@
   >
     <img
       class="full"
-      v-if="/^\s*<img[^>]*src[^>]+>$/.test(para)"
+      v-if="/^\s*<img[^>]*src[^>]+>$/.test(String(para))"
       :src="getImageSrc(para)"
       @error.once="proxyImage"
       loading="lazy"
@@ -86,6 +86,7 @@ onMounted(() => {
           emit(
             "readedLengthChange",
             props.chapterIndex,
+            // @ts-ignore
             parseInt(target.dataset.chapterpos),
           );
         }

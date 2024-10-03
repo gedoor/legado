@@ -433,10 +433,7 @@ const handleKeyPress = (event) => {
       event.stopPropagation();
       event.preventDefault();
       if (document.documentElement.scrollTop === 0) {
-        ElMessage({
-          message: "已到达页面顶部",
-          type: "warn",
-        });
+        ElMessage.warning("已到达页面顶部");
       } else {
         canJump = false;
         jump(0 - document.documentElement.clientHeight + 100, {
@@ -453,10 +450,7 @@ const handleKeyPress = (event) => {
           document.documentElement.scrollTop ===
         document.documentElement.scrollHeight
       ) {
-        ElMessage({
-          message: "已到达页面底部",
-          type: "warn",
-        });
+        ElMessage.warning("已到达页面底部");
       } else {
         canJump = false;
         jump(document.documentElement.clientHeight - 100, {
@@ -554,10 +548,12 @@ const addToBookShelfConfirm = async () => {
   sessionStorage.removeItem("isSeachBook");
   // 阅读的是搜索的书籍 并未在书架
   if (isSeachBook === "true") {
+
     const addtoshelf = window.confirm(`是否将《${bookName}》放入书架？`);
     if (!addtoshelf) await API.deleteBook(book);
-    //按下返回键时不能触发 ElMessageBox.confirm
-    /*     await ElMessageBox.confirm(
+    
+/*      //按下返回键时不能触发 ElMessageBox.confirm
+         await ElMessageBox.confirm(
       `是否将《${bookName}》放入书架？`,
       "放入书架",
       {
