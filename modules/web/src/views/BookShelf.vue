@@ -20,7 +20,9 @@
           <div class="recent-title">最近阅读</div>
           <div class="reading-recent">
             <el-tag
-              :type="readingRecent.name == '尚无阅读记录' ? 'warning' : 'primary'"
+              :type="
+                readingRecent.name == '尚无阅读记录' ? 'warning' : 'primary'
+              "
               class="recent-book"
               size="large"
               @click="
@@ -29,7 +31,7 @@
                   readingRecent.name,
                   readingRecent.author,
                   readingRecent.chapterIndex,
-                  readingRecent.chapterPos
+                  readingRecent.chapterPos,
                 )
               "
               :class="{ 'no-point': readingRecent.url == '' }"
@@ -40,37 +42,37 @@
         </div>
         <div class="setting-wrapper">
           <div class="setting-title">基本设定</div>
-            <div class="setting-item">
-              <el-tag
-                :type="connectType"
-                size="large"
-                class="setting-connect"
-                :class="{ 'no-point': newConnect }"
-                @click="setIP"
-              >
-                {{ connectStatus }}
-              </el-tag>
-            </div>
+          <div class="setting-item">
+            <el-tag
+              :type="connectType"
+              size="large"
+              class="setting-connect"
+              :class="{ 'no-point': newConnect }"
+              @click="setIP"
+            >
+              {{ connectStatus }}
+            </el-tag>
           </div>
         </div>
-        <div class="bottom-icons">
-          <a
-            href="https://github.com/gedoor/legado_web_bookshelf"
-            target="_blank"
-          >
-            <div class="bottom-icon">
-              <img :src="githubUrl" alt="" />
-            </div>
-          </a>
-        </div>
       </div>
-      <div class="shelf-wrapper" ref="shelfWrapper">
-        <book-items
-          :books="books"
-          @bookClick="handleBookClick"
-          :isSearch="isSearching"
-        ></book-items>
+      <div class="bottom-icons">
+        <a
+          href="https://github.com/gedoor/legado_web_bookshelf"
+          target="_blank"
+        >
+          <div class="bottom-icon">
+            <img :src="githubUrl" alt="" />
+          </div>
+        </a>
       </div>
+    </div>
+    <div class="shelf-wrapper" ref="shelfWrapper">
+      <book-items
+        :books="books"
+        @bookClick="handleBookClick"
+        :isSearch="isSearching"
+      ></book-items>
+    </div>
   </div>
 </template>
 
@@ -96,7 +98,7 @@ const readingRecent = ref({
 const shelfWrapper = ref(null);
 const { showLoading, closeLoading, loadingWrapper, isLoading } = useLoading(
   shelfWrapper,
-  "正在获取书籍信息"
+  "正在获取书籍信息",
 );
 
 // 书架书籍和在线书籍搜索
@@ -145,7 +147,7 @@ const searchBook = () => {
       if (books.value.length == 0) {
         ElMessage.info("搜索结果为空");
       }
-    }
+    },
   );
 };
 
@@ -171,7 +173,7 @@ const setIP = () => {
           // instance.inputValue
           const ip = instance.inputValue;
           API.testLeagdoHttpUrlConnection("http://" + ip)
-          //API.getBookShelf()
+            //API.getBookShelf()
             .then(function (configStr) {
               saveReadConfig(configStr);
               instance.confirmButtonLoading = false;
@@ -182,7 +184,7 @@ const setIP = () => {
               API.setLeagdoHttpUrl("http://" + ip);
               //持久化
               localStorage.setItem("remoteIp", ip);
-              fetchBookShelfData()
+              fetchBookShelfData();
               done();
             })
             .catch(function (error) {
@@ -196,7 +198,7 @@ const setIP = () => {
           done();
         }
       },
-    }
+    },
   );
 };
 
@@ -210,13 +212,20 @@ const handleBookClick = async (book) => {
     durChapterPos = 0,
   } = book;
   // 判断是否为 searchBook
-  const isSeachBook = "respondTime" in book
+  const isSeachBook = "respondTime" in book;
   if (isSeachBook) {
     await API.saveBook(book);
   }
   toDetail(bookUrl, name, author, durChapterIndex, durChapterPos, isSeachBook);
 };
-const toDetail = (bookUrl, bookName, bookAuthor, chapterIndex, chapterPos, isSeachBook) => {
+const toDetail = (
+  bookUrl,
+  bookName,
+  bookAuthor,
+  chapterIndex,
+  chapterPos,
+  isSeachBook,
+) => {
   if (bookName === "尚无阅读记录") return;
   sessionStorage.setItem("bookUrl", bookUrl);
   sessionStorage.setItem("bookName", bookName);
@@ -242,37 +251,36 @@ const loadShelf = () => {
     store
       .saveBookProgress()
       //确保各种网络情况下同步请求先完成
-      .finally(fetchBookShelfData)
+      .finally(fetchBookShelfData),
   );
 };
 
-const saveReadConfig = configStr => {
+const saveReadConfig = (configStr) => {
   try {
-      store.setConfig(JSON.parse(configStr));
-    } catch {
-      ElMessage.info("阅读界面解析错误");
-    }
-}
+    store.setConfig(JSON.parse(configStr));
+  } catch {
+    ElMessage.info("阅读界面解析错误");
+  }
+};
 
 const fetchBookShelfData = () => {
-  return API.getBookShelf()
-    .then((response) => {
-      store.setConnectType("success");
-      if (response.data.isSuccess) {
-        //store.increaseBookNum(response.data.data.length);
-        store.addBooks(
-          response.data.data.sort(function (a, b) {
-            var x = a["durChapterTime"] || 0;
-            var y = b["durChapterTime"] || 0;
-            return y - x;
-          })
-        );
-      } else {
-        ElMessage.error(response.data.errorMsg ?? "后端返回格式错误！");
-      }
-      store.setConnectStatus("已连接 " + API.legado_http_origin);
-      store.setNewConnect(false);
-    })
+  return API.getBookShelf().then((response) => {
+    store.setConnectType("success");
+    if (response.data.isSuccess) {
+      //store.increaseBookNum(response.data.data.length);
+      store.addBooks(
+        response.data.data.sort(function (a, b) {
+          var x = a["durChapterTime"] || 0;
+          var y = b["durChapterTime"] || 0;
+          return y - x;
+        }),
+      );
+    } else {
+      ElMessage.error(response.data.errorMsg ?? "后端返回格式错误！");
+    }
+    store.setConnectStatus("已连接 " + API.legado_http_origin);
+    store.setNewConnect(false);
+  });
 };
 
 onMounted(() => {
@@ -285,17 +293,16 @@ onMounted(() => {
     }
   }
   API.testLeagdoHttpUrlConnection()
-  //.then(saveReadConfig) 应该在组件挂载前读取阅读配置
-  .then(loadShelf)
-  .catch(function (error) {
+    //.then(saveReadConfig) 应该在组件挂载前读取阅读配置
+    .then(loadShelf)
+    .catch(function (error) {
       store.setConnectType("danger");
       store.setConnectStatus("连接异常");
-      ElMessage.error("后端连接失败异常，请检查阅读WEB服务或者设置其它可用IP")
+      ElMessage.error("后端连接失败异常，请检查阅读WEB服务或者设置其它可用IP");
       store.setNewConnect(false);
       throw error;
-  });
+    });
 });
-
 </script>
 
 <style lang="scss" scoped>

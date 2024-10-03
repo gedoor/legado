@@ -4,8 +4,8 @@ import { ElMessage } from "element-plus/es";
 /** https://github.com/gedoor/legado/tree/master/app/src/main/java/io/legado/app/api */
 /** https://github.com/gedoor/legado/tree/master/app/src/main/java/io/legado/app/web */
 
-let legado_http_origin
-let legado_webSocket_origin
+let legado_http_origin;
+let legado_webSocket_origin;
 
 const setLeagdoHttpUrl = (http_url) => {
   let legado_webSocket_port;
@@ -19,29 +19,28 @@ const setLeagdoHttpUrl = (http_url) => {
   } else {
     legado_webSocket_port = protocol.startsWith("https:") ? "444" : "81";
   }
-  legado_webSocket_origin = 
-    `${protocol.startsWith("https:") ? "wss://" : "ws://"}${hostname}:${legado_webSocket_port}`;
+  legado_webSocket_origin = `${protocol.startsWith("https:") ? "wss://" : "ws://"}${hostname}:${legado_webSocket_port}`;
 
   console.info("legado_server_config:");
-  console.table({legado_http_origin, legado_webSocket_origin});
+  console.table({ legado_http_origin, legado_webSocket_origin });
 };
 
 // 手动初始化 阅读web服务地址
 setLeagdoHttpUrl(ajax.defaults.baseURL);
 
 const testLeagdoHttpUrlConnection = async (http_url) => {
-  const {data = {}} = await ajax.get("/getReadConfig", {
+  const { data = {} } = await ajax.get("/getReadConfig", {
     baseURL: http_url,
-    timeout: 3000
-  })
+    timeout: 3000,
+  });
   // 返回结果应该是JSON 并有键值isSuccess
   try {
-    if ("isSuccess" in data) return data.data
-    throw new Error("ReadConfig后端返回格式错误" )
+    if ("isSuccess" in data) return data.data;
+    throw new Error("ReadConfig后端返回格式错误");
   } catch {
-    throw new Error("ReadConfig后端返回格式错误" )
+    throw new Error("ReadConfig后端返回格式错误");
   }
-}
+};
 
 const isSourecEditor = /source/i.test(location.href);
 const APIExceptionHandler = (error) => {
@@ -59,7 +58,7 @@ ajax.interceptors.response.use((response) => response, APIExceptionHandler);
 // 书架API
 // Http
 /** @returns {Promise<import("axios").AxiosResponse<{isSuccess: boolean, data: string, errorMsg:string}>>} */
-const getReadConfig = () => ajax.get("/getReadConfig", {timeout: 3000});
+const getReadConfig = () => ajax.get("/getReadConfig", { timeout: 3000 });
 const saveReadConfig = (config) => ajax.post("/saveReadConfig", config);
 
 const saveBookProgress = (bookProgress) =>
@@ -70,7 +69,7 @@ const saveBookProgressWithBeacon = (bookProgress) => {
   // 常规请求可能会被取消 使用Fetch keep-alive 或者 navigator.sendBeacon
   navigator.sendBeacon(
     `${legado_http_origin}/saveBookProgress`,
-    JSON.stringify(bookProgress)
+    JSON.stringify(bookProgress),
   );
 };
 
@@ -81,22 +80,21 @@ const getChapterList = (/** @type {string} */ bookUrl) =>
 
 const getBookContent = (
   /** @type {string} */ bookUrl,
-  /** @type {number} */ chapterIndex
+  /** @type {number} */ chapterIndex,
 ) =>
   ajax.get(
     "/getBookContent?url=" +
       encodeURIComponent(bookUrl) +
       "&index=" +
-      chapterIndex
+      chapterIndex,
   );
 
 // webSocket
 const search = (
   /** @type {string} */ searchKey,
   /** @type {(data: string) => void} */ onReceive,
-  /** @type {() => void} */ onFinish
+  /** @type {() => void} */ onFinish,
 ) => {
-
   const url = `${legado_webSocket_origin}/searchBook`;
   const socket = new WebSocket(url);
 
@@ -140,9 +138,8 @@ const debug = (
   /** @type {string} */ sourceUrl,
   /** @type {string} */ searchKey,
   /** @type {(data: string) => void} */ onReceive,
-  /** @type {() => void} */ onFinish
+  /** @type {() => void} */ onFinish,
 ) => {
-
   const url = `${legado_webSocket_origin}/${
     isBookSource ? "bookSource" : "rssSource"
   }Debug`;
@@ -168,16 +165,16 @@ const debug = (
  * @param {string} coverUrl
  */
 const getProxyCoverUrl = (coverUrl) => {
-  if(coverUrl.startsWith(legado_http_origin)) return coverUrl
+  if (coverUrl.startsWith(legado_http_origin)) return coverUrl;
   return legado_http_origin + "/cover?path=" + encodeURIComponent(coverUrl);
-}
+};
 /**
  * 从阅读获取需要特定处理的图片
  * @param {string} src
  * @param {number|`${number}`} width
  */
 const getProxyImageUrl = (src, width) => {
-  if (src.startsWith(legado_http_origin)) return src
+  if (src.startsWith(legado_http_origin)) return src;
   return (
     legado_http_origin +
     "/image?path=" +
@@ -187,7 +184,7 @@ const getProxyImageUrl = (src, width) => {
     "&width=" +
     width
   );
-}
+};
 
 export default {
   getReadConfig,

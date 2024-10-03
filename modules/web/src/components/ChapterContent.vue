@@ -34,11 +34,15 @@ const props = defineProps({
 const getImageSrc = (content) => {
   const imgPattern = /<img[^>]*src="([^"]*(?:"[^>]+\})?)"[^>]*>/;
   const src = content.match(imgPattern)[1];
-  if (isLegadoUrl(src)) return API.getProxyImageUrl(src, useBookStore().config.readWidth)
+  if (isLegadoUrl(src))
+    return API.getProxyImageUrl(src, useBookStore().config.readWidth);
   return src;
 };
 const proxyImage = (event) => {
-  event.target.src = API.getProxyImageUrl(event.target.src, useBookStore().config.readWidth);
+  event.target.src = API.getProxyImageUrl(
+    event.target.src,
+    useBookStore().config.readWidth,
+  );
 };
 
 const calculateWordCount = (paragraph) => {

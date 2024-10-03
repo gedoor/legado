@@ -44,8 +44,8 @@ const startDebug = async () => {
   try {
     await API.saveSource(store.currentSource);
   } catch (e) {
-    store.debugFinish()
-    throw e
+    store.debugFinish();
+    throw e;
   }
   API.debug(
     store.currentSourceUrl,

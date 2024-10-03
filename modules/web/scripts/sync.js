@@ -3,8 +3,8 @@ import fs from "node:fs";
 import process from "node:process";
 
 if (!process.env.GITHUB_ENV) {
-  console.log("非Github WorkFlows环境，取消文件复制")
-  process.exit()
+  console.log("非Github WorkFlows环境，取消文件复制");
+  process.exit();
 }
 const LEGADO_ASSETS_WEB_VUE_DIR = new URL(
   "../../../app/src/main/assets/web/vue",

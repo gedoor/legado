@@ -27,10 +27,7 @@ import CatalogItem from "./CatalogItem.vue";
 
 const store = useBookStore();
 
-const {
-  catalog,
-  popCataVisible, miniInterface
-} = storeToRefs(store);
+const { catalog, popCataVisible, miniInterface } = storeToRefs(store);
 
 //主题
 const isNight = computed(() => store.theme);
@@ -89,7 +86,6 @@ const gotoChapter = (note) => {
   store.saveBookProgress();
   emit("getContent", chapterIndex);
 };
-
 </script>
 
 <style lang="scss" scoped>

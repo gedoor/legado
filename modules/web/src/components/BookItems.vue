@@ -57,13 +57,11 @@ const props = defineProps(["books", "isSearch"]);
 const emit = defineEmits(["bookClick"]);
 const handleClick = (book) => emit("bookClick", book);
 const getCover = (coverUrl) => {
-  return isLegadoUrl(coverUrl)
-    ? API.getProxyCoverUrl(coverUrl) : coverUrl
+  return isLegadoUrl(coverUrl) ? API.getProxyCoverUrl(coverUrl) : coverUrl;
 };
 const proxyImage = (event) => {
   event.target.src = API.getProxyCoverUrl(event.target.src);
 };
-
 
 const subJustify = computed(() =>
   props.isSearch ? "space-between" : "flex-start",

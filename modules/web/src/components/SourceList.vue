@@ -54,7 +54,7 @@ import SourceItem from "./SourceItem.vue";
 const store = useSourceStore();
 const sourceUrlSelect = ref([]);
 const searchKey = ref("");
-const sources  = computed(() => store.sources);
+const sources = computed(() => store.sources);
 
 // 筛选源
 /** @type Ref<import('@/source').Source[]> */

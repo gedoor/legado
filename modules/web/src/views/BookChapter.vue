@@ -301,7 +301,10 @@ const toChapterPos = (pos) => {
 };
 
 // 60秒保存一次进度
-const saveBookProgressThrottle = useThrottleFn(() => store.saveBookProgress(), 60000)
+const saveBookProgressThrottle = useThrottleFn(
+  () => store.saveBookProgress(),
+  60000,
+);
 
 const onReadedLengthChange = (index, pos) => {
   saveReadingBookProgressToBrowser(index, pos);
@@ -491,7 +494,7 @@ onMounted(() => {
       bookAuthor: bookAuthor,
       bookUrl: bookUrl,
       index: chapterIndex,
-      chapterPos: chapterPos
+      chapterPos: chapterPos,
     };
     localStorage.setItem(bookUrl, JSON.stringify(book));
   }
@@ -531,7 +534,6 @@ onMounted(() => {
   );
 });
 
-
 onUnmounted(() => {
   window.removeEventListener("keyup", handleKeyPress);
   window.removeEventListener("keydown", ignoreKeyPress);
@@ -544,7 +546,6 @@ onUnmounted(() => {
   scrollObserver = null;
 });
 
-
 const addToBookShelfConfirm = async () => {
   const bookUrl = sessionStorage.getItem("bookUrl");
   const bookName = sessionStorage.getItem("bookName");
@@ -553,10 +554,10 @@ const addToBookShelfConfirm = async () => {
   sessionStorage.removeItem("isSeachBook");
   // 阅读的是搜索的书籍 并未在书架
   if (isSeachBook === "true") {
-    const addtoshelf = window.confirm(`是否将《${bookName}》放入书架？`)
+    const addtoshelf = window.confirm(`是否将《${bookName}》放入书架？`);
     if (!addtoshelf) await API.deleteBook(book);
-      //按下返回键时不能触发 ElMessageBox.confirm
-/*     await ElMessageBox.confirm(
+    //按下返回键时不能触发 ElMessageBox.confirm
+    /*     await ElMessageBox.confirm(
       `是否将《${bookName}》放入书架？`,
       "放入书架",
       {
@@ -571,7 +572,7 @@ const addToBookShelfConfirm = async () => {
       await API.deleteBook(book);
     }) */
   }
-}
+};
 onBeforeRouteLeave(async (to, from, next) => {
   await addToBookShelfConfirm();
   next();

@@ -52,7 +52,7 @@ export const useBookStore = defineStore("book", {
       };
     },
     theme: (state) => {
-      return state.config.theme
+      return state.config.theme;
     },
     isNight: (state) => state.config.theme == 6,
   },
@@ -114,10 +114,12 @@ export const useBookStore = defineStore("book", {
     },
     //读取阅读界面配置以初始化夜间模式 以免初次加载书架页面时闪屏
     async loadReadConfig() {
-      return API.getReadConfig().then(response => response.data)
-        .then(({isSuccess, data}) => 
-          isSuccess && this.setConfig(JSON.parse(data))
-        )
-    }
+      return API.getReadConfig()
+        .then((response) => response.data)
+        .then(
+          ({ isSuccess, data }) =>
+            isSuccess && this.setConfig(JSON.parse(data)),
+        );
+    },
   },
 });
