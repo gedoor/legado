@@ -36,7 +36,7 @@ const testLeagdoHttpUrlConnection = async (http_url) => {
   })
   // 返回结果应该是JSON 并有键值isSuccess
   try {
-    if ("isSuccess" in data) return
+    if ("isSuccess" in data) return data.data
     throw new Error("ReadConfig后端返回格式错误" )
   } catch {
     throw new Error("ReadConfig后端返回格式错误" )
@@ -58,7 +58,8 @@ ajax.interceptors.response.use((response) => response, APIExceptionHandler);
 
 // 书架API
 // Http
-const getReadConfig = () => ajax.get("/getReadConfig");
+/** @returns {Promise<import("axios").AxiosResponse<{isSuccess: boolean, data: string, errorMsg:string}>>} */
+const getReadConfig = () => ajax.get("/getReadConfig", {timeout: 3000});
 const saveReadConfig = (config) => ajax.post("/saveReadConfig", config);
 
 const saveBookProgress = (bookProgress) =>

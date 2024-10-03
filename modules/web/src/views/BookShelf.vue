@@ -172,13 +172,9 @@ const setIP = () => {
           const ip = instance.inputValue;
           API.testLeagdoHttpUrlConnection("http://" + ip)
           //API.getBookShelf()
-            .then(function (response) {
+            .then(function (configStr) {
+              saveReadConfig(configStr);
               instance.confirmButtonLoading = false;
-              // that.$store.commit(
-              // "increaseBookNum",
-              // response.data.data.length
-              // );
-              //store.addBooks(response.data.data);
               store.setConnectType("success");
               store.setConnectStatus("已连接 " + ip);
               store.clearSearchBooks();
@@ -241,27 +237,6 @@ const toDetail = (bookUrl, bookName, bookAuthor, chapterIndex, chapterPos, isSea
   });
 };
 
-onMounted(() => {
-  //获取最近阅读书籍
-  let readingRecentStr = localStorage.getItem("readingRecent");
-  if (readingRecentStr != null) {
-    readingRecent.value = JSON.parse(readingRecentStr);
-    if (typeof readingRecent.value.chapterIndex == "undefined") {
-      readingRecent.value.chapterIndex = 0;
-    }
-  }
-  API.testLeagdoHttpUrlConnection()
-  .then(loadReadConfig)
-  .then(loadShelf)
-  .catch(function (error) {
-      store.setConnectType("danger");
-      store.setConnectStatus("连接异常");
-      ElMessage.error("后端连接失败异常，请检查阅读WEB服务或者设置其它可用IP")
-      store.setNewConnect(false);
-      throw error;
-  });
-});
-
 const loadShelf = () => {
   loadingWrapper(
     store
@@ -270,6 +245,14 @@ const loadShelf = () => {
       .finally(fetchBookShelfData)
   );
 };
+
+const saveReadConfig = configStr => {
+  try {
+      store.setConfig(JSON.parse(configStr));
+    } catch {
+      ElMessage.info("阅读界面解析错误");
+    }
+}
 
 const fetchBookShelfData = () => {
   return API.getBookShelf()
@@ -292,18 +275,26 @@ const fetchBookShelfData = () => {
     })
 };
 
-/**
- * 加载阅读配置
- */
-const loadReadConfig = () => {
-  return API.getReadConfig().then((res) => {
-    var data = res.data.data;
-    if (data) {
-      let config = JSON.parse(data);
-      store.setConfig(config);
+onMounted(() => {
+  //获取最近阅读书籍
+  let readingRecentStr = localStorage.getItem("readingRecent");
+  if (readingRecentStr != null) {
+    readingRecent.value = JSON.parse(readingRecentStr);
+    if (typeof readingRecent.value.chapterIndex == "undefined") {
+      readingRecent.value.chapterIndex = 0;
     }
+  }
+  API.testLeagdoHttpUrlConnection()
+  //.then(saveReadConfig) 应该在组件挂载前读取阅读配置
+  .then(loadShelf)
+  .catch(function (error) {
+      store.setConnectType("danger");
+      store.setConnectStatus("连接异常");
+      ElMessage.error("后端连接失败异常，请检查阅读WEB服务或者设置其它可用IP")
+      store.setNewConnect(false);
+      throw error;
   });
-}
+});
 
 </script>
 

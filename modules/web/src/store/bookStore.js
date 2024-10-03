@@ -112,5 +112,12 @@ export const useBookStore = defineStore("book", {
       if (!this.bookProgress) return Promise.resolve();
       return API.saveBookProgress(this.bookProgress);
     },
+    //读取阅读界面配置以初始化夜间模式 以免初次加载书架页面时闪屏
+    async loadReadConfig() {
+      return API.getReadConfig().then(response => response.data)
+        .then(({isSuccess, data}) => 
+          isSuccess && this.setConfig(JSON.parse(data))
+        )
+    }
   },
 });
