@@ -60,7 +60,12 @@
 <script setup>
 const store = useSourceStore();
 defineProps(["config"]);
-const currentSource = store.currentSource;
+
+const currentSource = computed(() => store.currentSource);
+/* 
+修改currentSource的属性 没有直接修改本身
+const { currentSource } = storeToRefs(store);
+ */
 </script>
 
 <style lang="scss" scoped>

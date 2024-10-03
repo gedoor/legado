@@ -166,7 +166,7 @@ const redo = () => {
 };
 
 const saveSource = () => {
-  let isBookSource = /bookSource/.test(location.href),
+  let isBookSource = /bookSource/i.test(location.href),
     /** @type {import("@/source.js").Source} */
     source = store.currentSource;
   if (isInvaildSource(source)) {

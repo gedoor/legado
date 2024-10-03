@@ -127,7 +127,7 @@ const importSourceFile = () => {
   input.click();
 };
 
-const isBookSource = /bookSource/.test(window.location.href);
+const isBookSource = /bookSource/i.test(window.location.href);
 const outExport = () => {
   const exportFile = document.createElement("a");
   let sources =

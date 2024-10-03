@@ -19,7 +19,7 @@ export const useSourceStore = defineStore("source", {
       /** @type {import("@/source").Source[]} */
       savedSources: [], // 批量保存到阅读app成功的源
       /** @type {import("@/source").Source} */
-      currentSource: emptySource, // 当前编辑的源
+      currentSource: JSON.parse(JSON.stringify(emptySource)), // 当前编辑的源
       currentTab: localStorage.getItem("tabName") || "editTab",
       editTabSource: {}, // 生成序列化的json数据
       isDebuging: false,
@@ -119,7 +119,7 @@ export const useSourceStore = defineStore("source", {
     },
     clearEdit() {
       this.editTabSource = {};
-      this.currentSource = emptySource;
+      this.currentSource = JSON.parse(JSON.stringify(emptySource)); //复制一份新对象
     },
 
     // clear all source

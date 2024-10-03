@@ -56,7 +56,7 @@ const startDebug = async () => {
 };
 
 const isBookSource = computed(() => {
-  return /bookSource/.test(window.location.href);
+  return /bookSource/i.test(window.location.href);
 });
 </script>
 

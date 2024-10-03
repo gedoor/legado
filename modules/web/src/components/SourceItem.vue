@@ -2,7 +2,7 @@
   <el-checkbox
     size="large"
     border
-    :label="sourceUrl"
+    :value="sourceUrl"
     :class="{
       error: isSaveError,
       edit: sourceUrl == currentSourceUrl,
