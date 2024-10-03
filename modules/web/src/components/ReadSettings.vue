@@ -68,7 +68,13 @@
                 "
                 >确定</el-button
               >
-              <el-button type="primary" size="small" @click="loadFontFromURL"
+              <el-button
+                type="primary"
+                size="small"
+                @click="
+                  loadFontFromURL();
+                  customFontSavePopVisible = false;
+                "
                 >网络下载</el-button
               >
             </div>
