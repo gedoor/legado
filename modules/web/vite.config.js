@@ -1,5 +1,5 @@
 import { fileURLToPath, URL } from "node:url";
-import { defineConfig, splitVendorChunkPlugin } from "vite";
+import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import Icons from "unplugin-icons/vite";
 import IconsResolver from "unplugin-icons/resolver";
@@ -12,7 +12,6 @@ export default ({ mode }) =>
   defineConfig({
     plugins: [
       vue(),
-      splitVendorChunkPlugin(), // index vendor打包
       AutoImport({
         imports: ["vue", "vue-router", "pinia"],
         include: [/\.[tj]sx?$/, /\.vue$/, /\.vue\?vue/, /\.md$/],
@@ -50,6 +49,20 @@ export default ({ mode }) =>
         "@": fileURLToPath(new URL("./src", import.meta.url)),
         "@api": fileURLToPath(new URL("./src/api", import.meta.url)),
         "@utils": fileURLToPath(new URL("./src/utils/", import.meta.url)),
+      },
+    },
+    esbuild: {
+      drop: ["console"],
+    },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: (id) => {
+            if (id.includes("node_modules")) {
+              return "vendor";
+            }
+          },
+        },
       },
     },
   });
