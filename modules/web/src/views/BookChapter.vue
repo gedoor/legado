@@ -146,7 +146,32 @@ const chapterIndex = computed({
   set: (value) => (store.readingBook.index = value),
 });
 
+// 无限滚动
 const infiniteLoading = computed(() => store.config.infiniteLoading);
+let scrollObserver;
+const loading = ref();
+watchEffect(() => {
+  if (!infiniteLoading.value) {
+    scrollObserver?.disconnect();
+  } else {
+    scrollObserver?.observe(loading.value);
+  }
+});
+const loadMore = () => {
+  let index = chapterData.value.slice(-1)[0].index;
+  if (catalog.value.length - 1 > index) {
+    getContent(index + 1, false);
+    store.saveBookProgress(); // 保存的是上一章的进度，不是预载的本章进度
+  }
+};
+// IntersectionObserver回调 底部加载
+const onReachBottom = (entries) => {
+  if (isLoading.value) return;
+  for (let { isIntersecting } of entries) {
+    if (!isIntersecting) return;
+    loadMore();
+  }
+};
 
 // 字体
 const fontFamily = computed(() => {
@@ -388,32 +413,6 @@ const toPreChapter = () => {
   }
 };
 
-// 无限滚动
-let scrollObserver;
-const loading = ref();
-watchEffect(() => {
-  if (!infiniteLoading.value) {
-    scrollObserver?.disconnect();
-  } else {
-    scrollObserver?.observe(loading.value);
-  }
-});
-const loadMore = () => {
-  let index = chapterData.value.slice(-1)[0].index;
-  if (catalog.value.length - 1 > index) {
-    getContent(index + 1, false);
-    store.saveBookProgress(); // 保存的是上一章的进度，不是预载的本章进度
-  }
-};
-// IntersectionObserver回调 底部加载
-const onReachBottom = (entries) => {
-  if (isLoading.value) return;
-  for (let { isIntersecting } of entries) {
-    if (!isIntersecting) return;
-    loadMore();
-  }
-};
-
 let canJump = true;
 // 监听方向键
 const handleKeyPress = (event) => {
@@ -548,25 +547,24 @@ const addToBookShelfConfirm = async () => {
   sessionStorage.removeItem("isSeachBook");
   // 阅读的是搜索的书籍 并未在书架
   if (isSeachBook === "true") {
-
-    const addtoshelf = window.confirm(`是否将《${bookName}》放入书架？`);
-    if (!addtoshelf) await API.deleteBook(book);
-    
-/*      //按下返回键时不能触发 ElMessageBox.confirm
-         await ElMessageBox.confirm(
-      `是否将《${bookName}》放入书架？`,
-      "放入书架",
-      {
-        confirmButtonText: "确认",
-        cancelButtonText: "否",
-        type: "info"
-      }
-    ).then(() => {
-      //选择是，无动作
-    }).catch(async () => {
-      //选择否，删除书籍
-      await API.deleteBook(book);
-    }) */
+    await ElMessageBox.confirm(`是否将《${bookName}》放入书架？`, "放入书架", {
+      confirmButtonText: "确认",
+      cancelButtonText: "否",
+      type: "info",
+      /*      
+        ElMessageBox.confirm默认在触发hashChange事件时自动关闭
+        按下物理返回键时触发hashChange事件
+        使用router.push("/")则不会触发hashChange事件
+        */
+      closeOnHashChange: false,
+    })
+      .then(() => {
+        //选择是，无动作
+      })
+      .catch(async () => {
+        //选择否，删除书籍
+        await API.deleteBook(book);
+      });
   }
 };
 onBeforeRouteLeave(async (to, from, next) => {

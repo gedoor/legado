@@ -20,8 +20,8 @@ import { useSourceStore } from "@/store";
 const store = useSourceStore();
 
 const current_tab = computed({
-  get:() => store.currentTab,
-  set:(val) => store.currentTab = val
+  get: () => store.currentTab,
+  set: (val) => (store.currentTab = val),
 });
 
 const tabData = ref([
