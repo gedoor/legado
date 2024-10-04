@@ -192,14 +192,23 @@ import API from "@api";
 const store = useBookStore();
 
 //阅读界面设置改变时保存同步配置
+let configChanged = false;
 watch(
   () => store.config,
   (newValue) => {
     localStorage.setItem("config", JSON.stringify(newValue));
-    API.saveReadConfig(newValue);
+    configChanged = true;
   },
   {
     deep: 2, //深度为2
+  },
+);
+// 设置页面关闭时同步设置到阅读APP
+watch(
+  () => store.readSettingsVisible,
+  (visbile) => {
+    if (!visbile && configChanged)
+      API.saveReadConfig(store.config).then(() => (configChanged = false));
   },
 );
 
