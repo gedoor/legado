@@ -568,6 +568,9 @@ const addToBookShelfConfirm = async () => {
   }
 };
 onBeforeRouteLeave(async (to, from, next) => {
+  console.log("onBeforeRouteLeave");
+  // 弹窗时停止响应按键翻页
+  window.removeEventListener("keyup", handleKeyPress);
   await addToBookShelfConfirm();
   next();
 });

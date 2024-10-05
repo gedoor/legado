@@ -32,6 +32,8 @@
                   readingRecent.author,
                   readingRecent.chapterIndex,
                   readingRecent.chapterPos,
+                  readingRecent.isSeachBook,
+                  true,
                 )
               "
               :class="{ 'no-point': readingRecent.url == '' }"
@@ -110,6 +112,7 @@ export default defineComponent({
       url: "",
       chapterIndex: 0,
       chapterPos: 0,
+      isSeachBook: false,
     });
     const shelfWrapper = ref(null);
     const { showLoading, closeLoading, loadingWrapper, isLoading } = useLoading(
@@ -249,20 +252,28 @@ export default defineComponent({
       chapterIndex,
       chapterPos,
       isSeachBook,
+      fromReadRecentClick = false,
     ) => {
       if (bookName === "尚无阅读记录") return;
+      // 最近书籍不再书架上 自动搜索
+      if (isSeachBook === true && fromReadRecentClick) {
+        searchWord.value = bookName;
+        searchBook();
+        return;
+      }
       sessionStorage.setItem("bookUrl", bookUrl);
       sessionStorage.setItem("bookName", bookName);
       sessionStorage.setItem("bookAuthor", bookAuthor);
       sessionStorage.setItem("chapterIndex", chapterIndex);
       sessionStorage.setItem("chapterPos", chapterPos);
-      sessionStorage.setItem("isSeachBook", isSeachBook);
+      sessionStorage.setItem("isSeachBook", String(isSeachBook));
       readingRecent.value = {
         name: bookName,
         author: bookAuthor,
         url: bookUrl,
         chapterIndex: chapterIndex,
         chapterPos: chapterPos,
+        isSeachBook,
       };
       localStorage.setItem(
         "readingRecent",
@@ -343,6 +354,7 @@ export default defineComponent({
       searchBook,
       books,
       handleBookClick,
+      toDetail,
       isSearching,
       SearchIcon,
       githubUrl,
