@@ -45,7 +45,7 @@ kotlinxSerialization = "1.7.1"
 swiperefreshlayout = "1.1.0"
 recyclerview = "1.2.0"
 viewpager2 = "1.0.0"
-webkit = "1.11.0"
+webkit = "1.12.1"
 zxingLite = "3.2.0"
 
 
