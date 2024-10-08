@@ -8,12 +8,22 @@ let legado_http_origin;
 let legado_webSocket_origin;
 
 const setLeagdoHttpUrl = (http_url) => {
-  let legado_webSocket_port;
-  const { protocol, hostname, port } = new URL(http_url);
+  let legado_webSocket_port, url;
+  try {
+    url = new URL(http_url);
+  } catch (e) {
+    if (localStorage.getItem("remoteOrigin") == http_url) {
+      localStorage.removeItem("remoteOrigin");
+    }
+    throw new Error("Fail to parse Leagdo remoteOrigin: " + e);
+  }
+  const { protocol, hostname, port, origin } = url;
   if (!protocol.startsWith("http"))
-    throw new Error("unexpect protocol:" + http_url);
-  ajax.defaults.baseURL = http_url;
-  legado_http_origin = http_url;
+    throw new Error("unexpect protocol: " + http_url);
+  ajax.defaults.baseURL = origin;
+  //持久化
+  localStorage.setItem("remoteOrigin", origin);
+  legado_http_origin = origin;
   if (port !== "") {
     legado_webSocket_port = Number(port) + 1;
   } else {

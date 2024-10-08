@@ -50,7 +50,7 @@
               size="large"
               class="setting-connect"
               :class="{ 'no-point': newConnect }"
-              @click="setIP"
+              @click="setLegadoRetmoteUrl"
             >
               {{ connectStatus }}
             </el-tag>
@@ -175,35 +175,60 @@ export default defineComponent({
     const connectStatus = computed(() => store.connectStatus);
     const connectType = computed(() => store.connectType);
     const newConnect = computed(() => store.newConnect);
-    const setIP = () => {
+    const setLegadoRetmoteUrl = () => {
       ElMessageBox.prompt(
-        "请输入 IP 和端口 ( 如：127.0.0.1:9527 或者通过内网穿透的地址)",
+        "请输入 后端地址 ( 如：http://127.0.0.1:9527 或者通过内网穿透的地址)",
         "提示",
         {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
-          inputPattern:
-            /^[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+\.?:([1-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-9][0-9][0-9][0-9]|[1-6][0-5][0-5][0-3][0-5])$/,
-          inputErrorMessage: "url 形式不正确",
+          inputPlaceholder: API.legado_http_origin,
+          inputValidator: (url) => {
+            try {
+              const {
+                origin,
+                protocol,
+                username,
+                password,
+                pathname,
+                search,
+                hash,
+              } = new URL(url);
+              console.log(new URL(url));
+              if (origin == API.legado_http_origin)
+                return "请输入非当前远程链接";
+              if (!protocol.startsWith("http")) return `不支持协议${protocol}`;
+              if (
+                pathname !== "/" ||
+                search !== "" ||
+                hash !== "" ||
+                password !== "" ||
+                username !== ""
+              )
+                return `目前仅支持输入${origin}`;
+            } catch (e) {
+              console.warn(e);
+              return "URL解析失败，请重新输入";
+            }
+            return true;
+          },
           beforeClose: (action, instance, done) => {
             if (action === "confirm") {
               store.setNewConnect(true);
               instance.confirmButtonLoading = true;
               instance.confirmButtonText = "校验中……";
               // instance.inputValue
-              const ip = instance.inputValue;
-              API.testLeagdoHttpUrlConnection("http://" + ip)
+              const url = instance.inputValue;
+              API.testLeagdoHttpUrlConnection(url)
                 //API.getBookShelf()
                 .then(function (configStr) {
                   saveReadConfig(configStr);
                   instance.confirmButtonLoading = false;
                   store.setConnectType("success");
-                  store.setConnectStatus("已连接 " + ip);
+                  store.setConnectStatus("已连接 " + url);
                   store.clearSearchBooks();
                   store.setNewConnect(false);
-                  API.setLeagdoHttpUrl("http://" + ip);
-                  //持久化
-                  localStorage.setItem("remoteIp", ip);
+                  API.setLeagdoHttpUrl(url);
                   fetchBookShelfData();
                   done();
                 })
@@ -344,7 +369,7 @@ export default defineComponent({
         });
     });
     return {
-      setIP,
+      setLegadoRetmoteUrl,
       isNight,
       connectStatus,
       connectType,
