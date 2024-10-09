@@ -362,7 +362,7 @@ export default defineComponent({
           store.setConnectType("danger");
           store.setConnectStatus("连接异常");
           ElMessage.error(
-            "后端连接失败异常，请检查阅读WEB服务或者设置其它可用IP",
+            "后端连接失败异常，请检查阅读WEB服务或者设置其它可用链接",
           );
           store.setNewConnect(false);
           throw error;
