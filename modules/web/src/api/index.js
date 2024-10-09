@@ -4,43 +4,85 @@ import { ElMessage } from "element-plus/es";
 /** https://github.com/gedoor/legado/tree/master/app/src/main/java/io/legado/app/api */
 /** https://github.com/gedoor/legado/tree/master/app/src/main/java/io/legado/app/web */
 
-let legado_http_origin;
-let legado_webSocket_origin;
+/**@type string */
+export let legado_http_entry_point;
+/**@type string */
+export let legado_webSocket_entry_point;
 
-const setLeagdoHttpUrl = (http_url) => {
-  let legado_webSocket_port, url;
+/**
+ * @param  {string|URL} http_url
+ * @returns {URL}
+ * @throws {Error}
+ */
+export const validatorHttpUrl = (http_url) => {
   try {
-    url = new URL(http_url);
+    const url = new URL(http_url);
+    if (url.toString() === legado_http_entry_point)
+      throw new Error("Please input different url: " + legado_http_entry_point);
+    const { protocol } = url;
+    if (!protocol.startsWith("http"))
+      throw new Error("Expect http:/https: protocol but " + protocol);
+    return url;
   } catch (e) {
-    if (localStorage.getItem("remoteOrigin") == http_url) {
-      localStorage.removeItem("remoteOrigin");
+    if (localStorage.getItem("remoteUrl") == http_url) {
+      localStorage.removeItem("remoteUrl");
+      console.warn("Remove remoteUrl from localStorage");
     }
-    throw new Error("Fail to parse Leagdo remoteOrigin: " + e);
+    throw new Error("Fail to parse Leagdo remoteUrl " + http_url, { cause: e });
   }
-  const { protocol, hostname, port, origin } = url;
-  if (!protocol.startsWith("http"))
-    throw new Error("unexpect protocol: " + http_url);
-  ajax.defaults.baseURL = origin;
-  //持久化
-  localStorage.setItem("remoteOrigin", origin);
-  legado_http_origin = origin;
+};
+/**
+ * @param  {string|URL} http_url
+ * @returns
+ */
+export const setLeagdoHttpUrl = (http_url) => {
+  let url = new URL(location.origin); //默认当前网址的origin部分
+  try {
+    url = validatorHttpUrl(http_url);
+  } catch (e) {
+    console.warn(e);
+    console.info(
+      "setLeagdoHttpUrl: FallBack to location.origin: " + location.origin,
+    );
+  }
+  const { protocol, port, href } = url;
+  // websocket服务端口 为http服务端口 + 1
+  let legado_webSocket_port, legado_webSocket_protocol;
   if (port !== "") {
-    legado_webSocket_port = Number(port) + 1;
+    legado_webSocket_port = String(Number(port) + 1);
   } else {
     legado_webSocket_port = protocol.startsWith("https:") ? "444" : "81";
   }
-  legado_webSocket_origin = `${protocol.startsWith("https:") ? "wss://" : "ws://"}${hostname}:${legado_webSocket_port}`;
+  // websocket协议是否为加密版本
+  legado_webSocket_protocol = protocol.startsWith("https:")
+    ? "wss://"
+    : "ws://";
 
-  console.info("legado_server_config:");
-  console.table({ legado_http_origin, legado_webSocket_origin });
+  ajax.defaults.baseURL = href;
+  //持久化
+  localStorage.setItem("remoteUrl", href);
+  legado_http_entry_point = href;
+
+  url.protocol = legado_webSocket_protocol;
+  url.port = legado_webSocket_port;
+  legado_webSocket_entry_point = url.href;
+
+  console.info("legado_api_config:");
+  console.table({
+    "http API入口": legado_http_entry_point,
+    "webSocket API入口": legado_webSocket_entry_point,
+  });
 };
 
 // 手动初始化 阅读web服务地址
 setLeagdoHttpUrl(ajax.defaults.baseURL);
-
+/**
+ * @param  {string|URL} http_url
+ * @returns
+ */
 const testLeagdoHttpUrlConnection = async (http_url) => {
   const { data = {} } = await ajax.get("/getReadConfig", {
-    baseURL: http_url,
+    baseURL: new URL(http_url).toString(),
     timeout: 3000,
   });
   // 返回结果应该是JSON 并有键值isSuccess
@@ -78,7 +120,7 @@ const saveBookProgressWithBeacon = (bookProgress) => {
   if (!bookProgress) return;
   // 常规请求可能会被取消 使用Fetch keep-alive 或者 navigator.sendBeacon
   navigator.sendBeacon(
-    `${legado_http_origin}/saveBookProgress`,
+    new URL("/saveBookProgress", legado_http_entry_point),
     JSON.stringify(bookProgress),
   );
 };
@@ -105,8 +147,9 @@ const search = (
   /** @type {(data: string) => void} */ onReceive,
   /** @type {() => void} */ onFinish,
 ) => {
-  const url = `${legado_webSocket_origin}/searchBook`;
-  const socket = new WebSocket(url);
+  const socket = new WebSocket(
+    new URL("/searchBook", legado_webSocket_entry_point),
+  );
 
   socket.onopen = () => {
     socket.send(`{"key":"${searchKey}"}`);
@@ -150,9 +193,10 @@ const debug = (
   /** @type {(data: string) => void} */ onReceive,
   /** @type {() => void} */ onFinish,
 ) => {
-  const url = `${legado_webSocket_origin}/${
-    isBookSource ? "bookSource" : "rssSource"
-  }Debug`;
+  const url = new URL(
+    `/${isBookSource ? "bookSource" : "rssSource"}Debug`,
+    legado_webSocket_entry_point,
+  );
 
   const socket = new WebSocket(url);
 
@@ -175,8 +219,11 @@ const debug = (
  * @param {string} coverUrl
  */
 const getProxyCoverUrl = (coverUrl) => {
-  if (coverUrl.startsWith(legado_http_origin)) return coverUrl;
-  return legado_http_origin + "/cover?path=" + encodeURIComponent(coverUrl);
+  if (coverUrl.startsWith(legado_http_entry_point)) return coverUrl;
+  return new URL(
+    "/cover?path=" + encodeURIComponent(coverUrl),
+    legado_http_entry_point,
+  ).href;
 };
 /**
  * 从阅读获取需要特定处理的图片
@@ -184,15 +231,15 @@ const getProxyCoverUrl = (coverUrl) => {
  * @param {number|`${number}`} width
  */
 const getProxyImageUrl = (src, width) => {
-  if (src.startsWith(legado_http_origin)) return src;
-  return (
-    legado_http_origin +
+  if (src.startsWith(legado_http_entry_point)) return src;
+  return new URL(
     "/image?path=" +
-    encodeURIComponent(src) +
-    "&url=" +
-    encodeURIComponent(sessionStorage.getItem("bookUrl")) +
-    "&width=" +
-    width
+      encodeURIComponent(src) +
+      "&url=" +
+      encodeURIComponent(sessionStorage.getItem("bookUrl")) +
+      "&width=" +
+      width,
+    legado_http_entry_point,
   );
 };
 
@@ -218,6 +265,4 @@ export default {
   getProxyImageUrl,
 
   testLeagdoHttpUrlConnection,
-  setLeagdoHttpUrl,
-  legado_http_origin,
 };

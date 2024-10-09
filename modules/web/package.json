@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "engines": {
-    "node": ">=16",
-    "pnpm": ">=8"
+    "node": ">=20",
+    "pnpm": ">=9"
   },
   "scripts": {
     "dev": "vite",
@@ -16,13 +16,13 @@
   "dependencies": {
     "@element-plus/icons-svg": "^2.3.1",
     "@element-plus/icons-vue": "^2.3.1",
-    "@vueuse/shared": "^10.11.1",
     "@vueuse/core": "^11.1.0",
+    "@vueuse/shared": "^11.1.0",
     "axios": "^1.7.7",
     "element-plus": "^2.8.4",
     "hotkeys-js": "^3.13.7",
-    "pinia": "^2.2.3",
-    "vue": "^3.5.10",
+    "pinia": "^2.2.4",
+    "vue": "^3.5.11",
     "vue-router": "^4.4.5",
     "vue3-virtual-scroll-list": "^0.2.1"
   },
@@ -34,9 +34,9 @@
     "eslint-plugin-vue": "^9.28.0",
     "prettier": "^3.3.3",
     "sass": "^1.79.4",
-    "unplugin-auto-import": "^0.17.8",
-    "unplugin-icons": "^0.18.5",
-    "unplugin-vue-components": "^0.26.0",
+    "unplugin-auto-import": "^0.18.3",
+    "unplugin-icons": "^0.19.3",
+    "unplugin-vue-components": "^0.27.4",
     "vite": "^5.4.8"
   }
 }

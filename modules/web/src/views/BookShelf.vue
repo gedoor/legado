@@ -85,7 +85,11 @@ import { useBookStore } from "@/store";
 import githubUrl from "@/assets/imgs/github.png";
 import { useLoading } from "@/hooks/loading";
 import { Search as SearchIcon } from "@element-plus/icons-vue";
-import API from "@api";
+import API, {
+  legado_http_entry_point,
+  validatorHttpUrl,
+  setLeagdoHttpUrl,
+} from "@api";
 
 export default defineComponent({
   beforeRouteEnter: (to, from, next) => {
@@ -98,6 +102,8 @@ export default defineComponent({
             // @ts-ignore
             vm.saveReadConfig(data);
           });
+        } else {
+          next();
         }
       })
       .catch(() => next());
@@ -182,33 +188,12 @@ export default defineComponent({
         {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
-          inputPlaceholder: API.legado_http_origin,
-          inputValidator: (url) => {
+          inputPlaceholder: legado_http_entry_point,
+          inputValidator: (value) => {
             try {
-              const {
-                origin,
-                protocol,
-                username,
-                password,
-                pathname,
-                search,
-                hash,
-              } = new URL(url);
-              console.log(new URL(url));
-              if (origin == API.legado_http_origin)
-                return "请输入非当前远程链接";
-              if (!protocol.startsWith("http")) return `不支持协议${protocol}`;
-              if (
-                pathname !== "/" ||
-                search !== "" ||
-                hash !== "" ||
-                password !== "" ||
-                username !== ""
-              )
-                return `目前仅支持输入${origin}`;
+              validatorHttpUrl(value);
             } catch (e) {
-              console.warn(e);
-              return "URL解析失败，请重新输入";
+              return e?.cause?.message ?? e.message;
             }
             return true;
           },
@@ -218,17 +203,17 @@ export default defineComponent({
               instance.confirmButtonLoading = true;
               instance.confirmButtonText = "校验中……";
               // instance.inputValue
-              const url = instance.inputValue;
+              const url = new URL(instance.inputValue);
               API.testLeagdoHttpUrlConnection(url)
                 //API.getBookShelf()
                 .then(function (configStr) {
                   saveReadConfig(configStr);
                   instance.confirmButtonLoading = false;
                   store.setConnectType("success");
-                  store.setConnectStatus("已连接 " + url);
                   store.clearSearchBooks();
                   store.setNewConnect(false);
-                  API.setLeagdoHttpUrl(url);
+                  setLeagdoHttpUrl(url);
+                  store.setConnectStatus("已连接 " + url.toString());
                   fetchBookShelfData();
                   done();
                 })
@@ -341,7 +326,7 @@ export default defineComponent({
         } else {
           ElMessage.error(response.data.errorMsg ?? "后端返回格式错误！");
         }
-        store.setConnectStatus("已连接 " + API.legado_http_origin);
+        store.setConnectStatus("已连接 " + legado_http_entry_point);
         store.setNewConnect(false);
       });
     };
