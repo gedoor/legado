@@ -82,7 +82,7 @@ setLeagdoHttpUrl(ajax.defaults.baseURL);
  */
 const testLeagdoHttpUrlConnection = async (http_url) => {
   const { data = {} } = await ajax.get("/getReadConfig", {
-    baseURL: new URL(http_url).toString(),
+    baseURL: http_url,
     timeout: 3000,
   });
   // 返回结果应该是JSON 并有键值isSuccess
