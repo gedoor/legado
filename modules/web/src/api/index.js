@@ -77,12 +77,12 @@ export const setLeagdoHttpUrl = (http_url) => {
 // 手动初始化 阅读web服务地址
 setLeagdoHttpUrl(ajax.defaults.baseURL);
 /**
- * @param  {string|URL} http_url
+ * @param  {string|URL|undefined} http_url
  * @returns
  */
-const testLeagdoHttpUrlConnection = async (http_url) => {
+const testLeagdoHttpUrlConnection = async (http_url = legado_http_entry_point) => {
   const { data = {} } = await ajax.get("/getReadConfig", {
-    baseURL: http_url,
+    baseURL: http_url.toString(),
     timeout: 3000,
   });
   // 返回结果应该是JSON 并有键值isSuccess
