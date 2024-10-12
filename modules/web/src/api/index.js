@@ -5,9 +5,9 @@ import { ElMessage } from "element-plus/es";
 /** https://github.com/gedoor/legado/tree/master/app/src/main/java/io/legado/app/web */
 
 /**@type string */
-export let legado_http_entry_point;
+export let legado_http_entry_point = "";
 /**@type string */
-export let legado_webSocket_entry_point;
+export let legado_webSocket_entry_point = "";
 
 /**
  * @param  {string|URL} http_url
@@ -45,7 +45,7 @@ export const setLeagdoHttpUrl = (http_url) => {
       "setLeagdoHttpUrl: FallBack to location.origin: " + location.origin,
     );
   }
-  const { protocol, port, href } = url;
+  const { protocol, port } = url;
   // websocket服务端口 为http服务端口 + 1
   let legado_webSocket_port, legado_webSocket_protocol;
   if (port !== "") {
@@ -58,14 +58,12 @@ export const setLeagdoHttpUrl = (http_url) => {
     ? "wss://"
     : "ws://";
 
-  ajax.defaults.baseURL = href;
-  //持久化
-  localStorage.setItem("remoteUrl", href);
-  legado_http_entry_point = href;
+  ajax.defaults.baseURL = url.toString();
+  legado_http_entry_point = url.toString();
 
   url.protocol = legado_webSocket_protocol;
   url.port = legado_webSocket_port;
-  legado_webSocket_entry_point = url.href;
+  legado_webSocket_entry_point = url.toString();
 
   console.info("legado_api_config:");
   console.table({
@@ -77,7 +75,7 @@ export const setLeagdoHttpUrl = (http_url) => {
 // 手动初始化 阅读web服务地址
 setLeagdoHttpUrl(ajax.defaults.baseURL);
 /**
- * @param  {string|URL|undefined} http_url
+ * @param  {string|URL|undefined} http_url 不传为当前阅读HTTP服务接口
  * @returns
  */
 const testLeagdoHttpUrlConnection = async (http_url = legado_http_entry_point) => {
@@ -223,7 +221,7 @@ const getProxyCoverUrl = (coverUrl) => {
   return new URL(
     "/cover?path=" + encodeURIComponent(coverUrl),
     legado_http_entry_point,
-  ).href;
+  ).toString();
 };
 /**
  * 从阅读获取需要特定处理的图片
@@ -240,7 +238,7 @@ const getProxyImageUrl = (src, width) => {
       "&width=" +
       width,
     legado_http_entry_point,
-  );
+  ).toString();
 };
 
 export default {

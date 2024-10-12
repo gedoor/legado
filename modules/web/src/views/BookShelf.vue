@@ -85,6 +85,7 @@ import { useBookStore } from "@/store";
 import githubUrl from "@/assets/imgs/github.png";
 import { useLoading } from "@/hooks/loading";
 import { Search as SearchIcon } from "@element-plus/icons-vue";
+import {baseURL_localStorage_key} from "@/api/axios"
 import API, {
   legado_http_entry_point,
   validatorHttpUrl,
@@ -203,7 +204,7 @@ export default defineComponent({
               instance.confirmButtonLoading = true;
               instance.confirmButtonText = "校验中……";
               // instance.inputValue
-              const url = new URL(instance.inputValue);
+              const url = new URL(instance.inputValue).toString();
               API.testLeagdoHttpUrlConnection(url)
                 //API.getBookShelf()
                 .then(function (configStr) {
@@ -213,6 +214,11 @@ export default defineComponent({
                   store.clearSearchBooks();
                   store.setNewConnect(false);
                   setLeagdoHttpUrl(url);
+                  if (url === location.origin) {
+                    localStorage.removeItem(baseURL_localStorage_key);
+                  } else {
+                    localStorage.setItem(baseURL_localStorage_key, url);
+                  }
                   store.setConnectStatus("已连接 " + url.toString());
                   fetchBookShelfData();
                   done();
