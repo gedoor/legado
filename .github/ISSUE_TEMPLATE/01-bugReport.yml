@@ -35,7 +35,7 @@ body:
       label: 其他信息 / Additions
       description: |
         反馈WEB书架前端问题时请提供浏览器版本信息，如Edge 129.0.2792.89
-      placeholder: "请用```将提交的内容包裹，例如："
+      placeholder: "请用```将提交的内容包裹"
 
   - type: textarea
     attributes:
