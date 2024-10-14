@@ -62,7 +62,7 @@
               <el-button
                 type="primary"
                 size="small"
-                @click="setCustomFont(), (customFontSavePopVisible = false)"
+                @click="setCustomFont()"
                 >确定</el-button
               >
               <el-button type="primary" size="small" @click="loadFontFromURL()"
