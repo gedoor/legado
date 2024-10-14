@@ -8,32 +8,35 @@
       edit: sourceUrl == currentSourceUrl,
     }"
   >
-    {{ source.bookSourceName || source.sourceName }}
+    {{ getSourceName(source) }}
     <el-button text :icon="Edit" @click="handleSourceClick(source)" />
   </el-checkbox>
 </template>
 
-<script setup>
-import { Edit } from "@element-plus/icons-vue";
-import { getSourceUniqueKey } from "@/utils/souce";
+<script setup lang="ts">
+import { Edit } from '@element-plus/icons-vue'
+import { getSourceUniqueKey, getSourceName } from '@/utils/souce'
+import type { Source } from '@/source'
 
-const props = defineProps(["source"]);
+const props = defineProps<{
+  source: Source
+}>()
 
-const store = useSourceStore();
+const store = useSourceStore()
 
-const currentSourceUrl = computed(() => store.currentSourceUrl);
-const sourceUrl = computed(() => getSourceUniqueKey(props.source));
+const currentSourceUrl = computed(() => store.currentSourceUrl)
+const sourceUrl = computed(() => getSourceUniqueKey(props.source))
 
-const handleSourceClick = (source) => {
-  store.changeCurrentSource(source);
-};
+const handleSourceClick = (source: Source) => {
+  store.changeCurrentSource(source)
+}
 const isSaveError = computed(() => {
-  const map = store.savedSourcesMap;
-  if (map.size == 0) return false;
-  return !map.has(sourceUrl.value);
-});
+  const map = store.savedSourcesMap
+  if (map.size == 0) return false
+  return !map.has(sourceUrl.value)
+})
 </script>
-<style lang="scss" scoped>
+<style scoped>
 :deep(.el-checkbox__label) {
   flex: 1;
   display: flex;

@@ -27,7 +27,7 @@
               size="large"
               @click="
                 toDetail(
-                  readingRecent.url,
+                  readingRecent.bookUrl,
                   readingRecent.name,
                   readingRecent.author,
                   readingRecent.chapterIndex,
@@ -36,7 +36,7 @@
                   true,
                 )
               "
-              :class="{ 'no-point': readingRecent.url == '' }"
+              :class="{ 'no-point': readingRecent.bookUrl == '' }"
             >
               {{ readingRecent.name }}
             </el-tag>
@@ -78,309 +78,277 @@
   </div>
 </template>
 
-<script>
-import "@/assets/bookshelf.css";
-import "@/assets/fonts/shelffont.css";
-import { useBookStore } from "@/store";
-import githubUrl from "@/assets/imgs/github.png";
-import { useLoading } from "@/hooks/loading";
-import { Search as SearchIcon } from "@element-plus/icons-vue";
-import {baseURL_localStorage_key} from "@/api/axios"
+<script setup lang="ts">
+import '@/assets/bookshelf.css'
+import '@/assets/fonts/shelffont.css'
+import { useBookStore } from '@/store'
+import githubUrl from '@/assets/imgs/github.png'
+import { useLoading } from '@/hooks/loading'
+import { Search as SearchIcon } from '@element-plus/icons-vue'
+import { baseURL_localStorage_key } from '@/api/axios'
 import API, {
   legado_http_entry_point,
-  validatorHttpUrl,
-  setLeagdoHttpUrl,
-} from "@api";
+  parseLeagdoHttpUrlWithDefault,
+  setApiEntryPoint,
+} from '@api'
+import { validatorHttpUrl } from '@/utils/utils'
+import type { Book, SeachBook } from '@/book'
+import type { webReadConfig } from '@/web'
 
-export default defineComponent({
-  beforeRouteEnter: (to, from, next) => {
-    API.getReadConfig()
-      .then((response) => response.data)
-      .then(({ isSuccess, data }) => {
-        if (isSuccess) {
-          next((vm) => {
-            console.log("初始化加载阅读界面配置成功");
-            // @ts-ignore
-            vm.saveReadConfig(data);
-          });
-        } else {
-          next();
-        }
-      })
-      .catch(() => next());
-  },
-  setup: () => {
-    const store = useBookStore();
-    const isNight = computed(() => store.isNight);
+const store = useBookStore()
+const isNight = computed(() => store.isNight)
 
-    const readingRecent = ref({
-      name: "尚无阅读记录",
-      author: "",
-      url: "",
-      chapterIndex: 0,
-      chapterPos: 0,
-      isSeachBook: false,
-    });
-    const shelfWrapper = ref(null);
-    const { showLoading, closeLoading, loadingWrapper, isLoading } = useLoading(
-      shelfWrapper,
-      "正在获取书籍信息",
-    );
+/** shortcuts of `store.setConfig` */
+const applyReadConfig = (config?: webReadConfig) => {
+  try {
+    if (config !== undefined) store.setConfig(config)
+  } catch {
+    ElMessage.info('阅读界面配置解析错误')
+  }
+}
 
-    // 书架书籍和在线书籍搜索
-    const books = shallowRef([]);
-    const shelf = computed(() => store.shelf);
-    const searchWord = ref("");
-    const isSearching = ref(false);
-    watchEffect(() => {
-      if (isSearching.value && searchWord.value != "") return;
-      isSearching.value = false;
-      books.value = [];
-      if (searchWord.value == "") {
-        books.value = shelf.value;
-        return;
+const readingRecent = ref<typeof store.readingBook>({
+  name: '尚无阅读记录',
+  author: '',
+  bookUrl: '',
+  chapterIndex: 0,
+  chapterPos: 0,
+  isSeachBook: false,
+})
+
+const shelfWrapper = ref<HTMLElement>()
+//const shelfWrapper = useTemplateRef<HTMLElement>("shelfWrapper")
+const { showLoading, closeLoading, loadingWrapper, isLoading } = useLoading(
+  shelfWrapper,
+  '正在获取书籍信息',
+)
+
+// 书架书籍和在线书籍搜索
+const books = shallowRef<Book[] | SeachBook[]>([])
+const shelf = computed(() => store.shelf)
+const searchWord = ref('')
+const isSearching = ref(false)
+watchEffect(() => {
+  if (isSearching.value && searchWord.value != '') return
+  isSearching.value = false
+  books.value = []
+  if (searchWord.value == '') {
+    books.value = shelf.value
+    return
+  }
+  books.value = shelf.value.filter(book => {
+    return (
+      book.name.includes(searchWord.value) ||
+      book.author.includes(searchWord.value)
+    )
+  })
+})
+//搜索在线书籍
+const searchBook = () => {
+  if (searchWord.value == '') return
+  books.value = []
+  store.clearSearchBooks()
+  showLoading()
+  isSearching.value = true
+  API.search(
+    searchWord.value,
+    searcBooks => {
+      if (isLoading) {
+        closeLoading()
       }
-      books.value = shelf.value.filter((book) => {
-        return (
-          book.name.includes(searchWord.value) ||
-          book.author.includes(searchWord.value)
-        );
-      });
-    });
-    //搜索在线书籍
-    const searchBook = () => {
-      if (searchWord.value == "") return;
-      books.value = [];
-      store.clearSearchBooks();
-      showLoading();
-      isSearching.value = true;
-      API.search(
-        searchWord.value,
-        (data) => {
-          if (isLoading) {
-            closeLoading();
-          }
-          try {
-            store.setSearchBooks(JSON.parse(data));
-            books.value = store.searchBooks;
-            //store.searchBooks.forEach((item) => books.value.push(item));
-          } catch (e) {
-            ElMessage.error("后端数据错误");
-            throw e;
-          }
-        },
-        () => {
-          closeLoading();
-          if (books.value.length == 0) {
-            ElMessage.info("搜索结果为空");
-          }
-        },
-      );
-    };
-
-    //连接状态
-    const connectStatus = computed(() => store.connectStatus);
-    const connectType = computed(() => store.connectType);
-    const newConnect = computed(() => store.newConnect);
-    const setLegadoRetmoteUrl = () => {
-      ElMessageBox.prompt(
-        "请输入 后端地址 ( 如：http://127.0.0.1:9527 或者通过内网穿透的地址)",
-        "提示",
-        {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          inputPlaceholder: legado_http_entry_point,
-          inputValidator: (value) => {
-            try {
-              validatorHttpUrl(value);
-            } catch (e) {
-              return e?.cause?.message ?? e.message;
-            }
-            return true;
-          },
-          beforeClose: (action, instance, done) => {
-            if (action === "confirm") {
-              store.setNewConnect(true);
-              instance.confirmButtonLoading = true;
-              instance.confirmButtonText = "校验中……";
-              // instance.inputValue
-              const url = new URL(instance.inputValue).toString();
-              API.testLeagdoHttpUrlConnection(url)
-                //API.getBookShelf()
-                .then(function (configStr) {
-                  saveReadConfig(configStr);
-                  instance.confirmButtonLoading = false;
-                  store.setConnectType("success");
-                  store.clearSearchBooks();
-                  store.setNewConnect(false);
-                  setLeagdoHttpUrl(url);
-                  if (url === location.origin) {
-                    localStorage.removeItem(baseURL_localStorage_key);
-                  } else {
-                    localStorage.setItem(baseURL_localStorage_key, url);
-                  }
-                  store.setConnectStatus("已连接 " + url.toString());
-                  fetchBookShelfData();
-                  done();
-                })
-                .catch(function (error) {
-                  instance.confirmButtonLoading = false;
-                  instance.confirmButtonText = "确定";
-                  ElMessage.error("访问失败，请检查您输入的 url");
-                  store.setNewConnect(false);
-                  throw error;
-                });
-            } else {
-              done();
-            }
-          },
-        },
-      );
-    };
-
-    const router = useRouter();
-    const handleBookClick = async (book) => {
-      const {
-        bookUrl,
-        name,
-        author,
-        durChapterIndex = 0,
-        durChapterPos = 0,
-      } = book;
-      // 判断是否为 searchBook
-      const isSeachBook = "respondTime" in book;
-      if (isSeachBook) {
-        await API.saveBook(book);
-      }
-      toDetail(
-        bookUrl,
-        name,
-        author,
-        durChapterIndex,
-        durChapterPos,
-        isSeachBook,
-      );
-    };
-    const toDetail = (
-      bookUrl,
-      bookName,
-      bookAuthor,
-      chapterIndex,
-      chapterPos,
-      isSeachBook,
-      fromReadRecentClick = false,
-    ) => {
-      if (bookName === "尚无阅读记录") return;
-      // 最近书籍不再书架上 自动搜索
-      if (isSeachBook === true && fromReadRecentClick) {
-        searchWord.value = bookName;
-        searchBook();
-        return;
-      }
-      sessionStorage.setItem("bookUrl", bookUrl);
-      sessionStorage.setItem("bookName", bookName);
-      sessionStorage.setItem("bookAuthor", bookAuthor);
-      sessionStorage.setItem("chapterIndex", chapterIndex);
-      sessionStorage.setItem("chapterPos", chapterPos);
-      sessionStorage.setItem("isSeachBook", String(isSeachBook));
-      readingRecent.value = {
-        name: bookName,
-        author: bookAuthor,
-        url: bookUrl,
-        chapterIndex: chapterIndex,
-        chapterPos: chapterPos,
-        isSeachBook,
-      };
-      localStorage.setItem(
-        "readingRecent",
-        JSON.stringify(readingRecent.value),
-      );
-      router.push({
-        path: "/chapter",
-      });
-    };
-
-    const loadShelf = () => {
-      loadingWrapper(
-        store
-          .saveBookProgress()
-          //确保各种网络情况下同步请求先完成
-          .finally(fetchBookShelfData),
-      );
-    };
-
-    const saveReadConfig = (configStr) => {
       try {
-        store.setConfig(JSON.parse(configStr));
-      } catch {
-        ElMessage.info("阅读界面配置解析错误");
+        store.setSearchBooks(searcBooks)
+        books.value = store.searchBooks
+        //store.searchBooks.forEach((item) => books.value.push(item));
+      } catch (e) {
+        ElMessage.error('后端数据错误')
+        throw e
       }
-    };
+    },
+    () => {
+      closeLoading()
+      if (books.value.length == 0) {
+        ElMessage.info('搜索结果为空')
+      }
+    },
+  )
+}
 
-    const fetchBookShelfData = () => {
-      return API.getBookShelf().then((response) => {
-        store.setConnectType("success");
-        if (response.data.isSuccess) {
-          //store.increaseBookNum(response.data.data.length);
-          store.addBooks(
-            response.data.data.sort(function (a, b) {
-              var x = a["durChapterTime"] || 0;
-              var y = b["durChapterTime"] || 0;
-              return y - x;
-            }),
-          );
+//连接状态
+const connectStatus = computed(() => store.connectStatus)
+const connectType = computed(() => store.connectType)
+const newConnect = computed(() => store.newConnect)
+const setLegadoRetmoteUrl = () => {
+  ElMessageBox.prompt(
+    '请输入 后端地址 ( 如：http://127.0.0.1:9527 或者通过内网穿透的地址)',
+    '提示',
+    {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      inputPlaceholder: legado_http_entry_point,
+      inputValidator: value => validatorHttpUrl(value),
+      inputErrorMessage: '输入的格式不对',
+      beforeClose: (action, instance, done) => {
+        if (action === 'confirm') {
+          store.setNewConnect(true)
+          instance.confirmButtonLoading = true
+          instance.confirmButtonText = '校验中……'
+          // instance.inputValue
+          const url = new URL(instance.inputValue).toString()
+          API.getReadConfig(url)
+            //API.getBookShelf()
+            .then(function (config) {
+              applyReadConfig(config)
+              instance.confirmButtonLoading = false
+              store.setConnectType('success')
+              store.clearSearchBooks()
+              store.setNewConnect(false)
+              setApiEntryPoint(...parseLeagdoHttpUrlWithDefault(url))
+              if (url === location.origin) {
+                localStorage.removeItem(baseURL_localStorage_key)
+              } else {
+                localStorage.setItem(baseURL_localStorage_key, url)
+              }
+              store.setConnectStatus('已连接 ' + url.toString())
+              fetchBookShelfData()
+              done()
+            })
+            .catch(function (error) {
+              instance.confirmButtonLoading = false
+              instance.confirmButtonText = '确定'
+              ElMessage.error('访问失败，请检查您输入的 url')
+              store.setNewConnect(false)
+              throw error
+            })
         } else {
-          ElMessage.error(response.data.errorMsg ?? "后端返回格式错误！");
+          done()
         }
-        store.setConnectStatus("已连接 " + legado_http_entry_point);
-        store.setNewConnect(false);
-      });
-    };
-    onMounted(() => {
-      //获取最近阅读书籍
-      let readingRecentStr = localStorage.getItem("readingRecent");
-      if (readingRecentStr != null) {
-        readingRecent.value = JSON.parse(readingRecentStr);
-        if (typeof readingRecent.value.chapterIndex == "undefined") {
-          readingRecent.value.chapterIndex = 0;
-        }
+      },
+    },
+  )
+}
+
+const router = useRouter()
+const handleBookClick = async (book: SeachBook | Book) => {
+  // 判断是否为 searchBook
+  const isSeachBook = 'respondTime' in book
+  if (isSeachBook) {
+    await API.saveBook(book)
+  }
+  const {
+    bookUrl,
+    name,
+    author,
+    // @ts-expect-error: descruct with default value
+    durChapterIndex = 0,
+    // @ts-expect-error: descruct with default value
+    durChapterPos = 0,
+  } = book
+
+  toDetail(bookUrl, name, author, durChapterIndex, durChapterPos, isSeachBook)
+}
+const toDetail = (
+  bookUrl: string,
+  bookName: string,
+  bookAuthor: string,
+  chapterIndex: number,
+  chapterPos: number,
+  isSeachBook: boolean | undefined = false,
+  fromReadRecentClick = false,
+) => {
+  if (bookName === '尚无阅读记录') return
+  // 最近书籍不再书架上 自动搜索
+  if (
+    fromReadRecentClick &&
+    shelf.value.every(book => book.bookUrl !== bookUrl)
+  ) {
+    searchWord.value = bookName
+    searchBook()
+    return
+  }
+  sessionStorage.setItem('bookUrl', bookUrl)
+  sessionStorage.setItem('bookName', bookName)
+  sessionStorage.setItem('bookAuthor', bookAuthor)
+  sessionStorage.setItem('chapterIndex', String(chapterIndex))
+  sessionStorage.setItem('chapterPos', String(chapterPos))
+  sessionStorage.setItem('isSeachBook', String(isSeachBook))
+  readingRecent.value = {
+    name: bookName,
+    author: bookAuthor,
+    bookUrl,
+    chapterIndex,
+    chapterPos,
+    isSeachBook,
+  }
+  localStorage.setItem('readingRecent', JSON.stringify(readingRecent.value))
+  router.push({
+    path: '/chapter',
+  })
+}
+
+const loadShelf = async () => {
+  try {
+    if (store.configInited === false) {
+      const config = await API.getReadConfig()
+      applyReadConfig(config)
+    } else {
+    }
+    await store.saveBookProgress()
+    //确保各种网络情况下同步请求先完成
+    await fetchBookShelfData()
+  } catch (error: unknown) {
+    store.setConnectType('danger')
+    store.setConnectStatus('连接异常')
+    store.setNewConnect(false)
+    throw error
+  }
+}
+
+const fetchBookShelfData = () => {
+  return API.getBookShelf().then(response => {
+    store.setConnectType('success')
+    if (response.data.isSuccess) {
+      //store.increaseBookNum(response.data.data.length);
+      store.addBooks(
+        response.data.data.sort(function (a, b) {
+          const x = a['durChapterTime'] || 0
+          const y = b['durChapterTime'] || 0
+          return y - x
+        }),
+      )
+    } else {
+      if (
+        response.data.errorMsg.includes('还没有添加小说') &&
+        shelf.value.length > 0
+      ) {
+        ElNotification.warning({
+          title: '提示',
+          message: '当前书架上的书籍已经被删除',
+          position: 'bottom-right',
+        })
+        return store.clearBooks()
       }
-      console.log("bookshelf mounted");
-      API.testLeagdoHttpUrlConnection()
-        //.then(saveReadConfig) 应该在组件挂载前读取阅读配置
-        .then(loadShelf)
-        .catch(function (error) {
-          store.setConnectType("danger");
-          store.setConnectStatus("连接异常");
-          ElMessage.error(
-            "后端连接失败异常，请检查阅读WEB服务或者设置其它可用链接",
-          );
-          store.setNewConnect(false);
-          throw error;
-        });
-    });
-    return {
-      setLegadoRetmoteUrl,
-      isNight,
-      connectStatus,
-      connectType,
-      newConnect,
-      saveReadConfig, //expose it so beforeRouteEnter next can access it
-      readingRecent,
-      searchBook,
-      books,
-      handleBookClick,
-      toDetail,
-      isSearching,
-      SearchIcon,
-      githubUrl,
-      searchWord,
-    };
-  },
-});
+      ElMessage.error(response.data.errorMsg ?? '后端返回格式错误！')
+    }
+    store.setConnectStatus('已连接 ' + legado_http_entry_point)
+    store.setNewConnect(false)
+  })
+}
+onMounted(() => {
+  //获取最近阅读书籍
+  const readingRecentStr = localStorage.getItem('readingRecent')
+  if (readingRecentStr != null) {
+    readingRecent.value = JSON.parse(readingRecentStr)
+    if (typeof readingRecent.value.chapterIndex == 'undefined') {
+      readingRecent.value.chapterIndex = 0
+    }
+  }
+  console.log('bookshelf mounted')
+  loadingWrapper(loadShelf())
+})
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
 .index-wrapper {
   height: 100%;
   width: 100%;
@@ -438,12 +406,12 @@ export default defineComponent({
 
         .recent-book {
           font-size: 10px;
-          // font-weight: 400;
+          /*           // font-weight: 400;
           // margin: 12px 0;
           // font-weight: 500;
-          // color: #6B7C87;
+          // color: #6B7C87; */
           cursor: pointer;
-          // padding: 6px 18px;
+          /*           // padding: 6px 18px; */
         }
       }
     }
@@ -464,7 +432,7 @@ export default defineComponent({
       .setting-connect {
         font-size: 8px;
         margin-top: 16px;
-        // color: #6B7C87;
+        /*         // color: #6B7C87; */
         cursor: pointer;
       }
     }
@@ -538,7 +506,7 @@ export default defineComponent({
 }
 
 .night {
-  :deep(.navigation-wrapper) {
+  .navigation-wrapper {
     background-color: #454545;
 
     .navigation-title {

@@ -1,7 +1,9 @@
 code {
   border-radius: 4px;
-  padding: .15rem .5rem;
+  padding: 0.15rem 0.5rem;
   background-color: var(--el-fill-color-light);
-  transition: color .25s, background-color .5s;
+  transition:
+    color 0.25s,
+    background-color 0.5s;
   font-size: 14px;
 }

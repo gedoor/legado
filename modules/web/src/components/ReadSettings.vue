@@ -62,19 +62,10 @@
               <el-button
                 type="primary"
                 size="small"
-                @click="
-                  setCustomFont();
-                  customFontSavePopVisible = false;
-                "
+                @click="setCustomFont(), (customFontSavePopVisible = false)"
                 >确定</el-button
               >
-              <el-button
-                type="primary"
-                size="small"
-                @click="
-                  loadFontFromURL();
-                  customFontSavePopVisible = false;
-                "
+              <el-button type="primary" size="small" @click="loadFontFromURL()"
                 >网络下载</el-button
               >
             </div>
@@ -183,197 +174,192 @@
   </div>
 </template>
 
-<script setup>
-import "../assets/fonts/popfont.css";
-import "../assets/fonts/iconfont.css";
-import settings from "../config/themeConfig";
-import API from "@api";
+<script setup lang="ts">
+import '../assets/fonts/popfont.css'
+import '../assets/fonts/iconfont.css'
+import settings from '../config/themeConfig'
+import API from '@api'
+import { useDebounceFn } from '@vueuse/shared'
 
-const store = useBookStore();
-
+const store = useBookStore()
+const saveConfigDebounce = useDebounceFn(
+  () => API.saveReadConfig(store.config),
+  500,
+)
 //阅读界面设置改变时保存同步配置
-let configChanged = false;
 watch(
   () => store.config,
-  (newValue) => {
-    localStorage.setItem("config", JSON.stringify(newValue));
-    configChanged = true;
+  () => {
+    saveConfigDebounce()
   },
   {
     deep: 2, //深度为2
   },
-);
-// 设置页面关闭时同步设置到阅读APP
-watch(
-  () => store.readSettingsVisible,
-  (visbile) => {
-    if (!visbile && configChanged)
-      API.saveReadConfig(store.config).then(() => (configChanged = false));
-  },
-);
+)
 
 //主题颜色
-const theme = computed(() => store.theme);
-const isNight = computed(() => store.isNight);
-const moonIcon = computed(() => (theme.value == 6 ? "" : ""));
+const theme = computed(() => store.theme)
+const isNight = computed(() => store.isNight)
+const moonIcon = computed(() => (theme.value == 6 ? '' : ''))
 const themeColors = [
   {
-    background: "rgba(250, 245, 235, 0.8)",
+    background: 'rgba(250, 245, 235, 0.8)',
   },
   {
-    background: "rgba(245, 234, 204, 0.8)",
+    background: 'rgba(245, 234, 204, 0.8)',
   },
   {
-    background: "rgba(230, 242, 230, 0.8)",
+    background: 'rgba(230, 242, 230, 0.8)',
   },
   {
-    background: "rgba(228, 241, 245, 0.8)",
+    background: 'rgba(228, 241, 245, 0.8)',
   },
   {
-    background: "rgba(245, 228, 228, 0.8)",
+    background: 'rgba(245, 228, 228, 0.8)',
   },
   {
-    background: "rgba(224, 224, 224, 0.8)",
+    background: 'rgba(224, 224, 224, 0.8)',
   },
   {
-    background: "rgba(0, 0, 0, 0.5)",
+    background: 'rgba(0, 0, 0, 0.5)',
   },
-];
+]
 const popupTheme = computed(() => {
   return {
     background: settings.themes[theme.value].popup,
-  };
-});
-const setTheme = (theme) => {
-  store.config.theme = theme;
-};
+  }
+})
+const setTheme = (theme: number) => {
+  store.config.theme = theme
+}
 
 //预置字体
-const fonts = ref(["雅黑", "宋体", "楷书"]);
-const setFont = (font) => {
-  store.config.font = font;
-};
+const fonts = ref(['雅黑', '宋体', '楷书'])
+const setFont = (font: number) => {
+  store.config.font = font
+}
 const selectedFont = computed(() => {
-  return store.config.font;
-});
+  return store.config.font
+})
 //自定义字体
-const customFontName = ref(store.config.customFontName);
-const customFontSavePopVisible = ref(false);
+const customFontName = ref(store.config.customFontName)
+const customFontSavePopVisible = ref(false)
 const setCustomFont = () => {
-  store.config.font = -1;
-  store.config.customFontName = customFontName.value;
-};
+  customFontSavePopVisible.value = false
+  store.config.font = -1
+  store.config.customFontName = customFontName.value
+}
 // 加载网络字体
 const loadFontFromURL = () => {
-  ElMessageBox.prompt("请输入 字体网络链接", "提示", {
-    confirmButtonText: "确定",
-    cancelButtonText: "取消",
+  customFontSavePopVisible.value = false
+  ElMessageBox.prompt('请输入 字体网络链接', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
     inputPattern: /^https?:.+$/,
-    inputErrorMessage: "url 形式不正确",
+    inputErrorMessage: 'url 形式不正确',
     beforeClose: (action, instance, done) => {
-      if (action === "confirm") {
-        instance.confirmButtonLoading = true;
-        instance.confirmButtonText = "下载中……";
+      if (action === 'confirm') {
+        instance.confirmButtonLoading = true
+        instance.confirmButtonText = '下载中……'
         // instance.inputValue
-        const url = instance.inputValue;
-        if (typeof FontFace !== "function") {
-          ElMessage.error("浏览器不支持FontFace");
-          return done();
+        const url = instance.inputValue
+        if (typeof FontFace !== 'function') {
+          ElMessage.error('浏览器不支持FontFace')
+          return done()
         }
-        const fontface = new FontFace(customFontName.value, `url("${url}")`);
-        //@ts-ignore
-        document.fonts.add(fontface);
+        const fontface = new FontFace(customFontName.value, `url("${url}")`)
+        document.fonts.add(fontface)
         fontface
           .load()
           //API.getBookShelf()
           .then(function () {
-            instance.confirmButtonLoading = false;
-            ElMessage.info("字体加载成功！");
-            setCustomFont();
-            done();
+            instance.confirmButtonLoading = false
+            ElMessage.info('字体加载成功！')
+            setCustomFont()
+            done()
           })
           .catch(function (error) {
-            instance.confirmButtonLoading = false;
-            instance.confirmButtonText = "确定";
-            ElMessage.error("下载失败，请检查您输入的 url");
-            throw error;
-          });
+            instance.confirmButtonLoading = false
+            instance.confirmButtonText = '确定'
+            ElMessage.error('下载失败，请检查您输入的 url')
+            throw error
+          })
       } else {
-        done();
+        done()
       }
     },
-  });
-};
+  })
+}
 
 //字体大小
 const fontSize = computed(() => {
-  return store.config.fontSize;
-});
+  return store.config.fontSize
+})
 const moreFontSize = () => {
-  if (store.config.fontSize < 48) store.config.fontSize += 2;
-};
+  if (store.config.fontSize < 48) store.config.fontSize += 2
+}
 const lessFontSize = () => {
-  if (store.config.fontSize > 12) store.config.fontSize -= 2;
-};
+  if (store.config.fontSize > 12) store.config.fontSize -= 2
+}
 
 //字 行 段落间距
 const spacing = computed(() => {
-  return store.config.spacing;
-});
+  return store.config.spacing
+})
 const lessLetterSpacing = () => {
-  store.config.spacing.letter -= 0.01;
-};
+  store.config.spacing.letter -= 0.01
+}
 const moreLetterSpacing = () => {
-  store.config.spacing.letter += 0.01;
-};
+  store.config.spacing.letter += 0.01
+}
 const lessLineSpacing = () => {
-  store.config.spacing.line -= 0.1;
-};
+  store.config.spacing.line -= 0.1
+}
 const moreLineSpacing = () => {
-  store.config.spacing.line += 0.1;
-};
+  store.config.spacing.line += 0.1
+}
 const lessParagraphSpacing = () => {
-  store.config.spacing.paragraph -= 0.1;
-};
+  store.config.spacing.paragraph -= 0.1
+}
 const moreParagraphSpacing = () => {
-  store.config.spacing.paragraph += 0.1;
-};
+  store.config.spacing.paragraph += 0.1
+}
 
 //页面宽度
 const readWidth = computed(() => {
-  return store.config.readWidth;
-});
+  return store.config.readWidth
+})
 const moreReadWidth = () => {
   // 此时会截断页面
-  if (store.config.readWidth + 160 + 2 * 68 > window.innerWidth) return;
-  store.config.readWidth += 160;
-};
+  if (store.config.readWidth + 160 + 2 * 68 > window.innerWidth) return
+  store.config.readWidth += 160
+}
 const lessReadWidth = () => {
-  if (store.config.readWidth > 640) store.config.readWidth -= 160;
-};
+  if (store.config.readWidth > 640) store.config.readWidth -= 160
+}
 
 //翻页速度
 const jumpDuration = computed(() => {
-  return store.config.jumpDuration;
-});
+  return store.config.jumpDuration
+})
 const moreJumpDuration = () => {
-  store.config.jumpDuration += 100;
-};
+  store.config.jumpDuration += 100
+}
 const lessJumpDuration = () => {
-  if (store.config.jumpDuration === 0) return;
-  store.config.jumpDuration -= 100;
-};
+  if (store.config.jumpDuration === 0) return
+  store.config.jumpDuration -= 100
+}
 
 //无限加载
 const infiniteLoading = computed(() => {
-  return store.config.infiniteLoading;
-});
-const setInfiniteLoading = (loading) => {
-  store.config.infiniteLoading = loading;
-};
+  return store.config.infiniteLoading
+})
+const setInfiniteLoading = (loading: boolean) => {
+  store.config.infiniteLoading = loading
+}
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
 :deep(.iconfont) {
   font-family: iconfont;
   font-style: normal;
@@ -387,11 +373,11 @@ const setInfiniteLoading = (loading) => {
 .settings-wrapper {
   user-select: none;
   margin: -13px;
-  // width: 478px;
-  // height: 350px;
+  /*   width: 478px;
+  height: 350px; */
   text-align: left;
   padding: 40px 0 40px 24px;
-  background: #ede7da url("../assets/imgs/themes/popup_1.png") repeat;
+  background: #ede7da url('../assets/imgs/themes/popup_1.png') repeat;
 
   .settings-title {
     font-size: 18px;
@@ -416,7 +402,7 @@ const setInfiniteLoading = (loading) => {
         i {
           font:
             12px / 16px PingFangSC-Regular,
-            "-apple-system",
+            '-apple-system',
             Simsun;
           display: inline-block;
           min-width: 48px;
@@ -468,8 +454,8 @@ const setInfiniteLoading = (loading) => {
           font:
             14px / 34px PingFangSC-Regular,
             HelveticaNeue-Light,
-            "Helvetica Neue Light",
-            "Microsoft YaHei",
+            'Helvetica Neue Light',
+            'Microsoft YaHei',
             sans-serif;
         }
         .font-item-input {

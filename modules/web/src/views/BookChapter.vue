@@ -106,25 +106,18 @@
   </div>
 </template>
 
-<script setup>
-import jump from "@/plugins/jump";
-import settings from "@/config/themeConfig";
-import API from "@api";
-import { useLoading } from "@/hooks/loading";
-import { useThrottleFn } from "@vueuse/shared";
+<script setup lang="ts">
+import jump from '@/plugins/jump'
+import settings from '@/config/themeConfig'
+import API from '@api'
+import { useLoading } from '@/hooks/loading'
+import { useThrottleFn } from '@vueuse/shared'
+import { isNullOrBlank } from '@/utils/utils'
 
-const content = ref();
+const content = ref()
 // loading spinner
-const { isLoading, loadingWrapper } = useLoading(content, "正在获取信息");
-const store = useBookStore();
-
-// 读取阅读配置
-try {
-  const browerConfig = JSON.parse(localStorage.getItem("config"));
-  if (browerConfig != null) store.setConfig(browerConfig);
-} catch {
-  localStorage.removeItem("config");
-}
+const { isLoading, loadingWrapper } = useLoading(content, '正在获取信息')
+const store = useBookStore()
 
 const {
   catalog,
@@ -135,232 +128,238 @@ const {
   bookProgress,
   theme,
   isNight,
-} = storeToRefs(store);
+} = storeToRefs(store)
 
 const chapterPos = computed({
   get: () => store.readingBook.chapterPos,
-  set: (value) => (store.readingBook.chapterPos = value),
-});
+  set: value => (store.readingBook.chapterPos = value),
+})
 const chapterIndex = computed({
-  get: () => store.readingBook.index,
-  set: (value) => (store.readingBook.index = value),
-});
+  get: () => store.readingBook.chapterIndex,
+  set: value => (store.readingBook.chapterIndex = value),
+})
+const isSeachBook = computed({
+  get: () => store.readingBook.isSeachBook,
+  set: value => (store.readingBook.isSeachBook = value),
+})
+
+// 当前阅读书籍readingBook持久化
+watch(
+  () => store.readingBook,
+  book => {
+    // 保存localStorage
+    // localStorage.setItem(book.bookUrl, JSON.stringify(book));
+    // 最近阅读
+    localStorage.setItem('readingRecent', JSON.stringify(book))
+    //保存 sessionStorage
+    sessionStorage.setItem('chapterIndex', book.chapterIndex.toString())
+    sessionStorage.setItem('chapterPos', book.chapterPos.toString())
+  },
+)
 
 // 无限滚动
-const infiniteLoading = computed(() => store.config.infiniteLoading);
-let scrollObserver;
-const loading = ref();
+const infiniteLoading = computed(() => store.config.infiniteLoading)
+let scrollObserver: IntersectionObserver | null
+const loading = ref()
 watchEffect(() => {
   if (!infiniteLoading.value) {
-    scrollObserver?.disconnect();
+    scrollObserver?.disconnect()
   } else {
-    scrollObserver?.observe(loading.value);
+    scrollObserver?.observe(loading.value)
   }
-});
+})
 const loadMore = () => {
-  let index = chapterData.value.slice(-1)[0].index;
+  const index = chapterData.value.slice(-1)[0].index
   if (catalog.value.length - 1 > index) {
-    getContent(index + 1, false);
-    store.saveBookProgress(); // 保存的是上一章的进度，不是预载的本章进度
+    getContent(index + 1, false)
+    store.saveBookProgress() // 保存的是上一章的进度，不是预载的本章进度
   }
-};
+}
 // IntersectionObserver回调 底部加载
-const onReachBottom = (entries) => {
-  if (isLoading.value) return;
-  for (let { isIntersecting } of entries) {
-    if (!isIntersecting) return;
-    loadMore();
+const onReachBottom = (entries: IntersectionObserverEntry[]) => {
+  if (isLoading.value) return
+  for (const { isIntersecting } of entries) {
+    if (!isIntersecting) return
+    loadMore()
   }
-};
+}
 
 // 字体
 const fontFamily = computed(() => {
   if (store.config.font >= 0) {
-    return settings.fonts[store.config.font];
+    return settings.fonts[store.config.font]
   }
-  return store.config.customFontName;
-});
+  return store.config.customFontName
+})
 const fontSize = computed(() => {
-  return store.config.fontSize + "px";
-});
+  return store.config.fontSize + 'px'
+})
 
 // 主题部分
-const bodyColor = computed(() => settings.themes[theme.value].body);
-const chapterColor = computed(() => settings.themes[theme.value].content);
-const popupColor = computed(() => settings.themes[theme.value].popup);
+const bodyColor = computed(() => settings.themes[theme.value].body)
+const chapterColor = computed(() => settings.themes[theme.value].content)
+const popupColor = computed(() => settings.themes[theme.value].popup)
 
 const readWidth = computed(() => {
   if (!miniInterface.value) {
-    return store.config.readWidth - 130 + "px";
+    return store.config.readWidth - 130 + 'px'
   } else {
-    return window.innerWidth + "px";
+    return window.innerWidth + 'px'
   }
-});
+})
 const popupWidth = computed(() => {
   if (!miniInterface.value) {
-    return store.config.readWidth - 33;
+    return store.config.readWidth - 33
   } else {
-    return window.innerWidth - 33;
+    return window.innerWidth - 33
   }
-});
+})
 const bodyTheme = computed(() => {
   return {
     background: bodyColor.value,
-  };
-});
+  }
+})
 const chapterTheme = computed(() => {
   return {
     background: chapterColor.value,
     width: readWidth.value,
-  };
-});
-const showToolBar = ref(false);
+  }
+})
+const showToolBar = ref(false)
 const leftBarTheme = computed(() => {
   return {
     background: popupColor.value,
     marginLeft: miniInterface.value
       ? 0
-      : -(store.config.readWidth / 2 + 68) + "px",
-    display: miniInterface.value && !showToolBar.value ? "none" : "block",
-  };
-});
+      : -(store.config.readWidth / 2 + 68) + 'px',
+    display: miniInterface.value && !showToolBar.value ? 'none' : 'block',
+  }
+})
 const rightBarTheme = computed(() => {
   return {
     background: popupColor.value,
     marginRight: miniInterface.value
       ? 0
-      : -(store.config.readWidth / 2 + 52) + "px",
-    display: miniInterface.value && !showToolBar.value ? "none" : "block",
-  };
-});
+      : -(store.config.readWidth / 2 + 52) + 'px',
+    display: miniInterface.value && !showToolBar.value ? 'none' : 'block',
+  }
+})
 
 /**
  * pc移动端判断 最大阅读宽度修正
  * 阅读宽度最小为640px 加上工具栏 68px 52px 取较大值 为 776px
  */
 const onResize = () => {
-  store.setMiniInterface(window.innerWidth < 776);
-  const width = store.config.readWidth; /**包含padding */
-  checkPageWidth(width);
-};
+  store.setMiniInterface(window.innerWidth < 776)
+  const width = store.config.readWidth /**包含padding */
+  checkPageWidth(width)
+}
 /** 判断阅读宽度是否超出页面 */
-const checkPageWidth = (readWidth) => {
-  if (store.miniInterface) return;
-  if (readWidth + 2 * 68 > window.innerWidth) store.config.readWidth -= 160;
-};
+const checkPageWidth = (readWidth: number) => {
+  if (store.miniInterface) return
+  if (readWidth + 2 * 68 > window.innerWidth) store.config.readWidth -= 160
+}
 watch(
   () => store.config.readWidth,
-  (width) => checkPageWidth(width),
-);
+  width => checkPageWidth(width),
+)
 // 顶部底部跳转
-const top = ref();
-const bottom = ref();
+const top = ref()
+const bottom = ref()
 const toTop = () => {
-  jump(top.value);
-};
+  jump(top.value)
+}
 const toBottom = () => {
-  jump(bottom.value);
-};
+  jump(bottom.value)
+}
 
 // 书架路由切换
-const router = useRouter();
+const router = useRouter()
 const toShelf = () => {
-  router.push("/");
-};
+  router.push('/')
+}
 
 // 获取章节内容
-const chapterData = ref([]);
-const noPoint = ref(true);
-const getContent = (index, reloadChapter = true, chapterPos = 0) => {
+const chapterData = ref<{ index: number; content: string[]; title: string }[]>(
+  [],
+)
+const noPoint = ref(true)
+const getContent = (index: number, reloadChapter = true, chapterPos = 0) => {
   if (reloadChapter) {
     //展示进度条
-    store.setShowContent(false);
+    store.setShowContent(false)
     //强制滚回顶层
-    jump(top.value, { duration: 0 });
+    jump(top.value, { duration: 0 })
     //从目录，按钮切换章节时保存进度 预加载时不保存
-    saveReadingBookProgressToBrowser(index, chapterPos);
-    chapterData.value = [];
+    saveReadingBookProgressToBrowser(index, chapterPos)
+    chapterData.value = []
   }
-  let bookUrl = sessionStorage.getItem("bookUrl");
-  let { title, index: chapterIndex } = catalog.value[index];
+  const bookUrl = store.readingBook.bookUrl
+  const { title, index: chapterIndex } = catalog.value[index]
 
   loadingWrapper(
     API.getBookContent(bookUrl, chapterIndex).then(
-      (res) => {
+      res => {
         if (res.data.isSuccess) {
-          let data = res.data.data;
-          let content = data.split(/\n+/);
-          chapterData.value.push({ index, content, title });
-          if (reloadChapter) toChapterPos(chapterPos);
+          const data = res.data.data
+          const content = data.split(/\n+/)
+          chapterData.value.push({ index, content, title })
+          if (reloadChapter) toChapterPos(chapterPos)
         } else {
-          ElMessage({ message: res.data.errorMsg, type: "error" });
-          let content = [res.data.errorMsg];
-          chapterData.value.push({ index, content, title });
+          ElMessage({ message: res.data.errorMsg, type: 'error' })
+          const content = [res.data.errorMsg]
+          chapterData.value.push({ index, content, title })
         }
-        store.setContentLoading(true);
-        noPoint.value = false;
-        store.setShowContent(true);
+        store.setContentLoading(true)
+        noPoint.value = false
+        store.setShowContent(true)
         if (!res.data.isSuccess) {
-          throw res.data;
+          throw res.data
         }
       },
-      (err) => {
-        ElMessage({ message: "获取章节内容失败", type: "error" });
-        let content = ["获取章节内容失败！"];
-        chapterData.value.push({ index, content, title });
-        store.setShowContent(true);
-        throw err;
+      err => {
+        ElMessage({ message: '获取章节内容失败', type: 'error' })
+        const content = ['获取章节内容失败！']
+        chapterData.value.push({ index, content, title })
+        store.setShowContent(true)
+        throw err
       },
     ),
-  );
-};
+  )
+}
 
 // 章节进度跳转和计算
-const chapter = ref();
-const chapterRef = ref();
-const toChapterPos = (pos) => {
+const chapter = ref()
+const chapterRef = ref()
+const toChapterPos = (pos: number) => {
   nextTick(() => {
     if (chapterRef.value.length === 1)
-      chapterRef.value[0].scrollToReadedLength(pos);
-  });
-};
+      chapterRef.value[0].scrollToReadedLength(pos)
+  })
+}
 
 // 60秒保存一次进度
 const saveBookProgressThrottle = useThrottleFn(
   () => store.saveBookProgress(),
   60000,
-);
+)
 
-const onReadedLengthChange = (index, pos) => {
-  saveReadingBookProgressToBrowser(index, pos);
-  saveBookProgressThrottle();
-};
+const onReadedLengthChange = (index: number, pos: number) => {
+  saveReadingBookProgressToBrowser(index, pos)
+  saveBookProgressThrottle()
+}
 
 // 文档标题
 watchEffect(() => {
-  document.title = catalog.value[chapterIndex.value]?.title || document.title;
-});
+  document.title = catalog.value[chapterIndex.value]?.title || document.title
+})
 
 // 阅读记录保存浏览器
-const saveReadingBookProgressToBrowser = (index, pos) => {
-  //保存localStorage
-  let bookUrl = sessionStorage.getItem("bookUrl");
-  var book = JSON.parse(localStorage.getItem(bookUrl));
-  book.index = index;
-  book.chapterPos = pos;
-  localStorage.setItem(bookUrl, JSON.stringify(book));
-  //最近阅读
-  book = JSON.parse(localStorage.getItem("readingRecent"));
-  book.chapterIndex = index;
-  book.chapterPos = pos;
-  localStorage.setItem("readingRecent", JSON.stringify(book));
-  //保存vuex
-  chapterIndex.value = index;
-  chapterPos.value = pos;
-  //保存sessionStorage
-  sessionStorage.setItem("chapterIndex", index);
-  sessionStorage.setItem("chapterPos", String(pos));
-};
+const saveReadingBookProgressToBrowser = (index: number, pos: number) => {
+  // 保存pinia
+  chapterIndex.value = index
+  chapterPos.value = pos
+}
 
 // 进度同步
 // 返回导航变化 同步请求会在获取书架前完成
@@ -371,186 +370,210 @@ const saveReadingBookProgressToBrowser = (index, pos) => {
  * 注意不用监听点击链接导航变化 不对Safari<14.5兼容处理
  **/
 const onVisibilityChange = () => {
-  if (document.visibilityState == "hidden") {
-    API.saveBookProgressWithBeacon(bookProgress.value);
+  const _bookProgress = bookProgress.value
+  if (document.visibilityState == 'hidden' && _bookProgress) {
+    API.saveBookProgressWithBeacon(_bookProgress)
   }
-};
+}
 // 定时同步
 
 // 章节切换
 const toNextChapter = () => {
-  store.setContentLoading(true);
-  let index = chapterIndex.value + 1;
-  if (typeof catalog.value[index] !== "undefined") {
+  store.setContentLoading(true)
+  const index = chapterIndex.value + 1
+  if (typeof catalog.value[index] !== 'undefined') {
     ElMessage({
-      message: "下一章",
-      type: "info",
-    });
-    getContent(index);
-    store.saveBookProgress();
+      message: '下一章',
+      type: 'info',
+    })
+    getContent(index)
+    store.saveBookProgress()
   } else {
     ElMessage({
-      message: "本章是最后一章",
-      type: "error",
-    });
+      message: '本章是最后一章',
+      type: 'error',
+    })
   }
-};
+}
 const toPreChapter = () => {
-  store.setContentLoading(true);
-  let index = chapterIndex.value - 1;
-  if (typeof catalog.value[index] !== "undefined") {
+  store.setContentLoading(true)
+  const index = chapterIndex.value - 1
+  if (typeof catalog.value[index] !== 'undefined') {
     ElMessage({
-      message: "上一章",
-      type: "info",
-    });
-    getContent(index);
-    store.saveBookProgress();
+      message: '上一章',
+      type: 'info',
+    })
+    getContent(index)
+    store.saveBookProgress()
   } else {
     ElMessage({
-      message: "本章是第一章",
-      type: "error",
-    });
+      message: '本章是第一章',
+      type: 'error',
+    })
   }
-};
+}
 
-let canJump = true;
+let canJump = true
 // 监听方向键
-const handleKeyPress = (event) => {
-  if (!canJump) return;
+const handleKeyPress = (event: KeyboardEvent) => {
+  if (!canJump) return
   switch (event.key) {
-    case "ArrowLeft":
-      event.stopPropagation();
-      event.preventDefault();
-      toPreChapter();
-      break;
-    case "ArrowRight":
-      event.stopPropagation();
-      event.preventDefault();
-      toNextChapter();
-      break;
-    case "ArrowUp":
-      event.stopPropagation();
-      event.preventDefault();
+    case 'ArrowLeft':
+      event.stopPropagation()
+      event.preventDefault()
+      toPreChapter()
+      break
+    case 'ArrowRight':
+      event.stopPropagation()
+      event.preventDefault()
+      toNextChapter()
+      break
+    case 'ArrowUp':
+      event.stopPropagation()
+      event.preventDefault()
       if (document.documentElement.scrollTop === 0) {
-        ElMessage.warning("已到达页面顶部");
+        ElMessage.warning('已到达页面顶部')
       } else {
-        canJump = false;
+        canJump = false
         jump(0 - document.documentElement.clientHeight + 100, {
           duration: store.config.jumpDuration,
           callback: () => (canJump = true),
-        });
+        })
       }
-      break;
-    case "ArrowDown":
-      event.stopPropagation();
-      event.preventDefault();
+      break
+    case 'ArrowDown':
+      event.stopPropagation()
+      event.preventDefault()
       if (
         document.documentElement.clientHeight +
           document.documentElement.scrollTop ===
         document.documentElement.scrollHeight
       ) {
-        ElMessage.warning("已到达页面底部");
+        ElMessage.warning('已到达页面底部')
       } else {
-        canJump = false;
+        canJump = false
         jump(document.documentElement.clientHeight - 100, {
           duration: store.config.jumpDuration,
           callback: () => (canJump = true),
-        });
+        })
       }
-      break;
+      break
   }
-};
+}
 
 // 阻止默认滚动事件
-const ignoreKeyPress = (event) => {
-  if (event.key === "ArrowUp" || event.key === "ArrowDown") {
-    event.preventDefault();
-    event.stopPropagation();
+const ignoreKeyPress = (event: {
+  key: string
+  preventDefault: () => void
+  stopPropagation: () => void
+}) => {
+  if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+    event.preventDefault()
+    event.stopPropagation()
   }
-};
+}
 
 onMounted(() => {
   //获取书籍数据
-  let bookUrl = sessionStorage.getItem("bookUrl");
-  let bookName = sessionStorage.getItem("bookName");
-  let bookAuthor = sessionStorage.getItem("bookAuthor");
-  let chapterIndex = Number(sessionStorage.getItem("chapterIndex") || 0);
-  let chapterPos = Number(sessionStorage.getItem("chapterPos") || 0);
-  var book = JSON.parse(localStorage.getItem(bookUrl));
+  const bookUrl = sessionStorage.getItem('bookUrl')
+  const name = sessionStorage.getItem('bookName')
+  const author = sessionStorage.getItem('bookAuthor')
+  const chapterIndex = Number(sessionStorage.getItem('chapterIndex') || 0)
+  const chapterPos = Number(sessionStorage.getItem('chapterPos') || 0)
+  const isSeachBook = sessionStorage.getItem('isSeachBook') === 'true'
+  if (isNullOrBlank(bookUrl) || isNullOrBlank(name) || isNullOrBlank(author)) {
+    ElMessage.warning('书籍信息为空，即将自动返回书架页面...')
+    return setTimeout(toShelf, 500)
+  }
+  const book: typeof store.readingBook = {
+    // @ts-expect-error: bookUrl name author is NON_Blank string here
+    bookUrl,
+    // @ts-expect-error: bookUrl name author is NON_Blank string here
+    name,
+    // @ts-expect-error: bookUrl name author is NON_Blank string here
+    author,
+    chapterIndex,
+    chapterPos,
+    isSeachBook,
+  }
+  /*   const bookStr = localStorage.getItem(bookUrl);
+  if (isNullOrBlank(bookStr)) {
+    return setTimeout(toShelf, 500);
+  }
+  book = JSON.parse(bookStr as string);
   if (
     book == null ||
-    chapterIndex != book.index ||
+    chapterIndex != book.chapterIndex ||
     chapterPos != book.chapterPos
   ) {
     book = {
-      bookName: bookName,
-      bookAuthor: bookAuthor,
-      bookUrl: bookUrl,
-      index: chapterIndex,
-      chapterPos: chapterPos,
+      name: bookName!!,
+      author: bookAuthor!!,
+      bookUrl,
+      chapterIndex,
+      chapterPos,
+      isSeachBook
     };
     localStorage.setItem(bookUrl, JSON.stringify(book));
-  }
-  onResize();
-  window.addEventListener("resize", onResize);
+  } */
+  onResize()
+  window.addEventListener('resize', onResize)
   loadingWrapper(
-    API.getChapterList(bookUrl).then(
-      (res) => {
+    API.getChapterList(bookUrl as string).then(
+      res => {
         if (!res.data.isSuccess) {
-          ElMessage({ message: res.data.errorMsg, type: "error" });
-          setTimeout(toShelf, 500);
-          return;
+          ElMessage({ message: res.data.errorMsg, type: 'error' })
+          setTimeout(toShelf, 500)
+          return
         }
-        let data = res.data.data;
-        store.setCatalog(data);
-        store.setReadingBook(book);
+        const data = res.data.data
+        store.setCatalog(data)
+        store.setReadingBook(book)
 
-        getContent(chapterIndex, true, chapterPos);
-        window.addEventListener("keyup", handleKeyPress);
-        window.addEventListener("keydown", ignoreKeyPress);
+        getContent(chapterIndex, true, chapterPos)
+        window.addEventListener('keyup', handleKeyPress)
+        window.addEventListener('keydown', ignoreKeyPress)
         // 兼容Safari < 14
-        document.addEventListener("visibilitychange", onVisibilityChange);
+        document.addEventListener('visibilitychange', onVisibilityChange)
         //监听底部加载
         scrollObserver = new IntersectionObserver(onReachBottom, {
-          rootMargin: "-100% 0% 20% 0%",
-        });
-        infiniteLoading.value && scrollObserver.observe(loading.value);
+          rootMargin: '-100% 0% 20% 0%',
+        })
+        if (infiniteLoading.value === true)
+          scrollObserver.observe(loading.value)
         //第二次点击同一本书 页面标题不会变化
-        document.title = null;
-        document.title = bookName + " | " + catalog.value[chapterIndex].title;
+        document.title = '...'
+        document.title =
+          (name as string) + ' | ' + catalog.value[chapterIndex].title
       },
-      (err) => {
-        ElMessage({ message: "获取书籍目录失败", type: "error" });
-        throw err;
+      err => {
+        ElMessage({ message: '获取书籍目录失败', type: 'error' })
+        throw err
       },
     ),
-  );
-});
+  )
+})
 
 onUnmounted(() => {
-  window.removeEventListener("keyup", handleKeyPress);
-  window.removeEventListener("keydown", ignoreKeyPress);
-  window.removeEventListener("resize", onResize);
+  window.removeEventListener('keyup', handleKeyPress)
+  window.removeEventListener('keydown', ignoreKeyPress)
+  window.removeEventListener('resize', onResize)
   // 兼容Safari < 14
-  document.removeEventListener("visibilitychange", onVisibilityChange);
-  readSettingsVisible.value = false;
-  popCataVisible.value = false;
-  scrollObserver?.disconnect();
-  scrollObserver = null;
-});
+  document.removeEventListener('visibilitychange', onVisibilityChange)
+  readSettingsVisible.value = false
+  popCataVisible.value = false
+  scrollObserver?.disconnect()
+  scrollObserver = null
+})
 
 const addToBookShelfConfirm = async () => {
-  const bookUrl = sessionStorage.getItem("bookUrl");
-  const bookName = sessionStorage.getItem("bookName");
-  const isSeachBook = sessionStorage.getItem("isSeachBook");
-  const book = JSON.parse(localStorage.getItem(bookUrl));
-  sessionStorage.removeItem("isSeachBook");
+  const book = store.readingBook
   // 阅读的是搜索的书籍 并未在书架
-  if (isSeachBook === "true") {
-    await ElMessageBox.confirm(`是否将《${bookName}》放入书架？`, "放入书架", {
-      confirmButtonText: "确认",
-      cancelButtonText: "否",
-      type: "info",
+  if (book.isSeachBook === true) {
+    await ElMessageBox.confirm(`是否将《${book.name}》放入书架？`, '放入书架', {
+      confirmButtonText: '确认',
+      cancelButtonText: '否',
+      type: 'info',
       /*      
         ElMessageBox.confirm默认在触发hashChange事件时自动关闭
         按下物理返回键时触发hashChange事件
@@ -560,20 +583,22 @@ const addToBookShelfConfirm = async () => {
     })
       .then(() => {
         //选择是，无动作
+        isSeachBook.value = false
       })
       .catch(async () => {
         //选择否，删除书籍
-        await API.deleteBook(book);
-      });
+        await API.deleteBook(book)
+      })
+      .finally(() => sessionStorage.removeItem('isSeachBook'))
   }
-};
+}
 onBeforeRouteLeave(async (to, from, next) => {
-  console.log("onBeforeRouteLeave");
+  console.log('onBeforeRouteLeave')
   // 弹窗时停止响应按键翻页
-  window.removeEventListener("keyup", handleKeyPress);
-  await addToBookShelfConfirm();
-  next();
-});
+  window.removeEventListener('keyup', handleKeyPress)
+  await addToBookShelfConfirm()
+  next()
+})
 </script>
 
 <style lang="scss" scoped>
@@ -662,8 +687,8 @@ onBeforeRouteLeave(async (to, from, next) => {
   }
 
   .chapter {
-    font-family: "Microsoft YaHei", PingFangSC-Regular, HelveticaNeue-Light,
-      "Helvetica Neue Light", sans-serif;
+    font-family: 'Microsoft YaHei', PingFangSC-Regular, HelveticaNeue-Light,
+      'Helvetica Neue Light', sans-serif;
     text-align: left;
     padding: 0 65px;
     min-height: 100vh;
@@ -673,8 +698,8 @@ onBeforeRouteLeave(async (to, from, next) => {
     .content {
       font-size: 18px;
       line-height: 1.8;
-      font-family: "Microsoft YaHei", PingFangSC-Regular, HelveticaNeue-Light,
-        "Helvetica Neue Light", sans-serif;
+      font-family: 'Microsoft YaHei', PingFangSC-Regular, HelveticaNeue-Light,
+        'Helvetica Neue Light', sans-serif;
 
       .bottom-bar,
       .top-bar {

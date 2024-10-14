@@ -9,9 +9,12 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build && node scripts/sync.js",
+    "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
-    "lint:fix": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
+    "build-only": "vite build",
+    "type-check": "vue-tsc --build --force",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write src/"
   },
   "dependencies": {
     "@element-plus/icons-svg": "^2.3.1",
@@ -19,24 +22,31 @@
     "@vueuse/core": "^11.1.0",
     "@vueuse/shared": "^11.1.0",
     "axios": "^1.7.7",
-    "element-plus": "^2.8.4",
+    "element-plus": "^2.8.5",
     "hotkeys-js": "^3.13.7",
     "pinia": "^2.2.4",
-    "vue": "^3.5.11",
+    "vue": "^3.5.12",
     "vue-router": "^4.4.5",
     "vue3-virtual-scroll-list": "^0.2.1"
   },
   "devDependencies": {
+    "@eslint/compat": "^1.2.0",
+    "@eslint/js": "^9.12.0",
+    "@tsconfig/node20": "^20.1.4",
+    "@types/node": "^20.16.11",
     "@vitejs/plugin-vue": "^5.1.4",
-    "eslint": "^8.57.1",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.2.1",
-    "eslint-plugin-vue": "^9.28.0",
+    "@vue/eslint-config-prettier": "^10.0.0",
+    "@vue/eslint-config-typescript": "^14.0.1",
+    "@vue/tsconfig": "^0.5.1",
+    "eslint": "^9.12.0",
+    "eslint-plugin-vue": "^9.29.0",
+    "npm-run-all2": "^6.2.3",
     "prettier": "^3.3.3",
-    "sass": "^1.79.4",
+    "typescript": "~5.5.4",
     "unplugin-auto-import": "^0.18.3",
     "unplugin-icons": "^0.19.3",
     "unplugin-vue-components": "^0.27.4",
-    "vite": "^5.4.8"
+    "vite": "^5.4.8",
+    "vue-tsc": "^2.1.6"
   }
 }

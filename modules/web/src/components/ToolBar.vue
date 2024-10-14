@@ -36,7 +36,7 @@
 
     <div class="hotkeys-settings flex-column-center">
       <div
-        v-for="(button, index) in buttons"
+        v-for="(button, buttonIndex) in buttons"
         :key="button.name"
         class="hotkeys-item flex-space-between"
       >
@@ -44,9 +44,9 @@
           ><el-text>{{ button.name }}</el-text></span
         >
         <div class="hotkeys-item__content">
-          <div v-for="(key, index) in button.hotKeys" :key="key">
+          <div v-for="(key, hotKeysIndex) in button.hotKeys" :key="key">
             <kbd>{{ key }}</kbd>
-            <span v-if="index + 1 < button.hotKeys.length">
+            <span v-if="hotKeysIndex + 1 < button.hotKeys.length">
               <el-text>+</el-text>
             </span>
           </div>
@@ -56,7 +56,7 @@
           :disabled="recordKeyDowning"
           text
           :icon="Edit"
-          @click="recordKeyDown(index)"
+          @click="recordKeyDown(buttonIndex)"
           >编辑</el-button
         >
       </div>
@@ -64,59 +64,59 @@
   </el-dialog>
 </template>
 
-<script setup>
-import API from "@api";
-import { CircleCheckFilled, Edit } from "@element-plus/icons-vue";
-import hotkeys from "hotkeys-js";
-import { isInvaildSource } from "../utils/souce";
+<script setup lang="ts">
+import API from '@api'
+import { CircleCheckFilled, Edit } from '@element-plus/icons-vue'
+import hotkeys from 'hotkeys-js'
+import { getSourceName, isInvaildSource } from '../utils/souce'
 
-const store = useSourceStore();
+const store = useSourceStore()
 const pull = () => {
   const loadingMsg = ElMessage({
-    message: "加载中……",
+    message: '加载中……',
     showClose: true,
     duration: 0,
-  });
+  })
   API.getSources()
     .then(({ data }) => {
       if (data.isSuccess) {
-        store.changeTabName("editList");
-        store.saveSources(data.data);
+        store.changeTabName('editList')
+        store.saveSources(data.data)
         ElMessage({
           message: `成功拉取${data.data.length}条源`,
-          type: "success",
-        });
+          type: 'success',
+        })
       } else {
         ElMessage({
-          message: data.errorMsg ?? "后端错误",
-          type: "error",
-        });
+          message: data.errorMsg ?? '后端错误',
+          type: 'error',
+        })
       }
     })
-    .finally(() => loadingMsg.close());
-};
+    .finally(() => loadingMsg.close())
+}
 
 const push = () => {
-  let sources = store.sources;
-  store.changeTabName("editList");
+  const sources = store.sources
+  store.changeTabName('editList')
   if (sources.length === 0) {
     return ElMessage({
-      message: "空空如也",
-      type: "info",
-    });
+      message: '空空如也',
+      type: 'info',
+    })
   }
   ElMessage({
-    message: "正在推送中",
-    type: "info",
-  });
+    message: '正在推送中',
+    type: 'info',
+  })
   API.saveSources(sources).then(({ data }) => {
     if (data.isSuccess) {
-      let okData = data.data;
+      const okData = data.data
       if (Array.isArray(okData)) {
-        let failMsg = ``;
+        let failMsg = ``
         if (sources.length > okData.length) {
-          failMsg = "\n推送失败的源将用红色字体标注!";
-          store.setPushReturnSources(okData);
+          failMsg = '\n推送失败的源将用红色字体标注!'
+          store.setPushReturnSources(okData)
         }
         ElMessage({
           message: `批量推送源到「阅读3.0APP」\n共计: ${
@@ -124,168 +124,163 @@ const push = () => {
           } 条\n成功: ${okData.length} 条\n失败: ${
             sources.length - okData.length
           } 条${failMsg}`,
-          type: "success",
-        });
+          type: 'success',
+        })
       }
     } else {
       ElMessage({
         message: `批量推送源失败!\nErrorMsg: ${data.errorMsg}`,
-        type: "error",
-      });
+        type: 'error',
+      })
     }
-  });
-};
+  })
+}
 
 const conver2Tab = () => {
-  store.changeTabName("editTab");
-  store.changeEditTabSource(store.currentSource);
-};
+  store.changeTabName('editTab')
+  store.changeEditTabSource(store.currentSource)
+}
 const conver2Source = () => {
-  store.changeCurrentSource(store.editTabSource);
-};
+  store.changeCurrentSource(store.editTabSource)
+}
 
 const undo = () => {
-  store.editHistoryUndo();
-};
+  store.editHistoryUndo()
+}
 
 const clearEdit = () => {
-  store.clearEdit();
+  store.clearEdit()
   ElMessage({
-    message: "已清除",
-    type: "success",
-  });
-};
+    message: '已清除',
+    type: 'success',
+  })
+}
 
 const redo = () => {
-  store.clearEdit();
-  store.clearAllHistory();
+  store.clearEdit()
+  store.clearAllHistory()
   ElMessage({
-    message: "已清除所有历史记录",
-    type: "success",
-  });
-};
+    message: '已清除所有历史记录',
+    type: 'success',
+  })
+}
 
 const saveSource = () => {
-  let isBookSource = /bookSource/i.test(location.href),
-    /** @type {import("@/source.js").Source} */
-    source = store.currentSource;
+  const source = store.currentSource
   if (isInvaildSource(source)) {
     API.saveSource(source).then(({ data }) => {
+      const sourceName = getSourceName(source)
       if (data.isSuccess) {
         ElMessage({
-          message: `源《${
-            isBookSource ? source.bookSourceName : source.sourceName
-          }》已成功保存到「阅读3.0APP」`,
-          type: "success",
-        });
+          message: `源《${sourceName}》已成功保存到「阅读3.0APP」`,
+          type: 'success',
+        })
         //save to store
-        store.saveCurrentSource();
+        store.saveCurrentSource()
       } else {
         ElMessage({
-          message: `源《${
-            isBookSource ? source.bookSourceName : source.sourceName
-          }》保存失败!\nErrorMsg: ${data.errorMsg}`,
-          type: "error",
-        });
+          message: `源《${sourceName}》保存失败!\nErrorMsg: ${data.errorMsg}`,
+          type: 'error',
+        })
       }
-    });
+    })
   } else {
     ElMessage({
       message: `请检查<必填>项是否全部填写`,
-      type: "error",
-    });
+      type: 'error',
+    })
   }
-};
+}
 
 const debug = () => {
-  store.startDebug();
-};
+  store.startDebug()
+}
 
-const buttons = ref(
+const buttons = ref<{ name: string; hotKeys: string[]; action: () => void }[]>(
   Array.of(
-    { name: "⇈推送源", hotKeys: [], action: push },
-    { name: "⇊拉取源", hotKeys: [], action: pull },
-    { name: "⋙生成源", hotKeys: [], action: conver2Tab },
-    { name: "⋘编辑源", hotKeys: [], action: conver2Source },
-    { name: "✗清空表单", hotKeys: [], action: clearEdit },
-    { name: "↶撤销操作", hotKeys: [], action: undo },
-    { name: "↷重做操作", hotKeys: [], action: redo },
-    { name: "⇏调试源", hotKeys: [], action: debug },
-    { name: "✓保存源", hotKeys: [], action: saveSource },
+    { name: '⇈推送源', hotKeys: [], action: push },
+    { name: '⇊拉取源', hotKeys: [], action: pull },
+    { name: '⋙生成源', hotKeys: [], action: conver2Tab },
+    { name: '⋘编辑源', hotKeys: [], action: conver2Source },
+    { name: '✗清空表单', hotKeys: [], action: clearEdit },
+    { name: '↶撤销操作', hotKeys: [], action: undo },
+    { name: '↷重做操作', hotKeys: [], action: redo },
+    { name: '⇏调试源', hotKeys: [], action: debug },
+    { name: '✓保存源', hotKeys: [], action: saveSource },
   ),
-);
-const hotkeysDialogVisible = ref(true);
+)
+const hotkeysDialogVisible = ref(true)
 
-const recordKeyDowning = ref(false);
+const recordKeyDowning = ref(false)
 
-const recordKeyDownIndex = ref(-1);
+const recordKeyDownIndex = ref(-1)
 
 const stopRecordKeyDown = () => {
   if (!recordKeyDowning.value) {
-    hotkeysDialogVisible.value = false;
+    hotkeysDialogVisible.value = false
   }
-  recordKeyDowning.value = false;
-};
+  recordKeyDowning.value = false
+}
 
 watch(
   hotkeysDialogVisible,
-  (visibale) => {
+  visibale => {
     if (!visibale) {
-      hotkeys.unbind("*");
-      readHotkeysConfig();
-      bindHotKeys();
-      return;
+      hotkeys.unbind('*')
+      readHotkeysConfig()
+      bindHotKeys()
+      return
     }
-    readHotkeysConfig();
-    hotkeys.unbind();
+    readHotkeysConfig()
+    hotkeys.unbind()
     /**监听按键 */
-    hotkeys("*", (event) => {
-      event.preventDefault();
-      let pressedKeys = hotkeys.getPressedKeyString();
-      if (pressedKeys.length == 1 && pressedKeys[0] == "esc") {
+    hotkeys('*', event => {
+      event.preventDefault()
+      const pressedKeys = hotkeys.getPressedKeyString()
+      if (pressedKeys.length == 1 && pressedKeys[0] == 'esc') {
         //单独按下esc 不录入
-        return;
+        return
       }
       if (recordKeyDowning.value && recordKeyDownIndex.value > -1)
-        buttons.value[recordKeyDownIndex.value].hotKeys = pressedKeys;
-    });
+        buttons.value[recordKeyDownIndex.value].hotKeys = pressedKeys
+    })
   },
   { immediate: true },
-);
+)
 
-const recordKeyDown = (index) => {
-  recordKeyDowning.value = true;
+const recordKeyDown = (index: number) => {
+  recordKeyDowning.value = true
   ElMessage({
-    message: "按ESC键或者点击空白处结束录入",
-    type: "info",
-  });
-  buttons.value[index].hotKeys = [];
-  recordKeyDownIndex.value = index;
-};
+    message: '按ESC键或者点击空白处结束录入',
+    type: 'info',
+  })
+  buttons.value[index].hotKeys = []
+  recordKeyDownIndex.value = index
+}
 
 const saveHotKeys = () => {
-  const hotKeysConfig = [];
+  const hotKeysConfig: string[][] = []
   buttons.value.forEach(({ hotKeys }) => {
-    hotKeysConfig.push(hotKeys);
-  });
-  saveHotkeysConfig(hotKeysConfig);
-  hotkeysDialogVisible.value = false;
-};
+    hotKeysConfig.push(hotKeys)
+  })
+  saveHotkeysConfig(hotKeysConfig)
+  hotkeysDialogVisible.value = false
+}
 
 const bindHotKeys = () => {
   // hotkeys默认过滤INPUT SELECT TEXTAREA
-  hotkeys.filter = () => true;
+  hotkeys.filter = () => true
   buttons.value.forEach(({ hotKeys, action }) => {
-    if (hotKeys.length == 0) return;
-    hotkeys(hotKeys.join("+"), (event) => {
-      event.preventDefault();
-      action.call(null);
-    });
-  });
-};
-const saveHotkeysConfig = (config) => {
-  localStorage.setItem("legado_web_hotkeys", JSON.stringify(config));
-};
+    if (hotKeys.length == 0) return
+    hotkeys(hotKeys.join('+'), event => {
+      event.preventDefault()
+      action.call(null)
+    })
+  })
+}
+const saveHotkeysConfig = (config: string[][]) => {
+  localStorage.setItem('legado_web_hotkeys', JSON.stringify(config))
+}
 
 /**
  * 读取快捷键配置
@@ -293,26 +288,28 @@ const saveHotkeysConfig = (config) => {
  */
 function readHotkeysConfig() {
   try {
-    const config = JSON.parse(localStorage.getItem("legado_web_hotkeys"));
-    if (!Array.isArray(config) || config.length == 0) return false;
-    buttons.value.forEach((button, index) => (button.hotKeys = config[index]));
-    return true;
+    const localStorageConfig = localStorage.getItem('legado_web_hotkeys')
+    if (localStorageConfig === null) return false
+    const config = JSON.parse(localStorageConfig)
+    if (!Array.isArray(config) || config.length == 0) return false
+    buttons.value.forEach((button, index) => (button.hotKeys = config[index]))
+    return true
   } catch {
-    ElMessage({ message: "快捷键配置错误", type: "error" });
-    localStorage.removeItem("legado_web_hotkeys");
+    ElMessage({ message: '快捷键配置错误', type: 'error' })
+    localStorage.removeItem('legado_web_hotkeys')
   }
-  return false;
+  return false
 }
 
 onMounted(() => {
   /**读取热键配置 */
   if (readHotkeysConfig()) {
-    hotkeysDialogVisible.value = false;
+    hotkeysDialogVisible.value = false
   }
-});
+})
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
 .flex-space-between {
   display: flex;
   justify-content: space-between;
@@ -337,7 +334,7 @@ onMounted(() => {
     justify-content: flex-end;
     margin-right: 1em;
   }
-  &__content {
+  .hotkeys-item__content {
     display: flex;
     flex-wrap: wrap;
     flex: 1;
