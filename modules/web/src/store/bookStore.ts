@@ -219,7 +219,9 @@ export const useBookStore = defineStore('book', {
           this.bookProgress,
         )
       }
-      return API.saveBookProgress(this.bookProgress)
+      // 直接关闭浏览器时 http请求可能被取消
+      // return API.saveBookProgress(this.bookProgress)
+      return API.saveBookProgressWithBeacon(this.bookProgress)
     },
   },
 })

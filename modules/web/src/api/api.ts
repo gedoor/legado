@@ -54,9 +54,11 @@ const getReadConfig = async (http_url = legado_http_entry_point) => {
 const saveReadConfig = (config: webReadConfig) =>
   ajax.post<LeagdoApiResponse<string>>('/saveReadConfig', config)
 
+/** @deprecated: 使用`API.saveBookProgressWithBeacon`以确保在页面或者直接关闭的情况下保存进度 */
 const saveBookProgress = (bookProgress: BookProgress) =>
   ajax.post('/saveBookProgress', bookProgress)
 
+/**主要在直接关闭浏览器情况下可靠发送书籍进度 */
 const saveBookProgressWithBeacon = (bookProgress: BookProgress) => {
   if (!bookProgress) return
   // 常规请求可能会被取消 使用Fetch keep-alive 或者 navigator.sendBeacon

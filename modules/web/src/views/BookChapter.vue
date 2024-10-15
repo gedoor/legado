@@ -155,6 +155,7 @@ watch(
     sessionStorage.setItem('chapterIndex', book.chapterIndex.toString())
     sessionStorage.setItem('chapterPos', book.chapterPos.toString())
   },
+  { deep: 1 },
 )
 
 // 无限滚动
@@ -371,7 +372,7 @@ const saveReadingBookProgressToBrowser = (index: number, pos: number) => {
 const onVisibilityChange = () => {
   const _bookProgress = bookProgress.value
   if (document.visibilityState == 'hidden' && _bookProgress) {
-    API.saveBookProgressWithBeacon(_bookProgress)
+    store.saveBookProgress()
   }
 }
 // 定时同步
@@ -472,7 +473,8 @@ const ignoreKeyPress = (event: {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
+  await store.loadWebConfig()
   //获取书籍数据
   const bookUrl = sessionStorage.getItem('bookUrl')
   const name = sessionStorage.getItem('bookName')

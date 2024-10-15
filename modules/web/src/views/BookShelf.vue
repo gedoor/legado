@@ -288,7 +288,7 @@ const toDetail = (
 
 const loadShelf = async () => {
   try {
-    //await store.loadWebConfig() called in router.beforeEach
+    await store.loadWebConfig()
     await store.saveBookProgress()
     //确保各种网络情况下同步请求先完成
     await fetchBookShelfData()
