@@ -43,7 +43,7 @@ export const useBookStore = defineStore('book', {
       popCataVisible: false,
       contentLoading: true,
       showContent: false,
-      config: default_config as webReadConfig,
+      config: default_config,
       miniInterface: false,
       readSettingsVisible: false,
     }
@@ -182,7 +182,7 @@ export const useBookStore = defineStore('book', {
       )
     },
     setConfig(config?: webReadConfig) {
-      this.config = Object.assign({}, this.config ?? default_config, config)
+      this.config = Object.assign({}, this.config, config)
     },
     setReadSettingsVisible(visible: boolean) {
       this.readSettingsVisible = visible
