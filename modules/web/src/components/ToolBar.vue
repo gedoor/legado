@@ -309,7 +309,7 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .flex-space-between {
   display: flex;
   justify-content: space-between;

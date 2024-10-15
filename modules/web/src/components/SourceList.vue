@@ -143,7 +143,7 @@ const outExport = () => {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .tool {
   display: flex;
   margin: 4px 0;

@@ -36,7 +36,7 @@ const isSaveError = computed(() => {
   return !map.has(sourceUrl.value)
 })
 </script>
-<style scoped>
+<style lang="scss" scoped>
 :deep(.el-checkbox__label) {
   flex: 1;
   display: flex;

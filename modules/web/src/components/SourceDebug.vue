@@ -60,7 +60,7 @@ const isBookSource = computed(() => {
 })
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 :deep(#debug-text) {
   height: calc(100vh - 45px - 36px - 5px);
 }

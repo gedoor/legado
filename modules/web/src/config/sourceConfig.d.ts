@@ -2,11 +2,6 @@ import type { Source } from '@/source'
 import bookSourceEditConfig from './bookSourceEditConfig'
 import rssSourceEditConfig from './rssSourceEditConfig'
 
-type PickAnyValueKey<T> = {
-  [K in keyof T]: T[K] extends { [prop: string]: string } ? K : never
-}
-type b = keyof PickAnyValueKey<BookSoure>
-
 type SourceConfigKey =
   | keyof typeof bookSourceEditConfig
   | keyof typeof rssSourceEditConfig

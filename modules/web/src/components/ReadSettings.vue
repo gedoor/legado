@@ -356,7 +356,7 @@ const setInfiniteLoading = (loading: boolean) => {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 :deep(.iconfont) {
   font-family: iconfont;
   font-style: normal;

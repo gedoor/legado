@@ -288,11 +288,7 @@ const toDetail = (
 
 const loadShelf = async () => {
   try {
-    if (store.configInited === false) {
-      const config = await API.getReadConfig()
-      applyReadConfig(config)
-    } else {
-    }
+    //await store.loadWebConfig() called in router.beforeEach
     await store.saveBookProgress()
     //确保各种网络情况下同步请求先完成
     await fetchBookShelfData()
@@ -304,35 +300,11 @@ const loadShelf = async () => {
   }
 }
 
-const fetchBookShelfData = () => {
-  return API.getBookShelf().then(response => {
-    store.setConnectType('success')
-    if (response.data.isSuccess) {
-      //store.increaseBookNum(response.data.data.length);
-      store.addBooks(
-        response.data.data.sort(function (a, b) {
-          const x = a['durChapterTime'] || 0
-          const y = b['durChapterTime'] || 0
-          return y - x
-        }),
-      )
-    } else {
-      if (
-        response.data.errorMsg.includes('还没有添加小说') &&
-        shelf.value.length > 0
-      ) {
-        ElNotification.warning({
-          title: '提示',
-          message: '当前书架上的书籍已经被删除',
-          position: 'bottom-right',
-        })
-        return store.clearBooks()
-      }
-      ElMessage.error(response.data.errorMsg ?? '后端返回格式错误！')
-    }
-    store.setConnectStatus('已连接 ' + legado_http_entry_point)
-    store.setNewConnect(false)
-  })
+const fetchBookShelfData = async () => {
+  await store.loadBookShelf()
+  store.setConnectType('primary')
+  store.setConnectStatus('已连接 ' + legado_http_entry_point)
+  store.setNewConnect(false)
 }
 onMounted(() => {
   //获取最近阅读书籍
@@ -348,7 +320,7 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .index-wrapper {
   height: 100%;
   width: 100%;

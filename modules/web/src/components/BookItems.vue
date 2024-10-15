@@ -76,7 +76,7 @@ const subJustify = computed(() =>
 )
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .books-wrapper {
   overflow: auto;
 

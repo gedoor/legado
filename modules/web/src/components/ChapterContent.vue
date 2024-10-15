@@ -26,6 +26,7 @@ import type { webReadConfig } from '@/web'
 const store = useBookStore()
 const readWidth = computed(() => store.config.readWidth)
 const bookUrl = computed(() => store.readingBook.bookUrl)
+
 const props = defineProps<{
   chapterIndex: number
   contents: Array<string>
@@ -116,7 +117,7 @@ onUnmounted(() => {
 })
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .title {
   margin-bottom: 57px;
   font:

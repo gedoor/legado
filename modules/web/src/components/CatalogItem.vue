@@ -33,7 +33,7 @@ const catas = computed(() => {
 })
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .selected {
   color: #eb4259;
 }

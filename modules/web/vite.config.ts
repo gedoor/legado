@@ -52,7 +52,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     esbuild: {
-      drop: ["console"],
+      drop: mode === "development" ? undefined : ["console", "debugger"],
     },
     build: {
       rollupOptions: {

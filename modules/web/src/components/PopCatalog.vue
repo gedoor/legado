@@ -92,7 +92,7 @@ const gotoChapter = (chapter: BookChapter) => {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .cata-wrapper {
   margin: -16px;
   padding: 18px 0 24px 25px;

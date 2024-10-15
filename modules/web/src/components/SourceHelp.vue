@@ -53,7 +53,7 @@ import { Link } from '@element-plus/icons-vue'
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .el-link {
   padding: 4px;
 }

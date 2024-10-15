@@ -34,7 +34,7 @@ watchEffect(async () => {
   }
 })
 </script>
-<style scoped>
+<style lang="scss" scoped>
 :deep(.el-input) {
   width: 100%;
 }

@@ -17,7 +17,7 @@
         >
           <PopCatalog @getContent="getContent" class="popup" />
           <template #reference>
-            <div class="tool-icon" :class="{ 'no-point': noPoint }">
+            <div class="tool-icon" :class="{ 'no-point': false }">
               <div class="iconfont">&#58905;</div>
               <div class="icon-text">目录</div>
             </div>
@@ -318,7 +318,6 @@ const getContent = (index: number, reloadChapter = true, chapterPos = 0) => {
         }
       },
       err => {
-        ElMessage({ message: '获取章节内容失败', type: 'error' })
         const content = ['获取章节内容失败！']
         chapterData.value.push({ index, content, title })
         store.setShowContent(true)
@@ -496,61 +495,25 @@ onMounted(() => {
     chapterPos,
     isSeachBook,
   }
-  /*   const bookStr = localStorage.getItem(bookUrl);
-  if (isNullOrBlank(bookStr)) {
-    return setTimeout(toShelf, 500);
-  }
-  book = JSON.parse(bookStr as string);
-  if (
-    book == null ||
-    chapterIndex != book.chapterIndex ||
-    chapterPos != book.chapterPos
-  ) {
-    book = {
-      name: bookName!!,
-      author: bookAuthor!!,
-      bookUrl,
-      chapterIndex,
-      chapterPos,
-      isSeachBook
-    };
-    localStorage.setItem(bookUrl, JSON.stringify(book));
-  } */
   onResize()
   window.addEventListener('resize', onResize)
   loadingWrapper(
-    API.getChapterList(bookUrl as string).then(
-      res => {
-        if (!res.data.isSuccess) {
-          ElMessage({ message: res.data.errorMsg, type: 'error' })
-          setTimeout(toShelf, 500)
-          return
-        }
-        const data = res.data.data
-        store.setCatalog(data)
-        store.setReadingBook(book)
-
-        getContent(chapterIndex, true, chapterPos)
-        window.addEventListener('keyup', handleKeyPress)
-        window.addEventListener('keydown', ignoreKeyPress)
-        // 兼容Safari < 14
-        document.addEventListener('visibilitychange', onVisibilityChange)
-        //监听底部加载
-        scrollObserver = new IntersectionObserver(onReachBottom, {
-          rootMargin: '-100% 0% 20% 0%',
-        })
-        if (infiniteLoading.value === true)
-          scrollObserver.observe(loading.value)
-        //第二次点击同一本书 页面标题不会变化
-        document.title = '...'
-        document.title =
-          (name as string) + ' | ' + catalog.value[chapterIndex].title
-      },
-      err => {
-        ElMessage({ message: '获取书籍目录失败', type: 'error' })
-        throw err
-      },
-    ),
+    store.loadWebCatalog(book).then(chapters => {
+      store.setReadingBook(book)
+      getContent(chapterIndex, true, chapterPos)
+      window.addEventListener('keyup', handleKeyPress)
+      window.addEventListener('keydown', ignoreKeyPress)
+      // 兼容Safari < 14
+      document.addEventListener('visibilitychange', onVisibilityChange)
+      //监听底部加载
+      scrollObserver = new IntersectionObserver(onReachBottom, {
+        rootMargin: '-100% 0% 20% 0%',
+      })
+      if (infiniteLoading.value === true) scrollObserver.observe(loading.value)
+      //第二次点击同一本书 页面标题不会变化
+      document.title = '...'
+      document.title = (name as string) + ' | ' + chapters[chapterIndex].title
+    }),
   )
 })
 
