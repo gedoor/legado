@@ -491,7 +491,6 @@ onMounted(async () => {
     bookUrl,
     // @ts-expect-error: bookUrl name author is NON_Blank string here
     name,
-    // @ts-expect-error: bookUrl name author is NON_Blank string here
     author,
     chapterIndex,
     chapterPos,
