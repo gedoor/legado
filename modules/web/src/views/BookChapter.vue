@@ -482,7 +482,7 @@ onMounted(async () => {
   const chapterIndex = Number(sessionStorage.getItem('chapterIndex') || 0)
   const chapterPos = Number(sessionStorage.getItem('chapterPos') || 0)
   const isSeachBook = sessionStorage.getItem('isSeachBook') === 'true'
-  if (isNullOrBlank(bookUrl) || isNullOrBlank(name) || isNullOrBlank(author)) {
+  if (isNullOrBlank(bookUrl) || isNullOrBlank(name) || author === null) {
     ElMessage.warning('书籍信息为空，即将自动返回书架页面...')
     return setTimeout(toShelf, 500)
   }
@@ -539,7 +539,7 @@ const addToBookShelfConfirm = async () => {
       confirmButtonText: '确认',
       cancelButtonText: '否',
       type: 'info',
-      /*      
+      /*
         ElMessageBox.confirm默认在触发hashChange事件时自动关闭
         按下物理返回键时触发hashChange事件
         使用router.push("/")则不会触发hashChange事件
