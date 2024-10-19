@@ -255,9 +255,10 @@ const onResize = () => {
   const width = store.config.readWidth /**包含padding */
   checkPageWidth(width)
 }
-/** 判断阅读宽度是否超出页面 */
+/** 判断阅读宽度是否超出页面或者低于默认值640 */
 const checkPageWidth = (readWidth: number) => {
   if (store.miniInterface) return
+  if (readWidth < 640) store.config.readWidth = 640
   if (readWidth + 2 * 68 > window.innerWidth) store.config.readWidth -= 160
 }
 watch(
@@ -462,11 +463,7 @@ const handleKeyPress = (event: KeyboardEvent) => {
 }
 
 // 阻止默认滚动事件
-const ignoreKeyPress = (event: {
-  key: string
-  preventDefault: () => void
-  stopPropagation: () => void
-}) => {
+const ignoreKeyPress = (event: KeyboardEvent) => {
   if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
     event.preventDefault()
     event.stopPropagation()
