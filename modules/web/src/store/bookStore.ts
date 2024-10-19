@@ -29,9 +29,6 @@ let webReadConfigLoadedDate: Date | undefined
 export const useBookStore = defineStore('book', {
   state: () => {
     return {
-      connectStatus: '正在连接后端服务器……',
-      connectType: 'primary' as 'primary' | 'success' | 'danger',
-      newConnect: true,
       searchBooks: [] as SeachBook[],
       shelf: [] as Book[],
       catalog: [] as BookChapter[],
@@ -69,15 +66,6 @@ export const useBookStore = defineStore('book', {
     isNight: state => state.config.theme == 6,
   },
   actions: {
-    setConnectStatus(connectStatus: string) {
-      this.connectStatus = connectStatus
-    },
-    setConnectType(connectType: 'primary' | 'success' | 'danger') {
-      this.connectType = connectType
-    },
-    setNewConnect(newConnect: boolean) {
-      this.newConnect = newConnect
-    },
     /** 从后端加载书架书籍，优先返回内存缓存 */
     async loadBookShelf(): Promise<Book[]> {
       const fetchBookshellf_promise = API.getBookShelf().then(resp => {
@@ -116,16 +104,13 @@ export const useBookStore = defineStore('book', {
         return await fetchBookshellf_promise
       }
     },
-    clearBooks() {
-      this.shelf = []
-    },
     /** 从后端加载书籍目录，优先返回内存缓存 */
     async loadWebCatalog(
       book: typeof this.readingBook,
     ): Promise<BookChapter[]> {
       const { bookUrl, name, chapterIndex } = book
       const fetchChapterList_promise = API.getChapterList(
-        book.bookUrl as string,
+        bookUrl as string,
       ).then(res => {
         const { isSuccess, data, errorMsg } = res.data
         if (isSuccess === false) {
@@ -133,13 +118,14 @@ export const useBookStore = defineStore('book', {
           throw new Error()
         }
         if (
+          bookUrl === this.readingBook.bookUrl &&
           data.length !== this.catalog.length &&
           data.length > 0 &&
           this.catalog.length > 0
         ) {
           ElMessage.info(`书籍${name}: 章节目录已更新`)
         }
-        this.setCatalog(data)
+        this.catalog = data
         console.log(`书籍${name}: 章节目录已更新`)
         return this.catalog
       })
@@ -154,9 +140,6 @@ export const useBookStore = defineStore('book', {
         console.log(`从阅读后端获取书籍《${name}》 章节目录数据...`)
         return await fetchChapterList_promise
       }
-    },
-    setCatalog(catalog: BookChapter[]) {
-      this.catalog = catalog
     },
     setPopCataVisible(visible: boolean) {
       this.popCataVisible = visible

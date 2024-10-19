@@ -175,9 +175,9 @@ const searchBook = () => {
 }
 
 //连接状态
-const connectStatus = computed(() => store.connectStatus)
-const connectType = computed(() => store.connectType)
-const newConnect = computed(() => store.newConnect)
+const connectionStore = useConnectionStore()
+const { connectStatus, connectType, newConnect } = storeToRefs(connectionStore)
+
 const setLegadoRetmoteUrl = () => {
   ElMessageBox.prompt(
     '请输入 后端地址 ( 如：http://127.0.0.1:9527 或者通过内网穿透的地址)',
@@ -190,34 +190,30 @@ const setLegadoRetmoteUrl = () => {
       inputErrorMessage: '输入的格式不对',
       beforeClose: (action, instance, done) => {
         if (action === 'confirm') {
-          store.setNewConnect(true)
+          connectionStore.setNewConnect(true)
           instance.confirmButtonLoading = true
           instance.confirmButtonText = '校验中……'
           // instance.inputValue
           const url = new URL(instance.inputValue).toString()
           API.getReadConfig(url)
-            //API.getBookShelf()
             .then(function (config) {
+              connectionStore.setNewConnect(false)
               applyReadConfig(config)
               instance.confirmButtonLoading = false
-              store.setConnectType('success')
               store.clearSearchBooks()
-              store.setNewConnect(false)
               setApiEntryPoint(...parseLeagdoHttpUrlWithDefault(url))
               if (url === location.origin) {
                 localStorage.removeItem(baseURL_localStorage_key)
               } else {
                 localStorage.setItem(baseURL_localStorage_key, url)
               }
-              store.setConnectStatus('已连接 ' + url.toString())
-              fetchBookShelfData()
+              store.loadBookShelf()
               done()
             })
             .catch(function (error) {
+              connectionStore.setNewConnect(false)
               instance.confirmButtonLoading = false
               instance.confirmButtonText = '确定'
-              ElMessage.error('访问失败，请检查您输入的 url')
-              store.setNewConnect(false)
               throw error
             })
         } else {
@@ -287,25 +283,12 @@ const toDetail = (
 }
 
 const loadShelf = async () => {
-  try {
-    await store.loadWebConfig()
-    await store.saveBookProgress()
-    //确保各种网络情况下同步请求先完成
-    await fetchBookShelfData()
-  } catch (error: unknown) {
-    store.setConnectType('danger')
-    store.setConnectStatus('连接异常')
-    store.setNewConnect(false)
-    throw error
-  }
+  await store.loadWebConfig()
+  await store.saveBookProgress()
+  //确保各种网络情况下同步请求先完成
+  await store.loadBookShelf()
 }
 
-const fetchBookShelfData = async () => {
-  await store.loadBookShelf()
-  store.setConnectType('primary')
-  store.setConnectStatus('已连接 ' + legado_http_entry_point)
-  store.setNewConnect(false)
-}
 onMounted(() => {
   //获取最近阅读书籍
   const readingRecentStr = localStorage.getItem('readingRecent')

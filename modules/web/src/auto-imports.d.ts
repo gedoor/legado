@@ -70,6 +70,7 @@ declare global {
   const unref: typeof import('vue')['unref']
   const useAttrs: typeof import('vue')['useAttrs']
   const useBookStore: typeof import('./store/bookStore')['useBookStore']
+  const useConnectionStore: typeof import('./store/connectionStore')['useConnectionStore']
   const useCssModule: typeof import('vue')['useCssModule']
   const useCssVars: typeof import('vue')['useCssVars']
   const useId: typeof import('vue')['useId']
