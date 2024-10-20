@@ -70,13 +70,13 @@ internal class Request : OnRequestPermissionsResultCallback {
         } else {
             if (deniedPermissions.contains(Permissions.MANAGE_EXTERNAL_STORAGE)) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    toManageFileSetting()
+                    toManageFileSetting(deniedPermissions)
                 }
             } else if (deniedPermissions.contains(Permissions.POST_NOTIFICATIONS)) {
-                toNotificationSetting()
+                toNotificationSetting(deniedPermissions)
             } else if (deniedPermissions.contains(Permissions.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    toIgnoreBatterySetting()
+                    toIgnoreBatterySetting(deniedPermissions)
                 }
             } else if (deniedPermissions.isNotEmpty()) {
                 appCtx.startActivity<PermissionActivity> {
@@ -162,7 +162,7 @@ internal class Request : OnRequestPermissionsResultCallback {
         }
     }
 
-    private fun toManageFileSetting() {
+    private fun toManageFileSetting(deniedPermissions: Array<String>) {
         appCtx.startActivity<PermissionActivity> {
             putExtra(PermissionActivity.KEY_RATIONALE, rationale)
             putExtra(PermissionActivity.KEY_INPUT_REQUEST_TYPE, TYPE_MANAGE_ALL_FILES_ACCESS)
@@ -171,7 +171,7 @@ internal class Request : OnRequestPermissionsResultCallback {
         }
     }
 
-    private fun toNotificationSetting() {
+    private fun toNotificationSetting(deniedPermissions: Array<String>) {
         appCtx.startActivity<PermissionActivity> {
             putExtra(PermissionActivity.KEY_RATIONALE, rationale)
             putExtra(PermissionActivity.KEY_INPUT_REQUEST_TYPE, TYPE_REQUEST_NOTIFICATIONS)
@@ -180,7 +180,7 @@ internal class Request : OnRequestPermissionsResultCallback {
         }
     }
 
-    private fun toIgnoreBatterySetting() {
+    private fun toIgnoreBatterySetting(deniedPermissions: Array<String>) {
         appCtx.startActivity<PermissionActivity> {
             putExtra(PermissionActivity.KEY_RATIONALE, rationale)
             putExtra(
