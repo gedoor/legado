@@ -2,7 +2,7 @@
 
 kotlin = "2.0.20"
 ksp = "2.0.20-1.0.24"
-agp = "8.6.0"
+agp = "8.7.1"
 appcompat = "1.7.0"
 colorpicker = "1.1.0"
 commonsText = "1.12.0"
