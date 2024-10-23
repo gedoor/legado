@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.BaseViewModel
+import io.legado.app.constant.AppLog
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.TxtTocRule
 import io.legado.app.databinding.DialogTocRegexEditBinding
@@ -18,6 +19,8 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers
+import java.util.regex.Pattern
+import java.util.regex.PatternSyntaxException
 
 class TxtTocRuleEditDialog() : BaseDialogFragment(R.layout.dialog_toc_regex_edit, true),
     Toolbar.OnMenuItemClickListener {
@@ -55,14 +58,33 @@ class TxtTocRuleEditDialog() : BaseDialogFragment(R.layout.dialog_toc_regex_edit
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_save -> {
-                callback?.saveTxtTocRule(getRuleFromView())
-                dismissAllowingStateLoss()
+                val tocRule = getRuleFromView()
+                if (checkValid(tocRule)) {
+                    callback?.saveTxtTocRule(getRuleFromView())
+                    dismissAllowingStateLoss()
+                }
             }
             R.id.menu_copy_rule -> context?.sendToClip(GSON.toJson(getRuleFromView()))
             R.id.menu_paste_rule -> viewModel.pasteRule {
                 upRuleView(it)
             }
         }
+        return true
+    }
+
+    private fun checkValid(tocRule: TxtTocRule): Boolean {
+        if (tocRule.name.isEmpty()) {
+            toastOnUi("名称不能为空")
+            return false
+        }
+
+        try {
+            Pattern.compile(tocRule.rule, Pattern.MULTILINE)
+        } catch (ex: PatternSyntaxException) {
+            AppLog.put("正则语法错误或不支持(txt)：${ex.localizedMessage}", ex, true)
+            return false
+        }
+
         return true
     }
 
