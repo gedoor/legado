@@ -14,7 +14,6 @@ import kotlin.math.*
 
 @Suppress("WeakerAccess", "MemberVisibilityCanBePrivate")
 object BitmapUtils {
-
     /**
      * 从path中获取图片信息,在通过BitmapFactory.decodeFile(String path)方法将突破转成Bitmap时，
      * 遇到大一些的图片，我们经常会遇到OOM(Out Of Memory)的问题。所以用到了我们上面提到的BitmapFactory.Options这个类。
@@ -26,16 +25,31 @@ object BitmapUtils {
      */
     @Throws(IOException::class)
     fun decodeBitmap(path: String, width: Int, height: Int? = null): Bitmap? {
-        val fis = FileInputStream(path)
-        return fis.use {
-            val op = BitmapFactory.Options()
-            // inJustDecodeBounds如果设置为true,仅仅返回图片实际的宽和高,宽和高是赋值给opts.outWidth,opts.outHeight;
-            op.inJustDecodeBounds = true
-            BitmapFactory.decodeFileDescriptor(fis.fd, null, op)
-            op.inSampleSize = calculateInSampleSize(op, width, height)
-            op.inJustDecodeBounds = false
-            BitmapFactory.decodeFileDescriptor(fis.fd, null, op)
+        var fis: FileInputStream? = null
+        var out: ByteArrayOutputStream? = null
+        var bitmap: Bitmap? = null
+        try {
+            fis = FileInputStream(path)
+            out = ByteArrayOutputStream()
+            bitmap = fis.use {
+                val op = BitmapFactory.Options()
+                // inJustDecodeBounds如果设置为true,仅仅返回图片实际的宽和高,宽和高是赋值给opts.outWidth,opts.outHeight;
+                op.inJustDecodeBounds = true
+                BitmapFactory.decodeFileDescriptor(fis?.fd, null, op)
+                op.inSampleSize = calculateInSampleSize(op, width, height)
+                op.inJustDecodeBounds = false
+                op.inPreferredConfig = Config.RGB_565
+                BitmapFactory.decodeFileDescriptor(fis?.fd, null, op)
+            }
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 85, out)
+        } catch (_: Exception) {
+        } finally {
+            fis?.close()
+            out?.close()
+            fis = null
+            out = null
         }
+        return bitmap
     }
 
     /**
@@ -48,7 +62,7 @@ object BitmapUtils {
     private fun calculateInSampleSize(
         options: BitmapFactory.Options,
         width: Int? = null,
-        height: Int? = null
+        height: Int? = null,
     ): Int {
         //获取比例大小
         val wRatio = width?.let { options.outWidth / it } ?: -1
@@ -122,7 +136,7 @@ object BitmapUtils {
         context: Context,
         fileNameInAssets: String,
         width: Int,
-        height: Int
+        height: Int,
     ): Bitmap? {
         var inputStream = context.assets.open(fileNameInAssets)
         return inputStream.use {
@@ -150,7 +164,7 @@ object BitmapUtils {
     fun computeSampleSize(
         options: BitmapFactory.Options,
         minSideLength: Int,
-        maxNumOfPixels: Int
+        maxNumOfPixels: Int,
     ): Int {
         val initialSize = computeInitialSampleSize(options, minSideLength, maxNumOfPixels)
         var roundedSize: Int
@@ -169,7 +183,7 @@ object BitmapUtils {
     private fun computeInitialSampleSize(
         options: BitmapFactory.Options,
         minSideLength: Int,
-        maxNumOfPixels: Int
+        maxNumOfPixels: Int,
     ): Int {
 
         val w = options.outWidth.toDouble()
@@ -197,9 +211,11 @@ object BitmapUtils {
             maxNumOfPixels == -1 && minSideLength == -1 -> {
                 1
             }
+
             minSideLength == -1 -> {
                 lowerBound
             }
+
             else -> {
                 upperBound
             }
