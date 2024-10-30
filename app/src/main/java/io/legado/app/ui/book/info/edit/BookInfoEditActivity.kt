@@ -72,7 +72,7 @@ class BookInfoEditActivity :
 
     private fun initView() {
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, windowInsets ->
-            val typeMask = WindowInsetsCompat.Type.navigationBars() or WindowInsetsCompat.Type.ime()
+            val typeMask = WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.ime()
             val insets = windowInsets.getInsets(typeMask)
             binding.root.bottomPadding = insets.bottom
             windowInsets

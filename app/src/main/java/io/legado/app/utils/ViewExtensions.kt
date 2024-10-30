@@ -272,7 +272,7 @@ fun View.applyStatusBarPadding(withInitialPadding: Boolean = false) {
 fun View.applyNavigationBarPadding(withInitialPadding: Boolean = false) {
     val initialPadding = if (withInitialPadding) bottomPadding else 0
     ViewCompat.setOnApplyWindowInsetsListener(this) { _, windowInsets ->
-        val insets = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars())
+        val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
         bottomPadding = initialPadding + insets.bottom
         windowInsets
     }

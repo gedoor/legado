@@ -84,7 +84,7 @@ abstract class BaseReadBookActivity :
         upLayoutInDisplayCutoutMode()
         super.onCreate(savedInstanceState)
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, windowInsets ->
-            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars())
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             binding.navigationBar.run {
                 layoutParams = layoutParams.apply { height = insets.bottom }
             }
