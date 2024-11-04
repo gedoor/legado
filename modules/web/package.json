@@ -44,7 +44,7 @@
     "prettier": "^3.3.3",
     "typescript": "~5.5.4",
     "unplugin-auto-import": "^0.18.3",
-    "unplugin-icons": "^0.19.3",
+    "unplugin-icons": "^0.20.0",
     "unplugin-vue-components": "^0.27.4",
     "vite": "^5.4.8",
     "vue-tsc": "^2.1.6"
