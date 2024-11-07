@@ -429,6 +429,10 @@ class BookInfoActivity :
         tvOrigin.setOnClickListener {
             viewModel.getBook()?.let { book ->
                 if (book.isLocal) return@let
+                if (!appDb.bookSourceDao.has(book.origin)) {
+                    toastOnUi(R.string.error_no_source)
+                    return@let
+                }
                 editSourceResult.launch {
                     putExtra("sourceUrl", book.origin)
                 }
