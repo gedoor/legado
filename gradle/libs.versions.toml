@@ -38,7 +38,7 @@ quickChineseTransfer = "0.2.13"
 room = "2.6.1"
 splitties = "3.0.0"
 rhino = "1.7.15"
-desugar = "2.0.4"
+desugar = "2.1.3"
 
 activity = "1.9.1"
 kotlinxSerialization = "1.7.1"
