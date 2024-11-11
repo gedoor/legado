@@ -16,3 +16,7 @@ watch(
     }
   },
 )
+
+window.addEventListener('vite:preloadError', event => {
+  event.preventDefault()
+})
