@@ -10,13 +10,14 @@ import io.legado.app.api.controller.RssSourceController
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.service.WebService
 import io.legado.app.utils.GSON
+import io.legado.app.utils.LogUtils
+import io.legado.app.utils.stackTraceStr
 import io.legado.app.web.utils.AssetsWeb
 import kotlinx.coroutines.runBlocking
 import okio.Pipe
 import okio.buffer
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
-import kotlin.collections.set
 
 class HttpServer(port: Int) : NanoHTTPD(port) {
     private val assetsWeb = AssetsWeb("web")
@@ -27,6 +28,9 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
         val ct = ContentType(session.headers["content-type"]).tryUTF8()
         session.headers["content-type"] = ct.contentTypeHeader
         var uri = session.uri
+
+        val startAt = System.currentTimeMillis()
+        LogUtils.d(TAG, "${session.method.name} - $uri - ${session.queryParameterString} - Start($startAt)")
 
         try {
             when (session.method) {
@@ -126,11 +130,17 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
             }
             response.addHeader("Access-Control-Allow-Methods", "GET, POST")
             response.addHeader("Access-Control-Allow-Origin", session.headers["origin"])
+            LogUtils.d(TAG, "${session.method.name} - $uri - ${session.queryParameterString} - End($startAt)")
             return response
         } catch (e: Exception) {
+            LogUtils.d(TAG, "${session.method.name} - $uri - ${session.queryParameterString} - Error End($startAt)\n$e\n${e.stackTraceStr}")
             return newFixedLengthResponse(e.message)
         }
 
+    }
+
+    companion object {
+        private const val TAG = "HttpServer"
     }
 
 }
