@@ -151,7 +151,7 @@ class AboutFragment : PreferenceFragmentCompat() {
             }
             appCtx.toastOnUi("开始创建堆转储")
             System.gc()
-            CrashHandler.doHeapDump()
+            CrashHandler.doHeapDump(true)
             val doc = FileDoc.fromUri(Uri.parse(backupPath), true)
             if (!copyHeapDump(doc)) {
                 appCtx.toastOnUi("未找到堆转储文件")

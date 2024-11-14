@@ -28,9 +28,6 @@ import java.io.StringWriter
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.concurrent.TimeUnit
-import kotlin.collections.component1
-import kotlin.collections.component2
-import kotlin.collections.set
 
 /**
  * 异常管理类
@@ -172,12 +169,17 @@ class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
         /**
          * 进行堆转储
          */
-        fun doHeapDump() {
+        fun doHeapDump(manually: Boolean = false) {
             val heapDir = appCtx
                 .externalCache
                 .getFile("heapDump")
             heapDir.createFolderReplace()
-            val heapFile = heapDir.getFile("heap-dump-${System.currentTimeMillis()}.hprof")
+            val fileName = if (manually) {
+                "heap-dump-manually-${System.currentTimeMillis()}.hprof"
+            } else {
+                "heap-dump-${System.currentTimeMillis()}.hprof"
+            }
+            val heapFile = heapDir.getFile(fileName)
             val heapDumpName = heapFile.absolutePath
             Debug.dumpHprofData(heapDumpName)
         }
