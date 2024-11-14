@@ -27,11 +27,6 @@ import kotlinx.coroutines.isActive
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStreamWriter
-import kotlin.collections.List
-import kotlin.collections.Map
-import kotlin.collections.forEach
-import kotlin.collections.hashMapOf
-import kotlin.collections.set
 
 class BookshelfViewModel(application: Application) : BaseViewModel(application) {
     val addBookProgressLiveData = MutableLiveData(-1)
@@ -156,13 +151,13 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
 
     private fun importBookshelfByJson(json: String, groupId: Long) {
         execute {
-            val bookSources = appDb.bookSourceDao.allEnabled
+            val bookSourceParts = appDb.bookSourceDao.allEnabledPart
             GSON.fromJsonArray<Map<String, String?>>(json).getOrThrow().forEach { bookInfo ->
                 if (!isActive) return@execute
                 val name = bookInfo["name"] ?: ""
                 val author = bookInfo["author"] ?: ""
                 if (name.isNotEmpty() && appDb.bookDao.getBook(name, author) == null) {
-                    WebBook.preciseSearch(this, bookSources, name, author)
+                    WebBook.preciseSearch(this, bookSourceParts, name, author)
                         .onSuccess {
                             val book = it.first
                             if (groupId > 0) {
