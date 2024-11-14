@@ -6,14 +6,23 @@ on:
       - master
     paths:
       - '**'
-      - '!**/assets/**'
-      - '!**.md'
+      # - '!**/assets/**'
+      # - '!**.md'
       - '!**/ISSUE_TEMPLATE/**'
       - '!**/modules/web/**'
   pull_request:
     paths-ignore:
       - '**/modules/web/**'
+  workflow_run:
+    workflows: [Build Web]
+    branches: [master]
+    types:
+      - completed
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
 
@@ -75,7 +84,7 @@ jobs:
           sed '$a\RELEASE_KEY_PASSWORD=gedoor_legado'       $GITHUB_WORKSPACE/gradle.properties -i
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
 
       - name: Build With Gradle
         continue-on-error: true
@@ -120,6 +129,10 @@ jobs:
 
       - name: Check Build production
         run: |
+          if [ ! -d ${{ github.workspace }}/apk ]; then
+            echo "Build production not found! Check gradle logs."
+            exit 1
+          fi
           cd ${{ github.workspace }}/apk/
           if [ ! -e legado_*.apk ]; then
             echo "Build production not found! Check gradle logs."
@@ -139,6 +152,55 @@ jobs:
           name: legado.${{ env.product }}.${{ env.type }}.mapping
           if-no-files-found: ignore
           path: ${{ github.workspace }}/mapping/mapping.txt
+
+  prerelease:
+    needs: [ prepare, build ]
+    if: github.event_name != 'pull_request' && github.repository == 'gedoor/legado'
+    runs-on: ubuntu-latest
+    env: 
+      VERSION: ${{ needs.prepare.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: apk/
+
+      - working-directory: apk/
+        run: |
+          mv */*.apk .
+          rm -rf */
+
+          for file in `ls *.apk`; do
+            if [[ "$file" == *原包名* ]]; then
+              mv "$file" $(echo $file | sed s/原包名/release/)
+            else
+              mv "$file" $(echo $file | sed s/共存/releaseA/)
+            fi
+          done
+
+      - name: Delete Pre-Release
+        run: |
+          if gh release view beta &>/dev/null; then
+            gh release delete beta -y
+          fi
+        env:
+          GH_TOKEN: ${{ github.token }}
+      
+      - name: Create or update beta tag
+        uses: richardsimko/update-tag@v1
+        with:
+          tag_name: beta
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish Pre-Release
+        uses: ncipollo/release-action@v1
+        with:
+          name: legado_app_${{ env.VERSION }}
+          tag: "beta"
+          body: "此版本为测试版，签名与正式版不同，可能存在不稳定情况，升级前请务必备份好数据。"
+          prerelease: true
+          artifacts: ${{ github.workspace }}/apk/*.apk
 
   lanzou:
     needs: [ prepare, build ]

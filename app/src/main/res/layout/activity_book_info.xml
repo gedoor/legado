@@ -374,7 +374,7 @@
         <LinearLayout
             android:id="@+id/fl_action"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:background="@color/background_menu"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent">
@@ -382,7 +382,7 @@
             <TextView
                 android:id="@+id/tv_shelf"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="50dp"
                 android:layout_weight="1"
                 android:background="?attr/selectableItemBackground"
                 android:clickable="true"
@@ -396,7 +396,7 @@
             <io.legado.app.ui.widget.text.AccentBgTextView
                 android:id="@+id/tv_read"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="50dp"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:includeFontPadding="false"

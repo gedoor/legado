@@ -49,7 +49,11 @@ class ReadAloudDialog : BaseDialogFragment(R.layout.dialog_read_aloud) {
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        (activity as ReadBookActivity).bottomDialog++
+        val bottomDialog = (activity as ReadBookActivity).bottomDialog++
+        if (bottomDialog > 0) {
+            dismiss()
+            return
+        }
         val bg = requireContext().bottomBackground
         val isLight = ColorUtils.isColorLight(bg)
         val textColor = requireContext().getPrimaryTextColor(isLight)

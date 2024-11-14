@@ -27,6 +27,8 @@ import io.legado.app.utils.fastSum
 import io.legado.app.utils.splitNotBlank
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
@@ -83,7 +85,11 @@ class TextChapterLayout(
     var channel = Channel<TextPage>(Int.MAX_VALUE)
 
     init {
-        job = Coroutine.async(scope) {
+        job = Coroutine.async(
+            scope,
+            start = CoroutineStart.LAZY,
+            executeContext = IO
+        ) {
             launch {
                 val bookSource = book.getBookSource() ?: return@launch
                 BookHelp.saveImages(bookSource, book, bookChapter, bookContent.toString())
@@ -95,6 +101,7 @@ class TextChapterLayout(
         }.onFinally {
             isCompleted = true
         }
+        job.start()
     }
 
     fun setProgressListener(l: LayoutProgressListener?) {

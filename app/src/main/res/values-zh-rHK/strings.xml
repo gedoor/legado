@@ -91,7 +91,7 @@
         \u3000\u3000這是一款使用 Kotlin 全新開發的開源的閲讀應用程式，歡迎你的加入。
     </string>
     <string name="app_share_description">
-        閲讀3.0下載地址：\nhttps://play.google.com/store/apps/details?id=io.legado.play.release
+        閲讀3.0下載地址：\nhttps://github.com/gedoor/legado/releases
     </string>
     <string name="version_name">Version %s</string>
     <string name="pt_background_verification">後臺校驗書源</string>
@@ -1151,4 +1151,22 @@
     <string name="keep_swipe_tip">继续滑动以加载下一章…</string>
     <string name="enable_optimize_render">启用绘制优化</string>
     <string name="ignore_battery_permission_rationale">阅读需要请求后台权限以保持服务正常运行</string>
+    <string name="simulated_reading">模擬追讀</string>
+    <string name="switch_on">開關</string>
+    <string name="start_from">起始日期</string>
+    <string name="daily_chapters">日更章數</string>
+    <string name="start_chapter">開始篇章</string>
+    <string name="update_to_variant_title">检查更新查找版本</string>
+    <string name="update_to_variant_summary">检查更新时查找其他签名版本</string>
+    <string name="default_version">当前</string>
+    <string name="official_version">正式版</string>
+    <string name="beta_release_version">测试版</string>
+    <string name="beta_releaseA_version">共存版</string>
+    <string name="stream_read_aloud_audio">流式播放音频</string>
+    <string name="stream_read_aloud_audio_summary">即边下边播，网络不好时播放会断断续续，仅TTS源有效</string>
+    <string name="pause_read_aloud_while_phone_calls_title">来电期间暂停朗读</string>
+    <string name="pause_read_aloud_while_phone_calls_summary">在通话期间暂停朗读，需要读取手机状态权限</string>
+    <string name="read_aloud_read_phone_state_permission_rationale">阅读需要读取手机状态实现来电期间暂停朗读功能</string>
+    <string name="read_aloud_by_media_button_title">耳机按键启动朗读</string>
+    <string name="read_aloud_by_media_button_summary">通过耳机按键来启动朗读</string>
 </resources>

@@ -98,10 +98,9 @@ internal class RhinoCompiledScript(
     }
 
     override fun eval(scope: Scriptable, coroutineContext: CoroutineContext?): Any? {
-        val cx = Context.enter()
-        if (cx is RhinoContext) {
-            cx.coroutineContext = coroutineContext
-        }
+        val cx = Context.enter() as RhinoContext
+        val previousCoroutineContext = cx.coroutineContext
+        cx.coroutineContext = coroutineContext
         val result: Any?
         try {
             val ret = script.exec(cx, scope)
@@ -117,6 +116,7 @@ internal class RhinoCompiledScript(
             se.initCause(re)
             throw se
         } finally {
+            cx.coroutineContext = previousCoroutineContext
             Context.exit()
         }
         return result

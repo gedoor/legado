@@ -23,7 +23,7 @@ jobs:
           distribution: 'temurin'
           java-version: 17
 
-      - uses: gradle/actions/setup-gradle@v3
+      - uses: gradle/actions/setup-gradle@v4
         if: ${{ env.cronet == 'ok' }}
 
       - name: Download Cronet

@@ -11,13 +11,14 @@ import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.R
 import io.legado.app.constant.AppConst.appInfo
 import io.legado.app.constant.AppLog
-import io.legado.app.help.AppUpdate
 import io.legado.app.help.CrashHandler
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.help.update.AppUpdate
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.ui.widget.dialog.WaitDialog
 import io.legado.app.utils.FileDoc
+import io.legado.app.utils.compress.ZipUtils
 import io.legado.app.utils.createFileIfNotExist
 import io.legado.app.utils.createFolderIfNotExist
 import io.legado.app.utils.delete
@@ -30,8 +31,7 @@ import io.legado.app.utils.sendMail
 import io.legado.app.utils.sendToClip
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.toastOnUi
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 import splitties.init.appCtx
 import java.io.File
 
@@ -126,6 +126,10 @@ class AboutFragment : PreferenceFragmentCompat() {
                 appCtx.toastOnUi("未设置备份目录")
                 return@async
             }
+            if (!AppConfig.recordLog) {
+                appCtx.toastOnUi("未开启日志记录，请去其他设置里打开记录日志")
+                delay(3000)
+            }
             val doc = FileDoc.fromUri(Uri.parse(backupPath), true)
             copyLogs(doc)
             copyHeapDump(doc)
@@ -141,9 +145,13 @@ class AboutFragment : PreferenceFragmentCompat() {
                 appCtx.toastOnUi("未设置备份目录")
                 return@async
             }
+            if (!AppConfig.recordHeapDump) {
+                appCtx.toastOnUi("未开启堆转储记录，请去其他设置里打开记录堆转储")
+                delay(3000)
+            }
             appCtx.toastOnUi("开始创建堆转储")
             System.gc()
-            CrashHandler.doHeapDump()
+            CrashHandler.doHeapDump(true)
             val doc = FileDoc.fromUri(Uri.parse(backupPath), true)
             if (!copyHeapDump(doc)) {
                 appCtx.toastOnUi("未找到堆转储文件")
@@ -155,23 +163,22 @@ class AboutFragment : PreferenceFragmentCompat() {
         }
     }
 
-    private suspend fun copyLogs(doc: FileDoc) = coroutineScope {
-        val files = FileDoc.fromFile(File(appCtx.externalCacheDir, "logs")).list()
-        if (files.isNullOrEmpty()) {
-            return@coroutineScope
-        }
-        doc.find("logs")?.delete()
-        val logsDoc = doc.createFolderIfNotExist("logs")
-        files.forEach { file ->
-            launch {
-                file.openInputStream().getOrNull()?.use { input ->
-                    logsDoc.createFileIfNotExist(file.name).openOutputStream().getOrNull()
-                        ?.use {
-                            input.copyTo(it)
-                        }
+    private fun copyLogs(doc: FileDoc) {
+        val logFiles = File(appCtx.externalCacheDir, "logs")
+        val crashFiles = File(appCtx.externalCacheDir, "crash")
+
+        val zipFile = File(appCtx.externalCacheDir, "logs.zip")
+        ZipUtils.zipFiles(arrayListOf(logFiles, crashFiles), zipFile)
+
+        doc.find("logs.zip")?.delete()
+
+        zipFile.inputStream().use { input ->
+            doc.createFileIfNotExist("logs.zip").openOutputStream().getOrNull()
+                ?.use {
+                    input.copyTo(it)
                 }
-            }
         }
+        zipFile.delete()
     }
 
     private fun copyHeapDump(doc: FileDoc): Boolean {

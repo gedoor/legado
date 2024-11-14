@@ -6,6 +6,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.pm.ActivityInfo
+import android.content.pm.ApplicationInfo
 import android.content.res.Configuration
 import android.os.Build
 import com.github.liuyueyi.quick.transfer.constants.TransType
@@ -17,6 +18,7 @@ import io.legado.app.constant.AppConst.channelIdReadAloud
 import io.legado.app.constant.AppConst.channelIdWeb
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
+import io.legado.app.help.AppFreezeMonitor
 import io.legado.app.help.AppWebDav
 import io.legado.app.help.CrashHandler
 import io.legado.app.help.DefaultData
@@ -51,13 +53,13 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        CrashHandler(this)
         LogUtils.d("App", "onCreate")
         LogUtils.logDeviceInfo()
         if (isDebuggable) {
             ThreadUtils.setThreadAssertsDisabledForTesting(true)
         }
         oldConfig = Configuration(resources.configuration)
-        CrashHandler(this)
         //预下载Cronet so
         Cronet.preDownload()
         createNotificationChannels()
@@ -70,6 +72,7 @@ class App : Application() {
         registerActivityLifecycleCallbacks(LifecycleHelp)
         defaultSharedPreferences.registerOnSharedPreferenceChangeListener(AppConfig)
         DefaultData.upVersion()
+        AppFreezeMonitor.init(this)
         Coroutine.async {
             URL.setURLStreamHandlerFactory(ObsoleteUrlFactory(okHttpClient))
             launch { installGmsTlsProvider(appCtx) }
@@ -126,8 +129,13 @@ class App : Application() {
      */
     private fun installGmsTlsProvider(context: Context) {
         try {
+            val gmsPackageName = "com.google.android.gms"
+            val appInfo = packageManager.getApplicationInfo(gmsPackageName, 0)
+            if ((appInfo.flags and ApplicationInfo.FLAG_SYSTEM) == 0) {
+                return
+            }
             val gms = context.createPackageContext(
-                "com.google.android.gms",
+                gmsPackageName,
                 CONTEXT_INCLUDE_CODE or CONTEXT_IGNORE_SECURITY
             )
             gms.classLoader

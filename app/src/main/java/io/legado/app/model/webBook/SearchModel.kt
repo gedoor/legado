@@ -87,6 +87,9 @@ class SearchModel(private val scope: CoroutineScope, private val callBack: CallB
                     WebBook.searchBookAwait(it, searchKey, searchPage)
                 }
             }.onEach { items ->
+                for (book in items) {
+                    book.releaseHtmlData()
+                }
                 appDb.searchBookDao.insert(*items.toTypedArray())
                 mergeItems(items, precision)
                 currentCoroutineContext().ensureActive()

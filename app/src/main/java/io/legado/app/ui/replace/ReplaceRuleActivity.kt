@@ -168,9 +168,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
 
     private fun initSearchView() {
         searchView.applyTint(primaryTextColor)
-        searchView.onActionViewExpanded()
         searchView.queryHint = getString(R.string.replace_purify_search)
-        searchView.clearFocus()
         searchView.setOnQueryTextListener(this)
     }
 

@@ -2,7 +2,7 @@ package io.legado.app.model.analyzeRule
 
 import android.text.TextUtils
 import androidx.annotation.Keep
-import com.script.SimpleBindings
+import com.script.buildScriptBindings
 import com.script.rhino.RhinoScriptEngine
 import io.legado.app.constant.AppPattern.JS_PATTERN
 import io.legado.app.data.entities.BaseBook
@@ -21,7 +21,6 @@ import io.legado.app.utils.isJson
 import io.legado.app.utils.printOnDebug
 import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.stackTraceStr
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import org.apache.commons.text.StringEscapeUtils
@@ -31,8 +30,9 @@ import java.net.URL
 import java.util.regex.Pattern
 import kotlin.collections.component1
 import kotlin.collections.component2
-import kotlin.collections.set
+import kotlin.coroutines.ContinuationInterceptor
 import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 
 /**
  * 解析规则获取结果
@@ -61,13 +61,9 @@ class AnalyzeRule(
     private var analyzeByJSoup: AnalyzeByJSoup? = null
     private var analyzeByJSonPath: AnalyzeByJSonPath? = null
 
-    private var objectChangedXP = false
-    private var objectChangedJS = false
-    private var objectChangedJP = false
-
     private val stringRuleCache = hashMapOf<String, List<SourceRule>>()
 
-    private var coroutineContext: CoroutineContext? = null
+    private var coroutineContext: CoroutineContext = EmptyCoroutineContext
 
     @JvmOverloads
     fun setContent(content: Any?, baseUrl: String? = null): AnalyzeRule {
@@ -78,14 +74,14 @@ class AnalyzeRule(
             else -> content.toString().isJson()
         }
         setBaseUrl(baseUrl)
-        objectChangedXP = true
-        objectChangedJS = true
-        objectChangedJP = true
+        analyzeByXPath = null
+        analyzeByJSoup = null
+        analyzeByJSonPath = null
         return this
     }
 
-    fun setCoroutineContext(context: CoroutineContext?): AnalyzeRule {
-        coroutineContext = context
+    fun setCoroutineContext(context: CoroutineContext): AnalyzeRule {
+        coroutineContext = context.minusKey(ContinuationInterceptor)
         return this
     }
 
@@ -112,9 +108,8 @@ class AnalyzeRule(
         return if (o != content) {
             AnalyzeByXPath(o)
         } else {
-            if (analyzeByXPath == null || objectChangedXP) {
+            if (analyzeByXPath == null) {
                 analyzeByXPath = AnalyzeByXPath(content!!)
-                objectChangedXP = false
             }
             analyzeByXPath!!
         }
@@ -127,9 +122,8 @@ class AnalyzeRule(
         return if (o != content) {
             AnalyzeByJSoup(o)
         } else {
-            if (analyzeByJSoup == null || objectChangedJS) {
+            if (analyzeByJSoup == null) {
                 analyzeByJSoup = AnalyzeByJSoup(content!!)
-                objectChangedJS = false
             }
             analyzeByJSoup!!
         }
@@ -142,9 +136,8 @@ class AnalyzeRule(
         return if (o != content) {
             AnalyzeByJSonPath(o)
         } else {
-            if (analyzeByJSonPath == null || objectChangedJP) {
+            if (analyzeByJSonPath == null) {
                 analyzeByJSonPath = AnalyzeByJSonPath(content!!)
-                objectChangedJP = false
             }
             analyzeByJSonPath!!
         }
@@ -449,15 +442,10 @@ class AnalyzeRule(
     /**
      * getString 类规则缓存
      */
-    fun splitSourceRuleCacheString(ruleStr: String?): List<SourceRule> {
+    private fun splitSourceRuleCacheString(ruleStr: String?): List<SourceRule> {
         if (ruleStr.isNullOrEmpty()) return emptyList()
-        val cacheRule = stringRuleCache[ruleStr]
-        return if (cacheRule != null) {
-            cacheRule
-        } else {
-            val rules = splitSourceRule(ruleStr)
-            stringRuleCache[ruleStr] = rules
-            rules
+        return stringRuleCache.getOrPut(ruleStr) {
+            splitSourceRule(ruleStr)
         }
     }
 
@@ -744,20 +732,20 @@ class AnalyzeRule(
      * 执行JS
      */
     fun evalJS(jsStr: String, result: Any? = null): Any? {
-        val bindings = SimpleBindings()
-        bindings["java"] = this
-        bindings["cookie"] = CookieStore
-        bindings["cache"] = CacheManager
-        bindings["source"] = source
-        bindings["book"] = book
-        bindings["result"] = result
-        bindings["baseUrl"] = baseUrl
-        bindings["chapter"] = chapter
-        bindings["title"] = chapter?.title
-        bindings["src"] = content
-        bindings["nextChapterUrl"] = nextChapterUrl
-        val context = RhinoScriptEngine.getScriptContext(bindings)
-        val scope = RhinoScriptEngine.getRuntimeScope(context)
+        val bindings = buildScriptBindings { bindings ->
+            bindings["java"] = this
+            bindings["cookie"] = CookieStore
+            bindings["cache"] = CacheManager
+            bindings["source"] = source
+            bindings["book"] = book
+            bindings["result"] = result
+            bindings["baseUrl"] = baseUrl
+            bindings["chapter"] = chapter
+            bindings["title"] = chapter?.title
+            bindings["src"] = content
+            bindings["nextChapterUrl"] = nextChapterUrl
+        }
+        val scope = RhinoScriptEngine.getRuntimeScope(bindings)
         source?.getShareScope()?.let {
             scope.prototype = it
         }
@@ -777,9 +765,14 @@ class AnalyzeRule(
         } else {
             url.toString()
         }
-        return runBlocking {
+        val analyzeUrl = AnalyzeUrl(
+            urlStr,
+            source = source,
+            ruleData = book,
+            coroutineContext = coroutineContext
+        )
+        return runBlocking(coroutineContext) {
             kotlin.runCatching {
-                val analyzeUrl = AnalyzeUrl(urlStr, source = source, ruleData = book)
                 analyzeUrl.getStrResponseAwait().body
             }.onFailure {
                 log("ajax(${urlStr}) error\n${it.stackTraceToString()}")
@@ -797,7 +790,7 @@ class AnalyzeRule(
         val bookSource = source as? BookSource
         val book = book as? Book
         if (bookSource == null || book == null) return
-        runBlocking {
+        runBlocking(coroutineContext) {
             withTimeout(1800000) {
                 WebBook.preciseSearchAwait(this, bookSource, book.name, book.author)
                     .getOrThrow().let {
@@ -818,7 +811,7 @@ class AnalyzeRule(
         val bookSource = source as? BookSource
         val book = book as? Book
         if (bookSource == null || book == null) return
-        runBlocking {
+        runBlocking(coroutineContext) {
             withTimeout(1800000) {
                 WebBook.getBookInfoAwait(bookSource, book)
             }
@@ -832,7 +825,7 @@ class AnalyzeRule(
         val bookSource = source as? BookSource
         val book = book as? Book
         if (bookSource == null || book == null) return
-        runBlocking {
+        runBlocking(coroutineContext) {
             withTimeout(1800000) {
                 WebBook.getBookInfoAwait(bookSource, book)
             }

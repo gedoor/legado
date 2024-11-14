@@ -21,4 +21,5 @@ object IntentAction {
     const val moveTo = "moveTo"
     const val init = "init"
     const val remove = "remove"
+    const val stopPlay = "stopPlay"
 }

@@ -276,6 +276,9 @@ interface BookSourceDao {
     @Query("select count(*) from book_sources")
     fun allCount(): Int
 
+    @Query("SELECT EXISTS(select 1 from book_sources where bookSourceUrl = :key)")
+    fun has(key: String): Boolean
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg bookSource: BookSource)
 

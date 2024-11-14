@@ -15,7 +15,6 @@
             android:id="@+id/title_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:fitStatusBar="false"
             app:layout_constraintTop_toTopOf="parent" />
 
         <io.legado.app.ui.rss.read.VisibleWebView

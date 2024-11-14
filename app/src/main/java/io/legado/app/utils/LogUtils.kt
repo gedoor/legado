@@ -7,12 +7,11 @@ import android.os.Build
 import android.webkit.WebSettings
 import io.legado.app.BuildConfig
 import io.legado.app.constant.AppConst
+import io.legado.app.constant.AppLog
 import io.legado.app.help.config.AppConfig
 import splitties.init.appCtx
 import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.logging.ConsoleHandler
-import java.util.logging.FileHandler
 import java.util.logging.Level
 import java.util.logging.LogRecord
 import java.util.logging.Logger
@@ -41,54 +40,43 @@ object LogUtils {
     }
 
     val logger: Logger by lazy {
-        Logger.getGlobal().apply {
+        Logger.getLogger("Leagdo").apply {
             fileHandler?.let {
                 addHandler(it)
             }
-            addHandler(consoleHandler)
         }
     }
 
     private val fileHandler by lazy {
-        val root = appCtx.externalCacheDir ?: return@lazy null
-        val logFolder = FileUtils.createFolderIfNotExist(root, "logs")
-        val expiredTime = System.currentTimeMillis() - 7.days.inWholeMilliseconds
-        logFolder.listFiles()?.forEach {
-            if (it.lastModified() < expiredTime) {
-                it.delete()
+        try {
+            val root = appCtx.externalCacheDir ?: return@lazy null
+            val logFolder = FileUtils.createFolderIfNotExist(root, "logs")
+            val expiredTime = System.currentTimeMillis() - 7.days.inWholeMilliseconds
+            logFolder.listFiles()?.forEach {
+                if (it.lastModified() < expiredTime || it.name.endsWith(".lck")) {
+                    it.delete()
+                }
             }
+            val date = getCurrentDateStr(TIME_PATTERN)
+            val logPath = FileUtils.getPath(root = logFolder, "appLog-$date.txt")
+            AsyncFileHandler(logPath).apply {
+                formatter = object : java.util.logging.Formatter() {
+                    override fun format(record: LogRecord): String {
+                        // 设置文件输出格式
+                        return (getCurrentDateStr(TIME_PATTERN) + ": " + record.message + "\n")
+                    }
+                }
+                level = if (AppConfig.recordLog) {
+                    Level.INFO
+                } else {
+                    Level.OFF
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            AppLog.putNotSave("创建fileHandler出错\n$e", e)
+            return@lazy null
         }
-        val date = getCurrentDateStr(TIME_PATTERN)
-        val logPath = FileUtils.getPath(root = logFolder, "appLog-$date.txt")
-        FileHandler(logPath).apply {
-            formatter = object : java.util.logging.Formatter() {
-                override fun format(record: LogRecord): String {
-                    // 设置文件输出格式
-                    return (getCurrentDateStr(TIME_PATTERN) + ": " + record.message + "\n")
-                }
-            }
-            level = if (AppConfig.recordLog) {
-                Level.INFO
-            } else {
-                Level.OFF
-            }
-        }.asynchronous()
-    }
-
-    private val consoleHandler by lazy {
-        ConsoleHandler().apply {
-            formatter = object : java.util.logging.Formatter() {
-                override fun format(record: LogRecord): String {
-                    // 设置文件输出格式
-                    return (getCurrentDateStr(TIME_PATTERN) + ": " + record.message + "\n")
-                }
-            }
-            level = if (AppConfig.recordLog) {
-                Level.INFO
-            } else {
-                Level.OFF
-            }
-        }.asynchronous()
     }
 
     fun upLevel() {
@@ -98,7 +86,6 @@ object LogUtils {
             Level.OFF
         }
         fileHandler?.level = level
-        consoleHandler.level = level
     }
 
     /**
@@ -124,9 +111,10 @@ object LogUtils {
                     val userAgent = try {
                         WebSettings.getDefaultUserAgent(appCtx)
                     } catch (e: Throwable) {
-                        e.localizedMessage ?: "null"
+                        e.toString()
                     }
                     append("WebViewUserAgent=").append(userAgent).append("\n")
+                    append("packageName=").append(appCtx.packageName).append("\n")
                     //获取app版本信息
                     AppConst.appInfo.let {
                         append("versionName=").append(it.versionName).append("\n")

@@ -21,7 +21,7 @@ class MigrationTest {
 
     )
 
-    @Rule
+    @get:Rule
     val helper: MigrationTestHelper = MigrationTestHelper(
         InstrumentationRegistry.getInstrumentation(),
         AppDatabase::class.java.canonicalName,
@@ -32,7 +32,7 @@ class MigrationTest {
     @Throws(IOException::class)
     fun migrateAll() {
         // Create earliest version of the database.
-        helper.createDatabase(TEST_DB, 30).apply {
+        helper.createDatabase(TEST_DB, 50).apply {
             close()
         }
 

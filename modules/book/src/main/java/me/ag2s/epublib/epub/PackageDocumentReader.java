@@ -109,8 +109,7 @@ public class PackageDocumentReader extends PackageDocumentBase {
         for (int i = 0; i < originItemElements.getLength(); i++) {
             Element itemElement = (Element) originItemElements.item(i).cloneNode(false);
             String href = DOMUtil.getAttribute(itemElement, NAMESPACE_OPF, OPFAttributes.href);
-            href = URLEncodeUtil.encode(href);
-            String resolvedHref = packagePath.resolve(href).toString();
+            String resolvedHref = resolvePath(packagePath, href);
             itemElement.setAttribute("href", resolvedHref);
             fixedElements.add(itemElement);
             try {

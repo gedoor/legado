@@ -9,12 +9,13 @@ import io.legado.app.R
 import io.legado.app.help.config.AppConfig
 import kotlinx.parcelize.Parcelize
 
+@Suppress("ConstPropertyName")
 @Parcelize
 @Entity(tableName = "book_groups")
 data class BookGroup(
     @PrimaryKey
     val groupId: Long = 0b1,
-    var groupName: String,
+    var groupName: String = "",
     var cover: String? = null,
     var order: Int = 0,
     @ColumnInfo(defaultValue = "1")

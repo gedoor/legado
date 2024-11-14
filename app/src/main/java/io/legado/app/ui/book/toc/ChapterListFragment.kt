@@ -17,6 +17,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.databinding.FragmentChapterListBinding
 import io.legado.app.help.book.BookHelp
 import io.legado.app.help.book.isLocal
+import io.legado.app.help.book.simulatedTotalChapterNum
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.ui.widget.recycler.UpLinearLayoutManager
@@ -81,7 +82,7 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
             upChapterList(null)
             durChapterIndex = book.durChapterIndex
             binding.tvCurrentChapterInfo.text =
-                "${book.durChapterTitle}(${book.durChapterIndex + 1}/${book.totalChapterNum})"
+                "${book.durChapterTitle}(${book.durChapterIndex + 1}/${book.simulatedTotalChapterNum()})"
             initCacheFileNames(book)
         }
     }
@@ -117,9 +118,12 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
     override fun upChapterList(searchKey: String?) {
         lifecycleScope.launch {
             withContext(IO) {
+                val end = (book?.simulatedTotalChapterNum() ?: Int.MAX_VALUE) - 1
                 when {
-                    searchKey.isNullOrBlank() -> appDb.bookChapterDao.getChapterList(viewModel.bookUrl)
-                    else -> appDb.bookChapterDao.search(viewModel.bookUrl, searchKey)
+                    searchKey.isNullOrBlank() ->
+                        appDb.bookChapterDao.getChapterList(viewModel.bookUrl, 0, end)
+
+                    else -> appDb.bookChapterDao.search(viewModel.bookUrl, searchKey, 0, end)
                 }
             }.let {
                 adapter.setItems(it)
@@ -163,9 +167,10 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
 
     override fun openChapter(bookChapter: BookChapter) {
         activity?.run {
-            setResult(RESULT_OK, Intent()
-                .putExtra("index", bookChapter.index)
-                .putExtra("chapterChanged", bookChapter.index != durChapterIndex)
+            setResult(
+                RESULT_OK, Intent()
+                    .putExtra("index", bookChapter.index)
+                    .putExtra("chapterChanged", bookChapter.index != durChapterIndex)
             )
             finish()
         }

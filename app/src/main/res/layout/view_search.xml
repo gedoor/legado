@@ -11,7 +11,9 @@
         android:layout_marginBottom="10dp"
         android:imeOptions="actionSearch"
         android:focusable="false"
+        app:searchIcon="@null"
         app:queryBackground="@null"
         app:submitBackground="@null"
         app:searchHintIcon="@drawable/ic_search_hint"
+        app:iconifiedByDefault="false"
         app:defaultQueryHint="搜索"/>

@@ -54,7 +54,7 @@ import kotlinx.coroutines.launch
 /**
  * tts引擎管理
  */
-class SpeakEngineDialog(val callBack: CallBack) : BaseDialogFragment(R.layout.dialog_recycler_view),
+class SpeakEngineDialog() : BaseDialogFragment(R.layout.dialog_recycler_view),
     Toolbar.OnMenuItemClickListener {
 
     private val binding by viewBinding(DialogRecyclerViewBinding::bind)
@@ -63,6 +63,7 @@ class SpeakEngineDialog(val callBack: CallBack) : BaseDialogFragment(R.layout.di
     private val adapter by lazy { Adapter(requireContext()) }
     private var ttsEngine: String? = ReadAloud.ttsEngine
     private val sysTtsViews = arrayListOf<RadioButton>()
+    private val callBack: CallBack? get() = parentFragment as? CallBack
     private val importDocResult = registerForActivityResult(HandleFileContract()) {
         it.uri?.let { uri ->
             viewModel.importLocal(uri)
@@ -140,7 +141,7 @@ class SpeakEngineDialog(val callBack: CallBack) : BaseDialogFragment(R.layout.di
         tvFooterLeft.visible()
         tvFooterLeft.setOnClickListener {
             ReadBook.book?.setTtsEngine(ttsEngine)
-            callBack.upSpeakEngineSummary()
+            callBack?.upSpeakEngineSummary()
             ReadAloud.upReadAloudClass()
             dismissAllowingStateLoss()
         }
@@ -149,7 +150,7 @@ class SpeakEngineDialog(val callBack: CallBack) : BaseDialogFragment(R.layout.di
         tvOk.setOnClickListener {
             ReadBook.book?.setTtsEngine(null)
             AppConfig.ttsEngine = ttsEngine
-            callBack.upSpeakEngineSummary()
+            callBack?.upSpeakEngineSummary()
             ReadAloud.upReadAloudClass()
             dismissAllowingStateLoss()
         }

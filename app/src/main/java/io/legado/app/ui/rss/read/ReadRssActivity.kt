@@ -21,6 +21,8 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.addCallback
 import androidx.activity.viewModels
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.size
 import androidx.lifecycle.lifecycleScope
 import com.script.rhino.RhinoScriptEngine
@@ -40,6 +42,7 @@ import io.legado.app.model.Download
 import io.legado.app.ui.association.OnLineImportActivity
 import io.legado.app.ui.file.HandleFileContract
 import io.legado.app.ui.login.SourceLoginActivity
+import io.legado.app.ui.rss.favorites.RssFavoritesDialog
 import io.legado.app.utils.ACache
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.get
@@ -51,6 +54,7 @@ import io.legado.app.utils.openUrl
 import io.legado.app.utils.setDarkeningAllowed
 import io.legado.app.utils.setTintMutate
 import io.legado.app.utils.share
+import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.textArray
@@ -60,6 +64,7 @@ import io.legado.app.utils.visible
 import kotlinx.coroutines.launch
 import org.apache.commons.text.StringEscapeUtils
 import org.jsoup.Jsoup
+import splitties.views.bottomPadding
 import java.io.ByteArrayInputStream
 import java.net.URLDecoder
 import java.util.regex.PatternSyntaxException
@@ -67,7 +72,8 @@ import java.util.regex.PatternSyntaxException
 /**
  * rss阅读界面
  */
-class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>(false) {
+class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>(),
+    RssFavoritesDialog.Callback {
 
     override val binding by viewBinding(ActivityRssReadBinding::inflate)
     override val viewModel by viewModels<ReadRssViewModel>()
@@ -91,6 +97,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         viewModel.upStarMenuData.observe(this) { upStarMenu() }
         viewModel.upTtsMenuData.observe(this) { upTtsMenu(it) }
         binding.titleBar.title = intent.getStringExtra("title")
+        initView()
         initWebView()
         initLiveData()
         viewModel.initData(intent)
@@ -148,7 +155,13 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                 binding.webView.reload()
             }
 
-            R.id.menu_rss_star -> viewModel.favorite()
+            R.id.menu_rss_star -> {
+                viewModel.addFavorite()
+                viewModel.rssArticle?.let {
+                    showDialogFragment(RssFavoritesDialog(it))
+                }
+            }
+
             R.id.menu_share_it -> {
                 binding.webView.url?.let {
                     share(it)
@@ -170,12 +183,31 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         return super.onCompatOptionsItemSelected(item)
     }
 
+    override fun updateFavorite(title: String, group: String) {
+        viewModel.rssArticle?.title = title
+        viewModel.rssArticle?.group = group
+        viewModel.updateFavorite()
+    }
+
+    override fun deleteFavorite() {
+        viewModel.delFavorite()
+    }
+
     @JavascriptInterface
     fun isNightTheme(): Boolean {
         return AppConfig.isNightTheme
     }
 
-    @SuppressLint("SetJavaScriptEnabled")
+    private fun initView() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, windowInsets ->
+            val typeMask = WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.ime()
+            val insets = windowInsets.getInsets(typeMask)
+            binding.root.bottomPadding = insets.bottom
+            windowInsets
+        }
+    }
+
+    @SuppressLint("SetJavaScriptEnabled", "JavascriptInterface")
     private fun initWebView() {
         binding.progressBar.fontColor = accentColor
         binding.webView.webChromeClient = CustomWebChromeClient()

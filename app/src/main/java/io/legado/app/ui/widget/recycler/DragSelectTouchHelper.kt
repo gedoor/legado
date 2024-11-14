@@ -28,8 +28,7 @@ import androidx.recyclerview.widget.RecyclerView.OnItemTouchListener
 import io.legado.app.BuildConfig
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper.AdvanceCallback.Mode
 import io.legado.app.utils.DebugLog
-
-import java.util.*
+import java.util.Locale
 import kotlin.math.max
 import kotlin.math.min
 
@@ -52,7 +51,7 @@ import kotlin.math.min
  *  |                   | ----------------------------------------------> |                       |
  *  +-------------------+                                                 +-----------------------+
  */
-@Suppress("unused", "MemberVisibilityCanBePrivate")
+@Suppress("unused", "MemberVisibilityCanBePrivate", "DEPRECATION")
 class DragSelectTouchHelper(
     /**
      * Developer callback which controls the behavior of DragSelectTouchHelper.

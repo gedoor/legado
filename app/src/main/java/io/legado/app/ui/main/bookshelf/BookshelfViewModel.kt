@@ -73,8 +73,16 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
                 kotlin.runCatching {
                     WebBook.getBookInfoAwait(bookSource, book)
                 }.onSuccess {
-                    it.order = appDb.bookDao.minOrder - 1
-                    it.save()
+                    val dbBook = appDb.bookDao.getBook(it.name, it.author)
+                    if (dbBook != null) {
+                        val toc = WebBook.getChapterListAwait(bookSource, it).getOrThrow()
+                        dbBook.migrateTo(it, toc)
+                        appDb.bookDao.insert(it)
+                        appDb.bookChapterDao.insert(*toc.toTypedArray())
+                    } else {
+                        it.order = appDb.bookDao.minOrder - 1
+                        it.save()
+                    }
                     successCount++
                     addBookProgressLiveData.postValue(successCount)
                 }

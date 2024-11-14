@@ -53,9 +53,14 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
     private val indexedProps: MutableMap<Any, Any?>
     private val implementor: InterfaceImplementor
 
-    fun eval(js: String, bindingsConfig: SimpleBindings.() -> Unit = {}): Any? {
-        val bindings = SimpleBindings()
-        bindings.apply(bindingsConfig)
+    fun eval(js: String, bindingsConfig: ScriptBindings.() -> Unit = {}): Any? {
+        val bindings = ScriptBindings()
+        Context.enter()
+        try {
+            bindings.apply(bindingsConfig)
+        } finally {
+            Context.exit()
+        }
         return eval(js, bindings)
     }
 
@@ -90,10 +95,9 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
         scope: Scriptable,
         coroutineContext: CoroutineContext?
     ): Any? {
-        val cx = Context.enter()
-        if (cx is RhinoContext) {
-            cx.coroutineContext = coroutineContext
-        }
+        val cx = Context.enter() as RhinoContext
+        val previousCoroutineContext = cx.coroutineContext
+        cx.coroutineContext = coroutineContext
         val ret: Any?
         try {
             var filename = this["javax.script.filename"] as? String
@@ -112,6 +116,7 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
         } catch (var14: IOException) {
             throw ScriptException(var14)
         } finally {
+            cx.coroutineContext = previousCoroutineContext
             Context.exit()
         }
         return unwrapReturnValue(ret)
@@ -249,6 +254,16 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
         return newScope
     }
 
+    override fun getRuntimeScope(bindings: ScriptBindings): Scriptable {
+        val cx = Context.enter()
+        try {
+            bindings.prototype = cx.initStandardObjects()
+        } finally {
+            Context.exit()
+        }
+        return bindings
+    }
+
     @Throws(ScriptException::class)
     override fun compile(script: String): CompiledScript {
         return this.compile(StringReader(script) as Reader)
@@ -355,6 +370,7 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
                 args: Array<Any>
             ): Any? {
                 try {
+                    (cx as RhinoContext).ensureActive()
                     return super.doTopCall(callable, cx, scope, thisObj, args)
                 } catch (e: RhinoInterruptError) {
                     throw e.cause

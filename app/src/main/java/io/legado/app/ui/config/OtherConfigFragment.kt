@@ -15,6 +15,7 @@ import io.legado.app.R
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.DialogEditTextBinding
+import io.legado.app.help.AppFreezeMonitor
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.LocalConfig
 import io.legado.app.lib.dialogs.alert
@@ -27,6 +28,7 @@ import io.legado.app.service.WebService
 import io.legado.app.ui.file.HandleFileContract
 import io.legado.app.ui.widget.number.NumberPickerDialog
 import io.legado.app.utils.LogUtils
+import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.putPrefBoolean
 import io.legado.app.utils.putPrefString
@@ -122,7 +124,7 @@ class OtherConfigFragment : PreferenceFragment(),
             PreferKey.bitmapCacheSize -> {
                 NumberPickerDialog(requireContext())
                     .setTitle(getString(R.string.bitmap_cache_size))
-                    .setMaxValue(9999)
+                    .setMaxValue(2047)
                     .setMinValue(1)
                     .setValue(AppConfig.bitmapCacheSize)
                     .show {
@@ -173,9 +175,11 @@ class OtherConfigFragment : PreferenceFragment(),
             }
 
             PreferKey.recordLog -> {
+                AppConfig.recordLog = appCtx.getPrefBoolean(PreferKey.recordLog)
                 LogUtils.upLevel()
                 LogUtils.logDeviceInfo()
                 LiveEventBus.config().enableLogger(AppConfig.recordLog)
+                AppFreezeMonitor.init(appCtx)
             }
 
             PreferKey.processText -> sharedPreferences?.let {

@@ -17,7 +17,12 @@ import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.file.HandleFileContract
-import io.legado.app.utils.*
+import io.legado.app.utils.ArchiveUtils
+import io.legado.app.utils.FileDoc
+import io.legado.app.utils.applyTint
+import io.legado.app.utils.hideSoftInput
+import io.legado.app.utils.startActivity
+import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -156,9 +161,7 @@ abstract class BaseImportBookActivity<VM : ViewModel> : VMBaseActivity<ActivityI
 
     private fun initSearchView() {
         searchView.applyTint(primaryTextColor)
-        searchView.onActionViewExpanded()
         searchView.isSubmitButtonEnabled = true
-        searchView.clearFocus()
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false

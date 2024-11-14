@@ -1,17 +1,17 @@
 package io.legado.app.ui.book.read
 
 import android.annotation.SuppressLint
+import android.app.DatePickerDialog
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
-import android.view.Gravity
 import android.view.KeyEvent
 import android.view.View
-import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.WindowInsets
 import android.view.WindowManager
-import android.widget.FrameLayout
 import androidx.activity.viewModels
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -20,6 +20,7 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.ActivityBookReadBinding
 import io.legado.app.databinding.DialogDownloadChoiceBinding
 import io.legado.app.databinding.DialogEditTextBinding
+import io.legado.app.databinding.DialogSimulatedReadingBinding
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.LocalConfig
 import io.legado.app.help.config.ReadBookConfig
@@ -41,13 +42,13 @@ import io.legado.app.utils.find
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.gone
 import io.legado.app.utils.isTv
-import io.legado.app.utils.navigationBarGravity
-import io.legado.app.utils.navigationBarHeight
 import io.legado.app.utils.setLightStatusBar
 import io.legado.app.utils.setNavigationBarColorAuto
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 /**
  * 阅读界面
@@ -57,6 +58,7 @@ abstract class BaseReadBookActivity :
 
     override val binding by viewBinding(ActivityBookReadBinding::inflate)
     override val viewModel by viewModels<ReadBookViewModel>()
+
     var bottomDialog = 0
         set(value) {
             if (field != value) {
@@ -81,6 +83,13 @@ abstract class BaseReadBookActivity :
         setOrientation()
         upLayoutInDisplayCutoutMode()
         super.onCreate(savedInstanceState)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            binding.navigationBar.run {
+                layoutParams = layoutParams.apply { height = insets.bottom }
+            }
+            windowInsets
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -221,30 +230,30 @@ abstract class BaseReadBookActivity :
     private fun upNavigationBar() {
         binding.navigationBar.run {
             if (bottomDialog > 0 || binding.readMenu.isVisible) {
-                val navigationBarHeight =
-                    if (ReadBookConfig.hideNavigationBar) navigationBarHeight else 0
-                when (navigationBarGravity) {
-                    Gravity.BOTTOM -> layoutParams =
-                        (layoutParams as FrameLayout.LayoutParams).apply {
-                            height = navigationBarHeight
-                            width = MATCH_PARENT
-                            gravity = Gravity.BOTTOM
-                        }
-
-                    Gravity.LEFT -> layoutParams =
-                        (layoutParams as FrameLayout.LayoutParams).apply {
-                            height = MATCH_PARENT
-                            width = navigationBarHeight
-                            gravity = Gravity.LEFT
-                        }
-
-                    Gravity.RIGHT -> layoutParams =
-                        (layoutParams as FrameLayout.LayoutParams).apply {
-                            height = MATCH_PARENT
-                            width = navigationBarHeight
-                            gravity = Gravity.RIGHT
-                        }
-                }
+//                val navigationBarHeight =
+//                    if (ReadBookConfig.hideNavigationBar) navigationBarHeight else 0
+//                when (navigationBarGravity) {
+//                    Gravity.BOTTOM -> layoutParams =
+//                        (layoutParams as FrameLayout.LayoutParams).apply {
+//                            height = navigationBarHeight
+//                            width = MATCH_PARENT
+//                            gravity = Gravity.BOTTOM
+//                        }
+//
+//                    Gravity.LEFT -> layoutParams =
+//                        (layoutParams as FrameLayout.LayoutParams).apply {
+//                            height = MATCH_PARENT
+//                            width = navigationBarHeight
+//                            gravity = Gravity.LEFT
+//                        }
+//
+//                    Gravity.RIGHT -> layoutParams =
+//                        (layoutParams as FrameLayout.LayoutParams).apply {
+//                            height = MATCH_PARENT
+//                            width = navigationBarHeight
+//                            gravity = Gravity.RIGHT
+//                        }
+//                }
                 visible()
             } else {
                 gone()
@@ -270,10 +279,13 @@ abstract class BaseReadBookActivity :
      * 适配刘海
      */
     private fun upLayoutInDisplayCutoutMode() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && ReadBookConfig.readBodyToLh) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             window.attributes = window.attributes.apply {
-                layoutInDisplayCutoutMode =
+                layoutInDisplayCutoutMode = if (ReadBookConfig.readBodyToLh) {
                     WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+                } else {
+                    WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_NEVER
+                }
             }
         }
     }
@@ -297,6 +309,61 @@ abstract class BaseReadBookActivity :
                             if (it.isEmpty()) book.totalChapterNum else it.toInt()
                         }
                         CacheBook.start(this@BaseReadBookActivity, book, start - 1, end - 1)
+                    }
+                }
+                noButton()
+            }
+        }
+    }
+
+    fun showSimulatedReading() {
+        val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        ReadBook.book?.let { book ->
+            alert(titleResource = R.string.simulated_reading) {
+                val alertBinding = DialogSimulatedReadingBinding.inflate(layoutInflater).apply {
+                    root.setBackgroundColor(root.context.backgroundColor)
+                    srEnabled.isChecked = book.getReadSimulating()
+                    editStart.setText(book.getStartChapter().toString())
+                    editNum.setText(book.getDailyChapters().toString())
+                    startDate.setText(book.getStartDate()?.format(dateFormatter))
+                    startDate.isFocusable = false // 设置为false，不允许获得焦点
+                    startDate.isCursorVisible = false // 不显示光标
+                    startDate.setOnClickListener {
+                        // 获取当前日期
+                        val localStartDate = LocalDate.parse(startDate.text)
+                        // 创建 DatePickerDialog
+                        val datePickerDialog = DatePickerDialog(
+                            root.context,
+                            {  _, yy, mm, dayOfMonth ->
+                                // 使用Java 8的日期和时间API来格式化日期
+                                val date = LocalDate.of(yy, mm + 1, dayOfMonth) // Java 8的LocalDate，月份从1开始
+                                val formattedDate = date.format(dateFormatter)
+                                startDate.setText(formattedDate)
+                            }, localStartDate.year, localStartDate.monthValue - 1, localStartDate.dayOfMonth
+                        )
+                        datePickerDialog.show()
+                    }
+                }
+                customView { alertBinding.root }
+                yesButton {
+                    alertBinding.run {
+                        val start = editStart.text!!.toString().let {
+                            if (it.isEmpty()) 0 else it.toInt()
+                        }
+                        val num = editNum.text!!.toString().let {
+                            if (it.isEmpty()) book.totalChapterNum else it.toInt()
+                        }
+                        val enabled = srEnabled.isChecked
+                        val date = startDate.text!!.toString().let {
+                            if (it.isEmpty()) LocalDate.now() else LocalDate.parse(it, dateFormatter)
+                        }
+                        book.setStartDate(date)
+                        book.setDailyChapters(num)
+                        book.setStartChapter(start)
+                        book.setReadSimulating(enabled)
+                        book.save()
+                        ReadBook.clearTextChapter()
+                        viewModel.initData(intent)
                     }
                 }
                 noButton()

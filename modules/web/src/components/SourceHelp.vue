@@ -1,5 +1,5 @@
-<script setup>
-import { Link } from "@element-plus/icons-vue";
+<script setup lang="ts">
+import { Link } from '@element-plus/icons-vue'
 </script>
 <template>
   <el-link :icon="Link" href="/help/#appHelp" target="_blank"
@@ -26,11 +26,11 @@ import { Link } from "@element-plus/icons-vue";
   <el-link :icon="Link" href="/help/#httpTTSHelp" target="_blank"
     >在线朗读规则</el-link
   ><br />
-  <el-link :icon="Link" href="/help/#webDavBookHelp" target="_blank"
-    > WebDav书籍简明使用教程</el-link
+  <el-link :icon="Link" href="/help/#webDavBookHelp" target="_blank">
+    WebDav书籍简明使用教程</el-link
   ><br />
-  <el-link :icon="Link" href="/help/#webDavHelp" target="_blank"
-    > WebDav备份教程</el-link
+  <el-link :icon="Link" href="/help/#webDavHelp" target="_blank">
+    WebDav备份教程</el-link
   ><br />
   <el-link :icon="Link" href="https://regexr-cn.com/" target="_blank"
     >正则表达式在线验证工具</el-link

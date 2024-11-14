@@ -46,7 +46,12 @@ interface ScriptEngine {
     fun eval(script: String, bindings: Bindings): Any?
 
     @Throws(ScriptException::class)
+    fun eval(script: String, bindings: ScriptBindings): Any?
+
+    @Throws(ScriptException::class)
     fun eval(script: String, context: ScriptContext): Any?
+
+    fun getRuntimeScope(bindings: ScriptBindings): Scriptable
 
     fun getRuntimeScope(context: ScriptContext): Scriptable
 

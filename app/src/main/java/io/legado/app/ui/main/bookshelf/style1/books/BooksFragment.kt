@@ -3,6 +3,7 @@ package io.legado.app.ui.main.bookshelf.style1.books
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
+import android.view.ViewConfiguration
 import androidx.core.view.isGone
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -11,6 +12,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.Adapter.StateRestorationPolicy
 import io.legado.app.R
 import io.legado.app.base.BaseFragment
 import io.legado.app.constant.AppLog
@@ -71,7 +73,6 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
         }
     }
     private var booksFlowJob: Job? = null
-    private var savedInstanceState: Bundle? = null
     var position = 0
         private set
     var groupId = -1L
@@ -79,11 +80,9 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
     var bookSort = 0
         private set
     private var upLastUpdateTimeJob: Job? = null
-    private var defaultScrollBarSize = 0
     private var enableRefresh = true
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        this.savedInstanceState = savedInstanceState
         arguments?.let {
             position = it.getInt("position", 0)
             groupId = it.getLong("groupId", -1)
@@ -97,7 +96,6 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
 
     private fun initRecyclerView() {
         binding.rvBookshelf.setEdgeEffectColor(primaryColor)
-        defaultScrollBarSize = binding.rvBookshelf.scrollBarSize
         upFastScrollerBar()
         binding.refreshLayout.setColorSchemeColors(accentColor)
         binding.refreshLayout.setOnRefreshListener {
@@ -109,11 +107,17 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
         } else {
             binding.rvBookshelf.layoutManager = GridLayoutManager(context, bookshelfLayout + 2)
         }
+        if (bookshelfLayout == 0) {
+            binding.rvBookshelf.setRecycledViewPool(activityViewModel.booksListRecycledViewPool)
+        } else {
+            binding.rvBookshelf.setRecycledViewPool(activityViewModel.booksGridRecycledViewPool)
+        }
+        booksAdapter.stateRestorationPolicy = StateRestorationPolicy.PREVENT_WHEN_EMPTY
         binding.rvBookshelf.adapter = booksAdapter
         booksAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                 val layoutManager = binding.rvBookshelf.layoutManager
-                if (positionStart == 0 && layoutManager is LinearLayoutManager) {
+                if (positionStart == 0 && itemCount == 1 && layoutManager is LinearLayoutManager) {
                     val scrollTo = layoutManager.findFirstVisibleItemPosition() - itemCount
                     binding.rvBookshelf.scrollToPosition(max(0, scrollTo))
                 }
@@ -121,7 +125,7 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
 
             override fun onItemRangeMoved(fromPosition: Int, toPosition: Int, itemCount: Int) {
                 val layoutManager = binding.rvBookshelf.layoutManager
-                if (toPosition == 0 && layoutManager is LinearLayoutManager) {
+                if (toPosition == 0 && itemCount == 1 && layoutManager is LinearLayoutManager) {
                     val scrollTo = layoutManager.findFirstVisibleItemPosition() - itemCount
                     binding.rvBookshelf.scrollToPosition(max(0, scrollTo))
                 }
@@ -136,7 +140,8 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
         if (showBookshelfFastScroller) {
             binding.rvBookshelf.scrollBarSize = 0
         } else {
-            binding.rvBookshelf.scrollBarSize = defaultScrollBarSize
+            binding.rvBookshelf.scrollBarSize =
+                ViewConfiguration.get(requireContext()).scaledScrollBarSize
         }
     }
 
@@ -186,22 +191,8 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
                 binding.tvEmptyMsg.isGone = list.isNotEmpty()
                 binding.refreshLayout.isEnabled = enableRefresh && list.isNotEmpty()
                 booksAdapter.setItems(list)
-                recoverPositionState()
                 delay(100)
             }
-        }
-    }
-
-    private fun recoverPositionState() {
-        // 恢复书架位置状态
-        if (savedInstanceState?.getBoolean("needRecoverState") == true) {
-            val layoutManager = binding.rvBookshelf.layoutManager
-            if (layoutManager is LinearLayoutManager) {
-                val leavePosition = savedInstanceState!!.getInt("leavePosition")
-                val leaveOffset = savedInstanceState!!.getInt("leaveOffset")
-                layoutManager.scrollToPositionWithOffset(leavePosition, leaveOffset)
-            }
-            savedInstanceState!!.putBoolean("needRecoverState", false)
         }
     }
 
@@ -236,26 +227,13 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
         return booksAdapter.itemCount
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        // 保存书架位置状态
-        val layoutManager = binding.rvBookshelf.layoutManager
-        if (layoutManager is LinearLayoutManager) {
-            val itemPosition = layoutManager.findFirstVisibleItemPosition()
-            val currentView = layoutManager.findViewByPosition(itemPosition)
-            val viewOffset = currentView?.top
-            if (viewOffset != null) {
-                outState.putInt("leavePosition", itemPosition)
-                outState.putInt("leaveOffset", viewOffset)
-                outState.putBoolean("needRecoverState", true)
-            } else if (savedInstanceState != null) {
-                val leavePosition = savedInstanceState!!.getInt("leavePosition")
-                val leaveOffset = savedInstanceState!!.getInt("leaveOffset")
-                outState.putInt("leavePosition", leavePosition)
-                outState.putInt("leaveOffset", leaveOffset)
-                outState.putBoolean("needRecoverState", true)
-            }
-        }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        /**
+         * 将 RecyclerView 中的视图全部回收到 RecycledViewPool 中
+         */
+        binding.rvBookshelf.setItemViewCacheSize(0)
+        binding.rvBookshelf.adapter = null
     }
 
     override fun open(book: Book) {

@@ -11,8 +11,14 @@ import androidx.annotation.StringRes
 import androidx.appcompat.widget.PopupMenu
 import io.legado.app.R
 import io.legado.app.databinding.ViewSelectActionBarBinding
-import io.legado.app.lib.theme.*
+import io.legado.app.lib.theme.TintHelper
+import io.legado.app.lib.theme.accentColor
+import io.legado.app.lib.theme.bottomBackground
+import io.legado.app.lib.theme.elevation
+import io.legado.app.lib.theme.getPrimaryTextColor
+import io.legado.app.lib.theme.getSecondaryDisabledTextColor
 import io.legado.app.utils.ColorUtils
+import io.legado.app.utils.applyNavigationBarPadding
 import io.legado.app.utils.visible
 
 
@@ -46,6 +52,7 @@ class SelectActionBar @JvmOverloads constructor(
             binding.btnRevertSelection.setOnClickListener { callBack?.revertSelection() }
             binding.btnSelectActionMain.setOnClickListener { callBack?.onClickSelectBarMainAction() }
             binding.ivMenuMore.setOnClickListener { selMenu?.show() }
+            applyNavigationBarPadding()
         }
     }
 

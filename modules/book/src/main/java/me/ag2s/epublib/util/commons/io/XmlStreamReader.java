@@ -29,6 +29,7 @@ import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.Objects;
@@ -758,7 +759,17 @@ public class XmlStreamReader extends Reader {
                 }
             }
         }
-        return encoding;
+        boolean isSupportedEncoding;
+        try {
+            isSupportedEncoding = Charset.isSupported(encoding);
+        } catch (Exception e) {
+            return null;
+        }
+        if (isSupportedEncoding) {
+            return encoding;
+        } else {
+            return null;
+        }
     }
 
     /**

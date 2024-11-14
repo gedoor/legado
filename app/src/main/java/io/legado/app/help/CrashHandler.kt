@@ -28,9 +28,6 @@ import java.io.StringWriter
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.concurrent.TimeUnit
-import kotlin.collections.component1
-import kotlin.collections.component2
-import kotlin.collections.set
 
 /**
  * 异常管理类
@@ -81,7 +78,7 @@ class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
         LocalConfig.appCrash = true
         //保存日志文件
         saveCrashInfo2File(ex)
-        if (ex is OutOfMemoryError && AppConfig.recordHeapDump) {
+        if ((ex is OutOfMemoryError || ex.cause is OutOfMemoryError) && AppConfig.recordHeapDump) {
             doHeapDump()
         }
         context.longToastOnUiLegacy(ex.stackTraceStr)
@@ -104,8 +101,9 @@ class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
                 map["WebViewUserAgent"] = try {
                     WebSettings.getDefaultUserAgent(appCtx)
                 } catch (e: Throwable) {
-                    e.localizedMessage ?: "null"
+                    e.toString()
                 }
+                map["packageName"] = appCtx.packageName
                 //获取app版本信息
                 AppConst.appInfo.let {
                     map["versionName"] = it.versionName
@@ -141,6 +139,7 @@ class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
             printWriter.close()
             val result = writer.toString()
             sb.append(result)
+            val crashLog = sb.toString()
             val timestamp = System.currentTimeMillis()
             val time = format.format(Date())
             val fileName = "crash-$time-$timestamp.log"
@@ -150,19 +149,19 @@ class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
                 val uri = Uri.parse(backupPath)
                 val fileDoc = FileDoc.fromUri(uri, true)
                 fileDoc.createFileIfNotExist(fileName, "crash")
-                    .writeText(sb.toString())
-            } catch (e: Exception) {
+                    .writeText(crashLog)
+            } catch (_: Exception) {
+            }
+            kotlin.runCatching {
                 appCtx.externalCacheDir?.let { rootFile ->
+                    val exceedTimeMillis = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(7)
                     rootFile.getFile("crash").listFiles()?.forEach {
-                        if (it.lastModified() < System.currentTimeMillis() - TimeUnit.DAYS.toMillis(
-                                7
-                            )
-                        ) {
+                        if (it.lastModified() < exceedTimeMillis) {
                             it.delete()
                         }
                     }
                     FileUtils.createFileIfNotExist(rootFile, "crash", fileName)
-                        .writeText(sb.toString())
+                        .writeText(crashLog)
                 }
             }
         }
@@ -170,12 +169,17 @@ class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
         /**
          * 进行堆转储
          */
-        fun doHeapDump() {
+        fun doHeapDump(manually: Boolean = false) {
             val heapDir = appCtx
                 .externalCache
                 .getFile("heapDump")
             heapDir.createFolderReplace()
-            val heapFile = heapDir.getFile("heap-dump-${System.currentTimeMillis()}.hprof")
+            val fileName = if (manually) {
+                "heap-dump-manually-${System.currentTimeMillis()}.hprof"
+            } else {
+                "heap-dump-${System.currentTimeMillis()}.hprof"
+            }
+            val heapFile = heapDir.getFile(fileName)
             val heapDumpName = heapFile.absolutePath
             Debug.dumpHprofData(heapDumpName)
         }

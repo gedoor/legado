@@ -13,36 +13,36 @@
     v-model="printDebug"
     type="textarea"
     readonly
-    rows="29"
+    :rows="29"
     placeholder="这里用于输出调试信息"
   />
 </template>
 
-<script setup>
-import API from "@api";
-import { Search } from "@element-plus/icons-vue";
+<script setup lang="ts">
+import API from '@api'
+import { Search } from '@element-plus/icons-vue'
 
-const store = useSourceStore();
+const store = useSourceStore()
 
-const printDebug = ref("");
-const searchKey = ref("");
+const printDebug = ref('')
+const searchKey = ref('')
 
 watch(
   () => store.isDebuging,
   () => {
-    if (store.isDebuging) startDebug();
+    if (store.isDebuging) startDebug()
   },
-);
+)
 
-const appendDebugMsg = (msg) => {
-  let debugDom = document.querySelector("#debug-text");
-  debugDom.scrollTop = debugDom.scrollHeight;
-  printDebug.value += msg + "\n";
-};
+const appendDebugMsg = (msg: string) => {
+  const debugDom = document.querySelector('#debug-text')
+  debugDom!.scrollTop = debugDom!.scrollHeight
+  printDebug.value += msg + '\n'
+}
 const startDebug = async () => {
-  printDebug.value = "";
+  printDebug.value = ''
   try {
-    await API.saveSource(store.currentSource);
+    await API.saveSource(store.currentSource)
   } catch (e) {
     store.debugFinish()
     throw e
@@ -52,12 +52,12 @@ const startDebug = async () => {
     searchKey.value || store.searchKey,
     appendDebugMsg,
     store.debugFinish,
-  );
-};
+  )
+}
 
 const isBookSource = computed(() => {
-  return /bookSource/.test(window.location.href);
-});
+  return /bookSource/i.test(window.location.href)
+})
 </script>
 
 <style lang="scss" scoped>

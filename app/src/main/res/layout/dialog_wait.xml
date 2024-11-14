@@ -7,7 +7,7 @@
     android:padding="20dp"
     android:orientation="horizontal">
 
-    <ProgressBar
+    <io.legado.app.lib.theme.view.ThemeProgressBar
         android:id="@+id/pb"
         android:layout_width="30dp"
         android:layout_height="30dp"

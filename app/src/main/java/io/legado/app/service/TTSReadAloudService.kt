@@ -93,18 +93,6 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
             LogUtils.d(TAG, "朗读列表大小 ${contentList.size}")
             LogUtils.d(TAG, "朗读页数 ${textChapter?.pageSize}")
             val tts = textToSpeech ?: throw NoStackTraceException("tts is null")
-            var result = tts.runCatching {
-                speak("", TextToSpeech.QUEUE_FLUSH, null, null)
-            }.getOrElse {
-                AppLog.put("tts出错\n${it.localizedMessage}", it, true)
-                TextToSpeech.ERROR
-            }
-            if (result == TextToSpeech.ERROR) {
-                AppLog.put("tts出错 尝试重新初始化")
-                clearTTS()
-                initTts()
-                return@execute
-            }
             val contentList = contentList
             for (i in nowSpeak until contentList.size) {
                 ensureActive()
@@ -115,14 +103,29 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
                 if (text.matches(AppPattern.notReadAloudRegex)) {
                     continue
                 }
-                result = tts.runCatching {
-                    speak(text, TextToSpeech.QUEUE_ADD, null, AppConst.APP_TAG + i)
-                }.getOrElse {
-                    AppLog.put("tts出错\n${it.localizedMessage}", it, true)
-                    TextToSpeech.ERROR
-                }
-                if (result == TextToSpeech.ERROR) {
-                    AppLog.put("tts朗读出错:$text")
+                if (i == nowSpeak) {
+                    val result = tts.runCatching {
+                        speak(text, TextToSpeech.QUEUE_FLUSH, null, AppConst.APP_TAG + i)
+                    }.getOrElse {
+                        AppLog.put("tts出错\n${it.localizedMessage}", it, true)
+                        TextToSpeech.ERROR
+                    }
+                    if (result == TextToSpeech.ERROR) {
+                        AppLog.put("tts出错 尝试重新初始化")
+                        clearTTS()
+                        initTts()
+                        return@execute
+                    }
+                } else {
+                    val result = tts.runCatching {
+                        speak(text, TextToSpeech.QUEUE_ADD, null, AppConst.APP_TAG + i)
+                    }.getOrElse {
+                        AppLog.put("tts出错\n${it.localizedMessage}", it, true)
+                        TextToSpeech.ERROR
+                    }
+                    if (result == TextToSpeech.ERROR) {
+                        AppLog.put("tts朗读出错:$text")
+                    }
                 }
             }
             LogUtils.d(TAG, "朗读内容添加完成")
@@ -191,22 +194,13 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
 
         override fun onDone(s: String) {
             LogUtils.d(TAG, "onDone utteranceId:$s")
-            //跳过全标点段落
-            do {
-                readAloudNumber += contentList[nowSpeak].length + 1 - paragraphStartPos
-                paragraphStartPos = 0
-                nowSpeak++
-                if (nowSpeak >= contentList.size) {
-                    nextChapter()
-                    return
-                }
-            } while (contentList[nowSpeak].matches(AppPattern.notReadAloudRegex))
+            nextParagraph()
         }
 
         override fun onRangeStart(utteranceId: String?, start: Int, end: Int, frame: Int) {
             super.onRangeStart(utteranceId, start, end, frame)
             val msg =
-                "$TAG onRangeStart nowSpeak:$nowSpeak pageIndex:$pageIndex utteranceId:$utteranceId start:$start end:$end frame:$frame"
+                "onRangeStart nowSpeak:$nowSpeak pageIndex:$pageIndex utteranceId:$utteranceId start:$start end:$end frame:$frame"
             LogUtils.d(TAG, msg)
             textChapter?.let {
                 if (readAloudNumber + start > it.getReadLength(pageIndex + 1)) {
@@ -222,11 +216,26 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
                 TAG,
                 "onError nowSpeak:$nowSpeak pageIndex:$pageIndex utteranceId:$utteranceId errorCode:$errorCode"
             )
+            nextParagraph()
+        }
+
+        private fun nextParagraph() {
+            //跳过全标点段落
+            do {
+                readAloudNumber += contentList[nowSpeak].length + 1 - paragraphStartPos
+                paragraphStartPos = 0
+                nowSpeak++
+                if (nowSpeak >= contentList.size) {
+                    nextChapter()
+                    return
+                }
+            } while (contentList[nowSpeak].matches(AppPattern.notReadAloudRegex))
         }
 
         @Deprecated("Deprecated in Java")
         override fun onError(s: String) {
-            //nothing
+            LogUtils.d(TAG, "onError nowSpeak:$nowSpeak pageIndex:$pageIndex s:$s")
+            nextParagraph()
         }
 
     }

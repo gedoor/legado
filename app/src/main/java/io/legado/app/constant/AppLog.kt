@@ -35,6 +35,22 @@ object AppLog {
     }
 
     @Synchronized
+    fun putNotSave(message: String?, throwable: Throwable? = null, toast: Boolean = false) {
+        message ?: return
+        if (toast) {
+            appCtx.toastOnUi(message)
+        }
+        if (mLogs.size > 100) {
+            mLogs.removeLastOrNull()
+        }
+        mLogs.add(0, Triple(System.currentTimeMillis(), message, throwable))
+        if (BuildConfig.DEBUG) {
+            val stackTrace = Thread.currentThread().stackTrace
+            Log.e(stackTrace[3].className, message, throwable)
+        }
+    }
+
+    @Synchronized
     fun clear() {
         mLogs.clear()
     }

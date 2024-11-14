@@ -35,7 +35,7 @@ fun File.listFileDocs(filter: FileDocFilter? = null): ArrayList<FileDoc> {
 
 fun File.createFileIfNotExist(): File {
     if (!exists()) {
-        parentFile?.createFileIfNotExist()
+        parentFile?.createFolderIfNotExist()
         createNewFile()
     }
     return this

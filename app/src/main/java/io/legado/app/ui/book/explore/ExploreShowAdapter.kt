@@ -28,11 +28,13 @@ class ExploreShowAdapter(context: Context, val callBack: CallBack) :
         item: SearchBook,
         payloads: MutableList<Any>
     ) {
-        val bundle = payloads.getOrNull(0) as? Bundle
-        if (bundle == null) {
+        if (payloads.isEmpty()) {
             bind(binding, item)
         } else {
-            bindChange(binding, item, bundle)
+            for (i in payloads.indices) {
+                val bundle = payloads[i] as Bundle
+                bindChange(binding, item, bundle)
+            }
         }
 
     }

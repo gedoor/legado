@@ -82,6 +82,11 @@ abstract class AbstractScriptEngine(val bindings: Bindings? = null) : ScriptEngi
     }
 
     @Throws(ScriptException::class)
+    override fun eval(script: String, bindings: ScriptBindings): Any? {
+        return this.eval(script, getRuntimeScope(bindings))
+    }
+
+    @Throws(ScriptException::class)
     override fun eval(reader: Reader): Any? {
         return this.eval(reader, context)
     }

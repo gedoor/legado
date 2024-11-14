@@ -65,7 +65,7 @@ fun AppCompatActivity.readUri(
         }
     } catch (e: Exception) {
         e.printOnDebug()
-        toastOnUi("读取Uri出错\n${e.localizedMessage}")
+        AppLog.put("读取Uri出错\n$e", e, true)
         if (e is SecurityException) {
             throw e
         }
@@ -106,7 +106,7 @@ fun Fragment.readUri(uri: Uri?, success: (fileDoc: FileDoc, inputStream: InputSt
         }
     } catch (e: Exception) {
         e.printOnDebug()
-        toastOnUi("读取Uri出错\n${e.localizedMessage}")
+        AppLog.put("读取Uri出错\n$e", e, true)
     }
 }
 

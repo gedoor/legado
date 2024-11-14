@@ -8,6 +8,9 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import splitties.init.appCtx
 import java.io.File
 
 /**
@@ -100,4 +103,29 @@ fun SharedPreferences.remove(key: String) {
     edit {
         remove(key)
     }
+}
+
+fun LifecycleOwner.observeSharedPreferences(
+    prefs: SharedPreferences = appCtx.defaultSharedPreferences,
+    l: SharedPreferences.OnSharedPreferenceChangeListener
+) {
+    val observer = object : DefaultLifecycleObserver {
+        override fun onCreate(owner: LifecycleOwner) {
+            prefs.registerOnSharedPreferenceChangeListener(l)
+        }
+
+        override fun onDestroy(owner: LifecycleOwner) {
+            prefs.unregisterOnSharedPreferenceChangeListener(l)
+            lifecycle.removeObserver(this)
+        }
+
+        override fun onPause(owner: LifecycleOwner) {
+            prefs.unregisterOnSharedPreferenceChangeListener(l)
+        }
+
+        override fun onResume(owner: LifecycleOwner) {
+            prefs.registerOnSharedPreferenceChangeListener(l)
+        }
+    }
+    lifecycle.addObserver(observer)
 }

@@ -88,9 +88,6 @@ object ReadBookConfig {
             configList.clear()
             configList.addAll(it)
         }
-        for (i in configList.indices) {
-            configList[i].initColorInt()
-        }
     }
 
     fun initShareConfig() {
@@ -539,14 +536,23 @@ object ReadBookConfig {
         var footerMode: Int = 0
     ) {
 
+        @Transient
         private var textColorIntEInk = -1
+
+        @Transient
         private var textColorIntNight = -1
+
+        @Transient
         private var textColorInt = -1
 
-        fun initColorInt() {
+        @Transient
+        private var initColorInt = false
+
+        private fun initColorInt() {
             textColorIntEInk = Color.parseColor(textColorEInk)
             textColorIntNight = Color.parseColor(textColorNight)
             textColorInt = Color.parseColor(textColor)
+            initColorInt = true
         }
 
         fun setCurTextColor(color: Int) {
@@ -569,6 +575,9 @@ object ReadBookConfig {
         }
 
         fun curTextColor(): Int {
+            if (!initColorInt) {
+                initColorInt()
+            }
             return when {
                 AppConfig.isEInkMode -> textColorIntEInk
                 AppConfig.isNightTheme -> textColorIntNight

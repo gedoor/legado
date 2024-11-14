@@ -250,7 +250,7 @@ data class TextPage(
      */
     fun getPosByLineColumn(lineIndex: Int, columnIndex: Int): Int {
         var length = 0
-        val maxIndex = min(lineIndex, lineSize)
+        val maxIndex = min(lineIndex, lineSize - 1)
         for (index in 0 until maxIndex) {
             length += textLines[index].charSize
             if (textLines[index].isParagraphEnd) {
@@ -290,11 +290,11 @@ data class TextPage(
     fun draw(view: ContentTextView, canvas: Canvas, relativeOffset: Float) {
         if (AppConfig.optimizeRender) {
             render(view)
-            canvas.withTranslation(0f, relativeOffset + paddingTop) {
+            canvas.withTranslation(0f, relativeOffset) {
                 canvasRecorder.draw(this)
             }
         } else {
-            canvas.withTranslation(0f, relativeOffset + paddingTop) {
+            canvas.withTranslation(0f, relativeOffset) {
                 drawPage(view, this)
             }
         }
@@ -318,7 +318,7 @@ data class TextPage(
     private fun drawPage(view: ContentTextView, canvas: Canvas) {
         for (i in lines.indices) {
             val line = lines[i]
-            canvas.withTranslation(0f, line.lineTop - paddingTop) {
+            canvas.withTranslation(0f, line.lineTop) {
                 line.draw(view, this)
             }
         }
@@ -326,7 +326,8 @@ data class TextPage(
 
     fun render(view: ContentTextView): Boolean {
         if (!isCompleted) return false
-        return canvasRecorder.recordIfNeeded(view.width, height.toInt()) {
+        val height = lines.lastOrNull()?.lineBottom?.toInt() ?: 0
+        return canvasRecorder.recordIfNeeded(view.width, height) {
             drawPage(view, this)
         }
     }

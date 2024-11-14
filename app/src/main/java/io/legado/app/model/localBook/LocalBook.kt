@@ -3,7 +3,7 @@ package io.legado.app.model.localBook
 import android.net.Uri
 import android.util.Base64
 import androidx.documentfile.provider.DocumentFile
-import com.script.SimpleBindings
+import com.script.ScriptBindings
 import com.script.rhino.RhinoScriptEngine
 import io.legado.app.R
 import io.legado.app.constant.*
@@ -97,6 +97,10 @@ object LocalBook {
                 PdfFile.getChapterList(book)
             }
 
+            book.isMobi -> {
+                MobiFile.getChapterList(book)
+            }
+
             else -> {
                 TextFile.getChapterList(book)
             }
@@ -125,6 +129,10 @@ object LocalBook {
 
                 book.isPdf -> {
                     PdfFile.getContent(book, chapter)
+                }
+
+                book.isMobi -> {
+                    MobiFile.getContent(book, chapter)
                 }
 
                 else -> {
@@ -192,15 +200,24 @@ object LocalBook {
                 latestChapterTime = updateTime,
                 order = appDb.bookDao.minOrder - 1
             )
-            if (book.isEpub) EpubFile.upBookInfo(book)
-            if (book.isUmd) UmdFile.upBookInfo(book)
-            if (book.isPdf) PdfFile.upBookInfo(book)
+            upBookInfo(book)
             appDb.bookDao.insert(book)
         } else {
+            deleteBook(book, false)
+            upBookInfo(book)
             //已有书籍说明是更新,删除原有目录
             appDb.bookChapterDao.delByBook(bookUrl)
         }
         return book
+    }
+
+    fun upBookInfo(book: Book) {
+        when {
+            book.isEpub -> EpubFile.upBookInfo(book)
+            book.isUmd -> UmdFile.upBookInfo(book)
+            book.isPdf -> PdfFile.upBookInfo(book)
+            book.isMobi -> MobiFile.upBookInfo(book)
+        }
     }
 
     /* 导入压缩包内的书籍 */
@@ -274,7 +291,7 @@ object LocalBook {
                     AppConfig.bookImportFileName + "\nJSON.stringify({author:author,name:name})"
                 //在脚本中定义如何分解文件名成书名、作者名
                 val jsonStr = RhinoScriptEngine.run {
-                    val bindings = SimpleBindings()
+                    val bindings = ScriptBindings()
                     bindings["src"] = tempFileName
                     eval(js, bindings)
                 }.toString()
@@ -306,6 +323,9 @@ object LocalBook {
     fun deleteBook(book: Book, deleteOriginal: Boolean) {
         kotlin.runCatching {
             BookHelp.clearCache(book)
+            if (!book.coverUrl.isNullOrEmpty()) {
+                FileUtils.delete(book.coverUrl!!)
+            }
             if (deleteOriginal) {
                 if (book.bookUrl.isContentScheme()) {
                     val uri = Uri.parse(book.bookUrl)

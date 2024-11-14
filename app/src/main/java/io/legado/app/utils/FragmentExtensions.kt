@@ -12,6 +12,7 @@ import androidx.annotation.DrawableRes
 import androidx.core.content.edit
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import io.legado.app.R
 import io.legado.app.ui.widget.dialog.TextDialog
 
@@ -84,3 +85,6 @@ fun Fragment.showHelp(fileName: String) {
     val mdText = String(requireContext().assets.open("web/help/md/${fileName}.md").readBytes())
     showDialogFragment(TextDialog(getString(R.string.help), mdText, TextDialog.Mode.MD))
 }
+
+val Fragment.isCreated
+    get() = lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)

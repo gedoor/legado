@@ -188,7 +188,7 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
             val layoutNames = defaultConfigs.map { it.name }
             context?.selector("选择预设布局", layoutNames) { _, i ->
                 if (i >= 0) {
-                    ReadBookConfig.durConfig = defaultConfigs[i].copy().apply { initColorInt() }
+                    ReadBookConfig.durConfig = defaultConfigs[i].copy()
                     initData()
                     postEvent(EventBus.UP_CONFIG, arrayListOf(1, 2, 5))
                 }

@@ -1,5 +1,6 @@
 package io.legado.app.model.localBook
 
+import io.legado.app.constant.AppLog
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
@@ -14,6 +15,7 @@ import java.io.FileNotFoundException
 import java.nio.charset.Charset
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+import java.util.regex.PatternSyntaxException
 import kotlin.math.min
 
 class TextFile(private var book: Book) {
@@ -395,7 +397,12 @@ class TextFile(private var book: Book) {
         var maxCs = 1
         var tocPattern: Pattern? = null
         for (tocRule in rules) {
-            val pattern = tocRule.rule.toPattern(Pattern.MULTILINE)
+            val pattern = try {
+                tocRule.rule.toPattern(Pattern.MULTILINE)
+            } catch (e: PatternSyntaxException) {
+                AppLog.put("TXT目录规则正则语法错误:${tocRule.name}\n$e", e)
+                continue
+            }
             val matcher = pattern.matcher(content)
             var cs = 0
             while (matcher.find()) {

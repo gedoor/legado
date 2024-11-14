@@ -22,6 +22,7 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.databinding.ActivityBookInfoBinding
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.AppWebDav
+import io.legado.app.help.book.addType
 import io.legado.app.help.book.getRemoteUrl
 import io.legado.app.help.book.isAudio
 import io.legado.app.help.book.isLocal
@@ -45,6 +46,7 @@ import io.legado.app.ui.book.changesource.ChangeBookSourceDialog
 import io.legado.app.ui.book.group.GroupSelectDialog
 import io.legado.app.ui.book.info.edit.BookInfoEditActivity
 import io.legado.app.ui.book.read.ReadBookActivity
+import io.legado.app.ui.book.read.ReadBookActivity.Companion.RESULT_DELETED
 import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.book.toc.TocActivityResult
@@ -56,6 +58,7 @@ import io.legado.app.ui.widget.dialog.WaitDialog
 import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.GSON
 import io.legado.app.utils.StartActivityContract
+import io.legado.app.utils.applyNavigationBarPadding
 import io.legado.app.utils.dpToPx
 import io.legado.app.utils.gone
 import io.legado.app.utils.longToastOnUi
@@ -106,9 +109,16 @@ class BookInfoActivity :
         ActivityResultContracts.StartActivityForResult()
     ) {
         viewModel.upBook(intent)
-        if (it.resultCode == RESULT_OK) {
-            viewModel.inBookshelf = true
-            upTvBookshelf()
+        when (it.resultCode) {
+            RESULT_OK -> {
+                viewModel.inBookshelf = true
+                upTvBookshelf()
+            }
+
+            RESULT_DELETED -> {
+                setResult(RESULT_OK)
+                finish()
+            }
         }
     }
     private val infoEditResult = registerForActivityResult(
@@ -145,6 +155,7 @@ class BookInfoActivity :
         binding.arcView.setBgColor(backgroundColor)
         binding.llInfo.setBackgroundColor(backgroundColor)
         binding.flAction.setBackgroundColor(bottomBackground)
+        binding.flAction.applyNavigationBarPadding()
         binding.tvShelf.setTextColor(getPrimaryTextColor(ColorUtils.isColorLight(bottomBackground)))
         binding.tvToc.text = getString(R.string.toc_s, getString(R.string.loading))
         viewModel.bookData.observe(this) { showBook(it) }
@@ -418,6 +429,10 @@ class BookInfoActivity :
         tvOrigin.setOnClickListener {
             viewModel.getBook()?.let { book ->
                 if (book.isLocal) return@let
+                if (!appDb.bookSourceDao.has(book.origin)) {
+                    toastOnUi(R.string.error_no_source)
+                    return@let
+                }
                 editSourceResult.launch {
                     putExtra("sourceUrl", book.origin)
                 }
@@ -550,6 +565,7 @@ class BookInfoActivity :
                             LocalConfig.deleteBookOriginal = checkBox.isChecked
                         }
                         viewModel.delBook(LocalConfig.deleteBookOriginal) {
+                            setResult(RESULT_OK)
                             finish()
                         }
                     }
@@ -557,6 +573,7 @@ class BookInfoActivity :
                 }
             } else {
                 viewModel.delBook(LocalConfig.deleteBookOriginal) {
+                    setResult(RESULT_OK)
                     finish()
                 }
             }
@@ -637,6 +654,7 @@ class BookInfoActivity :
 
     private fun readBook(book: Book) {
         if (!viewModel.inBookshelf) {
+            book.addType(BookType.notShelf)
             viewModel.saveBook(book) {
                 viewModel.saveChapterList {
                     startReadActivity(book)

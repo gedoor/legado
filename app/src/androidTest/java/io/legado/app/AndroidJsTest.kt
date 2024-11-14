@@ -1,7 +1,7 @@
 package io.legado.app
 
 import cn.hutool.core.lang.JarClassLoader
-import com.script.SimpleBindings
+import com.script.ScriptBindings
 import com.script.rhino.RhinoScriptEngine
 import dalvik.system.DexClassLoader
 import org.intellij.lang.annotations.Language
@@ -69,7 +69,7 @@ class AndroidJsTest {
     @Test
     fun testMap() {
         val map = hashMapOf("id" to "3242532321")
-        val bindings = SimpleBindings()
+        val bindings = ScriptBindings()
         bindings["result"] = map
         @Language("js")
         val jsMap = "$=result;id=$.id;id"

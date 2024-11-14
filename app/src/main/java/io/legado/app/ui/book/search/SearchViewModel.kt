@@ -10,6 +10,7 @@ import io.legado.app.constant.AppLog
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.data.entities.SearchKeyword
+import io.legado.app.help.book.isNotShelf
 import io.legado.app.help.config.AppConfig
 import io.legado.app.model.webBook.SearchModel
 import io.legado.app.utils.ConflateLiveData
@@ -62,10 +63,11 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
         execute {
             appDb.bookDao.flowAll().mapLatest { books ->
                 val keys = arrayListOf<String>()
-                books.forEach {
-                    keys.add("${it.name}-${it.author}")
-                    keys.add(it.name)
-                }
+                books.filterNot { it.isNotShelf }
+                    .forEach {
+                        keys.add("${it.name}-${it.author}")
+                        keys.add(it.name)
+                    }
                 keys
             }.catch {
                 AppLog.put("搜索界面获取书籍列表失败\n${it.localizedMessage}", it)

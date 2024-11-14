@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.util.AttributeSet
 import android.view.Menu
 import android.view.MenuItem
+import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
 import androidx.annotation.RequiresApi
@@ -180,6 +181,15 @@ abstract class BaseActivity<VB : ViewBinding>(
     }
 
     open fun observeLiveBus() {
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        return try {
+            super.dispatchTouchEvent(ev)
+        } catch (e: IllegalArgumentException) {
+            e.printStackTrace()
+            false
+        }
     }
 
     override fun finish() {

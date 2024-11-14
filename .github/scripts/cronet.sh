@@ -82,8 +82,8 @@ if version_compare $current_cronet_version $lastest_cronet_version; then
     sed -i s/CronetMainVersion=.*/CronetMainVersion=$lastest_cronet_main_version/ $path
     # 更新cronet_proguard_rules.pro
     sync_proguard_rules
-    # 添加更新日志
-    sed "15a* 更新cronet: $lastest_cronet_version" -i $GITHUB_WORKSPACE/app/src/main/assets/updateLog.md
+    # 更新cronet版本
+    sed -i "s/## cronet版本: .*/## cronet版本: $lastest_cronet_version/" $GITHUB_WORKSPACE/app/src/main/assets/updateLog.md
     # 生成pull request信息
     write_github_env_variable PR_TITLE "Bump cronet from $current_cronet_version to $lastest_cronet_version"
     write_github_env_variable PR_BODY "Changes in the [Git log](https://chromium.googlesource.com/chromium/src/+log/$current_cronet_version..$lastest_cronet_version)"

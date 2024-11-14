@@ -135,6 +135,39 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application), J
         }
     }
 
+    fun addFavorite() {
+        execute {
+            rssStar ?: rssArticle?.toStar()?.let {
+                appDb.rssStarDao.insert(it)
+                rssStar = it
+            }
+        }.onSuccess {
+            upStarMenuData.postValue(true)
+        }
+    }
+
+    fun updateFavorite() {
+        execute {
+            rssArticle?.toStar()?.let {
+                appDb.rssStarDao.update(it)
+                rssStar = it
+            }
+        }.onSuccess {
+            upStarMenuData.postValue(true)
+        }
+    }
+
+    fun delFavorite() {
+        execute {
+            rssStar?.let {
+                appDb.rssStarDao.delete(it.origin, it.link)
+                rssStar = null
+            }
+        }.onSuccess {
+            upStarMenuData.postValue(true)
+        }
+    }
+
     fun saveImage(webPic: String?, uri: Uri) {
         webPic ?: return
         execute {

@@ -6,7 +6,9 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.exception.NoStackTraceException
+import io.legado.app.help.book.addType
 import io.legado.app.help.book.getBookType
+import io.legado.app.help.book.removeAllBookType
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.http.StrResponse
 import io.legado.app.model.Debug
@@ -58,6 +60,7 @@ object WebBook {
             headerMapF = bookSource.getHeaderMap(true),
             source = bookSource,
             ruleData = ruleData,
+            coroutineContext = coroutineContext
         )
         var res = analyzeUrl.getStrResponseAwait()
         //检测书源是否已登录
@@ -104,7 +107,8 @@ object WebBook {
             baseUrl = bookSource.bookSourceUrl,
             source = bookSource,
             ruleData = ruleData,
-            headerMapF = bookSource.getHeaderMap(true)
+            headerMapF = bookSource.getHeaderMap(true),
+            coroutineContext = coroutineContext
         )
         var res = analyzeUrl.getStrResponseAwait()
         //检测书源是否已登录
@@ -144,7 +148,8 @@ object WebBook {
         book: Book,
         canReName: Boolean = true,
     ): Book {
-        book.type = bookSource.getBookType()
+        book.removeAllBookType()
+        book.addType(bookSource.getBookType())
         if (!book.infoHtml.isNullOrEmpty()) {
             BookInfo.analyzeBookInfo(
                 bookSource = bookSource,
@@ -160,7 +165,8 @@ object WebBook {
                 baseUrl = bookSource.bookSourceUrl,
                 source = bookSource,
                 ruleData = book,
-                headerMapF = bookSource.getHeaderMap(true)
+                headerMapF = bookSource.getHeaderMap(true),
+                coroutineContext = coroutineContext
             )
             var res = analyzeUrl.getStrResponseAwait()
             //检测书源是否已登录
@@ -220,7 +226,8 @@ object WebBook {
         book: Book,
         runPerJs: Boolean = false
     ): Result<List<BookChapter>> {
-        book.type = bookSource.getBookType()
+        book.removeAllBookType()
+        book.addType(bookSource.getBookType())
         return kotlin.runCatching {
             if (runPerJs) {
                 runPreUpdateJs(bookSource, book).getOrThrow()
@@ -239,7 +246,8 @@ object WebBook {
                     baseUrl = book.bookUrl,
                     source = bookSource,
                     ruleData = book,
-                    headerMapF = bookSource.getHeaderMap(true)
+                    headerMapF = bookSource.getHeaderMap(true),
+                    coroutineContext = coroutineContext
                 )
                 var res = analyzeUrl.getStrResponseAwait()
                 //检测书源是否已登录
@@ -312,7 +320,8 @@ object WebBook {
                 source = bookSource,
                 ruleData = book,
                 chapter = bookChapter,
-                headerMapF = bookSource.getHeaderMap(true)
+                headerMapF = bookSource.getHeaderMap(true),
+                coroutineContext = coroutineContext
             )
             var res = analyzeUrl.getStrResponseAwait(
                 jsStr = bookSource.getContentRule().webJs,
