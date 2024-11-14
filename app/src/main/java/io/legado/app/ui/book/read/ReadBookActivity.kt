@@ -10,6 +10,7 @@ import android.os.Looper
 import android.view.*
 import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.get
 import androidx.core.view.isVisible
@@ -204,6 +205,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         NetworkChangedListener(this)
     }
     private var justInitData: Boolean = false
+    private var syncDialog: AlertDialog? = null
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -1478,7 +1480,8 @@ class ReadBookActivity : BaseReadBookActivity(),
     }
 
     override fun sureNewProgress(progress: BookProgress) {
-        alert(R.string.get_book_progress) {
+        syncDialog?.dismiss()
+        syncDialog = alert(R.string.get_book_progress) {
             setMessage(R.string.cloud_progress_exceeds_current)
             okButton {
                 ReadBook.setProgress(progress)
