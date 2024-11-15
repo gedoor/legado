@@ -10,27 +10,34 @@ import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
+import io.legado.app.constant.AppLog
+import io.legado.app.data.AppDatabase
 import io.legado.app.data.appDb
-import io.legado.app.data.entities.BookSource
+import io.legado.app.data.entities.BookSourcePart
 import io.legado.app.databinding.DialogSearchScopeBinding
 import io.legado.app.databinding.ItemCheckBoxBinding
 import io.legado.app.databinding.ItemRadioButtonBinding
-import io.legado.app.help.source.contains
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.applyTint
+import io.legado.app.utils.flowWithLifecycleAndDatabaseChange
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class SearchScopeDialog : BaseDialogFragment(R.layout.dialog_search_scope) {
 
     private val binding by viewBinding(DialogSearchScopeBinding::bind)
+    private var sourceFlowJob: Job? = null
     val callback: Callback get() = parentFragment as? Callback ?: activity as Callback
     var groups: List<String> = emptyList()
-    var sources: List<BookSource> = emptyList()
-    val screenSources = arrayListOf<BookSource>()
+    val screenSources = arrayListOf<BookSourcePart>()
     var screenText: String? = null
 
     val adapter by lazy {
@@ -49,7 +56,6 @@ class SearchScopeDialog : BaseDialogFragment(R.layout.dialog_search_scope) {
         initSearchView()
         initOtherView()
         initData()
-        upData()
     }
 
     private fun initMenu() {
@@ -105,34 +111,49 @@ class SearchScopeDialog : BaseDialogFragment(R.layout.dialog_search_scope) {
             groups = withContext(IO) {
                 appDb.bookSourceDao.allEnabledGroups()
             }
-            sources = withContext(IO) {
-                appDb.bookSourceDao.allEnabled
-            }
             upData()
         }
     }
 
     @SuppressLint("NotifyDataSetChanged")
     private fun upData() {
-        lifecycleScope.launch {
-            withContext(IO) {
-                if (binding.rbSource.isChecked) {
-                    sources.filter { source ->
-                        source.contains(screenText)
-                    }.let {
-                        screenSources.clear()
-                        screenSources.addAll(it)
-                    }
-                }
-            }
+        if (binding.rbSource.isChecked) {
+            upBookSource(screenText)
+        } else {
             adapter.notifyDataSetChanged()
+        }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun upBookSource(searchKey: String? = null) {
+        sourceFlowJob?.cancel()
+        sourceFlowJob = lifecycleScope.launch {
+            when {
+                searchKey.isNullOrEmpty() -> {
+                    appDb.bookSourceDao.flowAll()
+                }
+
+                else -> {
+                    appDb.bookSourceDao.flowSearch(searchKey)
+                }
+            }.flowWithLifecycleAndDatabaseChange(
+                lifecycle,
+                table = AppDatabase.BOOK_SOURCE_TABLE_NAME
+            ).catch {
+                AppLog.put("多分组/书源界面更新书源出错", it)
+            }.flowOn(IO).conflate().collect { data ->
+                screenSources.clear()
+                screenSources.addAll(data)
+                adapter.notifyDataSetChanged()
+                delay(500)
+            }
         }
     }
 
     inner class RecyclerAdapter : RecyclerView.Adapter<ItemViewHolder>() {
 
         val selectGroups = arrayListOf<String>()
-        var selectSource: BookSource? = null
+        var selectSource: BookSourcePart? = null
 
         override fun getItemViewType(position: Int): Int {
             return if (binding.rbSource.isChecked) {
@@ -165,6 +186,7 @@ class SearchScopeDialog : BaseDialogFragment(R.layout.dialog_search_scope) {
                             holder.binding.checkBox.text = it
                         }
                     }
+
                     is ItemRadioButtonBinding -> {
                         screenSources.getOrNull(position)?.let {
                             holder.binding.radioButton.isChecked = selectSource == it
@@ -195,6 +217,7 @@ class SearchScopeDialog : BaseDialogFragment(R.layout.dialog_search_scope) {
                         }
                     }
                 }
+
                 is ItemRadioButtonBinding -> {
                     screenSources.getOrNull(position)?.let {
                         holder.binding.radioButton.isChecked = selectSource == it

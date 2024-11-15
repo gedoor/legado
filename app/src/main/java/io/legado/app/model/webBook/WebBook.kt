@@ -4,6 +4,7 @@ import io.legado.app.constant.AppLog
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
+import io.legado.app.data.entities.BookSourcePart
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.book.addType
@@ -352,13 +353,14 @@ object WebBook {
      */
     fun preciseSearch(
         scope: CoroutineScope,
-        bookSources: List<BookSource>,
+        bookSourceParts: List<BookSourcePart>,
         name: String,
         author: String,
         context: CoroutineContext = Dispatchers.IO,
     ): Coroutine<Pair<Book, BookSource>> {
         return Coroutine.async(scope, context) {
-            for (source in bookSources) {
+            for (s in bookSourceParts) {
+                val source = s.getBookSource() ?: continue
                 val book = preciseSearchAwait(scope, source, name, author).getOrNull()
                 if (book != null) {
                     return@async Pair(book, source)

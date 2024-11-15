@@ -6,30 +6,39 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppConst
+import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
+import io.legado.app.data.entities.BookSourcePart
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.help.config.AppConfig
-import io.legado.app.help.coroutine.CompositeCoroutine
 import io.legado.app.model.webBook.WebBook
+import io.legado.app.utils.mapParallelSafe
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.ExecutorCoroutineDispatcher
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import java.util.*
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
+import java.util.Collections
 import java.util.concurrent.Executors
 import kotlin.math.min
 
 class ChangeCoverViewModel(application: Application) : BaseViewModel(application) {
     private val threadCount = AppConfig.threadCount
     private var searchPool: ExecutorCoroutineDispatcher? = null
-    private val tasks = CompositeCoroutine()
     private var searchSuccess: ((SearchBook) -> Unit)? = null
     private var upAdapter: (() -> Unit)? = null
-    private var bookSourceList = arrayListOf<BookSource>()
+    private var bookSourceParts = arrayListOf<BookSourcePart>()
     private val defaultCover by lazy {
         listOf(
             SearchBook(
@@ -40,6 +49,7 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
             )
         )
     }
+    private var task: Job? = null
     val searchStateData = MutableLiveData<Boolean>()
     var name: String = ""
     var author: String = ""
@@ -73,9 +83,6 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
         }
     }.flowOn(IO)
 
-    @Volatile
-    private var searchIndex = -1
-
     fun initData(arguments: Bundle?) {
         arguments?.let { bundle ->
             bundle.getString("name")?.let {
@@ -90,7 +97,6 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
     private fun initSearchPool() {
         searchPool = Executors
             .newFixedThreadPool(min(threadCount, AppConst.MAX_THREAD)).asCoroutineDispatcher()
-        searchIndex = -1
     }
 
     private fun startSearch() {
@@ -98,71 +104,50 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
             stopSearch()
             searchBooks.clear()
             upAdapter?.invoke()
-            bookSourceList.clear()
-            bookSourceList.addAll(appDb.bookSourceDao.allEnabled)
-            searchStateData.postValue(true)
+            bookSourceParts.clear()
+            bookSourceParts.addAll(appDb.bookSourceDao.allEnabledPart)
             initSearchPool()
-            for (i in 0 until threadCount) {
-                search()
-            }
+            search()
         }
     }
 
-    @Synchronized
     private fun search() {
-        if (searchIndex >= bookSourceList.lastIndex) {
-            return
-        }
-        searchIndex++
-        val source = bookSourceList[searchIndex]
-        if (source.getSearchRule().coverUrl.isNullOrBlank()) {
-            searchNext()
-            return
-        }
-        val task = WebBook
-            .searchBook(
-                viewModelScope,
-                source,
-                name,
-                context = searchPool!!,
-                executeContext = searchPool!!
-            )
-            .timeout(60000L)
-            .onSuccess(IO) {
-                it.firstOrNull()?.let { searchBook ->
-                    if (searchBook.name == name && searchBook.author == author
-                        && !searchBook.coverUrl.isNullOrEmpty()
-                    ) {
-                        appDb.searchBookDao.insert(searchBook)
-                        searchSuccess?.invoke(searchBook)
+        task = viewModelScope.launch(searchPool!!) {
+            flow {
+                for (bs in bookSourceParts) {
+                    bs.getBookSource()?.let {
+                        emit(it)
                     }
                 }
-            }
-            .onFinally {
-                searchNext()
-            }
-        tasks.add(task)
+            }.onStart {
+                searchStateData.postValue(true)
+            }.mapParallelSafe(threadCount) {
+                withTimeout(60000L) {
+                    search(it)
+                }
+            }.onCompletion {
+                searchStateData.postValue(false)
+            }.catch {
+                AppLog.put("封面换源搜索出错\n${it.localizedMessage}", it)
+            }.collect()
+        }
     }
 
-    @Synchronized
-    private fun searchNext() {
-        if (searchIndex < bookSourceList.lastIndex) {
-            search()
-        } else {
-            searchIndex++
+    private suspend fun search(source: BookSource) {
+        if (source.getSearchRule().coverUrl.isNullOrBlank()) {
+            return
         }
-        if (searchIndex >= bookSourceList.lastIndex + min(
-                bookSourceList.size,
-                threadCount
-            )
+        val searchBook = WebBook.searchBookAwait(source, name).firstOrNull() ?: return
+        if (searchBook.name == name && searchBook.author == author
+            && !searchBook.coverUrl.isNullOrEmpty()
         ) {
-            searchStateData.postValue(false)
-            tasks.clear()
+            appDb.searchBookDao.insert(searchBook)
+            searchSuccess?.invoke(searchBook)
         }
     }
 
     fun startOrStopSearch() {
-        if (tasks.isEmpty) {
+        if (task == null || !task!!.isActive) {
             startSearch()
         } else {
             stopSearch()
@@ -170,7 +155,7 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
     }
 
     private fun stopSearch() {
-        tasks.clear()
+        task?.cancel()
         searchPool?.close()
         searchStateData.postValue(false)
     }

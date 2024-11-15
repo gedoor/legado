@@ -14,7 +14,6 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.collections.set
 
 /**
  * 采用md5作为key可以在分类修改后自动重新计算,不需要手动刷新
@@ -90,14 +89,4 @@ suspend fun BookSourcePart.clearExploreKindsCache() {
         aCache.remove(exploreKindsKey)
         exploreKindsMap.remove(exploreKindsKey)
     }
-}
-
-fun BookSource.contains(word: String?): Boolean {
-    if (word.isNullOrEmpty()) {
-        return true
-    }
-    return bookSourceName.contains(word)
-            || bookSourceUrl.contains(word)
-            || bookSourceGroup?.contains(word) == true
-            || bookSourceComment?.contains(word) == true
 }
