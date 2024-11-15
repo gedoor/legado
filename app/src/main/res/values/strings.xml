@@ -812,9 +812,14 @@
     <string name="rule_subscription">Rule Subscription</string>
     <string name="rule_sub_empty_msg">Add the rule import address provided by the bosses\nClick to import rules after adding</string>
     <string name="get_book_progress">Pull the cloud  progress</string>
+    <string name="cover_book_progress">Overlay Cloud Progress</string>
     <string name="current_progress_exceeds_cloud">The current progress exceeds the cloud progress. Do you want to synchronize?</string>
+    <string name="cloud_progress_exceeds_current">The cloud progress exceeds the current progress. Do you want to synchronize?</string>
     <string name="sync_book_progress_t">Synchronous reading progress</string>
     <string name="sync_book_progress_s">Synchronize reading progress when entering / exiting the reading interface</string>
+    <string name="sync_book_progress_plus_t">Sync Enhancement</string>
+    <string name="sync_book_progress_plus_s">Sync cloud progress when re-entering the page (e.g., after screen off, returning from background, etc.) or when the network becomes available</string>
+    <string name="sync_book_progress_success">Sync progress success</string>
     <string name="create_bookmark_error">Failed to create bookmark</string>
     <string name="single_url">Single URL</string>
     <string name="export_bookshelf">Export the list of books</string>

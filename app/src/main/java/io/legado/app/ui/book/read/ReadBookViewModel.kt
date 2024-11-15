@@ -125,7 +125,11 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             // 有章节跳转不同步阅读进度
             ReadBook.chapterChanged = false
         } else if (!isSameBook || !BaseReadAloudService.isRun) {
-            syncBookProgress(book)
+            if (AppConfig.syncBookProgressPlus) {
+                ReadBook.syncProgress({ progress -> ReadBook.callBack?.sureNewProgress(progress) }, null)
+            } else {
+                syncBookProgress(book)
+            }
         }
         if (!book.isLocal && ReadBook.bookSource == null) {
             autoChangeSource(book.name, book.author)

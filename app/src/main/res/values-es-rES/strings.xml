@@ -806,9 +806,12 @@
     <string name="rule_subscription">Suscripción de reglsa</string>
     <string name="rule_sub_empty_msg">添加大佬们提供的规则导入地址\n添加后点击可导入规则</string>
     <string name="get_book_progress">Obtener progreso en la nube</string>
+    <string name="cover_book_progress">Cobertura del progreso en la nube</string>
     <string name="current_progress_exceeds_cloud">El progreso actual excede el progreso de la nube. ¿Quieres sincronizar?</string>
     <string name="sync_book_progress_t">Progreso de lectura sincronizado</string>
     <string name="sync_book_progress_s">Sincronizar el progreso de la lectura al entrar y salir de la pantalla de lectura</string>
+    <string name="sync_book_progress_plus_t">Mejora de Sincronización</string>
+    <string name="sync_book_progress_plus_s">Sincronizar el progreso en la nube al volver a entrar en la página (por ejemplo, tras apagar la pantalla o al regresar desde el fondo) o cuando la red esté disponible</string>
     <string name="create_bookmark_error">No se pudo marcar</string>
     <string name="single_url">URL única</string>
     <string name="export_bookshelf">Exportar lista de libros</string>
@@ -1129,8 +1132,10 @@
     <string name="open_book_info_by_click_title">点击书名打开详情</string>
     <string name="export_wait">等待导出</string>
     <string name="default_home_page">默认主页</string>
+    <string name="sync_book_progress_success">" Sincronización del progreso exitosa"</string>
     <string name="show_bookshelf_fast_scroller">显示快速滚动条</string>
     <string name="export_all_use_book_source">导出所有书的书源</string>
+    <string name="cloud_progress_exceeds_current">The cloud progress exceeds the current progress. Do you want to synchronize?</string>
     <string name="keep_enable">保留启用状态</string>
     <string name="preview_image_by_click">点击预览图片</string>
     <string name="screen_portrait_reversed">反向竖屏</string>

@@ -199,12 +199,47 @@ object ReadBook : CoroutineScope by MainScope() {
         nextTextChapter?.clearSearchResult()
     }
 
-    fun uploadProgress() {
+    fun uploadProgress(successAction: (() -> Unit)? = null) {
         book?.let {
             launch(IO) {
                 AppWebDav.uploadBookProgress(it)
                 ensureActive()
                 it.update()
+                successAction?.invoke()
+            }
+        }
+    }
+
+    /**
+     * 同步阅读进度
+     * 如果当前进度快于服务器进度或者没有进度进行上传，如果慢与服务器进度则执行传入动作
+     */
+    fun syncProgress(
+        newProgressAction: ((progress: BookProgress) -> Unit)? = null,
+        uploadSuccessAction: (() -> Unit)? = null,
+        syncSuccessAction: (() -> Unit)? = null) {
+        if (!AppConfig.syncBookProgress) return
+        book?.let {
+            Coroutine.async {
+                AppWebDav.getBookProgress(it)
+            }.onError {
+                AppLog.put("拉取阅读进度失败", it)
+            }.onSuccess { progress ->
+                if (progress == null || progress.durChapterIndex < it.durChapterIndex ||
+                    (progress.durChapterIndex == it.durChapterIndex
+                            && progress.durChapterPos < it.durChapterPos)) {
+                    // 服务器没有进度或者进度比服务器快，上传现有进度
+                    Coroutine.async {
+                        AppWebDav.uploadBookProgress(BookProgress(it), uploadSuccessAction)
+                        it.save()
+                    }
+                } else if (progress.durChapterIndex > it.durChapterIndex ||
+                    progress.durChapterPos > it.durChapterPos) {
+                    // 进度比服务器慢，执行传入动作
+                    newProgressAction?.invoke(progress)
+                } else {
+                    syncSuccessAction?.invoke()
+                }
             }
         }
     }
@@ -892,6 +927,8 @@ object ReadBook : CoroutineScope by MainScope() {
         fun upPageAnim(upRecorder: Boolean = false)
 
         fun notifyBookChanged()
+
+        fun sureNewProgress(progress: BookProgress)
 
         fun cancelSelect()
     }

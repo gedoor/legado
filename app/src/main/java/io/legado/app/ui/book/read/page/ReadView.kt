@@ -10,7 +10,9 @@ import android.view.MotionEvent
 import android.view.ViewConfiguration
 import android.view.WindowInsets
 import android.widget.FrameLayout
+import io.legado.app.R
 import io.legado.app.constant.PageAnim
+import io.legado.app.data.entities.BookProgress
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.model.ReadAloud
@@ -34,6 +36,7 @@ import io.legado.app.ui.book.read.page.provider.TextPageFactory
 import io.legado.app.utils.activity
 import io.legado.app.utils.canvasrecorder.pools.BitmapPool
 import io.legado.app.utils.invisible
+import io.legado.app.utils.longToastOnUi
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.throttle
 import java.text.BreakIterator
@@ -434,6 +437,9 @@ class ReadView(context: Context, attrs: AttributeSet) :
             9 -> callBack.changeReplaceRuleState()
             10 -> callBack.openChapterList()
             11 -> callBack.openSearchActivity(null)
+            12 -> ReadBook.syncProgress({progress -> callBack.sureNewProgress(progress)},
+                { context.longToastOnUi(context.getString(R.string.upload_book_success)) },
+                { context.longToastOnUi(context.getString(R.string.sync_book_progress_success)) })
         }
     }
 
@@ -726,5 +732,6 @@ class ReadView(context: Context, attrs: AttributeSet) :
         fun changeReplaceRuleState()
         fun openSearchActivity(searchWord: String?)
         fun upSystemUiVisibility()
+        fun sureNewProgress(progress: BookProgress)
     }
 }

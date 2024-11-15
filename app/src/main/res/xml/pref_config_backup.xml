@@ -50,6 +50,16 @@
             app:allowDividerBelow="false"
             app:iconSpaceReserved="false" />
 
+        <io.legado.app.lib.prefs.SwitchPreference
+            android:key="syncBookProgressPlus"
+            android:defaultValue="false"
+            android:title="@string/sync_book_progress_plus_t"
+            android:summary="@string/sync_book_progress_plus_s"
+            android:dependency="syncBookProgress"
+            app:allowDividerAbove="false"
+            app:allowDividerBelow="false"
+            app:iconSpaceReserved="false" />
+
     </io.legado.app.lib.prefs.PreferenceCategory>
 
     <io.legado.app.lib.prefs.PreferenceCategory

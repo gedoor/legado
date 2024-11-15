@@ -810,9 +810,12 @@
     <string name="rule_subscription">規則訂閱</string>
     <string name="rule_sub_empty_msg">新增大佬們提供的規則匯入地址\n新增後點擊可匯入規則</string>
     <string name="get_book_progress">拉取雲端進度</string>
+    <string name="cover_book_progress">覆蓋雲端進度</string>
     <string name="current_progress_exceeds_cloud">目前進度超過雲端進度，是否同步？</string>
     <string name="sync_book_progress_t">同步閱讀進度</string>
     <string name="sync_book_progress_s">進入退出閱讀介面時同步閱讀進度</string>
+    <string name="sync_book_progress_plus_t">同步增強</string>
+    <string name="sync_book_progress_plus_s">重新進入頁面（熄屏、背景返回等）或網路變為可用時同步雲端進度</string>
     <string name="create_bookmark_error">建立書籤失敗</string>
     <string name="single_url">單URL</string>
     <string name="export_bookshelf">匯出書單</string>
@@ -1130,9 +1133,11 @@
     <string name="change_source_delay">换源间隔</string>
     <string name="open_book_info_by_click_title">点击书名打开详情</string>
     <string name="export_wait">等待导出</string>
+    <string name="sync_book_progress_success">進度同步成功</string>
     <string name="default_home_page">默认主页</string>
     <string name="show_bookshelf_fast_scroller">显示快速滚动条</string>
     <string name="export_all_use_book_source">导出所有书的书源</string>
+    <string name="cloud_progress_exceeds_current">雲端進度超過目前進度，是否同步？</string>
     <string name="keep_enable">保留启用状态</string>
     <string name="preview_image_by_click">点击预览图片</string>
     <string name="screen_portrait_reversed">反向竖屏</string>

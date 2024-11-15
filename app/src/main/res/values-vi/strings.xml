@@ -808,9 +808,12 @@ Còn </string>
     <string name="rule_subscription">Quy tắc đăng ký</string>
     <string name="rule_sub_empty_msg">Thêm địa chỉ nhập quy tắc do các ông chủ cung cấp\\nNhấp để nhập quy tắc sau khi thêm</string>
     <string name="get_book_progress">Kéo tiến độ đám mây</string>
+    <string name="cover_book_progress">Phủ sóng tiến độ trên đám mây</string>
     <string name="current_progress_exceeds_cloud">Tiến độ hiện tại vượt quá tiến độ đám mây. Bạn có muốn đồng bộ hóa?</string>
     <string name="sync_book_progress_t">Tiến độ đọc đồng bộ</string>
     <string name="sync_book_progress_s">Đồng bộ tiến độ đọc khi vào/ra khỏi giao diện đọc</string>
+    <string name="sync_book_progress_plus_t">Cải Tiến Đồng Bộ</string>
+    <string name="sync_book_progress_plus_s">Đồng bộ tiến độ trên đám mây khi quay lại trang (ví dụ: sau khi tắt màn hình, quay trở lại từ nền, v.v.) hoặc khi mạng trở nên khả dụng</string>
     <string name="create_bookmark_error">Không thể tạo dấu trang</string>
     <string name="single_url">URL đơn</string>
     <string name="export_bookshelf">Xuất bookshelf</string>
@@ -1127,9 +1130,11 @@ Còn </string>
     <string name="change_source_delay">换源间隔</string>
     <string name="open_book_info_by_click_title">点击书名打开详情</string>
     <string name="export_wait">等待导出</string>
+    <string name="sync_book_progress_success">" Đồng bộ hóa tiến trình thành công"</string>
     <string name="default_home_page">默认主页</string>
     <string name="show_bookshelf_fast_scroller">显示快速滚动条</string>
     <string name="export_all_use_book_source">导出所有书的书源</string>
+    <string name="cloud_progress_exceeds_current">The cloud progress exceeds the current progress. Do you want to synchronize?</string>
     <string name="keep_enable">保留启用状态</string>
     <string name="preview_image_by_click">点击预览图片</string>
     <string name="screen_portrait_reversed">反向竖屏</string>

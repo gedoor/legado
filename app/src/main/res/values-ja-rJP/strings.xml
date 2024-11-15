@@ -808,10 +808,13 @@
     <string name="header_footer">footer <![CDATA[&]]> header</string>
     <string name="rule_subscription">Rule Subscription</string>
     <string name="rule_sub_empty_msg">添加大佬们提供的规则导入地址\n添加后点击可导入规则</string>
-    <string name="get_book_progress">Pull the cloud  progress</string>
+    <string name="get_book_progress">クラウド上の進捗状況のカバー</string>
+    <string name="cover_book_progress">Cobertura do progresso na nuvem</string>
     <string name="current_progress_exceeds_cloud">The current progress exceeds the cloud progress. Do you want to synchronize?</string>
     <string name="sync_book_progress_t">Synchronous reading progress</string>
     <string name="sync_book_progress_s">Synchronize reading progress when entering / exiting the reading interface</string>
+    <string name="sync_book_progress_plus_t">同期強化</string>
+    <string name="sync_book_progress_plus_s">ページに再入力する時（スリープ解除やバックグラウンドから復帰など）、またはネットワークが利用可能になるとクラウド進捗を同期します</string>
     <string name="create_bookmark_error">Failed to create bookmark</string>
     <string name="single_url">Single URL</string>
     <string name="export_bookshelf">Export the list of books</string>
@@ -1132,8 +1135,10 @@
     <string name="open_book_info_by_click_title">点击书名打开详情</string>
     <string name="export_wait">等待导出</string>
     <string name="default_home_page">默认主页</string>
+    <string name="sync_book_progress_success">Sync progress success</string>
     <string name="show_bookshelf_fast_scroller">显示快速滚动条</string>
     <string name="export_all_use_book_source">导出所有书的书源</string>
+    <string name="cloud_progress_exceeds_current">The cloud progress exceeds the current progress. Do you want to synchronize?</string>
     <string name="keep_enable">保留启用状态</string>
     <string name="preview_image_by_click">点击预览图片</string>
     <string name="screen_portrait_reversed">反向竖屏</string>
