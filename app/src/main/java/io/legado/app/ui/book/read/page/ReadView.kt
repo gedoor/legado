@@ -169,11 +169,15 @@ class ReadView(context: Context, attrs: AttributeSet) :
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            val insets =
-                this.rootWindowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.mandatorySystemGestures())
+            val insets = this.rootWindowInsets.getInsetsIgnoringVisibility(
+                WindowInsets.Type.mandatorySystemGestures()
+            )
             val height = activity?.windowManager?.currentWindowMetrics?.bounds?.height()
             if (height != null) {
-                if (event.y > height.minus(insets.bottom) && event.action != MotionEvent.ACTION_UP && event.action != MotionEvent.ACTION_CANCEL) {
+                if (event.y > height.minus(insets.bottom)
+                    && event.action != MotionEvent.ACTION_UP
+                    && event.action != MotionEvent.ACTION_CANCEL
+                ) {
                     return true
                 }
             }
@@ -437,7 +441,8 @@ class ReadView(context: Context, attrs: AttributeSet) :
             9 -> callBack.changeReplaceRuleState()
             10 -> callBack.openChapterList()
             11 -> callBack.openSearchActivity(null)
-            12 -> ReadBook.syncProgress({progress -> callBack.sureNewProgress(progress)},
+            12 -> ReadBook.syncProgress(
+                { progress -> callBack.sureNewProgress(progress) },
                 { context.longToastOnUi(context.getString(R.string.upload_book_success)) },
                 { context.longToastOnUi(context.getString(R.string.sync_book_progress_success)) })
         }

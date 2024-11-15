@@ -217,7 +217,8 @@ object ReadBook : CoroutineScope by MainScope() {
     fun syncProgress(
         newProgressAction: ((progress: BookProgress) -> Unit)? = null,
         uploadSuccessAction: (() -> Unit)? = null,
-        syncSuccessAction: (() -> Unit)? = null) {
+        syncSuccessAction: (() -> Unit)? = null
+    ) {
         if (!AppConfig.syncBookProgress) return
         book?.let {
             Coroutine.async {
@@ -227,14 +228,16 @@ object ReadBook : CoroutineScope by MainScope() {
             }.onSuccess { progress ->
                 if (progress == null || progress.durChapterIndex < it.durChapterIndex ||
                     (progress.durChapterIndex == it.durChapterIndex
-                            && progress.durChapterPos < it.durChapterPos)) {
+                            && progress.durChapterPos < it.durChapterPos)
+                ) {
                     // 服务器没有进度或者进度比服务器快，上传现有进度
                     Coroutine.async {
                         AppWebDav.uploadBookProgress(BookProgress(it), uploadSuccessAction)
-                        it.save()
+                        it.update()
                     }
                 } else if (progress.durChapterIndex > it.durChapterIndex ||
-                    progress.durChapterPos > it.durChapterPos) {
+                    progress.durChapterPos > it.durChapterPos
+                ) {
                     // 进度比服务器慢，执行传入动作
                     newProgressAction?.invoke(progress)
                 } else {
