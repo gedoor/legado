@@ -13,7 +13,11 @@ import io.legado.app.help.SymmetricCryptoAndroid
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.http.CookieStore
 import io.legado.app.model.SharedJsScope
-import io.legado.app.utils.*
+import io.legado.app.utils.GSON
+import io.legado.app.utils.fromJsonArray
+import io.legado.app.utils.fromJsonObject
+import io.legado.app.utils.has
+import io.legado.app.utils.printOnDebug
 import org.intellij.lang.annotations.Language
 import org.mozilla.javascript.Scriptable
 
@@ -99,19 +103,13 @@ interface BaseSource : JsExtensions {
      */
     fun getHeaderMap(hasLoginHeader: Boolean = false) = HashMap<String, String>().apply {
         header?.let {
-            val savedHeader = it
-            header = null
-            val json = try {
-                when {
-                    it.startsWith("@js:", true) -> evalJS(it.substring(4)).toString()
-                    it.startsWith("<js>", true) -> evalJS(
-                        it.substring(4, it.lastIndexOf("<"))
-                    ).toString()
+            val json = when {
+                it.startsWith("@js:", true) -> evalJS(it.substring(4)).toString()
+                it.startsWith("<js>", true) -> evalJS(
+                    it.substring(4, it.lastIndexOf("<"))
+                ).toString()
 
-                    else -> it
-                }
-            } finally {
-                header = savedHeader
+                else -> it
             }
             GSON.fromJsonObject<Map<String, String>>(json).getOrNull()?.let { map ->
                 putAll(map)
