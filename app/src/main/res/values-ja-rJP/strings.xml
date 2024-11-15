@@ -813,6 +813,8 @@
     <string name="current_progress_exceeds_cloud">The current progress exceeds the cloud progress. Do you want to synchronize?</string>
     <string name="sync_book_progress_t">Synchronous reading progress</string>
     <string name="sync_book_progress_s">Synchronize reading progress when entering / exiting the reading interface</string>
+    <string name="sync_book_progress_plus_t">同期強化</string>
+    <string name="sync_book_progress_plus_s">ページに再入力する時（スリープ解除やバックグラウンドから復帰など）、またはネットワークが利用可能になるとクラウド進捗を同期します</string>
     <string name="create_bookmark_error">Failed to create bookmark</string>
     <string name="single_url">Single URL</string>
     <string name="export_bookshelf">Export the list of books</string>

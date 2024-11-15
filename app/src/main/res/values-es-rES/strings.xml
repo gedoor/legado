@@ -810,6 +810,8 @@
     <string name="current_progress_exceeds_cloud">El progreso actual excede el progreso de la nube. ¿Quieres sincronizar?</string>
     <string name="sync_book_progress_t">Progreso de lectura sincronizado</string>
     <string name="sync_book_progress_s">Sincronizar el progreso de la lectura al entrar y salir de la pantalla de lectura</string>
+    <string name="sync_book_progress_plus_t">Mejora de Sincronización</string>
+    <string name="sync_book_progress_plus_s">Sincronizar el progreso en la nube al volver a entrar en la página (por ejemplo, tras apagar la pantalla o al regresar desde el fondo) o cuando la red esté disponible</string>
     <string name="create_bookmark_error">No se pudo marcar</string>
     <string name="single_url">URL única</string>
     <string name="export_bookshelf">Exportar lista de libros</string>

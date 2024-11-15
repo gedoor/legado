@@ -812,6 +812,8 @@ Còn </string>
     <string name="current_progress_exceeds_cloud">Tiến độ hiện tại vượt quá tiến độ đám mây. Bạn có muốn đồng bộ hóa?</string>
     <string name="sync_book_progress_t">Tiến độ đọc đồng bộ</string>
     <string name="sync_book_progress_s">Đồng bộ tiến độ đọc khi vào/ra khỏi giao diện đọc</string>
+    <string name="sync_book_progress_plus_t">Cải Tiến Đồng Bộ</string>
+    <string name="sync_book_progress_plus_s">Đồng bộ tiến độ trên đám mây khi quay lại trang (ví dụ: sau khi tắt màn hình, quay trở lại từ nền, v.v.) hoặc khi mạng trở nên khả dụng</string>
     <string name="create_bookmark_error">Không thể tạo dấu trang</string>
     <string name="single_url">URL đơn</string>
     <string name="export_bookshelf">Xuất bookshelf</string>

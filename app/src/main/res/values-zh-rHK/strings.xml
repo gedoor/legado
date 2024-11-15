@@ -811,6 +811,8 @@
     <string name="current_progress_exceeds_cloud">目前進度超過雲端進度,係咪同步?</string>
     <string name="sync_book_progress_t">同步閱讀進度</string>
     <string name="sync_book_progress_s">進入退出閱讀介面時同步閱讀進度</string>
+    <string name="sync_book_progress_plus_t">同步增強</string>
+    <string name="sync_book_progress_plus_s">重新進入頁面（熄屏、返回背景等）或者當網絡可用時同步雲端進度</string>
     <string name="create_bookmark_error">建立書籤失敗</string>
     <string name="single_url">單URL</string>
     <string name="export_bookshelf">導出書單</string>
