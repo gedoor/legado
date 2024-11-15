@@ -100,11 +100,6 @@ android {
             dimension "mode"
             manifestPlaceholders.put("APP_CHANNEL_VALUE", "app")
         }
-        liaocl {
-            dimension "mode"
-            applicationId "io.legado.liaocl"
-            manifestPlaceholders.put("APP_CHANNEL_VALUE", "liaocl")
-        }
     }
 
     android.applicationVariants.configureEach { variant ->
@@ -183,6 +178,7 @@ dependencies {
     implementation(libs.preference.ktx)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.swiperefreshlayout)
+    implementation(libs.androidx.recyclerview)
     implementation(libs.androidx.viewpager2)
     implementation(libs.androidx.webkit)
 
@@ -227,8 +223,6 @@ dependencies {
     implementation implementation(project(path: ':modules:rhino'))
 
     //JS rhino
-//    implementation(project(path: ':modules:rhino1.7.3'))
-//    liaoclImplementation(project(path: ':modules:rhino1.7.3'))
 
     //网络
     implementation(libs.okhttp)

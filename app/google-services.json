@@ -145,43 +145,6 @@
           ]
         }
       }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:453392274790:android:c1481c1c3d3f51eff624a7",
-        "android_client_info": {
-          "package_name": "io.legado.liaocl.release"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "453392274790-trrgennt5njr1lhil1sgtf0ogcgd38fo.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "io.legado.app.release",
-            "certificate_hash": "fd67dba87b7b761631266f19ddde249054aac5c1"
-          }
-        },
-        {
-          "client_id": "453392274790-hnbpatpce9hbjiggj76hgo7queu86atq.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyD90mfNLhA7cAzzI9SonpSz5mrF5BnmyJA"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "453392274790-hnbpatpce9hbjiggj76hgo7queu86atq.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
     }
   ],
   "configuration_version": "1"

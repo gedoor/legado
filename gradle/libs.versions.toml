@@ -43,7 +43,8 @@ desugar = "2.0.4"
 activity = "1.9.1"
 kotlinxSerialization = "1.7.1"
 swiperefreshlayout = "1.1.0"
-viewpager2 = "1.1.0"
+recyclerview = "1.2.0"
+viewpager2 = "1.0.0"
 webkit = "1.11.0"
 zxingLite = "3.2.0"
 
@@ -127,6 +128,7 @@ splitties-views = { module = "com.louiscad.splitties:splitties-views", version.r
 
 androidx-runner = { module = "androidx.test:runner", version = "1.6.2" }
 androidx-swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
+androidx-recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerview" }
 androidx-viewpager2 = { module = "androidx.viewpager2:viewpager2", version.ref = "viewpager2" }
 androidx-webkit = { module = "androidx.webkit:webkit", version.ref = "webkit" }
 colorpicker = { module = "com.jaredrummler:colorpicker", version.ref = "colorpicker" }
