@@ -9,7 +9,11 @@ import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.http.text
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.analyzeRule.CustomUrl
-import io.legado.app.utils.*
+import io.legado.app.utils.NetworkUtils
+import io.legado.app.utils.findNS
+import io.legado.app.utils.findNSPrefix
+import io.legado.app.utils.printOnDebug
+import io.legado.app.utils.toRequestBody
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import okhttp3.Interceptor
@@ -188,7 +192,8 @@ open class WebDav(
                 }
                 val displayName = element
                     .findNS("displayname", ns)
-                    .firstOrNull()?.text()?.takeIf { it.isNotEmpty() } ?: fileName
+                    .firstOrNull()?.text()?.takeIf { it.isNotEmpty() }
+                    ?.let { URLDecoder.decode(it.replace("+", "%2B"), "UTF-8") } ?: fileName
                 val contentType = element
                     .findNS("getcontenttype", ns)
                     .firstOrNull()?.text().orEmpty()
