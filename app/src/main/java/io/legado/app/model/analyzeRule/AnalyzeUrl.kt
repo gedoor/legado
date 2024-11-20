@@ -21,9 +21,31 @@ import io.legado.app.help.JsExtensions
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.exoplayer.ExoPlayerHelper
 import io.legado.app.help.glide.GlideHeaders
-import io.legado.app.help.http.*
+import io.legado.app.help.http.BackstageWebView
+import io.legado.app.help.http.CookieManager
 import io.legado.app.help.http.CookieManager.mergeCookies
-import io.legado.app.utils.*
+import io.legado.app.help.http.CookieStore
+import io.legado.app.help.http.RequestMethod
+import io.legado.app.help.http.StrResponse
+import io.legado.app.help.http.addHeaders
+import io.legado.app.help.http.get
+import io.legado.app.help.http.getProxyClient
+import io.legado.app.help.http.newCallResponse
+import io.legado.app.help.http.newCallStrResponse
+import io.legado.app.help.http.postForm
+import io.legado.app.help.http.postJson
+import io.legado.app.help.http.postMultipart
+import io.legado.app.utils.EncoderUtils
+import io.legado.app.utils.GSON
+import io.legado.app.utils.NetworkUtils
+import io.legado.app.utils.fromJsonArray
+import io.legado.app.utils.fromJsonObject
+import io.legado.app.utils.get
+import io.legado.app.utils.isJson
+import io.legado.app.utils.isJsonArray
+import io.legado.app.utils.isJsonObject
+import io.legado.app.utils.isXml
+import io.legado.app.utils.splitNotBlank
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import okhttp3.MediaType.Companion.toMediaType
@@ -87,7 +109,7 @@ class AnalyzeUrl(
     private var webJs: String? = null
     private val enabledCookieJar = source?.enabledCookieJar ?: false
     private val domain: String
-    private var delayTime: Long? = null
+    private var webViewDelayTime: Long = 0
 
     // 服务器ID
     var serverID: Long? = null
@@ -216,7 +238,7 @@ class AnalyzeUrl(
                         }
                     }
                     serverID = option.getServerID()
-                    delayTime = option.getDelayTime()
+                    webViewDelayTime = max(0, option.getWebViewDelayTime() ?: 0)
                 }
         }
         urlNoQuery = url
@@ -436,7 +458,7 @@ class AnalyzeUrl(
                             javaScript = webJs ?: jsStr,
                             sourceRegex = sourceRegex,
                             headerMap = headerMap,
-                            delayTime = delayTime ?:1000
+                            delayTime = webViewDelayTime
                         ).getStrResponse()
                     }
 
@@ -446,7 +468,7 @@ class AnalyzeUrl(
                         javaScript = webJs ?: jsStr,
                         sourceRegex = sourceRegex,
                         headerMap = headerMap,
-                        delayTime = delayTime ?:1000
+                        delayTime = webViewDelayTime
                     ).getStrResponse()
                 }
             } else {
@@ -712,7 +734,7 @@ class AnalyzeUrl(
         /**
          * webview等待页面加载完毕的延迟时间（毫秒）
          */
-        private var delayTime: Long? = null,
+        private var webViewDelayTime: Long? = null,
     ) {
         fun setMethod(value: String?) {
             method = if (value.isNullOrBlank()) null else value
@@ -820,12 +842,12 @@ class AnalyzeUrl(
             return serverID
         }
 
-        fun setDelayTime(value: String?) {
-            delayTime = if (value.isNullOrBlank()) null else value.toLong()
+        fun setWebViewDelayTime(value: String?) {
+            webViewDelayTime = if (value.isNullOrBlank()) null else value.toLong()
         }
 
-        fun getDelayTime(): Long? {
-            return delayTime
+        fun getWebViewDelayTime(): Long? {
+            return webViewDelayTime
         }
     }
 
