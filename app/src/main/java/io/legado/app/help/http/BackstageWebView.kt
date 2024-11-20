@@ -5,6 +5,7 @@ import android.net.http.SslError
 import android.os.Handler
 import android.os.Looper
 import android.util.AndroidRuntimeException
+import android.util.Log
 import android.webkit.CookieManager
 import android.webkit.SslErrorHandler
 import android.webkit.WebResourceRequest
@@ -18,6 +19,7 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.utils.runOnUI
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Runnable
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeout
 import org.apache.commons.text.StringEscapeUtils
@@ -38,6 +40,7 @@ class BackstageWebView(
     private val sourceRegex: String? = null,
     private val overrideUrlRegex: String? = null,
     private val javaScript: String? = null,
+    private val delayTime: Long = 1000,
 ) {
 
     private val mHandler = Handler(Looper.getMainLooper())
@@ -53,8 +56,9 @@ class BackstageWebView(
             }
             callback = object : Callback() {
                 override fun onResult(response: StrResponse) {
-                    if (!block.isCompleted)
+                    if (!block.isCompleted) {
                         block.resume(response)
+                    }
                 }
 
                 override fun onError(error: Throwable) {
@@ -145,11 +149,13 @@ class BackstageWebView(
 
         override fun onPageFinished(view: WebView, url: String) {
             setCookie(url)
-            if (runnable == null) {
-                runnable = EvalJsRunnable(view, url, getJs())
-            }
-            mHandler.removeCallbacks(runnable!!)
-            mHandler.postDelayed(runnable!!, 1000)
+            mHandler.postDelayed({
+                if (runnable == null) {
+                    runnable = EvalJsRunnable(view, url, getJs())
+                }
+                mHandler.removeCallbacks(runnable!!)
+                mHandler.postDelayed(runnable!!, 1000)
+            }, delayTime)
         }
 
         @SuppressLint("WebViewClientOnReceivedSslError")
@@ -176,6 +182,7 @@ class BackstageWebView(
 
             private fun handleResult(result: String) = Coroutine.async {
                 if (result.isNotEmpty() && result != "null") {
+                    Log.d("BackstageWebView", "result: $result")
                     val content = StringEscapeUtils.unescapeJson(result)
                         .replace(quoteRegex, "")
                     try {
@@ -255,10 +262,12 @@ class BackstageWebView(
 
         override fun onPageFinished(webView: WebView, url: String) {
             setCookie(url)
-            if (!javaScript.isNullOrEmpty()) {
-                val runnable = LoadJsRunnable(webView, javaScript)
-                mHandler.postDelayed(runnable, 1000L)
-            }
+            mHandler.postDelayed({
+                if (!javaScript.isNullOrEmpty()) {
+                    val runnable = LoadJsRunnable(webView, javaScript)
+                    mHandler.postDelayed(runnable, 1000L)
+                }
+            }, delayTime)
         }
 
         @SuppressLint("WebViewClientOnReceivedSslError")
