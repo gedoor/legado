@@ -87,6 +87,7 @@ class AnalyzeUrl(
     private var webJs: String? = null
     private val enabledCookieJar = source?.enabledCookieJar ?: false
     private val domain: String
+    private var delayTime: Long? = null
 
     // 服务器ID
     var serverID: Long? = null
@@ -215,6 +216,7 @@ class AnalyzeUrl(
                         }
                     }
                     serverID = option.getServerID()
+                    delayTime = option.getDelayTime()
                 }
         }
         urlNoQuery = url
@@ -433,7 +435,8 @@ class AnalyzeUrl(
                             tag = source?.getKey(),
                             javaScript = webJs ?: jsStr,
                             sourceRegex = sourceRegex,
-                            headerMap = headerMap
+                            headerMap = headerMap,
+                            delayTime = delayTime ?:1000
                         ).getStrResponse()
                     }
 
@@ -442,7 +445,8 @@ class AnalyzeUrl(
                         tag = source?.getKey(),
                         javaScript = webJs ?: jsStr,
                         sourceRegex = sourceRegex,
-                        headerMap = headerMap
+                        headerMap = headerMap,
+                        delayTime = delayTime ?:1000
                     ).getStrResponse()
                 }
             } else {
@@ -704,7 +708,11 @@ class AnalyzeUrl(
         /**
          * 服务器id
          */
-        private var serverID: Long? = null
+        private var serverID: Long? = null,
+        /**
+         * webview等待页面加载完毕的延迟时间（毫秒）
+         */
+        private var delayTime: Long? = null,
     ) {
         fun setMethod(value: String?) {
             method = if (value.isNullOrBlank()) null else value
@@ -810,6 +818,14 @@ class AnalyzeUrl(
 
         fun getServerID(): Long? {
             return serverID
+        }
+
+        fun setDelayTime(value: String?) {
+            delayTime = if (value.isNullOrBlank()) null else value.toLong()
+        }
+
+        fun getDelayTime(): Long? {
+            return delayTime
         }
     }
 
