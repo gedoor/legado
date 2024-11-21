@@ -1,10 +1,22 @@
 package io.legado.app.utils
 
-import com.google.gson.*
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
+import com.google.gson.JsonParseException
+import com.google.gson.JsonSyntaxException
+import com.google.gson.ToNumberPolicy
 import com.google.gson.internal.LinkedTreeMap
 import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonWriter
-import io.legado.app.data.entities.rule.*
+import io.legado.app.data.entities.rule.BookInfoRule
+import io.legado.app.data.entities.rule.ContentRule
+import io.legado.app.data.entities.rule.ExploreRule
+import io.legado.app.data.entities.rule.ReviewRule
+import io.legado.app.data.entities.rule.SearchRule
+import io.legado.app.data.entities.rule.TocRule
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.io.OutputStream
@@ -20,6 +32,7 @@ val INITIAL_GSON: Gson by lazy {
         )
         .registerTypeAdapter(Int::class.java, IntJsonDeserializer())
         .registerTypeAdapter(String::class.java, StringJsonDeserializer())
+        .setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE)
         .disableHtmlEscaping()
         .setPrettyPrinting()
         .create()
