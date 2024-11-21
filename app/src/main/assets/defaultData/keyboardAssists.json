@@ -156,7 +156,7 @@
   },
   {
     "key": "useWebView",
-    "value": "{'webView': true}",
+    "value": ",{\"webView\": true}",
     "serialNo": 31
   }
 ]
