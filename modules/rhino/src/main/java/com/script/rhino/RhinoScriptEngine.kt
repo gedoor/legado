@@ -24,16 +24,38 @@
  */
 package com.script.rhino
 
-import com.script.*
+import com.script.AbstractScriptEngine
+import com.script.Bindings
+import com.script.Compilable
+import com.script.CompiledScript
+import com.script.Invocable
+import com.script.ScriptBindings
+import com.script.ScriptContext
+import com.script.ScriptException
+import com.script.SimpleBindings
 import kotlinx.coroutines.asContextElement
 import kotlinx.coroutines.withContext
-import org.mozilla.javascript.*
+import org.mozilla.javascript.Callable
+import org.mozilla.javascript.ConsString
+import org.mozilla.javascript.Context
+import org.mozilla.javascript.ContextFactory
+import org.mozilla.javascript.ContinuationPending
 import org.mozilla.javascript.Function
+import org.mozilla.javascript.JavaScriptException
+import org.mozilla.javascript.RhinoException
+import org.mozilla.javascript.Scriptable
+import org.mozilla.javascript.ScriptableObject
+import org.mozilla.javascript.Undefined
+import org.mozilla.javascript.Wrapper
 import java.io.IOException
 import java.io.Reader
 import java.io.StringReader
 import java.lang.reflect.Method
-import java.security.*
+import java.security.AccessControlContext
+import java.security.AccessControlException
+import java.security.AccessController
+import java.security.AllPermission
+import java.security.PrivilegedAction
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn
@@ -304,6 +326,9 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
         var result1 = result
         if (result1 is Wrapper) {
             result1 = result1.unwrap()
+        }
+        if (result1 is ConsString) {
+            result1 = result1.toString()
         }
         return if (result1 is Undefined) null else result1
     }
