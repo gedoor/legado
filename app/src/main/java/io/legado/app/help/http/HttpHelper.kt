@@ -53,8 +53,8 @@ val okHttpClient: OkHttpClient by lazy {
     )
 
     val builder = OkHttpClient.Builder()
-        .connectTimeout(60, TimeUnit.SECONDS)   //将请求等待超时时间由15s增加到60s
-        .writeTimeout(60, TimeUnit.SECONDS)
+        .connectTimeout(15, TimeUnit.SECONDS)
+        .writeTimeout(15, TimeUnit.SECONDS)
         .readTimeout(60, TimeUnit.SECONDS)
         .callTimeout(60, TimeUnit.SECONDS)
         //.cookieJar(cookieJar = cookieJar)
