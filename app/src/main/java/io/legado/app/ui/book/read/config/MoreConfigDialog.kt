@@ -11,9 +11,9 @@ import android.view.ViewConfiguration
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.LinearLayout
-import androidx.fragment.app.DialogFragment
 import androidx.preference.Preference
 import io.legado.app.R
+import io.legado.app.base.BasePrefDialogFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.help.config.AppConfig
@@ -30,7 +30,7 @@ import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.setEdgeEffectColor
 
-class MoreConfigDialog : DialogFragment() {
+class MoreConfigDialog : BasePrefDialogFragment() {
     private val readPreferTag = "readPreferenceFragment"
 
     override fun onStart() {

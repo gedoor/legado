@@ -98,6 +98,11 @@ class ReadStyleDialog : BaseDialogFragment(R.layout.dialog_read_book_style),
                 }
             }
         }
+        if(AppConfig.isEInkMode) {
+            binding.vwBgFg1.visibility = View.INVISIBLE
+            binding.llBgTs.visibility = View.GONE
+            binding.rvStyle.visibility = View.GONE
+        }
     }
 
     private fun initData() {

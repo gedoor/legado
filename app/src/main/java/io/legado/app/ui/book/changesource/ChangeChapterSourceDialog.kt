@@ -156,7 +156,7 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
         binding.ivHideToc.setOnClickListener {
             binding.clToc.gone()
         }
-        binding.flHideToc.elevation = requireContext().elevation
+        binding.flHideToc.elevation = if (AppConfig.isEInkMode) 0f else requireContext().elevation
     }
 
     private fun initRecyclerView() {

@@ -6,6 +6,7 @@ import android.provider.Settings
 import androidx.annotation.Keep
 import cn.hutool.crypto.digest.DigestUtil
 import io.legado.app.BuildConfig
+import io.legado.app.help.config.AppConfig
 import io.legado.app.help.update.AppVariant
 import splitties.init.appCtx
 import java.text.SimpleDateFormat
@@ -51,7 +52,7 @@ object AppConst {
     )
 
     @SuppressLint("PrivateResource")
-    val sysElevation = appCtx.resources
+    val sysElevation = if (AppConfig.isEInkMode) 0 else appCtx.resources
         .getDimension(com.google.android.material.R.dimen.design_appbar_elevation)
         .toInt()
 

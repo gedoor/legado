@@ -31,7 +31,7 @@ class TipConfigDialog : BaseDialogFragment(R.layout.dialog_tip_config) {
 
     override fun onStart() {
         super.onStart()
-        setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        setLayout(0.9f, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
