@@ -8,8 +8,6 @@ import android.graphics.PorterDuff
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.View.OnClickListener
-import android.view.View.OnLongClickListener
 import android.view.WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
 import android.view.animation.Animation
 import android.widget.FrameLayout
@@ -100,7 +98,7 @@ class ReadMenu @JvmOverloads constructor(
     private val showBrightnessView
         get() = context.getPrefBoolean(
             PreferKey.showBrightnessView,
-            !AppConfig.isEInkMode
+            true
         )
     private val sourceMenu by lazy {
         PopupMenu(context, binding.tvSourceAction).apply {
@@ -202,7 +200,7 @@ class ReadMenu @JvmOverloads constructor(
         brightnessBackground.cornerRadius = 5F.dpToPx()
         brightnessBackground.setColor(ColorUtils.adjustAlpha(bgColor, 0.5f))
         llBrightness.background = brightnessBackground
-        if(AppConfig.isEInkMode) {
+        if (AppConfig.isEInkMode) {
             titleBar.setBackgroundResource(R.drawable.bg_eink_border_bottom)
             llBottomBg.setBackgroundResource(R.drawable.bg_eink_border_top)
         } else {

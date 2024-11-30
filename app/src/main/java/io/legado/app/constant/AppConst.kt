@@ -52,7 +52,7 @@ object AppConst {
     )
 
     @SuppressLint("PrivateResource")
-    val sysElevation = if (AppConfig.isEInkMode) 0 else appCtx.resources
+    val sysElevation = appCtx.resources
         .getDimension(com.google.android.material.R.dimen.design_appbar_elevation)
         .toInt()
 

@@ -53,7 +53,6 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.collections.set
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -112,7 +111,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
                     return@addCallback
                 }
             }
-            if (!AppConfig.isEInkMode && System.currentTimeMillis() - exitTime > 2000) {
+            if (System.currentTimeMillis() - exitTime > 2000) {
                 toastOnUi(R.string.double_click_exit)
                 exitTime = System.currentTimeMillis()
             } else {
