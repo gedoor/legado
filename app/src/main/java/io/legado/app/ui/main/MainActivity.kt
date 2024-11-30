@@ -96,6 +96,9 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
             bottomNavigationView.elevation = elevation
             bottomNavigationView.setOnNavigationItemSelectedListener(this@MainActivity)
             bottomNavigationView.setOnNavigationItemReselectedListener(this@MainActivity)
+            if (AppConfig.isEInkMode) {
+                bottomNavigationView.setBackgroundResource(R.drawable.bg_eink_border_top)
+            }
         }
         upHomePage()
         viewModel.deleteNotShelfBook()
@@ -109,7 +112,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
                     return@addCallback
                 }
             }
-            if (System.currentTimeMillis() - exitTime > 2000) {
+            if (!AppConfig.isEInkMode && System.currentTimeMillis() - exitTime > 2000) {
                 toastOnUi(R.string.double_click_exit)
                 exitTime = System.currentTimeMillis()
             } else {

@@ -1,12 +1,14 @@
 package io.legado.app.lib.theme.view
 
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import com.google.android.material.bottomnavigation.BottomNavigationItemView
-import com.google.android.material.bottomnavigation.BottomNavigationMenuView
+import android.view.ViewGroup
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import io.legado.app.databinding.ViewNavigationBadgeBinding
+import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.theme.Selector
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.lib.theme.bottomBackground
@@ -27,13 +29,18 @@ class ThemeBottomNavigationVIew(context: Context, attrs: AttributeSet) :
             .setSelectedColor(ThemeStore.accentColor(context)).create()
         itemIconTintList = colorStateList
         itemTextColor = colorStateList
+
+        if (AppConfig.isEInkMode) {
+            isItemHorizontalTranslationEnabled = false
+            itemBackground = ColorDrawable(Color.TRANSPARENT)
+        }
     }
 
     fun addBadgeView(index: Int): BadgeView {
         //获取底部菜单view
-        val menuView = getChildAt(0) as BottomNavigationMenuView
+        val menuView = getChildAt(0) as ViewGroup
         //获取第index个itemView
-        val itemView = menuView.getChildAt(index) as BottomNavigationItemView
+        val itemView = menuView.getChildAt(index) as ViewGroup
         val badgeBinding = ViewNavigationBadgeBinding.inflate(LayoutInflater.from(context))
         itemView.addView(badgeBinding.root)
         return badgeBinding.viewBadge

@@ -497,7 +497,7 @@ object ReadBookConfig {
         private var textColorNight: String = "#ADADAD",//夜间文字颜色
         private var textColorEInk: String = "#000000",
         private var pageAnim: Int = 0,//翻页动画
-        private var pageAnimEInk: Int = 3,
+        private var pageAnimEInk: Int = 4,
         var textFont: String = "",//字体
         var textBold: Int = 0,//是否粗体字 0:正常, 1:粗体, 2:细体
         var textSize: Int = 20,//文字大小

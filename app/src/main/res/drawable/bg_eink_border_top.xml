@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape>
+            <!--    边框颜色    -->
+            <solid android:color="@color/divider" />
+        </shape>
+    </item>
+    <!--    边框位置和粗细    -->
+    <item android:top="1dp">
+        <shape>
+            <!--    背景颜色    -->
+            <solid android:color="@color/white" />
+        </shape>
+    </item>
+</layer-list>

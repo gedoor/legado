@@ -100,7 +100,7 @@ class ReadMenu @JvmOverloads constructor(
     private val showBrightnessView
         get() = context.getPrefBoolean(
             PreferKey.showBrightnessView,
-            true
+            !AppConfig.isEInkMode
         )
     private val sourceMenu by lazy {
         PopupMenu(context, binding.tvSourceAction).apply {
@@ -202,7 +202,12 @@ class ReadMenu @JvmOverloads constructor(
         brightnessBackground.cornerRadius = 5F.dpToPx()
         brightnessBackground.setColor(ColorUtils.adjustAlpha(bgColor, 0.5f))
         llBrightness.background = brightnessBackground
-        llBottomBg.setBackgroundColor(bgColor)
+        if(AppConfig.isEInkMode) {
+            titleBar.setBackgroundResource(R.drawable.bg_eink_border_bottom)
+            llBottomBg.setBackgroundResource(R.drawable.bg_eink_border_top)
+        } else {
+            llBottomBg.setBackgroundColor(bgColor)
+        }
         fabSearch.backgroundTintList = bottomBackgroundList
         fabSearch.setColorFilter(textColor)
         fabAutoPage.backgroundTintList = bottomBackgroundList

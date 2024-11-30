@@ -7,6 +7,8 @@ import android.view.KeyEvent
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import io.legado.app.utils.applyTint
+import io.legado.app.R
+import io.legado.app.help.config.AppConfig
 
 internal class AndroidAlertBuilder(override val ctx: Context) : AlertBuilder<AlertDialog> {
     private val builder = AlertDialog.Builder(ctx)
@@ -139,7 +141,21 @@ internal class AndroidAlertBuilder(override val ctx: Context) : AlertBuilder<Ale
         }
     }
 
-    override fun build(): AlertDialog = builder.create()
+    override fun build(): AlertDialog {
+        var dialog = builder.create()
+        if (AppConfig.isEInkMode) {
+            dialog.window?.setDimAmount(0f)
+            dialog.window?.decorView?.setBackgroundResource(R.drawable.bg_eink_border_dialog)
+        }
+        return dialog
+    }
 
-    override fun show(): AlertDialog = builder.show().applyTint()
+    override fun show(): AlertDialog {
+        var dialog = builder.show().applyTint()
+        if (AppConfig.isEInkMode) {
+            dialog.window?.setDimAmount(0f)
+            dialog.window?.decorView?.setBackgroundResource(R.drawable.bg_eink_border_dialog)
+        }
+        return dialog
+    }
 }
