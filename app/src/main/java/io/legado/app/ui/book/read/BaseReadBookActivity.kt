@@ -295,7 +295,6 @@ abstract class BaseReadBookActivity :
         ReadBook.book?.let { book ->
             alert(titleResource = R.string.offline_cache) {
                 val alertBinding = DialogDownloadChoiceBinding.inflate(layoutInflater).apply {
-                    root.setBackgroundColor(root.context.backgroundColor)
                     editStart.setText((book.durChapterIndex + 1).toString())
                     editEnd.setText(book.totalChapterNum.toString())
                 }
