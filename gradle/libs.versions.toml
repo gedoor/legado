@@ -16,6 +16,7 @@ core = "1.13.1"
 firebaseBom = "33.2.0"
 flexbox = "3.0.0"
 fragment = "1.8.2"
+androidx-startup = "1.2.0"
 
 #不要更新版本
 hutool = "5.8.22"
@@ -69,6 +70,7 @@ androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayo
 
 core-core = { module = "androidx.core:core", version.ref = "core" }
 core-ktx = { module = "androidx.core:core-ktx", version.ref = "core" }
+androidx-startup-runtime = { module = "androidx.startup:startup-runtime", version.ref = "androidx-startup" }
 
 androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version = "3.6.1" }
 

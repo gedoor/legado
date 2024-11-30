@@ -203,6 +203,7 @@ dependencies {
     implementation(libs.androidx.recyclerview)
     implementation(libs.androidx.viewpager2)
     implementation(libs.androidx.webkit)
+    implementation(libs.androidx.startup.runtime)
 
     //google
     implementation(libs.material)
