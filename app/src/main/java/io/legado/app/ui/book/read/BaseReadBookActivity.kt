@@ -27,7 +27,6 @@ import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.ThemeStore
-import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.model.CacheBook
 import io.legado.app.model.ReadBook
@@ -320,7 +319,6 @@ abstract class BaseReadBookActivity :
         ReadBook.book?.let { book ->
             alert(titleResource = R.string.simulated_reading) {
                 val alertBinding = DialogSimulatedReadingBinding.inflate(layoutInflater).apply {
-                    root.setBackgroundColor(root.context.backgroundColor)
                     srEnabled.isChecked = book.getReadSimulating()
                     editStart.setText(book.getStartChapter().toString())
                     editNum.setText(book.getDailyChapters().toString())

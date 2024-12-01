@@ -19,6 +19,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.children
 import com.google.android.material.appbar.AppBarLayout
 import io.legado.app.R
+import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.theme.elevation
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.activity
@@ -176,7 +177,11 @@ class TitleBar @JvmOverloads constructor(
                 }
             }
 
-            setBackgroundColor(context.primaryColor)
+            if (AppConfig.isEInkMode) {
+                setBackgroundResource(R.drawable.bg_eink_border_bottom)
+            } else {
+                setBackgroundColor(context.primaryColor)
+            }
 
             stateListAnimator = null
             elevation = context.elevation
