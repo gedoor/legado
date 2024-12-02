@@ -22,7 +22,7 @@ gson = "2.11.0"
 jsonPath = "2.9.0"
 # issue #3811，不要更新版本，新版引入了一个破坏性变更（详见https://github.com/jhy/jsoup/pull/2017）
 # 若要升级请确保相关代码不会受此变更影响（如AnalyzeByJSoup.kt、JsoupXpath库等）
-jsoup = "1.16.2"
+jsoup = "1.18.3"
 jsoupxpath = "2.5.3"
 coroutines = "1.8.1"
 liveeventbus = "1.8.14"
