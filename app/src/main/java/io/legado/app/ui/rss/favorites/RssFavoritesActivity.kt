@@ -46,7 +46,7 @@ class RssFavoritesActivity : BaseActivity<ActivityRssFavoritesBinding>() {
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.main_explore, menu)
+        menuInflater.inflate(R.menu.rss_favorites, menu)
         groupsMenu = menu.findItem(R.id.menu_group)?.subMenu
         upGroupsMenu()
         return super.onCompatCreateOptionsMenu(menu)

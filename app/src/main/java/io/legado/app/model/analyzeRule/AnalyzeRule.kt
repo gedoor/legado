@@ -30,8 +30,6 @@ import org.mozilla.javascript.NativeObject
 import java.net.URL
 import java.util.Locale
 import java.util.regex.Pattern
-import kotlin.collections.component1
-import kotlin.collections.component2
 import kotlin.coroutines.ContinuationInterceptor
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
@@ -653,7 +651,7 @@ class AnalyzeRule(
                                     jsEval is String -> infoVal.insert(0, jsEval)
                                     jsEval is Double && jsEval % 1.0 == 0.0 -> infoVal.insert(
                                         0,
-                                        String.format(Locale.getDefault(), "%.0f", jsEval)
+                                        String.format(Locale.ROOT, "%.0f", jsEval)
                                     )
 
                                     else -> infoVal.insert(0, jsEval.toString())
