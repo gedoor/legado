@@ -30,8 +30,8 @@ dependencyResolutionManagement {
                 includeGroupByRegex("androidx.*")
             }
         }
-        maven {
-            url 'https://jitpack.io'
+
+        maven(url = "https://jitpack.io") {
             content {
                 includeGroupByRegex("com\\.github.*")
             }
@@ -45,8 +45,8 @@ dependencyResolutionManagement {
         //maven { url 'https://repo.huaweicloud.com/repository/maven/' }
     }
 }
-rootProject.name = 'legado'
+rootProject.name = "legado"
 
-include ':app'
-include ':modules:book'
-include ':modules:rhino'
+include(":app")
+include(":modules:book")
+include(":modules:rhino")
