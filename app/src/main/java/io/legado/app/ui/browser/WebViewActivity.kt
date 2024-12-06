@@ -11,7 +11,14 @@ import android.view.MenuItem
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
-import android.webkit.*
+import android.webkit.CookieManager
+import android.webkit.SslErrorHandler
+import android.webkit.URLUtil
+import android.webkit.WebChromeClient
+import android.webkit.WebResourceRequest
+import android.webkit.WebSettings
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.core.view.size
@@ -27,8 +34,16 @@ import io.legado.app.lib.theme.accentColor
 import io.legado.app.model.Download
 import io.legado.app.ui.association.OnLineImportActivity
 import io.legado.app.ui.file.HandleFileContract
-import io.legado.app.utils.*
+import io.legado.app.utils.ACache
+import io.legado.app.utils.gone
+import io.legado.app.utils.invisible
+import io.legado.app.utils.longSnackbar
+import io.legado.app.utils.openUrl
+import io.legado.app.utils.sendToClip
+import io.legado.app.utils.setDarkeningAllowed
+import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import io.legado.app.utils.visible
 import java.net.URLDecoder
 
 class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
@@ -39,6 +54,7 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
     private var customWebViewCallback: WebChromeClient.CustomViewCallback? = null
     private var webPic: String? = null
     private var isCloudflareChallenge = false
+    private var isFullScreen = false
     private val saveImage = registerForActivityResult(HandleFileContract()) {
         it.uri?.let { uri ->
             ACache.get().put(imagePathKey, uri.toString())
@@ -70,6 +86,10 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
                 binding.webView.goBack()
                 return@addCallback
             }
+            if (isFullScreen) {
+                toggleFullScreen()
+                return@addCallback
+            }
             finish()
         }
     }
@@ -92,24 +112,23 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
                     finish()
                 }
             }
-            R.id.menu_full_screen -> toggleFullScreen(item)
+
+            R.id.menu_full_screen -> toggleFullScreen()
         }
         return super.onCompatOptionsItemSelected(item)
     }
 
-    private var isFullScreen = false
-
     //实现starBrowser调起页面全屏
-    private fun toggleFullScreen(item: MenuItem) {
+    private fun toggleFullScreen() {
         isFullScreen = !isFullScreen
-        item.title = if (isFullScreen) "Exit full screen" else "Full screen"
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             // For API 30 and above
             val windowInsetsController = window.insetsController
             windowInsetsController?.let {
                 if (isFullScreen) {
-                    it.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                    it.systemBarsBehavior =
+                        WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
                     it.hide(WindowInsets.Type.systemBars())
                     supportActionBar?.hide()
                 } else {
