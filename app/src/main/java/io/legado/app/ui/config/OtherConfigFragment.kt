@@ -249,7 +249,7 @@ class OtherConfigFragment : PreferenceFragment(),
                     putPrefString(PreferKey.userAgent, userAgent)
                 }
             }
-            noButton()
+            cancelButton()
         }
     }
 
