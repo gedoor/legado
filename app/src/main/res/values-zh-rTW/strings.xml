@@ -911,6 +911,7 @@
     <string name="double_page_horizontal">平板/橫屏雙頁</string>
     <string name="open_in_browser">瀏覽器打開</string>
     <string name="copy_url">複製url</string>
+    <string name="full_screen">全屏</string>
     <string name="open_fun">打開方式</string>
     <string name="use_browser_open">是否使用外部瀏覽器打開？</string>
     <string name="see">查看</string>

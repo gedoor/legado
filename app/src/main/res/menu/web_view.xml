@@ -18,4 +18,9 @@
         android:title="@string/copy_url"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/menu_full_screen"
+        android:title="@string/full_screen"
+        app:showAsAction="never" />
+
 </menu>

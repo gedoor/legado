@@ -4,10 +4,13 @@ import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.net.http.SslError
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.WindowInsets
+import android.view.WindowInsetsController
 import android.webkit.*
 import androidx.activity.addCallback
 import androidx.activity.viewModels
@@ -89,8 +92,43 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
                     finish()
                 }
             }
+            R.id.menu_full_screen -> toggleFullScreen(item)
         }
         return super.onCompatOptionsItemSelected(item)
+    }
+
+    private var isFullScreen = false
+
+    //实现starBrowser调起页面全屏
+    private fun toggleFullScreen(item: MenuItem) {
+        isFullScreen = !isFullScreen
+        item.title = if (isFullScreen) "Exit full screen" else "Full screen"
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            // For API 30 and above
+            val windowInsetsController = window.insetsController
+            windowInsetsController?.let {
+                if (isFullScreen) {
+                    it.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                    it.hide(WindowInsets.Type.systemBars())
+                    supportActionBar?.hide()
+                } else {
+                    it.show(WindowInsets.Type.systemBars())
+                    supportActionBar?.show()
+                }
+            }
+        } else {
+            // For older APIs
+            @Suppress("DEPRECATION")
+            window.decorView.systemUiVisibility = if (isFullScreen) {
+                (View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        or View.SYSTEM_UI_FLAG_FULLSCREEN
+                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION)
+            } else {
+                View.SYSTEM_UI_FLAG_VISIBLE
+            }
+            supportActionBar?.let { if (isFullScreen) it.hide() else it.show() }
+        }
     }
 
     @SuppressLint("JavascriptInterface", "SetJavaScriptEnabled")
