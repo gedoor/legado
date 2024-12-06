@@ -183,9 +183,15 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         return super.onCompatOptionsItemSelected(item)
     }
 
-    override fun updateFavorite(title: String, group: String) {
-        viewModel.rssArticle?.title = title
-        viewModel.rssArticle?.group = group
+    override fun updateFavorite(title: String?, group: String?) {
+        viewModel.rssArticle?.let{
+            if (title != null) {
+                it.title = title
+            }
+            if (group != null) {
+                it.group = group
+            }
+        }
         viewModel.updateFavorite()
     }
 
