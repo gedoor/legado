@@ -1,6 +1,7 @@
 <resources>
 <!--App-->
     <string name="app_name">Legado</string>
+    <string name="app_name_a">Legado·A</string>
     <string name="receiving_shared_label">Legado·tìm kiếm</string>
     <string name="tip_perm_request_storage">Legado cần quyền truy cập bộ nhớ để tìm và đọc sách. vui lòng vào &amp;quot;Cài đặt ứng dụng&amp;quot; để cho phép &amp;quot;Quyền lưu trữ&amp;quot;.</string>
 

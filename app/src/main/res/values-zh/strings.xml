@@ -1,6 +1,7 @@
 <resources>
     <!--App-->
     <string name="app_name">阅读</string>
+    <string name="app_name_a">阅读·A</string>
     <string name="receiving_shared_label">阅读·搜索</string>
     <string name="tip_perm_request_storage">阅读需要访问存储卡权限，请前往“设置”—“应用权限”，打开所需权限</string>
 

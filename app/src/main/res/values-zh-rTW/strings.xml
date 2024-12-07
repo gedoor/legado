@@ -1,6 +1,7 @@
 <resources>
     <!--App-->
     <string name="app_name">閱讀</string>
+    <string name="app_name_a">閱讀·A</string>
     <string name="receiving_shared_label">閱讀·搜尋</string>
     <string name="tip_perm_request_storage">閱讀需要存取記憶卡權限，請前往「設定」—「應用程式權限」—打開所需權限</string>
 

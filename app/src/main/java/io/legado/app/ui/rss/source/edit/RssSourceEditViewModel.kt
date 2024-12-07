@@ -38,6 +38,11 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
             }
             rssSource?.let {
                 appDb.rssSourceDao.delete(it)
+                //更新收藏的源地址
+                if (it.sourceUrl != source.sourceUrl){
+                    appDb.rssStarDao.updateOrigin(source.sourceUrl, it.sourceUrl)
+                    appDb.rssArticleDao.updateOrigin(source.sourceUrl, it.sourceUrl)
+                }
             }
             appDb.rssSourceDao.insert(source)
             rssSource = source
