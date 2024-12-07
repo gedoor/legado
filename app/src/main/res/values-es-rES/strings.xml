@@ -2,6 +2,7 @@
 <resources>
     <!--App-->
     <string name="app_name">Legado</string>
+    <string name="app_name_a">Legado·A</string>
     <string name="receiving_shared_label">Legado·buscador</string>
     <string name="tip_perm_request_storage">Legado necesita de acceso de almacenamineto para buscar y leer libros. Por favor, diríjase a los "Ajustes de la aplicación" para conceder el "Permiso de almacenamineto".</string>
 

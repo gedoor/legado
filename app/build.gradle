@@ -79,6 +79,12 @@ android {
             }
             applicationIdSuffix '.release'
 
+            if (getApplicationIdSuffix() == '.releaseA') {
+                manifestPlaceholders.put("app_name", "@string/app_name_a")
+            }else {
+                manifestPlaceholders.put("app_name", "@string/app_name")
+            }
+
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro', 'cronet-proguard-rules.pro'
