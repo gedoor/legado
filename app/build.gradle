@@ -99,6 +99,11 @@ android {
         app {
             dimension "mode"
             manifestPlaceholders.put("APP_CHANNEL_VALUE", "app")
+            if ('.release' == '.releaseA') {
+                manifestPlaceholders.put("app_name", "@string/app_name_a")
+            }else {
+                manifestPlaceholders.put("app_name", "@string/app_name")
+            }
         }
     }
 

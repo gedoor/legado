@@ -1,6 +1,7 @@
 <resources>
     <!--App-->
     <string name="app_name">閲讀</string>
+    <string name="app_name_a">閲讀·A</string>
     <string name="receiving_shared_label">閲讀·搜尋</string>
     <string name="tip_perm_request_storage">閲讀需要訪問存儲卡權限，請前往「設定」—「應用程式權限」—開啟所需要的權限</string>
 
