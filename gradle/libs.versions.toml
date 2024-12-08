@@ -168,7 +168,7 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 android-test = { id = "com.android.test", version.ref = "agp" }
 
-androidx-benchmark = { id = "androidx.benchmark", version = "1.3.0" }
+androidx-benchmark = { id = "androidx.benchmark", version = "1.3.3" }
 
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
