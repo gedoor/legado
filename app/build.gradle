@@ -78,6 +78,11 @@ android {
                 signingConfig signingConfigs.myConfig
             }
             applicationIdSuffix '.release'
+            if (getApplicationIdSuffix() == '.releaseA') {
+                manifestPlaceholders.put("app_name", "@string/app_name_a")
+            }else {
+                manifestPlaceholders.put("app_name", "@string/app_name")
+            }
 
             minifyEnabled true
             shrinkResources true
@@ -87,6 +92,8 @@ android {
             if (project.hasProperty("RELEASE_STORE_FILE")) {
                 signingConfig signingConfigs.myConfig
             }
+            manifestPlaceholders.put("app_name", "@string/app_name")
+
             applicationIdSuffix '.debug'
             versionNameSuffix 'debug'
             minifyEnabled false
@@ -99,11 +106,6 @@ android {
         app {
             dimension "mode"
             manifestPlaceholders.put("APP_CHANNEL_VALUE", "app")
-            if ('.release' == '.releaseA') {
-                manifestPlaceholders.put("app_name", "@string/app_name_a")
-            }else {
-                manifestPlaceholders.put("app_name", "@string/app_name")
-            }
         }
     }
 
