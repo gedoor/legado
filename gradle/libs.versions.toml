@@ -24,7 +24,7 @@ jsonPath = "2.9.0"
 # 若要升级请确保相关代码不会受此变更影响（如AnalyzeByJSoup.kt、JsoupXpath库等）
 jsoup = "1.16.2"
 jsoupxpath = "2.5.3"
-coroutines = "1.8.1"
+coroutines = "1.9.0"
 liveeventbus = "1.8.14"
 markwon = "4.6.2"
 material = "1.12.0"
