@@ -26,7 +26,6 @@ import java.io.File
 import java.time.LocalDate
 import java.time.Period.between
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.collections.set
 import kotlin.math.max
 import kotlin.math.min
 
@@ -242,9 +241,14 @@ fun BookSource.getBookType(): Int {
 fun Book.sync(oldBook: Book) {
     val curBook = appDb.bookDao.getBook(oldBook.bookUrl)!!
     durChapterTime = curBook.durChapterTime
-    durChapterIndex = curBook.durChapterIndex
     durChapterPos = curBook.durChapterPos
-    durChapterTitle = curBook.durChapterTitle
+    if (durChapterIndex != curBook.durChapterIndex) {
+        durChapterIndex = curBook.durChapterIndex
+        val replaceRules = ContentProcessor.get(this).getTitleReplaceRules()
+        appDb.bookChapterDao.getChapter(bookUrl, durChapterIndex)?.let {
+            durChapterTitle = it.getDisplayTitle(replaceRules, getUseReplaceRule())
+        }
+    }
     canUpdate = curBook.canUpdate
 }
 
