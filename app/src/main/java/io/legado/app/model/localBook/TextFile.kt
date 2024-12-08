@@ -214,6 +214,7 @@ class TextFile(private var book: Book) {
                         curChapter.title = matcher.group()
                         curChapter.start = curOffset + chapterLength
                         toc.add(curChapter)
+                        lastChapterWordCount = 0
                     } else if (seekPos == 0 && chapterStart != 0) {
                         /**
                          * 如果 seekPos == 0 && chapterStart != 0 表示当前block处前面有一段内容
