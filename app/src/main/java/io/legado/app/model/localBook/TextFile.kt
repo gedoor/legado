@@ -222,6 +222,7 @@ class TextFile(private var book: Book) {
                                 qyChapter.title = "前言"
                                 qyChapter.start = curOffset
                                 qyChapter.end = curOffset + chapterLength
+                                qyChapter.tag = chapterContent.length.toString()
                                 toc.add(qyChapter)
                                 book.intro = if (chapterContent.length <= 500) {
                                     chapterContent
@@ -241,6 +242,7 @@ class TextFile(private var book: Book) {
                                 chapterContent.substringAfter(lastChapter.title).isBlank()
                             //将当前段落添加上一章去
                             lastChapter.end = lastChapter.end!! + chapterLength
+                            lastChapter.tag = ((lastChapter.tag?.toInt() ?: 0) + chapterContent.length).toString()
                             //创建当前章节
                             val curChapter = BookChapter()
                             curChapter.title = matcher.group()
@@ -255,6 +257,7 @@ class TextFile(private var book: Book) {
                                 chapterContent.substringAfter(lastChapter.title).isBlank()
                             lastChapter.end =
                                 lastChapter.start!! + chapterLength
+                            lastChapter.tag = chapterContent.length.toString()
                             //创建当前章节
                             val curChapter = BookChapter()
                             curChapter.title = matcher.group()
@@ -265,6 +268,7 @@ class TextFile(private var book: Book) {
                             curChapter.title = matcher.group()
                             curChapter.start = curOffset
                             curChapter.end = curOffset
+                            curChapter.tag = chapterContent.length.toString()
                             toc.add(curChapter)
                         }
                     }
@@ -274,8 +278,10 @@ class TextFile(private var book: Book) {
                 //block的偏移点
                 curOffset += length.toLong()
                 //设置上一章的结尾
-                toc.lastOrNull()?.end = curOffset
-
+                toc.lastOrNull()?.let {
+                    it.end = curOffset
+                    it.tag = blockContent.substring(seekPos).length.toString()
+                }
             }
             toc.lastOrNull()?.let { chapter ->
                 //章节字数太多进行拆分
