@@ -5,7 +5,6 @@ import android.graphics.Canvas
 import android.graphics.Paint.FontMetrics
 import android.os.Build
 import androidx.annotation.Keep
-import androidx.core.graphics.withTranslation
 import io.legado.app.help.PaintPool
 import io.legado.app.help.book.isImage
 import io.legado.app.help.config.AppConfig
@@ -183,19 +182,16 @@ data class TextLine(
         }
         val paint = PaintPool.obtain()
         paint.set(textPaint)
+        val letterSpacing = paint.letterSpacing * paint.textSize
+        val letterSpacingHalf = letterSpacing * 0.5f
         if (extraLetterSpacing != 0f) {
             paint.letterSpacing += extraLetterSpacing
         }
         if (wordSpacing != 0f) {
             paint.wordSpacing = wordSpacing
         }
-        if (extraLetterSpacingOffsetX != 0f) {
-            canvas.withTranslation(extraLetterSpacingOffsetX) {
-                canvas.drawText(text, indentSize, text.length, startX, lineBase - lineTop, paint)
-            }
-        } else {
-            canvas.drawText(text, indentSize, text.length, startX, lineBase - lineTop, paint)
-        }
+        val offsetX = if (atLeastApi35) letterSpacingHalf else extraLetterSpacingOffsetX
+        canvas.drawText(text, indentSize, text.length, startX + offsetX, lineBase - lineTop, paint)
         PaintPool.recycle(paint)
         for (i in columns.indices) {
             val column = columns[i] as TextColumn
@@ -246,6 +242,7 @@ data class TextLine(
     companion object {
         val emptyTextLine = TextLine()
         private val atLeastApi26 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+        private val atLeastApi35 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM
         private val wordSpacingWorking by lazy {
             // issue 3785 3846
             val paint = PaintPool.obtain()
