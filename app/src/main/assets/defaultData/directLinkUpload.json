@@ -10,11 +10,5 @@
     "downloadUrlRule": "$.data@js:if (result == '') \n '' \n else \n 'https://shuyuan.miaogongzi.cc/shuyuan/' + result",
     "summary": "喵公子网盘②(有效期7天)",
     "compress": false
-  },
-  {
-    "uploadUrl": "http://v2.jt12.eu/up-v2.php,{\"method\":\"POST\",\"body\": {\"file\": \"fileRequest\"},\"type\": \"multipart/form-data\"}",
-    "downloadUrlRule": "$.msg",
-    "summary": "橘涂网盘·过于卡顿，如非需要永久链接。否则不建议使用(永久有效)",
-    "compress": false
   }
 ]
