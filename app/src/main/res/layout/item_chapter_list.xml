@@ -15,8 +15,19 @@
         android:singleLine="true"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/iv_checked"
-        app:layout_constraintBottom_toTopOf="@id/tv_tag" />
+        app:layout_constraintRight_toLeftOf="@+id/iv_checked" />
+
+    <TextView
+        android:id="@+id/tv_word_count"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:visibility="gone"
+        android:singleLine="true"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_chapter_name"
+        app:layout_constraintRight_toLeftOf="@+id/tv_tag" />
 
     <TextView
         android:id="@+id/tv_tag"
@@ -27,7 +38,7 @@
         android:singleLine="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_chapter_name"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/tv_word_count"
         app:layout_constraintRight_toLeftOf="@+id/iv_checked" />
 
     <ImageView

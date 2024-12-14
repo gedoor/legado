@@ -142,7 +142,7 @@ class TextFile(private var book: Book) {
      * 按规则解析目录
      */
     private fun analyze(pattern: Pattern?): Pair<ArrayList<BookChapter>, Int> {
-        if (pattern?.pattern().isNullOrEmpty()) {
+        if (pattern == null || pattern.pattern().isNullOrEmpty()) {
             return analyze()
         }
         val toc = arrayListOf<BookChapter>()
@@ -227,7 +227,7 @@ class TextFile(private var book: Book) {
                                 qyChapter.title = "前言"
                                 qyChapter.start = curOffset
                                 qyChapter.end = curOffset + chapterLength
-                                qyChapter.tag = StringUtils.wordCountFormat(chapterContent.length)
+                                qyChapter.wordCount = StringUtils.wordCountFormat(chapterContent.length)
                                 toc.add(qyChapter)
                                 book.intro = if (chapterContent.length <= 500) {
                                     chapterContent
@@ -248,7 +248,7 @@ class TextFile(private var book: Book) {
                             //将当前段落添加上一章去
                             lastChapter.end = lastChapter.end!! + chapterLength
                             lastChapterWordCount += chapterContent.length
-                            lastChapter.tag = StringUtils.wordCountFormat(lastChapterWordCount)
+                            lastChapter.wordCount = StringUtils.wordCountFormat(lastChapterWordCount)
                             //创建当前章节
                             val curChapter = BookChapter()
                             curChapter.title = matcher.group()
@@ -265,7 +265,7 @@ class TextFile(private var book: Book) {
                                 chapterContent.substringAfter(lastChapter.title).isBlank()
                             lastChapter.end =
                                 lastChapter.start!! + chapterLength
-                            lastChapter.tag = StringUtils.wordCountFormat(chapterContent.length)
+                            lastChapter.wordCount = StringUtils.wordCountFormat(chapterContent.length)
                             //创建当前章节
                             val curChapter = BookChapter()
                             curChapter.title = matcher.group()
@@ -276,7 +276,7 @@ class TextFile(private var book: Book) {
                             curChapter.title = matcher.group()
                             curChapter.start = curOffset
                             curChapter.end = curOffset
-                            curChapter.tag = StringUtils.wordCountFormat(chapterContent.length)
+                            curChapter.wordCount = StringUtils.wordCountFormat(chapterContent.length)
                             toc.add(curChapter)
                         }
                         bookWordCount += chapterContent.length
@@ -293,7 +293,7 @@ class TextFile(private var book: Book) {
                 //设置上一章的结尾
                 toc.lastOrNull()?.let {
                     it.end = curOffset
-                    it.tag = StringUtils.wordCountFormat(lastChapterWordCount)
+                    it.wordCount = StringUtils.wordCountFormat(lastChapterWordCount)
                 }
             }
             toc.lastOrNull()?.let { chapter ->
@@ -383,7 +383,7 @@ class TextFile(private var book: Book) {
                         chapter.title = "第${blockPos}章($chapterPos)"
                         chapter.start = toc.lastOrNull()?.end ?: curOffset
                         chapter.end = chapter.start!! + end - chapterOffset
-                        chapter.tag = StringUtils.wordCountFormat(content.length)
+                        chapter.wordCount = StringUtils.wordCountFormat(content.length)
                         toc.add(chapter)
                         //减去已经被分配的长度
                         strLength -= (end - chapterOffset)
@@ -407,13 +407,13 @@ class TextFile(private var book: Book) {
                 chapter.title = "第${blockPos}章(${chapterPos})"
                 chapter.start = toc.lastOrNull()?.end ?: curOffset
                 chapter.end = chapter.start!! + bufferStart
-                chapter.tag = StringUtils.wordCountFormat(content.length)
+                chapter.wordCount = StringUtils.wordCountFormat(content.length)
                 toc.add(chapter)
             } else {
                 val wordCount = lastChapterWordCount + content.length
                 toc.lastOrNull()?.let {
                     it.end = it.end!! + bufferStart
-                    it.tag = StringUtils.wordCountFormat(wordCount)
+                    it.wordCount = StringUtils.wordCountFormat(wordCount)
                 }
             }
         }
