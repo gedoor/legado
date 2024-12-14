@@ -13,7 +13,7 @@ data class AppReleaseInfo(
     val downloadUrl: String,
     val assetUrl: String
 ) {
-    val versionName: String = name.split("_").getOrNull(2)?.removeSuffix(".apk") ?: ""
+    val versionName: String = name.split("_").getOrNull(2)?.dropLast(2) ?: ""
 }
 
 enum class AppVariant {
