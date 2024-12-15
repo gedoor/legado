@@ -20,6 +20,7 @@ import me.ag2s.epublib.epub.EpubReader
 import me.ag2s.epublib.util.zip.AndroidZipFile
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
+import org.jsoup.parser.Parser
 import org.jsoup.select.Elements
 import java.io.FileOutputStream
 import java.io.IOException
@@ -228,6 +229,10 @@ class EpubFile(var book: Book) {
                 select("h1, h2, h3, h4, h5, h6").remove()
                 //getElementsMatchingOwnText(chapter.title)?.remove()
             }
+        }
+        bodyElement.select("image").forEach {
+            it.tagName("img", Parser.NamespaceHtml)
+            it.attr("src", it.attr("xlink:href"))
         }
         bodyElement.select("img").forEach {
             val src = it.attr("src").encodeURI()
