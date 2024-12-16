@@ -19,6 +19,7 @@ import io.legado.app.utils.LogUtils
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.servicePendingIntent
 import io.legado.app.utils.toastOnUi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
 
 /**
@@ -94,6 +95,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
             LogUtils.d(TAG, "朗读页数 ${textChapter?.pageSize}")
             val tts = textToSpeech ?: throw NoStackTraceException("tts is null")
             val contentList = contentList
+            var isAddedText = false
             for (i in nowSpeak until contentList.size) {
                 ensureActive()
                 var text = contentList[i]
@@ -103,7 +105,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
                 if (text.matches(AppPattern.notReadAloudRegex)) {
                     continue
                 }
-                if (i == nowSpeak) {
+                if (!isAddedText) {
                     val result = tts.runCatching {
                         speak(text, TextToSpeech.QUEUE_FLUSH, null, AppConst.APP_TAG + i)
                     }.getOrElse {
@@ -127,8 +129,14 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
                         AppLog.put("tts朗读出错:$text")
                     }
                 }
+                isAddedText = true
             }
             LogUtils.d(TAG, "朗读内容添加完成")
+            if (!isAddedText) {
+                playStop()
+                delay(1000)
+                nextChapter()
+            }
         }.onError {
             AppLog.put("tts朗读出错\n${it.localizedMessage}", it, true)
         }
@@ -184,6 +192,9 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
         override fun onStart(s: String) {
             LogUtils.d(TAG, "onStart nowSpeak:$nowSpeak pageIndex:$pageIndex utteranceId:$s")
             textChapter?.let {
+                if (contentList[nowSpeak].matches(AppPattern.notReadAloudRegex)) {
+                    nextParagraph()
+                }
                 if (readAloudNumber + 1 > it.getReadLength(pageIndex + 1)) {
                     pageIndex++
                     ReadBook.moveToNextPage()

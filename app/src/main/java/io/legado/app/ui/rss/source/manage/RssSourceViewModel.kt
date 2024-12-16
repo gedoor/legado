@@ -38,7 +38,12 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
     }
 
     fun del(vararg rssSource: RssSource) {
-        execute { appDb.rssSourceDao.delete(*rssSource) }
+        execute {
+            appDb.rssSourceDao.delete(*rssSource)
+            rssSource.forEach {
+                appDb.rssArticleDao.delete(it.sourceUrl)
+            }
+        }
     }
 
     fun update(vararg rssSource: RssSource) {

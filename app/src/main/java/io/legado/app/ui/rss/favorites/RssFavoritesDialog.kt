@@ -34,8 +34,8 @@ class RssFavoritesDialog() : BaseDialogFragment(R.layout.dialog_rss_favorite_con
             return
         }
 
-        var title = arguments.getString("title") ?: "默认名称"
-        var group = arguments.getString("group") ?: "默认分组"
+        var title = arguments.getString("title")
+        var group = arguments.getString("group")
         binding.run {
             editTitle.setText(title)
             editGroup.setText(group)
@@ -65,7 +65,7 @@ class RssFavoritesDialog() : BaseDialogFragment(R.layout.dialog_rss_favorite_con
 
     interface Callback {
 
-        fun updateFavorite(title: String, group: String)
+        fun updateFavorite(title: String?, group: String?)
 
         fun deleteFavorite()
 

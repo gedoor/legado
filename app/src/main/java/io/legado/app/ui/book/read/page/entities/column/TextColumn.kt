@@ -1,6 +1,7 @@
 package io.legado.app.ui.book.read.page.entities.column
 
 import android.graphics.Canvas
+import android.os.Build
 import androidx.annotation.Keep
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.lib.theme.ThemeStore
@@ -55,7 +56,14 @@ data class TextColumn(
         if (textPaint.color != textColor) {
             textPaint.color = textColor
         }
-        canvas.drawText(charData, start, textLine.lineBase - textLine.lineTop, textPaint)
+        val y = textLine.lineBase - textLine.lineTop
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            val letterSpacing = textPaint.letterSpacing * textPaint.textSize
+            val letterSpacingHalf = letterSpacing * 0.5f
+            canvas.drawText(charData, start + letterSpacingHalf, y, textPaint)
+        } else {
+            canvas.drawText(charData, start, y, textPaint)
+        }
         if (selected) {
             canvas.drawRect(start, 0f, end, textLine.height, view.selectedPaint)
         }

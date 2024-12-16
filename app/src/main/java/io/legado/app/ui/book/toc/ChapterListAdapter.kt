@@ -138,13 +138,22 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
                     //普通章节 保持不变
                     tvChapterItem.background =
                         ThemeUtils.resolveDrawable(context, android.R.attr.selectableItemBackground)
-                }
-                if (!item.tag.isNullOrEmpty() && !item.isVolume) {
-                    //卷名不显示tag(更新时间规则)
-                    tvTag.text = item.tag
-                    tvTag.visible()
-                } else {
-                    tvTag.gone()
+
+                    //卷名不显示
+                    if (!item.tag.isNullOrEmpty()) {
+                        //更新时间规则
+                        tvTag.text = item.tag
+                        tvTag.visible()
+                    } else {
+                        tvTag.gone()
+                    }
+                    if (!item.wordCount.isNullOrEmpty()) {
+                        //章节字数
+                        tvWordCount.text = item.wordCount
+                        tvWordCount.visible()
+                    } else {
+                        tvWordCount.gone()
+                    }
                 }
                 upHasCache(binding, isDur, cached)
             } else {

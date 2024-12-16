@@ -28,6 +28,9 @@ interface RssStarDao {
     @Update
     fun update(vararg rssStar: RssStar)
 
+    @Query("update rssStars set origin = :origin where origin = :oldOrigin")
+    fun updateOrigin(origin: String, oldOrigin: String)
+
     @Query("delete from rssStars where origin = :origin")
     fun delete(origin: String)
 

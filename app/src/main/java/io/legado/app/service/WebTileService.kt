@@ -40,12 +40,13 @@ class WebTileService : TileService() {
 
     override fun onStartListening() {
         super.onStartListening()
-        if (WebService.isRun) {
-            qsTile.state = Tile.STATE_ACTIVE
-            qsTile.updateTile()
-        } else {
-            qsTile.state = Tile.STATE_INACTIVE
-            qsTile.updateTile()
+        qsTile?.run {
+            state = if (WebService.isRun) {
+                Tile.STATE_ACTIVE
+            } else {
+                Tile.STATE_INACTIVE
+            }
+            updateTile()
         }
     }
 

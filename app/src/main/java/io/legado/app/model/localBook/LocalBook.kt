@@ -109,7 +109,9 @@ object LocalBook {
             throw TocEmptyException(appCtx.getString(R.string.chapter_list_empty))
         }
         val list = ArrayList(LinkedHashSet(chapters))
-        list.forEachIndexed { index, bookChapter -> bookChapter.index = index }
+        list.forEachIndexed { index, bookChapter ->
+            bookChapter.index = index
+        }
         book.latestChapterTitle = list.last().title
         book.totalChapterNum = list.size
         book.save()

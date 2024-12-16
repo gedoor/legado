@@ -4,15 +4,22 @@ import android.content.DialogInterface
 import android.content.DialogInterface.OnDismissListener
 import android.os.Build
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View
+import android.view.WindowManager
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.constant.AppLog
+import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.theme.ThemeStore
+import io.legado.app.utils.dpToPx
+import io.legado.app.utils.setBackgroundKeepPadding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlin.coroutines.CoroutineContext
@@ -33,6 +40,29 @@ abstract class BaseDialogFragment(
         super.onStart()
         if (adaptationSoftKeyboard) {
             dialog?.window?.setBackgroundDrawableResource(R.color.transparent)
+        } else if (AppConfig.isEInkMode) {
+            dialog?.window?.let {
+                it.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+                val attr = it.attributes
+                attr.dimAmount = 0.0f
+                attr.windowAnimations = 0
+                it.attributes = attr
+                it.decorView.setBackgroundKeepPadding(R.color.transparent)
+            }
+            // 修改gravity的时机一般在子类的onStart方法中, 因此需要在onStart之后执行.
+            lifecycle.addObserver(LifecycleEventObserver { _, event ->
+                if (event == Lifecycle.Event.ON_START) {
+                    when (dialog?.window?.attributes?.gravity) {
+                        Gravity.TOP -> view?.setBackgroundResource(R.drawable.bg_eink_border_bottom)
+                        Gravity.BOTTOM -> view?.setBackgroundResource(R.drawable.bg_eink_border_top)
+                        else -> {
+                            val padding = 2.dpToPx();
+                            view?.setPadding(padding, padding, padding, padding)
+                            view?.setBackgroundResource(R.drawable.bg_eink_border_dialog)
+                        }
+                    }
+                }
+            })
         }
     }
 
@@ -49,7 +79,7 @@ abstract class BaseDialogFragment(
         if (adaptationSoftKeyboard) {
             view.findViewById<View>(R.id.vw_bg)?.setOnClickListener(null)
             view.setOnClickListener { dismiss() }
-        } else {
+        } else if (!AppConfig.isEInkMode) {
             view.setBackgroundColor(ThemeStore.backgroundColor())
         }
         onFragmentCreated(view, savedInstanceState)

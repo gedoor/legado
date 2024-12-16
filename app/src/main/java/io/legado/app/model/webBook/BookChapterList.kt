@@ -4,6 +4,7 @@ import android.text.TextUtils
 import com.script.ScriptBindings
 import com.script.rhino.RhinoScriptEngine
 import io.legado.app.R
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
@@ -162,6 +163,7 @@ object BookChapterList {
             list.getOrElse(book.simulatedTotalChapterNum() - 1) { list.last() }
                 .getDisplayTitle(replaceRules, book.getUseReplaceRule())
         coroutineContext.ensureActive()
+        getWordCount(list, book)
         return list
     }
 
@@ -265,6 +267,19 @@ object BookChapterList {
             }
         }
         return Pair(chapterList, nextUrlList)
+    }
+
+    private fun getWordCount(list: ArrayList<BookChapter>, book: Book) {
+        val chapterList = appDb.bookChapterDao.getChapterList(book.bookUrl)
+        if (chapterList.isNotEmpty()){
+            val map = chapterList.associateBy({ it.getFileName() }, { it.wordCount })
+            for (bookChapter in list) {
+                val wordCount = map[bookChapter.getFileName()]
+                if(wordCount != null){
+                    bookChapter.wordCount = wordCount
+                }
+            }
+        }
     }
 
 }

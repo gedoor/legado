@@ -8,7 +8,8 @@ import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Locale
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 import java.util.zip.GZIPInputStream
@@ -22,6 +23,9 @@ object StringUtils {
     private const val DAY_OF_YESTERDAY = 2
     private const val TIME_UNIT = 60
     private val ChnMap = chnMap
+    private val wordCountFormatter by lazy {
+        DecimalFormat("#.#")
+    }
 
     private val chnMap: HashMap<Char, Int>
         get() {
@@ -232,16 +236,30 @@ object StringUtils {
         return isNum.matches()
     }
 
+    fun wordCountFormat(words: Int): String {
+        var wordsS = ""
+        if (words > 0) {
+            if (words > 10000) {
+                val df = wordCountFormatter
+                wordsS = df.format(words * 1.0f / 10000f.toDouble()) + "万字"
+            } else {
+                wordsS = words.toString() + "字"
+            }
+        }
+        return wordsS
+    }
+
     fun wordCountFormat(wc: String?): String {
         if (wc == null) return ""
         var wordsS = ""
         if (isNumeric(wc)) {
             val words: Int = wc.toInt()
             if (words > 0) {
-                wordsS = words.toString() + "字"
                 if (words > 10000) {
-                    val df = DecimalFormat("#.#")
+                    val df = wordCountFormatter
                     wordsS = df.format(words * 1.0f / 10000f.toDouble()) + "万字"
+                } else {
+                    wordsS = words.toString() + "字"
                 }
             }
         } else {

@@ -51,6 +51,7 @@ data class BookChapter(
     var isPay: Boolean = false,         // 是否已购买
     var resourceUrl: String? = null,    // 音频真实URL
     var tag: String? = null,            // 更新时间或其他章节附加信息
+    var wordCount: String? = null,      // 本章节字数
     var start: Long? = null,            // 章节起始位置
     var end: Long? = null,              // 章节终止位置
     var startFragmentId: String? = null,  //EPUB书籍当前章节的fragmentId

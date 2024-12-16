@@ -113,9 +113,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             return
         }
         ReadBook.upMsg(null)
-        if (ReadBook.simulatedChapterSize > 0 && ReadBook.durChapterIndex > ReadBook.simulatedChapterSize - 1) {
-            ReadBook.durChapterIndex = ReadBook.simulatedChapterSize - 1
-        }
+        ensureChapterExist()
         if (!isSameBook) {
             ReadBook.loadContent(resetPageOffset = true)
         } else {
@@ -150,6 +148,12 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    private fun ensureChapterExist() {
+        if (ReadBook.simulatedChapterSize > 0 && ReadBook.durChapterIndex > ReadBook.simulatedChapterSize - 1) {
+            ReadBook.durChapterIndex = ReadBook.simulatedChapterSize - 1
+        }
+    }
+
     /**
      * 加载详情页
      */
@@ -170,6 +174,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     fun loadChapterList(book: Book) {
         execute {
             if (loadChapterListAwait(book)) {
+                ensureChapterExist()
                 ReadBook.upMsg(null)
                 ReadBook.loadContent(resetPageOffset = true)
             }
