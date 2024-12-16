@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:id="@+id/tv_chapter_item"
     android:layout_width="match_parent"
@@ -19,15 +20,16 @@
 
     <TextView
         android:id="@+id/tv_word_count"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingEnd="18dp"
         android:textSize="12sp"
         android:visibility="gone"
         android:singleLine="true"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_chapter_name"
-        app:layout_constraintRight_toLeftOf="@+id/tv_tag" />
+        tools:ignore="RtlSymmetry" />
 
     <TextView
         android:id="@+id/tv_tag"
