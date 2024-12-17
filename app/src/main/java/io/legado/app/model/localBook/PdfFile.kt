@@ -74,6 +74,10 @@ class PdfFile(var book: Book) {
             return field
         }
 
+    init {
+        upBookCover(true)
+    }
+
     /**
      * 读取PDF文件
      *
@@ -188,11 +192,14 @@ class PdfFile(var book: Book) {
         return chapterList
     }
 
-    private fun upBookCover() {
+    private fun upBookCover(fastCheck: Boolean = false) {
         try {
             pdfRenderer?.let { renderer ->
                 if (book.coverUrl.isNullOrEmpty()) {
                     book.coverUrl = LocalBook.getCoverPath(book)
+                }
+                if (fastCheck && File(book.coverUrl!!).exists()) {
+                    return
                 }
                 FileOutputStream(FileUtils.createFileIfNotExist(book.coverUrl!!)).use { out ->
                     openPdfPage(renderer, 0)?.compress(Bitmap.CompressFormat.JPEG, 90, out)
