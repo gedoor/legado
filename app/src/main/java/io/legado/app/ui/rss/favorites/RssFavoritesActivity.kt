@@ -14,6 +14,7 @@ import io.legado.app.base.BaseActivity
 import io.legado.app.constant.AppLog
 import io.legado.app.data.appDb
 import io.legado.app.databinding.ActivityRssFavoritesBinding
+import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.gone
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -53,16 +54,20 @@ class RssFavoritesActivity : BaseActivity<ActivityRssFavoritesBinding>() {
     }
 
     private fun upGroupsMenu() = groupsMenu?.let { subMenu ->
-        subMenu.removeGroup(R.id.menu_group_text)
+        subMenu.removeGroup(R.id.menu_group)
         groupList.forEachIndexed { index, it ->
-            subMenu.add(R.id.menu_group_text, Menu.NONE, index, it)
+            subMenu.add(R.id.menu_group, Menu.NONE, index, it)
         }
     }
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
-        super.onCompatOptionsItemSelected(item)
-        if (item.groupId == R.id.menu_group_text) {
+        if (item.groupId == R.id.menu_group) {
             binding.viewPager.setCurrentItem(item.order)
+        }else{
+            when (item.itemId) {
+                R.id.menu_del_group -> deleteGroup()
+                R.id.menu_del_all -> deleteAll()
+            }
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -83,6 +88,28 @@ class RssFavoritesActivity : BaseActivity<ActivityRssFavoritesBinding>() {
                     upGroupsMenu()
                 }
                 adapter.notifyDataSetChanged()
+            }
+        }
+    }
+
+    private fun deleteGroup() {
+        alert(R.string.draw) {
+            val item = binding.viewPager.currentItem
+            val group = groupList[item]
+            setMessage(getString(R.string.sure_del) + "\n" + group + " 分组的收藏")
+            noButton()
+            yesButton {
+                appDb.rssStarDao.deleteByGroup(group)
+            }
+        }
+    }
+
+    private fun deleteAll() {
+        alert(R.string.draw) {
+            setMessage(getString(R.string.sure_del) + "\n" + "所有收藏")
+            noButton()
+            yesButton {
+                appDb.rssStarDao.deleteAll()
             }
         }
     }

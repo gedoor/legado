@@ -36,4 +36,10 @@ interface RssStarDao {
 
     @Query("delete from rssStars where origin = :origin and link = :link")
     fun delete(origin: String, link: String)
+
+    @Query("delete from rssStars where `group` = :group")
+    fun deleteByGroup(group: String)
+
+    @Query("delete from rssStars")
+    fun deleteAll()
 }

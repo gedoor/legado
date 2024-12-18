@@ -28,6 +28,7 @@
     <string name="draw">提醒</string>
     <string name="edit">編輯</string>
     <string name="delete">刪除</string>
+    <string name="delete_select_group">刪除當前分組</string>
     <string name="replace">替換</string>
     <string name="replace_purify">替換淨化</string>
     <string name="replace_purify_desc">配置替換淨化規則</string>

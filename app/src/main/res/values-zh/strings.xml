@@ -29,6 +29,7 @@
     <string name="draw">提醒</string>
     <string name="edit">编辑</string>
     <string name="delete">删除</string>
+    <string name="delete_select_group">删除当前分组</string>
     <string name="delete_all">删除所有</string>
     <string name="replace">替换</string>
     <string name="replace_purify">替换净化</string>
