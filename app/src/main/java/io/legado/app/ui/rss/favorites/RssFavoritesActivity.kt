@@ -104,13 +104,12 @@ class RssFavoritesActivity : BaseActivity<ActivityRssFavoritesBinding>() {
                 if (groupsMenu != null) {
                     upGroupsMenu()
                 }
-                if (groupList.isNotEmpty() && currentGroup.isEmpty()) {
-                    currentGroup = groupList[0]
-                }
                 adapter.notifyDataSetChanged()
                 val item = groupList.indexOf(currentGroup)
                 if (item > -1) {
                     binding.viewPager.setCurrentItem(item)
+                } else if (groupList.isNotEmpty()) {
+                    currentGroup = groupList[binding.viewPager.currentItem]
                 }
             }
         }
