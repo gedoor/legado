@@ -29,6 +29,7 @@
     <string name="draw">Cảnh báo</string>
     <string name="edit">Sửa đổi</string>
     <string name="delete">Xóa</string>
+    <string name="delete_select_group">Xóa nhóm hiện tại</string>
     <string name="delete_all">Xóa tất cả</string>
     <string name="custom_export_section">Chương xuất tùy chỉnh của epub</string>
     <string name="replace">Thay thế</string>

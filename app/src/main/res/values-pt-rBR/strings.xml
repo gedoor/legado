@@ -30,6 +30,7 @@
     <string name="draw">Aviso</string>
     <string name="edit">Editar</string>
     <string name="delete">Excluir</string>
+    <string name="delete_select_group">Delete Select Group</string>
     <string name="delete_all">Excluir tudo</string>
     <string name="replace">Substituir</string>
     <string name="replace_purify">Substituição</string>
