@@ -9,6 +9,7 @@ import android.view.SubMenu
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.lifecycleScope
+import androidx.viewpager.widget.ViewPager
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.constant.AppLog
@@ -34,6 +35,7 @@ class RssFavoritesActivity : BaseActivity<ActivityRssFavoritesBinding>() {
     private val adapter by lazy { TabFragmentPageAdapter() }
     private var groupList = mutableListOf<String>()
     private var groupsMenu: SubMenu? = null
+    private var currentGroup = ""
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initView()
@@ -42,6 +44,21 @@ class RssFavoritesActivity : BaseActivity<ActivityRssFavoritesBinding>() {
 
     private fun initView() {
         binding.viewPager.adapter = adapter
+        binding.viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageScrolled(
+                position: Int,
+                positionOffset: Float,
+                positionOffsetPixels: Int
+            ) {
+            }
+
+            override fun onPageSelected(position: Int) {
+                currentGroup = groupList[position]
+            }
+
+            override fun onPageScrollStateChanged(state: Int) {}
+
+        })
         binding.tabLayout.setupWithViewPager(binding.viewPager)
         binding.tabLayout.setSelectedTabIndicatorColor(accentColor)
     }
@@ -63,7 +80,7 @@ class RssFavoritesActivity : BaseActivity<ActivityRssFavoritesBinding>() {
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         if (item.groupId == R.id.menu_group) {
             binding.viewPager.setCurrentItem(item.order)
-        }else{
+        } else {
             when (item.itemId) {
                 R.id.menu_del_group -> deleteGroup()
                 R.id.menu_del_all -> deleteAll()
@@ -84,10 +101,17 @@ class RssFavoritesActivity : BaseActivity<ActivityRssFavoritesBinding>() {
                 } else {
                     binding.tabLayout.visible()
                 }
-                if (groupsMenu != null){
+                if (groupsMenu != null) {
                     upGroupsMenu()
                 }
+                if (groupList.isNotEmpty() && currentGroup.isEmpty()) {
+                    currentGroup = groupList[0]
+                }
                 adapter.notifyDataSetChanged()
+                val item = groupList.indexOf(currentGroup)
+                if (item > -1) {
+                    binding.viewPager.setCurrentItem(item)
+                }
             }
         }
     }
