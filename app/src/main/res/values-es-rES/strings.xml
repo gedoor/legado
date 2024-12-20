@@ -30,7 +30,7 @@
     <string name="draw">Advertencia</string>
     <string name="edit">Editar</string>
     <string name="delete">Borrar</string>
-    <string name="delete_select_group">Delete Select Group</string>
+    <string name="delete_select_group">Eliminar grupo seleccionado</string>
     <string name="delete_all">Borrar todo</string>
     <string name="replace">Reemplazar</string>
     <string name="replace_purify">Reemplazo</string>
@@ -769,6 +769,7 @@
     <string name="donate_summary">Su donación mejora esta aplicación</string>
     <string name="about_summary">Cuenta oficial de Wechat [开源阅读软件]</string>
     <string name="read_record">Leer historial</string>
+    <string name="del_read_record">Eliminar historial de lectura</string>
     <string name="read_record_summary">Leer resumen del historial</string>
     <string name="local_tts">TTS local</string>
     <string name="thread_count">Recuento de subprocesos</string>

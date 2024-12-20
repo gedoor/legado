@@ -72,4 +72,14 @@ class RssSortViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    fun countRead() : Int{
+        return appDb.rssArticleDao.countRead
+    }
+
+    fun delReadRecord() {
+        execute {
+            appDb.rssArticleDao.deleteRecord()
+        }
+    }
+
 }
