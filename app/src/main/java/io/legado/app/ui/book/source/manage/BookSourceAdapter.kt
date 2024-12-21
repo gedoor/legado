@@ -272,6 +272,18 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
         callBack.upCountView()
     }
 
+    fun getHeaderText(position: Int): String {
+        val source = getItem(position)!!
+        return callBack.getSourceHost(source.bookSourceUrl)
+    }
+
+    fun isItemHeader(position: Int): Boolean {
+        if (position == 0) return true
+        val lastHost = getHeaderText(position - 1)
+        val curHost = getHeaderText(position)
+        return lastHost != curHost
+    }
+
     override fun swap(srcPosition: Int, targetPosition: Int): Boolean {
         val srcItem = getItem(srcPosition)
         val targetItem = getItem(targetPosition)
@@ -344,5 +356,6 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
         fun enable(enable: Boolean, bookSource: BookSourcePart)
         fun enableExplore(enable: Boolean, bookSource: BookSourcePart)
         fun upCountView()
+        fun getSourceHost(origin: String): String
     }
 }
