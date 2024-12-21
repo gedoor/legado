@@ -91,7 +91,6 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
         payloads: MutableList<Any>
     ) {
         binding.run {
-            upSourceHost(binding, holder.layoutPosition)
             if (payloads.isEmpty()) {
                 root.setBackgroundColor(ColorUtils.withAlpha(context.backgroundColor, 0.5f))
                 cbBookSource.text = item.getDisPlayNameGroup()
@@ -99,6 +98,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                 cbBookSource.isChecked = selected.contains(item)
                 upCheckSourceMessage(binding, item)
                 upShowExplore(ivExplore, item)
+                upSourceHost(binding, holder.layoutPosition)
             } else {
                 for (i in payloads.indices) {
                     val bundle = payloads[i] as Bundle
@@ -109,6 +109,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                             "upExplore" -> upShowExplore(ivExplore, item)
                             "selected" -> cbBookSource.isChecked = selected.contains(item)
                             "checkSourceMessage" -> upCheckSourceMessage(binding, item)
+                            "upSourceHost" -> upSourceHost(binding, holder.layoutPosition)
                         }
                     }
                 }
@@ -151,6 +152,9 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
 
     override fun onCurrentListChanged() {
         callBack.upCountView()
+        if (showSourceHost) {
+            notifyItemRangeChanged(0, itemCount, bundleOf("upSourceHost" to null))
+        }
     }
 
     private fun showMenu(view: View, position: Int) {
