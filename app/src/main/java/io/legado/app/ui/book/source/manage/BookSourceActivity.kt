@@ -349,7 +349,8 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                 if (showDuplicationSource) {
                     data.sortedWith(
                         compareBy<BookSourcePart> { getSourceHost(it.bookSourceUrl) == "#" }
-                            .thenBy { getSourceHost(it.bookSourceUrl) })
+                            .thenBy { getSourceHost(it.bookSourceUrl) }
+                            .thenByDescending { it.lastUpdateTime })
                 } else if (sortAscending) {
                     when (sort) {
                         BookSourceSort.Weight -> data.sortedBy { it.weight }
