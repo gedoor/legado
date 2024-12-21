@@ -771,6 +771,7 @@
     <string name="donate_summary">您的支援是我更新的動力</string>
     <string name="about_summary">公眾號[开源阅读软件]</string>
     <string name="read_record">閱讀記錄</string>
+    <string name="del_read_record">刪除閲讀記錄</string>
     <string name="read_record_summary">閱讀時間記錄</string>
     <string name="local_tts">本機TTS</string>
     <string name="thread_count">執行緒數</string>

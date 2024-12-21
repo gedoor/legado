@@ -770,6 +770,7 @@ Còn </string>
     <string name="donate_summary">Đóng góp của bạn làm cho ứng dụng này tốt hơn</string>
     <string name="about_summary">Tài khoản chính thức của WeChat [开源阅读软件]</string>
     <string name="read_record">Đọc bản ghi</string>
+    <string name="del_read_record">Xóa lịch sử đọc</string>
     <string name="read_record_summary">Đọc tóm tắt bản ghi</string>
     <string name="local_tts">TTS địa phương</string>
     <string name="thread_count">Số lượng chủ đề</string>

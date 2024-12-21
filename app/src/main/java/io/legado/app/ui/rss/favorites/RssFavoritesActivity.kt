@@ -9,7 +9,6 @@ import android.view.SubMenu
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.lifecycleScope
-import androidx.viewpager.widget.ViewPager
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.constant.AppLog
@@ -35,7 +34,6 @@ class RssFavoritesActivity : BaseActivity<ActivityRssFavoritesBinding>() {
     private val adapter by lazy { TabFragmentPageAdapter() }
     private var groupList = mutableListOf<String>()
     private var groupsMenu: SubMenu? = null
-    private var currentGroup = ""
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initView()
@@ -44,21 +42,6 @@ class RssFavoritesActivity : BaseActivity<ActivityRssFavoritesBinding>() {
 
     private fun initView() {
         binding.viewPager.adapter = adapter
-        binding.viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-            override fun onPageScrolled(
-                position: Int,
-                positionOffset: Float,
-                positionOffsetPixels: Int
-            ) {
-            }
-
-            override fun onPageSelected(position: Int) {
-                currentGroup = groupList[position]
-            }
-
-            override fun onPageScrollStateChanged(state: Int) {}
-
-        })
         binding.tabLayout.setupWithViewPager(binding.viewPager)
         binding.tabLayout.setSelectedTabIndicatorColor(accentColor)
     }
@@ -105,12 +88,6 @@ class RssFavoritesActivity : BaseActivity<ActivityRssFavoritesBinding>() {
                     upGroupsMenu()
                 }
                 adapter.notifyDataSetChanged()
-                val item = groupList.indexOf(currentGroup)
-                if (item > -1) {
-                    binding.viewPager.setCurrentItem(item)
-                } else if (groupList.isNotEmpty()) {
-                    currentGroup = groupList[binding.viewPager.currentItem]
-                }
             }
         }
     }
@@ -119,7 +96,7 @@ class RssFavoritesActivity : BaseActivity<ActivityRssFavoritesBinding>() {
         alert(R.string.draw) {
             val item = binding.viewPager.currentItem
             val group = groupList[item]
-            setMessage(getString(R.string.sure_del) + "\n" + group + " 分组的收藏")
+            setMessage(getString(R.string.sure_del) + "\n<" + group + ">" + getString(R.string.group))
             noButton()
             yesButton {
                 appDb.rssStarDao.deleteByGroup(group)
@@ -129,7 +106,7 @@ class RssFavoritesActivity : BaseActivity<ActivityRssFavoritesBinding>() {
 
     private fun deleteAll() {
         alert(R.string.draw) {
-            setMessage(getString(R.string.sure_del) + "\n" + "所有收藏")
+            setMessage(getString(R.string.sure_del) + "\n<" + getString(R.string.all) + ">" + getString(R.string.favorite))
             noButton()
             yesButton {
                 appDb.rssStarDao.deleteAll()
