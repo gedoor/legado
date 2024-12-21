@@ -21,6 +21,7 @@ import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.utils.ColorUtils
+import io.legado.app.utils.gone
 import io.legado.app.utils.invisible
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.visible
@@ -33,6 +34,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
 
     private val selected = linkedSetOf<BookSourcePart>()
     private val finalMessageRegex = Regex("成功|失败")
+    var showSourceHost = false
 
     val selection: List<BookSourcePart>
         get() {
@@ -89,6 +91,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
         payloads: MutableList<Any>
     ) {
         binding.run {
+            upSourceHost(binding, holder.layoutPosition)
             if (payloads.isEmpty()) {
                 root.setBackgroundColor(ColorUtils.withAlpha(context.backgroundColor, 0.5f))
                 cbBookSource.text = item.getDisPlayNameGroup()
@@ -231,6 +234,15 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
             if (!isEmpty) View.VISIBLE else View.GONE
         ivProgressBar.visibility =
             if (isFinalMessage || isEmpty || !Debug.isChecking) View.GONE else View.VISIBLE
+    }
+
+    private fun upSourceHost(binding: ItemBookSourceBinding, position: Int) = binding.run {
+        if (showSourceHost && isItemHeader(position)) {
+            tvHostText.text = getHeaderText(position)
+            tvHostText.visible()
+        } else {
+            tvHostText.gone()
+        }
     }
 
     fun selectAll() {

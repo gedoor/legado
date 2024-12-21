@@ -19,7 +19,6 @@ import androidx.lifecycle.LifecycleRegistry
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -106,9 +105,6 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         private set
     private var snackBar: Snackbar? = null
     private var showDuplicationSource = false
-    private val bookSourceDecoration by lazy {
-        BookSourceDecoration(adapter)
-    }
     private val hostMap = hashMapOf<String, String>()
     private val qrResult = registerForActivityResult(QrCodeResult()) {
         it ?: return@registerForActivityResult
@@ -274,7 +270,9 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
 
             R.id.menu_show_same_source -> {
                 item.isChecked = !item.isChecked
-                toggleDuplicationSourceView(item.isChecked)
+                showDuplicationSource = item.isChecked
+                adapter.showSourceHost = item.isChecked
+                upBookSource(searchView.query?.toString())
             }
 
             R.id.menu_help -> showHelp("SourceMBookHelp")
@@ -683,21 +681,6 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                 }
             }
         }
-    }
-
-    private fun toggleDuplicationSourceView(enable: Boolean) {
-        showDuplicationSource = enable
-        adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
-            override fun onChanged() {
-                if (enable) {
-                    binding.recyclerView.addItemDecoration(bookSourceDecoration)
-                } else {
-                    binding.recyclerView.removeItemDecoration(bookSourceDecoration)
-                }
-                adapter.unregisterAdapterDataObserver(this)
-            }
-        })
-        upBookSource(searchView.query?.toString())
     }
 
     /**
