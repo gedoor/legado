@@ -50,8 +50,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
         }
 
         override fun areContentsTheSame(oldItem: BookSourcePart, newItem: BookSourcePart): Boolean {
-            return !showSourceHost
-                    && oldItem.bookSourceName == newItem.bookSourceName
+            return oldItem.bookSourceName == newItem.bookSourceName
                     && oldItem.bookSourceGroup == newItem.bookSourceGroup
                     && oldItem.enabled == newItem.enabled
                     && oldItem.enabledExplore == newItem.enabledExplore
