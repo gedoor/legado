@@ -21,6 +21,7 @@ import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.utils.ColorUtils
+import io.legado.app.utils.buildMainHandler
 import io.legado.app.utils.gone
 import io.legado.app.utils.invisible
 import io.legado.app.utils.startActivity
@@ -34,6 +35,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
 
     private val selected = linkedSetOf<BookSourcePart>()
     private val finalMessageRegex = Regex("成功|失败")
+    private val handler = buildMainHandler()
     var showSourceHost = false
 
     val selection: List<BookSourcePart>
@@ -152,7 +154,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
 
     override fun onCurrentListChanged() {
         callBack.upCountView()
-        if (showSourceHost) {
+        handler.post {
             notifyItemRangeChanged(0, itemCount, bundleOf("upSourceHost" to null))
         }
     }
