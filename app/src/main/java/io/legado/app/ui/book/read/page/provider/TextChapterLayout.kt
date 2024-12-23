@@ -341,6 +341,39 @@ class TextChapterLayout(
                     height = size.height * visibleWidth / size.width
                 }
 
+                Book.imgStyleSingle -> {
+                    width = ChapterProvider.visibleWidth
+                    height = size.height * ChapterProvider.visibleWidth / size.width
+                    if (height > ChapterProvider.visibleHeight) {
+                        width = width * ChapterProvider.visibleHeight / height
+                        height = ChapterProvider.visibleHeight
+                    }
+                    if (durY > 0f) {
+                        val textPage = pendingTextPage
+                        // 双页的 durY 不正确，可能会小于实际高度
+                        if (textPage.height < durY) {
+                            textPage.height = durY
+                        }
+                        if (doublePage && absStartX < viewWidth / 2) {
+                            //当前页面左列结束
+                            textPage.leftLineSize = textPage.lineSize
+                            absStartX = viewWidth / 2 + paddingLeft
+                        } else {
+                            //当前页面结束
+                            if (textPage.leftLineSize == 0) {
+                                textPage.leftLineSize = textPage.lineSize
+                            }
+                            textPage.text = stringBuilder.toString().ifEmpty { "本页无文字内容" }
+                            stringBuilder.clear()
+                            textPages.add(textPage)
+                            coroutineContext.ensureActive()
+                            onPageCompleted()
+                            pendingTextPage = TextPage()
+                        }
+                        durY = 0f
+                    }
+                }
+
                 else -> {
                     if (size.width > visibleWidth) {
                         height = size.height * visibleWidth / size.width

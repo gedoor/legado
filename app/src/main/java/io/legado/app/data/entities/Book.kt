@@ -414,6 +414,7 @@ data class Book(
         const val imgStyleDefault = "DEFAULT"
         const val imgStyleFull = "FULL"
         const val imgStyleText = "TEXT"
+        const val imgStyleSingle = "SINGLE"
     }
 
     @Parcelize
