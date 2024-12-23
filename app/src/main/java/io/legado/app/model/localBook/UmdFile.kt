@@ -7,6 +7,7 @@ import io.legado.app.utils.FileUtils
 import io.legado.app.utils.printOnDebug
 import me.ag2s.umdlib.domain.UmdBook
 import me.ag2s.umdlib.umd.UmdReader
+import java.io.File
 import java.io.InputStream
 
 class UmdFile(var book: Book) {
@@ -58,16 +59,23 @@ class UmdFile(var book: Book) {
             return field
         }
 
+    init {
+        upBookCover(true)
+    }
+
     private fun readUmd(): UmdBook? {
         val input = LocalBook.getBookInputStream(book)
         return UmdReader().read(input)
     }
 
-    private fun upBookCover() {
+    private fun upBookCover(fastCheck: Boolean = false) {
         try {
             umdBook?.let {
                 if (book.coverUrl.isNullOrEmpty()) {
                     book.coverUrl = LocalBook.getCoverPath(book)
+                }
+                if (fastCheck && File(book.coverUrl!!).exists()) {
+                    return
                 }
                 FileUtils.writeBytes(book.coverUrl!!, it.cover.coverData)
             }

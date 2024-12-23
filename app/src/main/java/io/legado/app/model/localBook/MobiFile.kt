@@ -16,6 +16,7 @@ import io.legado.app.utils.FileUtils
 import io.legado.app.utils.HtmlFormatter
 import io.legado.app.utils.printOnDebug
 import org.jsoup.Jsoup
+import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
 
@@ -69,6 +70,10 @@ class MobiFile(var book: Book) {
             }
             return field
         }
+
+    init {
+        upBookCover(true)
+    }
 
     private fun readMobi(): MobiBook? {
         return kotlin.runCatching {
@@ -266,11 +271,14 @@ class MobiFile(var book: Book) {
         return kf8Book.getResourceByHref(href)?.inputStream()
     }
 
-    private fun upBookCover() {
+    private fun upBookCover(fastCheck: Boolean = false) {
         try {
             mobiBook?.let {
                 if (book.coverUrl.isNullOrEmpty()) {
                     book.coverUrl = LocalBook.getCoverPath(book)
+                }
+                if (fastCheck && File(book.coverUrl!!).exists()) {
+                    return
                 }
                 it.getCover()?.let { bytes ->
                     val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)

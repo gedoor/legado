@@ -30,6 +30,7 @@
     <string name="draw">Warning</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
+    <string name="delete_select_group">Delete Select Group</string>
     <string name="delete_all">Delete all</string>
     <string name="custom_export_section">Custom export chapter of epub</string>
     <string name="replace">Replace</string>
@@ -773,6 +774,7 @@
     <string name="donate_summary">Your donation makes this app better</string>
     <string name="about_summary">Wechat official account [开源阅读软件]</string>
     <string name="read_record">Read record</string>
+    <string name="del_read_record">Delete Read record</string>
     <string name="read_record_summary">Read record summary</string>
     <string name="local_tts">Local TTS</string>
     <string name="thread_count">Thread count</string>
@@ -1176,4 +1178,5 @@
     <string name="read_aloud_read_phone_state_permission_rationale">阅读需要读取手机状态实现来电期间暂停朗读功能</string>
     <string name="read_aloud_by_media_button_title">耳机按键启动朗读</string>
     <string name="read_aloud_by_media_button_summary">通过耳机按键来启动朗读</string>
+    <string name="show_same_source">显示重复书源</string>
 </resources>

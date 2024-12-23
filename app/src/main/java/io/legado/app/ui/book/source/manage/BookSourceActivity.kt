@@ -49,6 +49,7 @@ import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.ACache
+import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.cnCompare
 import io.legado.app.utils.dpToPx
@@ -103,6 +104,8 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     override var sortAscending = true
         private set
     private var snackBar: Snackbar? = null
+    private var showDuplicationSource = false
+    private val hostMap = hashMapOf<String, String>()
     private val qrResult = registerForActivityResult(QrCodeResult()) {
         it ?: return@registerForActivityResult
         showDialogFragment(ImportBookSourceDialog(it))
@@ -265,6 +268,13 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                 searchView.setQuery(getString(R.string.disabled_explore), true)
             }
 
+            R.id.menu_show_same_source -> {
+                item.isChecked = !item.isChecked
+                showDuplicationSource = item.isChecked
+                adapter.showSourceHost = item.isChecked
+                upBookSource(searchView.query?.toString())
+            }
+
             R.id.menu_help -> showHelp("SourceMBookHelp")
         }
         if (item.groupId == R.id.source_group) {
@@ -335,7 +345,13 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                     appDb.bookSourceDao.flowSearch(searchKey)
                 }
             }.map { data ->
-                if (sortAscending) {
+                hostMap.clear()
+                if (showDuplicationSource) {
+                    data.sortedWith(
+                        compareBy<BookSourcePart> { getSourceHost(it.bookSourceUrl) == "#" }
+                            .thenBy { getSourceHost(it.bookSourceUrl) }
+                            .thenByDescending { it.lastUpdateTime })
+                } else if (sortAscending) {
                     when (sort) {
                         BookSourceSort.Weight -> data.sortedBy { it.weight }
                         BookSourceSort.Name -> data.sortedWith { o1, o2 ->
@@ -383,7 +399,8 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                 AppLog.put("书源界面更新书源出错", it)
             }.flowOn(IO).conflate().collect { data ->
                 adapter.setItems(data, adapter.diffItemCallback, !Debug.isChecking)
-                itemTouchCallback.isCanDrag = sort == BookSourceSort.Default
+                itemTouchCallback.isCanDrag =
+                    sort == BookSourceSort.Default && !showDuplicationSource
                 delay(500)
             }
         }
@@ -684,6 +701,12 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     override fun upCountView() {
         binding.selectActionBar
             .upCountView(adapter.selection.size, adapter.itemCount)
+    }
+
+    override fun getSourceHost(origin: String): String {
+        return hostMap.getOrPut(origin) {
+            NetworkUtils.getSubDomainOrNull(origin) ?: "#"
+        }
     }
 
     override fun onQueryTextChange(newText: String?): Boolean {

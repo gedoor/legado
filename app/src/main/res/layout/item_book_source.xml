@@ -5,8 +5,32 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
+    android:clipToPadding="false"
     android:padding="16dp"
     android:scrollbars="none">
+
+    <io.legado.app.ui.widget.text.AccentTextView
+        android:id="@+id/tv_host_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-12dp"
+        android:layout_marginBottom="16dp"
+        android:scrollbars="none"
+        android:singleLine="true"
+        android:textSize="16sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/barrier"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="host"
+        tools:visibility="visible" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="top"
+        app:constraint_referenced_ids="cb_book_source,swt_enabled,iv_edit,iv_menu_more" />
 
     <io.legado.app.lib.theme.view.ThemeCheckBox
         android:id="@+id/cb_book_source"
@@ -19,7 +43,7 @@
         app:layout_constraintBottom_toTopOf="@id/iv_debug_text"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/swt_enabled"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/barrier"
         tools:ignore="TouchTargetSizeCheck"
         tools:text="@string/book_source" />
 
@@ -32,7 +56,7 @@
         android:scrollbars="none"
         app:layout_constraintBottom_toTopOf="@id/iv_debug_text"
         app:layout_constraintRight_toLeftOf="@id/iv_edit"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/barrier"
         tools:ignore="RtlHardcoded,RtlSymmetry,TouchTargetSizeCheck" />
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -48,7 +72,7 @@
         android:tint="@color/primaryText"
         app:layout_constraintBottom_toTopOf="@id/iv_debug_text"
         app:layout_constraintRight_toLeftOf="@id/iv_menu_more"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/barrier" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_menu_more"
@@ -62,7 +86,7 @@
         android:tint="@color/primaryText"
         app:layout_constraintBottom_toTopOf="@id/iv_debug_text"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/barrier"
         tools:ignore="RtlHardcoded" />
 
     <io.legado.app.ui.widget.image.CircleImageView

@@ -133,6 +133,12 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_show_same_source"
+        android:checkable="true"
+        android:title="@string/show_same_source"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_help"
         android:icon="@drawable/ic_help"
         android:title="@string/help"

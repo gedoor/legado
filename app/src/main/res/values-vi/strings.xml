@@ -29,6 +29,7 @@
     <string name="draw">Cảnh báo</string>
     <string name="edit">Sửa đổi</string>
     <string name="delete">Xóa</string>
+    <string name="delete_select_group">Xóa nhóm hiện tại</string>
     <string name="delete_all">Xóa tất cả</string>
     <string name="custom_export_section">Chương xuất tùy chỉnh của epub</string>
     <string name="replace">Thay thế</string>
@@ -769,6 +770,7 @@ Còn </string>
     <string name="donate_summary">Đóng góp của bạn làm cho ứng dụng này tốt hơn</string>
     <string name="about_summary">Tài khoản chính thức của WeChat [开源阅读软件]</string>
     <string name="read_record">Đọc bản ghi</string>
+    <string name="del_read_record">Xóa lịch sử đọc</string>
     <string name="read_record_summary">Đọc tóm tắt bản ghi</string>
     <string name="local_tts">TTS địa phương</string>
     <string name="thread_count">Số lượng chủ đề</string>
@@ -1172,4 +1174,5 @@ Còn </string>
     <string name="read_aloud_read_phone_state_permission_rationale">阅读需要读取手机状态实现来电期间暂停朗读功能</string>
     <string name="read_aloud_by_media_button_title">耳机按键启动朗读</string>
     <string name="read_aloud_by_media_button_summary">通过耳机按键来启动朗读</string>
+    <string name="show_same_source">显示重复书源</string>
 </resources>

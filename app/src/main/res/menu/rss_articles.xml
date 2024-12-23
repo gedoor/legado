@@ -32,4 +32,9 @@
         android:title="@string/clear"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/menu_del_read_record"
+        android:title="@string/del_read_record"
+        app:showAsAction="never" />
+
 </menu>

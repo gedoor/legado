@@ -29,6 +29,7 @@
     <string name="draw">提醒</string>
     <string name="edit">編輯</string>
     <string name="delete">刪除</string>
+    <string name="delete_select_group">刪除當前分組</string>
     <string name="delete_all">刪除所有</string>
     <string name="replace">取代</string>
     <string name="replace_purify">取代淨化</string>
@@ -770,6 +771,7 @@
     <string name="donate_summary">您的支援是我更新的動力</string>
     <string name="about_summary">公眾號[开源阅读软件]</string>
     <string name="read_record">閱讀記錄</string>
+    <string name="del_read_record">刪除閲讀記錄</string>
     <string name="read_record_summary">閱讀時間記錄</string>
     <string name="local_tts">本機TTS</string>
     <string name="thread_count">執行緒數</string>
@@ -1175,4 +1177,5 @@
     <string name="read_aloud_read_phone_state_permission_rationale">阅读需要读取手机状态实现来电期间暂停朗读功能</string>
     <string name="read_aloud_by_media_button_title">耳机按键启动朗读</string>
     <string name="read_aloud_by_media_button_summary">通过耳机按键来启动朗读</string>
+    <string name="show_same_source">显示重复书源</string>
 </resources>

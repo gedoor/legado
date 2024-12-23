@@ -21,6 +21,8 @@ import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.utils.ColorUtils
+import io.legado.app.utils.buildMainHandler
+import io.legado.app.utils.gone
 import io.legado.app.utils.invisible
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.visible
@@ -33,6 +35,8 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
 
     private val selected = linkedSetOf<BookSourcePart>()
     private val finalMessageRegex = Regex("成功|失败")
+    private val handler = buildMainHandler()
+    var showSourceHost = false
 
     val selection: List<BookSourcePart>
         get() {
@@ -96,6 +100,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                 cbBookSource.isChecked = selected.contains(item)
                 upCheckSourceMessage(binding, item)
                 upShowExplore(ivExplore, item)
+                upSourceHost(binding, holder.layoutPosition)
             } else {
                 for (i in payloads.indices) {
                     val bundle = payloads[i] as Bundle
@@ -106,6 +111,7 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
                             "upExplore" -> upShowExplore(ivExplore, item)
                             "selected" -> cbBookSource.isChecked = selected.contains(item)
                             "checkSourceMessage" -> upCheckSourceMessage(binding, item)
+                            "upSourceHost" -> upSourceHost(binding, holder.layoutPosition)
                         }
                     }
                 }
@@ -148,6 +154,9 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
 
     override fun onCurrentListChanged() {
         callBack.upCountView()
+        handler.post {
+            notifyItemRangeChanged(0, itemCount, bundleOf("upSourceHost" to null))
+        }
     }
 
     private fun showMenu(view: View, position: Int) {
@@ -233,6 +242,15 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
             if (isFinalMessage || isEmpty || !Debug.isChecking) View.GONE else View.VISIBLE
     }
 
+    private fun upSourceHost(binding: ItemBookSourceBinding, position: Int) = binding.run {
+        if (showSourceHost && isItemHeader(position)) {
+            tvHostText.text = getHeaderText(position)
+            tvHostText.visible()
+        } else {
+            tvHostText.gone()
+        }
+    }
+
     fun selectAll() {
         getItems().forEach {
             selected.add(it)
@@ -270,6 +288,18 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
         }
         notifyItemRangeChanged(minPosition, itemCount, bundleOf(Pair("selected", null)))
         callBack.upCountView()
+    }
+
+    fun getHeaderText(position: Int): String {
+        val source = getItem(position)!!
+        return callBack.getSourceHost(source.bookSourceUrl)
+    }
+
+    fun isItemHeader(position: Int): Boolean {
+        if (position == 0) return true
+        val lastHost = getHeaderText(position - 1)
+        val curHost = getHeaderText(position)
+        return lastHost != curHost
     }
 
     override fun swap(srcPosition: Int, targetPosition: Int): Boolean {
@@ -344,5 +374,6 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
         fun enable(enable: Boolean, bookSource: BookSourcePart)
         fun enableExplore(enable: Boolean, bookSource: BookSourcePart)
         fun upCountView()
+        fun getSourceHost(origin: String): String
     }
 }

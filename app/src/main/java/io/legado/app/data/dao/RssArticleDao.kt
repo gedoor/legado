@@ -41,5 +41,10 @@ interface RssArticleDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertRecord(vararg rssReadRecord: RssReadRecord)
 
+    @get:Query("select count(1) from rssReadRecords")
+    val countRead: Int
+
+    @Query("delete from rssReadRecords")
+    fun deleteRecord()
 
 }
