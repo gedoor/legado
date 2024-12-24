@@ -23,6 +23,7 @@ import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.book.read.page.provider.TextPageFactory
 import io.legado.app.ui.widget.dialog.PhotoDialog
 import io.legado.app.utils.activity
+import io.legado.app.utils.dpToPx
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.toastOnUi
@@ -279,11 +280,15 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             if (textPos.compare(selectEnd) <= 0) {
                 selectStartMoveIndex(textPos)
             } else {
-                reverseStartCursor = true
-                reverseEndCursor = false
-                selectEnd.columnIndex++
-                selectStartMoveIndex(selectEnd)
-                selectEndMoveIndex(textPos)
+                touchRough(x - 2 * cursorWidth, y) { _, textPos, _, _, _ ->
+                    if (textPos.compare(selectEnd) > 0) {
+                        reverseStartCursor = true
+                        reverseEndCursor = false
+                        selectEnd.columnIndex++
+                        selectStartMoveIndex(selectEnd)
+                        selectEndMoveIndex(textPos)
+                    }
+                }
             }
         }
     }
@@ -299,11 +304,15 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             if (textPos.compare(selectStart) >= 0) {
                 selectEndMoveIndex(textPos)
             } else {
-                reverseEndCursor = true
-                reverseStartCursor = false
-                selectStart.columnIndex--
-                selectEndMoveIndex(selectStart)
-                selectStartMoveIndex(textPos)
+                touchRough(x + 2 * cursorWidth, y) { _, textPos, _, _, _ ->
+                    if (textPos.compare(selectStart) < 0) {
+                        reverseEndCursor = true
+                        reverseStartCursor = false
+                        selectStart.columnIndex--
+                        selectEndMoveIndex(selectStart)
+                        selectStartMoveIndex(textPos)
+                    }
+                }
             }
         }
     }
@@ -690,6 +699,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 Thread(it, "TextPageRender")
             }
         }
+        private val cursorWidth = 24.dpToPx()
     }
 
     interface CallBack {
