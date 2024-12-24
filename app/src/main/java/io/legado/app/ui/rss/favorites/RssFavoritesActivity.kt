@@ -9,6 +9,7 @@ import android.view.SubMenu
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.lifecycleScope
+import androidx.viewpager.widget.ViewPager
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.constant.AppLog
@@ -20,6 +21,7 @@ import io.legado.app.utils.gone
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
@@ -34,14 +36,50 @@ class RssFavoritesActivity : BaseActivity<ActivityRssFavoritesBinding>() {
     private val adapter by lazy { TabFragmentPageAdapter() }
     private var groupList = mutableListOf<String>()
     private var groupsMenu: SubMenu? = null
+    private var currentGroup = ""
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initView()
         upFragments()
     }
 
+    override fun onResume() {
+        super.onResume()
+        //从ReadRssActivity退出时，判断是否需要重新定位tabLayout选中项
+        if (currentGroup.isNotEmpty() && groupList.isNotEmpty()){
+            var item = groupList.indexOf(currentGroup)
+            val currentItem = binding.viewPager.currentItem
+            //如果坐标没有变化，则结束
+            if(item == currentItem){
+                return
+            }
+            if (item == -1){
+                item = currentItem
+            }
+            lifecycleScope.launch {
+                delay(100)
+                binding.tabLayout.getTabAt(item)?.select()
+            }
+        }
+    }
+
     private fun initView() {
         binding.viewPager.adapter = adapter
+        binding.viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageScrolled(
+                position: Int,
+                positionOffset: Float,
+                positionOffsetPixels: Int
+            ) {
+            }
+
+            override fun onPageSelected(position: Int) {
+                currentGroup = groupList[position]
+            }
+
+            override fun onPageScrollStateChanged(state: Int) {}
+
+        })
         binding.tabLayout.setupWithViewPager(binding.viewPager)
         binding.tabLayout.setSelectedTabIndicatorColor(accentColor)
     }
