@@ -40,22 +40,29 @@
 规则填写示范
 [
     {
-        name: "telephone",
-        type: "text"
+        "name": "telephone",
+        "type": "text"
     },
     {
-        name: "password",
-        type: "password"
+        "name": "password",
+        "type": "password"
     },
     {
-        name: "注册",
-        type: "button",
-        action: "http://www.yooike.com/xiaoshuo/#/register?title=%E6%B3%A8%E5%86%8C"
+        "name": "注册",
+        "type": "button",
+        "action": "http://www.yooike.com/xiaoshuo/#/register?title=%E6%B3%A8%E5%86%8C"
     },
     {
-        name: "获取验证码",
-        type: "button",
-        action: "getVerificationCode()"
+        "name": "获取验证码",
+        "type": "button",
+        "action": "getVerificationCode()",
+        "style": {
+            "layout_flexGrow": 0,
+            "layout_flexShrink": 1,
+            "layout_alignSelf": "auto",
+            "layout_flexBasisPercent": -1,
+            "layout_wrapBefore": false
+        }
     }
 ]
 ```
