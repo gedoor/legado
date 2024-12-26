@@ -107,6 +107,7 @@ object PreferKey {
     const val checkSource = "checkSource"
     const val uploadRule = "uploadRule"
     const val tocUiUseReplace = "tocUiUseReplace"
+    const val tocCountWords = "tocCountWords"
     const val enableReadRecord = "enableReadRecord"
     const val localBookImportSort = "localBookImportSort"
     const val customWelcome = "customWelcome"
