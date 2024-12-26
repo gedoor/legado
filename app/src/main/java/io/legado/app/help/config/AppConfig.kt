@@ -381,6 +381,12 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             appCtx.putPrefBoolean(PreferKey.tocUiUseReplace, value)
         }
 
+    var tocCountWords: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.tocCountWords, true)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.tocCountWords, value)
+        }
+
     var enableReadRecord: Boolean
         get() = appCtx.getPrefBoolean(PreferKey.enableReadRecord, true)
         set(value) {

@@ -42,6 +42,12 @@
             android:title="@string/use_replace"
             app:showAsAction="never" />
 
+        <item
+            android:id="@+id/menu_load_word_count"
+            android:checkable="true"
+            android:title="@string/load_word_count"
+            app:showAsAction="never" />
+
     </group>
 
     <group

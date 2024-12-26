@@ -150,7 +150,7 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
                 } else {
                     tvTag.gone()
                 }
-                if (!item.wordCount.isNullOrEmpty() && !item.isVolume) {
+                if (AppConfig.tocCountWords && !item.wordCount.isNullOrEmpty() && !item.isVolume) {
                     //章节字数
                     tvWordCount.text = item.wordCount
                     tvWordCount.visible()
