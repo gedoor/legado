@@ -35,11 +35,6 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import splitties.views.onClick
-import kotlin.collections.HashMap
-import kotlin.collections.List
-import kotlin.collections.forEachIndexed
-import kotlin.collections.hashMapOf
-import kotlin.collections.set
 
 
 class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
@@ -70,6 +65,7 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
                     it.textInputLayout.hint = rowUi.name
                     it.editText.setText(loginInfo?.get(rowUi.name))
                 }
+
                 RowUi.Type.password -> ItemSourceEditBinding.inflate(
                     layoutInflater,
                     binding.root,
@@ -82,37 +78,19 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
                         InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_CLASS_TEXT
                     it.editText.setText(loginInfo?.get(rowUi.name))
                 }
+
                 RowUi.Type.button -> ItemFilletTextBinding.inflate(
                     layoutInflater,
                     binding.root,
                     false
                 ).let {
                     binding.flexbox.addView(it.root)
+                    rowUi.style().apply(it.root)
                     it.root.id = index + 1000
                     it.textView.text = rowUi.name
                     it.textView.setPadding(16.dpToPx())
                     it.root.onClick {
-                        Coroutine.async {
-                            if (rowUi.action.isAbsUrl()) {
-                                context?.openUrl(rowUi.action!!)
-                            } else {
-                                // JavaScript
-                                rowUi.action?.let { buttonFunctionJS ->
-                                    kotlin.runCatching {
-                                        source.getLoginJs()?.let { loginJS ->
-                                            source.evalJS("$loginJS\n$buttonFunctionJS") {
-                                                put("result", getLoginData(loginUi))
-                                            }
-                                        }
-                                    }.onFailure { e ->
-                                        AppLog.put(
-                                            "LoginUI Button ${rowUi.name} JavaScript error",
-                                            e
-                                        )
-                                    }
-                                }
-                            }
-                        }
+                        handleButtonClick(source, rowUi, loginUi)
                     }
                 }
             }
@@ -125,16 +103,37 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
                     val loginData = getLoginData(loginUi)
                     login(source, loginData)
                 }
+
                 R.id.menu_show_login_header -> alert {
                     setTitle(R.string.login_header)
                     source.getLoginHeader()?.let { loginHeader ->
                         setMessage(loginHeader)
                     }
                 }
+
                 R.id.menu_del_login_header -> source.removeLoginHeader()
                 R.id.menu_log -> showDialogFragment<AppLogDialog>()
             }
             return@setOnMenuItemClickListener true
+        }
+    }
+
+    private fun handleButtonClick(source: BaseSource, rowUi: RowUi, loginUi: List<RowUi>) {
+        Coroutine.async {
+            if (rowUi.action.isAbsUrl()) {
+                context?.openUrl(rowUi.action!!)
+            } else if (rowUi.action != null) {
+                // JavaScript
+                val buttonFunctionJS = rowUi.action!!
+                val loginJS = source.getLoginJs() ?: return@async
+                kotlin.runCatching {
+                    source.evalJS("$loginJS\n$buttonFunctionJS") {
+                        put("result", getLoginData(loginUi))
+                    }
+                }.onFailure { e ->
+                    AppLog.put("LoginUI Button ${rowUi.name} JavaScript error", e)
+                }
+            }
         }
     }
 

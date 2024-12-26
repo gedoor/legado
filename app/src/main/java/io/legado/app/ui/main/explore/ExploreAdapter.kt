@@ -91,14 +91,7 @@ class ExploreAdapter(context: Context, val callBack: CallBack) :
                 val tv = getFlexboxChild(flexbox)
                 flexbox.addView(tv)
                 tv.text = kind.title
-                val lp = tv.layoutParams as FlexboxLayout.LayoutParams
-                kind.style().let { style ->
-                    lp.flexGrow = style.layout_flexGrow
-                    lp.flexShrink = style.layout_flexShrink
-                    lp.alignSelf = style.alignSelf()
-                    lp.flexBasisPercent = style.layout_flexBasisPercent
-                    lp.isWrapBefore = style.layout_wrapBefore
-                }
+                kind.style().apply(tv)
                 if (kind.url.isNullOrBlank()) {
                     tv.setOnClickListener(null)
                 } else {

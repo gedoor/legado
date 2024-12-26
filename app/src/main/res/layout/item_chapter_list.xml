@@ -2,11 +2,11 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:id="@+id/tv_chapter_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
+    android:orientation="vertical"
     android:padding="12dp">
 
     <TextView
@@ -14,20 +14,21 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:singleLine="true"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/tv_word_count"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/iv_checked" />
+        app:layout_constraintRight_toLeftOf="@+id/iv_checked"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_word_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingEnd="18dp"
+        android:singleLine="true"
         android:textSize="12sp"
         android:visibility="gone"
-        android:singleLine="true"
-        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_chapter_name"
         tools:ignore="RtlSymmetry" />
 
@@ -35,25 +36,25 @@
         android:id="@+id/tv_tag"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:singleLine="true"
         android:textSize="12sp"
         android:visibility="gone"
-        android:singleLine="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_chapter_name"
         app:layout_constraintLeft_toRightOf="@id/tv_word_count"
-        app:layout_constraintRight_toLeftOf="@+id/iv_checked" />
+        app:layout_constraintRight_toLeftOf="@+id/iv_checked"
+        app:layout_constraintTop_toBottomOf="@+id/tv_chapter_name" />
 
     <ImageView
         android:id="@+id/iv_checked"
         android:layout_width="24dp"
         android:layout_height="24dp"
+        android:contentDescription="@string/success"
         android:padding="4dp"
         android:src="@drawable/ic_check"
         android:visibility="invisible"
-        android:contentDescription="@string/success"
-        app:tint="@color/secondaryText"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/secondaryText" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -148,7 +148,7 @@ object BookHelp {
             book.getFolderName(),
             bookChapter.getFileName(),
         ).writeText(content)
-        if (book.isOnLineTxt) {
+        if (book.isOnLineTxt && AppConfig.tocCountWords) {
             bookChapter.wordCount = StringUtils.wordCountFormat(content.length)
             appDb.bookChapterDao.update(bookChapter)
         }

@@ -270,12 +270,15 @@ object BookChapterList {
     }
 
     private fun getWordCount(list: ArrayList<BookChapter>, book: Book) {
+        if (!AppConfig.tocCountWords) {
+            return
+        }
         val chapterList = appDb.bookChapterDao.getChapterList(book.bookUrl)
-        if (chapterList.isNotEmpty()){
+        if (chapterList.isNotEmpty()) {
             val map = chapterList.associateBy({ it.getFileName() }, { it.wordCount })
             for (bookChapter in list) {
                 val wordCount = map[bookChapter.getFileName()]
-                if(wordCount != null){
+                if (wordCount != null) {
                     bookChapter.wordCount = wordCount
                 }
             }
