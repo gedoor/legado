@@ -14,10 +14,17 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:singleLine="true"
-        app:layout_constraintBottom_toTopOf="@id/tv_word_count"
+        app:layout_constraintBottom_toTopOf="@id/barrier"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/iv_checked"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="top"
+        app:constraint_referenced_ids="tv_word_count,tv_tag" />
 
     <TextView
         android:id="@+id/tv_word_count"
@@ -29,7 +36,7 @@
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_chapter_name"
+        app:layout_constraintTop_toBottomOf="@+id/barrier"
         tools:ignore="RtlSymmetry" />
 
     <TextView
@@ -42,7 +49,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@id/tv_word_count"
         app:layout_constraintRight_toLeftOf="@+id/iv_checked"
-        app:layout_constraintTop_toBottomOf="@+id/tv_chapter_name" />
+        app:layout_constraintTop_toBottomOf="@+id/barrier" />
 
     <ImageView
         android:id="@+id/iv_checked"

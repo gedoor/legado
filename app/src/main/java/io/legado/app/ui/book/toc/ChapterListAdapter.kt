@@ -52,6 +52,7 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
                         && oldItem.isPay == newItem.isPay
                         && oldItem.title == newItem.title
                         && oldItem.tag == newItem.tag
+                        && oldItem.wordCount == newItem.wordCount
                         && oldItem.isVolume == newItem.isVolume
             }
 

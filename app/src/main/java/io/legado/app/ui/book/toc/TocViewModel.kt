@@ -73,6 +73,10 @@ class TocViewModel(application: Application) : BaseViewModel(application) {
         bookMarkCallBack?.upBookmark(newText)
     }
 
+    fun upChapterListAdapter() {
+        chapterListCallBack?.upAdapter()
+    }
+
     fun saveBookmark(treeUri: Uri) {
         execute {
             val book = bookData.value
@@ -119,6 +123,8 @@ class TocViewModel(application: Application) : BaseViewModel(application) {
         fun upChapterList(searchKey: String?)
 
         fun clearDisplayTitle()
+
+        fun upAdapter()
     }
 
     interface BookmarkCallBack {

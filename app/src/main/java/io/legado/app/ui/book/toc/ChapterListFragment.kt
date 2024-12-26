@@ -152,6 +152,10 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
         adapter.upDisplayTitles(mLayoutManager.findFirstVisibleItemPosition())
     }
 
+    override fun upAdapter() {
+        adapter.notifyItemRangeChanged(0, adapter.itemCount)
+    }
+
     override val scope: CoroutineScope
         get() = lifecycleScope
 

@@ -169,6 +169,7 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>(),
 
             R.id.menu_load_word_count -> {
                 AppConfig.tocCountWords = !item.isChecked
+                viewModel.upChapterListAdapter()
             }
 
             R.id.menu_export_bookmark -> exportDir.launch {
