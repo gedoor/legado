@@ -806,15 +806,15 @@ class AnalyzeUrl(
         fun setBody(value: String?) {
             body = when {
                 value.isNullOrBlank() -> null
-                value.isJsonObject() -> GSON.fromJsonObject<Map<String, Any>>(value)
-                value.isJsonArray() -> GSON.fromJsonArray<Map<String, Any>>(value)
+                value.isJsonObject() -> GSON.fromJsonObject<Map<String, Any>>(value).getOrNull()
+                value.isJsonArray() -> GSON.fromJsonArray<Map<String, Any>>(value).getOrNull()
                 else -> value
             }
         }
 
         fun getBody(): String? {
             return body?.let {
-                if (it is String) it else GSON.toJson(it)
+                it as? String ?: GSON.toJson(it)
             }
         }
 

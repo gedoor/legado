@@ -40,7 +40,7 @@ object LogUtils {
     }
 
     val logger: Logger by lazy {
-        Logger.getLogger("Leagdo").apply {
+        Logger.getLogger("Legado").apply {
             fileHandler?.let {
                 addHandler(it)
             }

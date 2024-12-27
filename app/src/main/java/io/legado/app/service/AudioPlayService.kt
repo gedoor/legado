@@ -31,6 +31,7 @@ import io.legado.app.constant.NotificationId
 import io.legado.app.constant.Status
 import io.legado.app.help.MediaHelp
 import io.legado.app.help.config.AppConfig
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.exoplayer.ExoPlayerHelper
 import io.legado.app.help.glide.ImageLoader
 import io.legado.app.model.AudioPlay
@@ -109,6 +110,7 @@ class AudioPlayService : BaseService(),
     private var needResumeOnAudioFocusGain = false
     private var position = AudioPlay.book?.durChapterPos ?: 0
     private var dsJob: Job? = null
+    private var upNotificationJob: Coroutine<*>? = null
     private var upPlayProgressJob: Job? = null
     private var playSpeed: Float = 1f
     private var cover: Bitmap =
@@ -196,6 +198,9 @@ class AudioPlayService : BaseService(),
         AudioPlay.status = Status.STOP
         postEvent(EventBus.AUDIO_STATE, Status.STOP)
         AudioPlay.unregisterService()
+        upNotificationJob?.invokeOnCompletion {
+            notificationManager.cancel(NotificationId.AudioPlayService)
+        }
     }
 
     /**
@@ -602,7 +607,7 @@ class AudioPlayService : BaseService(),
     }
 
     private fun upAudioPlayNotification() {
-        execute {
+        upNotificationJob = execute {
             try {
                 val notification = createNotification()
                 notificationManager.notify(NotificationId.AudioPlayService, notification.build())

@@ -34,6 +34,7 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.constant.Status
 import io.legado.app.help.MediaHelp
 import io.legado.app.help.config.AppConfig
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.glide.ImageLoader
 import io.legado.app.lib.permission.Permissions
 import io.legado.app.lib.permission.PermissionsCompat
@@ -123,6 +124,7 @@ abstract class BaseReadAloudService : BaseService(),
     private var needResumeOnCallStateIdle = false
     private var registeredPhoneStateListener = false
     private var dsJob: Job? = null
+    private var upNotificationJob: Coroutine<*>? = null
     private var cover: Bitmap =
         BitmapFactory.decodeResource(appCtx.resources, R.drawable.icon_read_book)
     var pageChanged = false
@@ -198,6 +200,9 @@ abstract class BaseReadAloudService : BaseService(),
         mediaSessionCompat.release()
         ReadBook.uploadProgress()
         unregisterPhoneStateListener(phoneStateListener)
+        upNotificationJob?.invokeOnCompletion {
+            notificationManager.cancel(NotificationId.ReadAloudService)
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -504,7 +509,7 @@ abstract class BaseReadAloudService : BaseService(),
     }
 
     private fun upReadAloudNotification() {
-        execute {
+        upNotificationJob = execute {
             try {
                 val notification = createNotification()
                 notificationManager.notify(NotificationId.ReadAloudService, notification.build())
