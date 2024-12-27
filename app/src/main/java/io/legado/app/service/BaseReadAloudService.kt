@@ -396,6 +396,8 @@ abstract class BaseReadAloudService : BaseService(),
                     }
                     if (timeMinute == 0) {
                         ReadAloud.stop(this@BaseReadAloudService)
+                        postEvent(EventBus.READ_ALOUD_DS, timeMinute)
+                        break
                     }
                 }
                 postEvent(EventBus.READ_ALOUD_DS, timeMinute)

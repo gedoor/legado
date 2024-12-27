@@ -404,6 +404,8 @@ class AudioPlayService : BaseService(),
                     }
                     if (timeMinute == 0) {
                         AudioPlay.stop()
+                        postEvent(EventBus.AUDIO_DS, timeMinute)
+                        break
                     }
                 }
                 postEvent(EventBus.AUDIO_DS, timeMinute)
