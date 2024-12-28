@@ -7,6 +7,7 @@ import android.text.StaticLayout
 import android.text.TextPaint
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern
+import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.book.BookContent
@@ -416,7 +417,12 @@ class TextChapterLayout(
             stringBuilder.append(" ") // 确保翻页时索引计算正确
             pendingTextPage.addLine(textLine)
         }
-        return absStartX to durY + textHeight * paragraphSpacing / 10f
+        val spacing = if (ReadBookConfig.comicLayout && book.type == BookType.image) {
+            0
+        }else {
+            paragraphSpacing
+        }
+        return absStartX to durY + textHeight * spacing / 10f
     }
 
     /**

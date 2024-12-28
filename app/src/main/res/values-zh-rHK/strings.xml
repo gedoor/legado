@@ -649,6 +649,7 @@
     <string name="select_end">文本選擇結束位置</string>
     <string name="select_start">文本選擇開始位置</string>
     <string name="share_layout">共用佈局</string>
+    <string name="comic_layout">漫畫段距為0</string>
     <string name="browser">瀏覽器</string>
     <string name="import_default_rule">導入默認規則</string>
     <string name="name">名稱</string>

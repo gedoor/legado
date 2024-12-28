@@ -656,6 +656,7 @@
     <string name="select_end">Selecionar o fim</string>
     <string name="select_start">Selecionar o início</string>
     <string name="share_layout">Layout compartilhado</string>
+    <string name="comic_layout">O espaçamento entre parágrafos cômicos é 0</string>
     <string name="browser">Navegador</string>
     <string name="import_default_rule">Importar regras padrão</string>
     <string name="name">Nome</string>

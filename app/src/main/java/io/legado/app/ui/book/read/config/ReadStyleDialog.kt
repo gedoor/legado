@@ -73,7 +73,7 @@ class ReadStyleDialog : BaseDialogFragment(R.layout.dialog_read_book_style),
         val textColor = requireContext().getPrimaryTextColor(isLight)
         rootView.setBackgroundColor(bg)
         tvPageAnim.setTextColor(textColor)
-        tvBgTs.setTextColor(textColor)
+        tvComicLayout.setTextColor(textColor)
         tvShareLayout.setTextColor(textColor)
         dsbTextSize.valueFormat = {
             (it + 5).toString()
@@ -101,6 +101,7 @@ class ReadStyleDialog : BaseDialogFragment(R.layout.dialog_read_book_style),
     }
 
     private fun initData() {
+        binding.cbComicLayout.isChecked = ReadBookConfig.comicLayout
         binding.cbShareLayout.isChecked = ReadBookConfig.shareLayout
         upView()
         styleAdapter.setItems(ReadBookConfig.configList)
@@ -138,6 +139,10 @@ class ReadStyleDialog : BaseDialogFragment(R.layout.dialog_read_book_style),
             ReadBookConfig.pageAnim = binding.rgPageAnim.getIndexById(checkedId)
             callBack?.upPageAnim()
             ReadBook.loadContent(false)
+        }
+        cbComicLayout.onCheckedChangeListener = { _, isChecked ->
+            ReadBookConfig.comicLayout = isChecked
+            postEvent(EventBus.UP_CONFIG, arrayListOf(5))
         }
         cbShareLayout.onCheckedChangeListener = { _, isChecked ->
             ReadBookConfig.shareLayout = isChecked

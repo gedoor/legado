@@ -180,6 +180,13 @@ object ReadBookConfig {
                 appCtx.putPrefInt(PreferKey.readStyleSelect, value)
             }
         }
+    var comicLayout = appCtx.getPrefBoolean(PreferKey.comicLayout)
+        set(value) {
+            field = value
+            if (appCtx.getPrefBoolean(PreferKey.comicLayout) != value) {
+                appCtx.putPrefBoolean(PreferKey.comicLayout, value)
+            }
+        }
     var shareLayout = appCtx.getPrefBoolean(PreferKey.shareLayout)
         set(value) {
             field = value

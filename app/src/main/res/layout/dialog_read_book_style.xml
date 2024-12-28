@@ -270,19 +270,25 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/tv_bg_ts"
-            android:layout_width="0dp"
+            android:id="@+id/tv_comic_layout"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             android:layout_weight="1"
-            android:alpha="0.75"
-            android:text="@string/text_bg_style"
-            android:textSize="12sp" />
+            android:layout_marginStart="16dp"
+            android:text="@string/comic_layout" />
+
+        <io.legado.app.ui.widget.checkbox.SmoothCheckBox
+            android:id="@+id/cb_comic_layout"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="6dp" />
 
         <TextView
             android:id="@+id/tv_share_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="16dp"
             android:text="@string/share_layout" />
 
         <io.legado.app.ui.widget.checkbox.SmoothCheckBox

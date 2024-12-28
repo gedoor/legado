@@ -654,6 +654,7 @@
     <string name="select_end">Select end</string>
     <string name="select_start">Select start</string>
     <string name="share_layout">Shared layout</string>
+    <string name="comic_layout">Comic paragraph spacing is 0</string>
     <string name="browser">Browser</string>
     <string name="import_default_rule">Import default rules</string>
     <string name="name">Name</string>
