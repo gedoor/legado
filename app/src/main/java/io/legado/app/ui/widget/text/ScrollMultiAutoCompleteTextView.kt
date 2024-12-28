@@ -2,6 +2,7 @@ package io.legado.app.ui.widget.text
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Build
 import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.MotionEvent
@@ -80,6 +81,9 @@ open class ScrollMultiAutoCompleteTextView @JvmOverloads constructor(
         mTouchSlop = vc.scaledTouchSlop
         mMinFlingVelocity = vc.scaledMinimumFlingVelocity
         mMaxFlingVelocity = vc.scaledMaximumFlingVelocity
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            isLocalePreferredLineHeightForMinimumUsed = false
+        }
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
