@@ -69,6 +69,7 @@ object PreferKey {
     const val launcherIcon = "launcherIcon"
     const val textSelectAble = "selectText"
     const val shareLayout = "shareLayout"
+    const val comicStyleSelect = "comicStyleSelect"
     const val readStyleSelect = "readStyleSelect"
     const val systemTypefaces = "system_typefaces"
     const val readBodyToLh = "readBodyToLh"
