@@ -255,9 +255,9 @@ class ReadBookActivity : BaseReadBookActivity(),
     private var justInitData: Boolean = false
     private var syncDialog: AlertDialog? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onStart() {
         viewModel.initBookType(intent) { upStyle() }
-        super.onCreate(savedInstanceState)
+        super.onStart()
     }
 
     @SuppressLint("ClickableViewAccessibility")
