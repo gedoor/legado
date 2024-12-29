@@ -2,6 +2,7 @@ package io.legado.app.ui.book.read.page.provider
 
 import android.graphics.Paint
 import android.graphics.Rect
+import android.os.Build
 import android.text.Layout
 import android.text.TextPaint
 import java.util.WeakHashMap
@@ -216,7 +217,13 @@ class ZhLayout(
         return cnCharWidth / 2 - d
     }
 
-    fun getDesiredWidth(sting: String, paint: TextPaint) = paint.measureText(sting)
+    fun getDesiredWidth(string: String, paint: TextPaint): Float {
+        var width = paint.measureText(string)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            width += paint.letterSpacing * paint.textSize
+        }
+        return width
+    }
 
     override fun getLineCount(): Int {
         return lineCount
