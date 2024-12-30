@@ -21,6 +21,7 @@ import io.legado.app.help.glide.ImageLoader
 import io.legado.app.help.glide.OkHttpModelLoader
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.model.BookCover
+import io.legado.app.utils.LogUtils
 import io.legado.app.utils.textHeight
 import io.legado.app.utils.toStringArray
 
@@ -158,6 +159,7 @@ class CoverImageView @JvmOverloads constructor(
                 target: Target<Drawable>,
                 isFirstResource: Boolean
             ): Boolean {
+                LogUtils.d("CoverImageView", "glide load fail model:$model\ne:$e")
                 defaultCover = true
                 return false
             }
