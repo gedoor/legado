@@ -150,14 +150,14 @@ object ReadBookConfig {
 
     fun deleteDur(): Boolean {
         if (configList.size > 5) {
-            configList.removeAt(styleSelect)
-            if (styleSelect <= readStyleSelect) {
+            val removeIndex = styleSelect
+            configList.removeAt(removeIndex)
+            if (removeIndex <= readStyleSelect) {
                 readStyleSelect -= 1
             }
-            if (styleSelect <= comicStyleSelect) {
+            if (removeIndex <= comicStyleSelect) {
                 comicStyleSelect -= 1
             }
-            styleSelect = initSelectStyle()
             return true
         }
         return false
@@ -177,6 +177,15 @@ object ReadBookConfig {
         set(value) {
             field = value
             appCtx.putPrefInt(PreferKey.autoReadSpeed, value)
+        }
+    var styleSelect: Int
+        get() = if (isComic) comicStyleSelect else readStyleSelect
+        set(value) {
+            if (isComic) {
+                comicStyleSelect = value
+            } else {
+                readStyleSelect = value
+            }
         }
     var readStyleSelect = appCtx.getPrefInt(PreferKey.readStyleSelect)
         set(value) {
@@ -199,26 +208,6 @@ object ReadBookConfig {
                 appCtx.putPrefBoolean(PreferKey.shareLayout, value)
             }
         }
-
-    var styleSelect = initSelectStyle()
-    fun initSelectStyle(): Int {
-        return if (isComic) {
-            comicStyleSelect
-        }else {
-            readStyleSelect
-        }
-    }
-
-    fun updateStyleSelect(value: Int) {
-        if (styleSelect != value) {
-            if (isComic) {
-                comicStyleSelect = value
-            }else {
-                readStyleSelect = value
-            }
-            styleSelect = value
-        }
-    }
 
     /**
      * 两端对齐

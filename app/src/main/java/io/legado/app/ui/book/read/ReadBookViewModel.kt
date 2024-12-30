@@ -23,7 +23,6 @@ import io.legado.app.help.book.isLocalModified
 import io.legado.app.help.book.removeType
 import io.legado.app.help.book.simulatedTotalChapterNum
 import io.legado.app.help.config.AppConfig
-import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.ImageProvider
 import io.legado.app.model.ReadAloud
@@ -68,14 +67,13 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         AppConfig.detectClickArea()
     }
 
-    fun initBookType(intent: Intent, callBack: (() -> Unit)? = null) {
+    fun initReadBookConfig(intent: Intent) {
         val bookUrl = intent.getStringExtra("bookUrl")
         val book = when {
             bookUrl.isNullOrEmpty() -> appDb.bookDao.lastReadBook
             else -> appDb.bookDao.getBook(bookUrl)
-        }
-        ReadBookConfig.isComic = book?.type == BookType.image
-        callBack?.invoke()
+        } ?: return
+        ReadBook.upReadBookConfig(book)
     }
 
     /**

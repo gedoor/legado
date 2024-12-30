@@ -1,6 +1,7 @@
 package io.legado.app.model
 
 import io.legado.app.constant.AppLog
+import io.legado.app.constant.EventBus
 import io.legado.app.constant.PageAnim.scrollPageAnim
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
@@ -11,6 +12,7 @@ import io.legado.app.data.entities.ReadRecord
 import io.legado.app.help.AppWebDav
 import io.legado.app.help.book.BookHelp
 import io.legado.app.help.book.ContentProcessor
+import io.legado.app.help.book.isImage
 import io.legado.app.help.book.isLocal
 import io.legado.app.help.book.readSimulating
 import io.legado.app.help.book.simulatedTotalChapterNum
@@ -24,6 +26,7 @@ import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.book.read.page.provider.LayoutProgressListener
+import io.legado.app.utils.postEvent
 import io.legado.app.utils.stackTraceStr
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.CoroutineScope
@@ -171,6 +174,14 @@ object ReadBook : CoroutineScope by MainScope() {
             } ?: let {
                 bookSource = null
             }
+        }
+    }
+
+    fun upReadBookConfig(book: Book) {
+        val oldIndex = ReadBookConfig.styleSelect
+        ReadBookConfig.isComic = book.isImage
+        if (oldIndex != ReadBookConfig.styleSelect) {
+            postEvent(EventBus.UP_CONFIG, arrayListOf(1, 2, 5))
         }
     }
 

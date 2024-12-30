@@ -255,11 +255,6 @@ class ReadBookActivity : BaseReadBookActivity(),
     private var justInitData: Boolean = false
     private var syncDialog: AlertDialog? = null
 
-    override fun onStart() {
-        viewModel.initBookType(intent) { upStyle() }
-        super.onStart()
-    }
-
     @SuppressLint("ClickableViewAccessibility")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -299,6 +294,7 @@ class ReadBookActivity : BaseReadBookActivity(),
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
+        viewModel.initReadBookConfig(intent)
         Looper.myQueue().addIdleHandler {
             viewModel.initData(intent)
             false
@@ -404,14 +400,6 @@ class ReadBookActivity : BaseReadBookActivity(),
         menu.findItem(R.id.menu_same_title_removed)?.isChecked =
             ReadBook.curTextChapter?.sameTitleRemoved == true
         return super.onMenuOpened(featureId, menu)
-    }
-
-    private fun upStyle() {
-        val oldIndex = ReadBookConfig.styleSelect
-        ReadBookConfig.styleSelect = ReadBookConfig.initSelectStyle()
-        if (oldIndex != ReadBookConfig.styleSelect){
-            postEvent(EventBus.UP_CONFIG, arrayListOf(1, 2, 5))
-        }
     }
 
     /**

@@ -261,7 +261,6 @@ object Restore {
         ReadBookConfig.apply {
             comicStyleSelect = appCtx.getPrefInt(PreferKey.comicStyleSelect)
             readStyleSelect = appCtx.getPrefInt(PreferKey.readStyleSelect)
-            styleSelect = initSelectStyle()
             shareLayout = appCtx.getPrefBoolean(PreferKey.shareLayout)
             hideStatusBar = appCtx.getPrefBoolean(PreferKey.hideStatusBar)
             hideNavigationBar = appCtx.getPrefBoolean(PreferKey.hideNavigationBar)
