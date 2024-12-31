@@ -16,12 +16,20 @@ import io.legado.app.lib.webdav.WebDav
 import io.legado.app.lib.webdav.WebDavException
 import io.legado.app.lib.webdav.WebDavFile
 import io.legado.app.model.remote.RemoteBookWebDav
-import io.legado.app.utils.*
+import io.legado.app.utils.AlphanumComparator
+import io.legado.app.utils.FileUtils
+import io.legado.app.utils.GSON
+import io.legado.app.utils.NetworkUtils
+import io.legado.app.utils.UrlUtil
 import io.legado.app.utils.compress.ZipUtils
+import io.legado.app.utils.fromJsonObject
+import io.legado.app.utils.getPrefString
+import io.legado.app.utils.isJson
+import io.legado.app.utils.removePref
+import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.runBlocking
 import splitties.init.appCtx
 import java.io.File
-import java.util.*
 
 /**
  * webDav初始化会访问网络,不要放到主线程
@@ -133,7 +141,7 @@ object AppWebDav {
                 WebDav(rootWebDavUrl, it).listFiles().reversed().forEach { webDavFile ->
                     if (webDavFile.displayName.startsWith("backup")) {
                         if (lastBackupFile == null
-                            || webDavFile.lastModify > lastBackupFile!!.lastModify
+                            || webDavFile.lastModify > lastBackupFile.lastModify
                         ) {
                             lastBackupFile = webDavFile
                         }
