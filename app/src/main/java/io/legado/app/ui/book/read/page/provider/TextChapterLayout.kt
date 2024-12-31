@@ -495,23 +495,8 @@ class TextChapterLayout(
             isTitle && textPages.isEmpty() && pendingTextPage.lines.isEmpty() -> {
                 when (imageStyle?.uppercase(Locale.ROOT)) {
                     Book.imgStyleSingle -> {
-                        val textPage = pendingTextPage
-                        if (textPage.lineSize == 0) {
-                            val ty = (visibleHeight - layout.lineCount * textHeight) / 2
-                            if (ty > titleTopSpacing) ty else titleTopSpacing.toFloat()
-                        } else {
-                            var textLayoutHeight = layout.lineCount * textHeight
-                            val fistLine = textPage.getLine(0)
-                            if (fistLine.lineTop < textLayoutHeight + titleTopSpacing) {
-                                textLayoutHeight = fistLine.lineTop - titleTopSpacing
-                            }
-                            textPage.lines.forEach {
-                                it.lineTop -= textLayoutHeight
-                                it.lineBase -= textLayoutHeight
-                                it.lineBottom -= textLayoutHeight
-                            }
-                            y - textLayoutHeight
-                        }
+                        val ty = (visibleHeight - layout.lineCount * textHeight) / 2
+                        if (ty > titleTopSpacing) ty else titleTopSpacing.toFloat()
                     }
 
                     else -> y + titleTopSpacing
@@ -567,7 +552,7 @@ class TextChapterLayout(
                     //标题x轴居中
                     val startX = if (
                         isTitle &&
-                        (ReadBookConfig.isMiddleTitle || emptyContent || isVolumeTitle || imageStyle == "SINGLE")
+                        (ReadBookConfig.isMiddleTitle || emptyContent || isVolumeTitle || imageStyle == Book.imgStyleSingle)
                     ) {
                         (visibleWidth - desiredWidth) / 2
                     } else {
@@ -582,7 +567,7 @@ class TextChapterLayout(
                 else -> {
                     if (
                         isTitle &&
-                        (ReadBookConfig.isMiddleTitle || emptyContent || isVolumeTitle || imageStyle == "SINGLE")
+                        (ReadBookConfig.isMiddleTitle || emptyContent || isVolumeTitle || imageStyle == Book.imgStyleSingle)
                     ) {
                         //标题居中
                         val startX = (visibleWidth - desiredWidth) / 2
