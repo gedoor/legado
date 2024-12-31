@@ -14,6 +14,7 @@ import io.legado.app.model.analyzeRule.CustomUrl
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.model.remote.RemoteBook
 import io.legado.app.model.remote.RemoteBookWebDav
+import io.legado.app.utils.AlphanumComparator
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
@@ -68,13 +69,15 @@ class RemoteBookViewModel(application: Application) : BaseViewModel(application)
         }
     }.map { list ->
         if (sortAscending) when (sortKey) {
-            RemoteBookSort.Name -> list.sortedWith(compareBy({ !it.isDir }, { it.filename }))
+            RemoteBookSort.Name -> list.sortedWith(compareBy<RemoteBook> { !it.isDir }
+                    then compareBy(AlphanumComparator) { it.filename })
+
             else -> list.sortedWith(compareBy({ !it.isDir }, { it.lastModify }))
         } else when (sortKey) {
             RemoteBookSort.Name -> list.sortedWith { o1, o2 ->
                 val compare = -compareValues(o1.isDir, o2.isDir)
                 if (compare == 0) {
-                    return@sortedWith -compareValues(o1.filename, o2.filename)
+                    return@sortedWith -AlphanumComparator.compare(o1.filename, o2.filename)
                 }
                 return@sortedWith compare
             }
