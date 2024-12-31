@@ -211,7 +211,10 @@ open class WebDav(
                                 .toInstant(ZoneOffset.of("+8")).toEpochMilli()
                         }
                 }.getOrNull() ?: 0
-                val fullURL = NetworkUtils.getAbsoluteURL(baseUrl, hrefDecode)
+                var fullURL = NetworkUtils.getAbsoluteURL(baseUrl, hrefDecode)
+                if (WebDavFile.isDir(contentType, resourceType) && !fullURL.endsWith("/")) {
+                    fullURL += "/"
+                }
                 webDavFile = WebDavFile(
                     fullURL,
                     authorization,
