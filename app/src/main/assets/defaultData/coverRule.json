@@ -1,5 +1,5 @@
 {
-  "enable": true,
-  "searchUrl": "https://api.yousuu.com/api/search?type=title&value={{key}}&page=1&highlight=0&from=search",
-  "coverRule": "@js:java.getString(\"$..books[?(@.author == '\" + book.author + \"')].cover\")"
+  "enable": false,
+  "searchUrl": "",
+  "coverRule": ""
 }

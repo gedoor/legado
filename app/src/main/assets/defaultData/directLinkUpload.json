@@ -14,7 +14,7 @@
   {
     "uploadUrl": "http://v2.jt12.eu/up-v2.php,{\"method\":\"POST\",\"body\": {\"file\": \"fileRequest\"},\"type\": \"multipart/form-data\"}",
     "downloadUrlRule": "$.msg",
-    "summary": "橘涂网盘·过于卡顿，如非需要永久链接。否则不建议使用(永久有效)",
+    "summary": "橘涂书源网盘2.0 Beta(永久有效)",
     "compress": false
   }
 ]
