@@ -9,6 +9,7 @@ import io.legado.app.constant.AppPattern.archiveFileRegex
 import io.legado.app.constant.AppPattern.bookFileRegex
 import io.legado.app.constant.PreferKey
 import io.legado.app.model.localBook.LocalBook
+import io.legado.app.utils.AlphanumComparator
 import io.legado.app.utils.FileDoc
 import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.isContentScheme
@@ -74,17 +75,12 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
         }
 
     }.map { docList ->
-        when (sort) {
-            2 -> docList.sortedWith(
-                compareBy({ !it.isDir }, { -it.lastModified }, { it.name })
-            )
-            1 -> docList.sortedWith(
-                compareBy({ !it.isDir }, { -it.size }, { it.name })
-            )
-            else -> docList.sortedWith(
-                compareBy({ !it.isDir }, { it.name })
-            )
-        }
+        val comparator = when (sort) {
+            2 -> compareBy<FileDoc>({ !it.isDir }, { -it.lastModified })
+            1 -> compareBy({ !it.isDir }, { -it.size })
+            else -> compareBy { !it.isDir }
+        } then compareBy(AlphanumComparator) { it.name }
+        docList.sortedWith(comparator)
     }.flowOn(IO)
 
     fun addToBookshelf(uriList: HashSet<String>, finally: () -> Unit) {
@@ -181,7 +177,7 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
     }
 
     fun updateCallBackFlow(filterKey: String?) {
-       dataCallback?.screen(filterKey)
+        dataCallback?.screen(filterKey)
     }
 
     interface DataCallback {
