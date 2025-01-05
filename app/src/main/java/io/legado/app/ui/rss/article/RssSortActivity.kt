@@ -1,15 +1,14 @@
-@file:Suppress("DEPRECATION")
-
 package io.legado.app.ui.rss.article
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.ViewGroup
 import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.lifecycleScope
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.google.android.material.tabs.TabLayoutMediator
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.databinding.ActivityRssArtivlesBinding
@@ -30,9 +29,8 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
 
     override val binding by viewBinding(ActivityRssArtivlesBinding::inflate)
     override val viewModel by viewModels<RssSortViewModel>()
-    private val adapter by lazy { TabFragmentPageAdapter() }
+    private val adapter by lazy { TabFragmentPageAdapter(this) }
     private val sortList = mutableListOf<Pair<String, String>>()
-    private val fragmentMap = hashMapOf<String, Fragment>()
     private val editSourceResult = registerForActivityResult(
         StartActivityContract(RssSourceEditActivity::class.java)
     ) {
@@ -45,7 +43,10 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.viewPager.adapter = adapter
-        binding.tabLayout.setupWithViewPager(binding.viewPager)
+        binding.viewPager.offscreenPageLimit = 1
+        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+            tab.text = sortList[position].first
+        }.attach()
         binding.tabLayout.setSelectedTabIndicatorColor(accentColor)
         viewModel.titleLiveData.observe(this) {
             binding.titleBar.title = it
@@ -99,6 +100,7 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
         return super.onCompatOptionsItemSelected(item)
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun upFragments() {
         lifecycleScope.launch {
             viewModel.rssSource?.sortUrls()?.let {
@@ -119,7 +121,7 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
             val countRead = viewModel.countRead()
             setMessage(getString(R.string.sure_del) + "\n" + countRead + " " + getString(R.string.read_record))
             noButton()
-            yesButton(){
+            yesButton {
                 viewModel.delReadRecord()
             }
         }
@@ -150,30 +152,16 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
         viewModel.rssSource?.setVariable(variable)
     }
 
-    private inner class TabFragmentPageAdapter :
-        FragmentStatePagerAdapter(supportFragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+    private inner class TabFragmentPageAdapter(rssSortActivity: RssSortActivity) :
+        FragmentStateAdapter(rssSortActivity) {
 
-        override fun getItemPosition(`object`: Any): Int {
-            return POSITION_NONE
-        }
-
-        override fun getPageTitle(position: Int): CharSequence {
-            return sortList[position].first
-        }
-
-        override fun getItem(position: Int): Fragment {
-            val sort = sortList[position]
-            return RssArticlesFragment(sort.first, sort.second)
-        }
-
-        override fun getCount(): Int {
+        override fun getItemCount(): Int {
             return sortList.size
         }
 
-        override fun instantiateItem(container: ViewGroup, position: Int): Any {
-            val fragment = super.instantiateItem(container, position) as Fragment
-            fragmentMap[sortList[position].first] = fragment
-            return fragment
+        override fun createFragment(position: Int): Fragment {
+            val sort = sortList[position]
+            return RssArticlesFragment(sort.first, sort.second)
         }
     }
 

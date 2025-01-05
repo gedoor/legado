@@ -37,7 +37,7 @@ class RssSortViewModel(application: Application) : BaseViewModel(application) {
     fun switchLayout() {
         rssSource?.let {
             if (it.articleStyle < 2) {
-                it.articleStyle = it.articleStyle + 1
+                it.articleStyle += 1
             } else {
                 it.articleStyle = 0
             }
