@@ -252,6 +252,10 @@ fun Book.sync(oldBook: Book) {
     canUpdate = curBook.canUpdate
 }
 
+fun Book.update() {
+    appDb.bookDao.update(this)
+}
+
 fun Book.getBookSource(): BookSource? {
     return appDb.bookSourceDao.getBookSource(origin)
 }

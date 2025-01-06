@@ -1,15 +1,28 @@
 package io.legado.app.lib.prefs.fragment
 
 import android.annotation.SuppressLint
+import android.os.Bundle
+import android.view.View
 import androidx.fragment.app.DialogFragment
-import androidx.preference.*
+import androidx.preference.EditTextPreference
+import androidx.preference.ListPreference
+import androidx.preference.MultiSelectListPreference
+import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
 import io.legado.app.lib.prefs.EditTextPreferenceDialog
 import io.legado.app.lib.prefs.ListPreferenceDialog
 import io.legado.app.lib.prefs.MultiSelectListPreferenceDialog
+import io.legado.app.utils.applyNavigationBarPadding
 
 abstract class PreferenceFragment : PreferenceFragmentCompat() {
 
     private val dialogFragmentTag = "androidx.preference.PreferenceFragment.DIALOG"
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        listView.clipToPadding = false
+        listView.applyNavigationBarPadding()
+    }
 
     @SuppressLint("RestrictedApi")
     override fun onDisplayPreferenceDialog(preference: Preference) {

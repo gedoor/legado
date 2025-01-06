@@ -28,6 +28,7 @@ import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.widget.recycler.UpLinearLayoutManager
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.ColorUtils
+import io.legado.app.utils.applyNavigationBarMargin
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.hideSoftInput
 import io.legado.app.utils.invisible
@@ -65,6 +66,7 @@ class SearchContentActivity :
         val bbg = bottomBackground
         val btc = getPrimaryTextColor(ColorUtils.isColorLight(bbg))
         binding.llSearchBaseInfo.setBackgroundColor(bbg)
+        binding.llSearchBaseInfo.applyNavigationBarMargin()
         binding.tvCurrentSearchInfo.setTextColor(btc)
         binding.ivSearchContentTop.setColorFilter(btc)
         binding.ivSearchContentBottom.setColorFilter(btc)

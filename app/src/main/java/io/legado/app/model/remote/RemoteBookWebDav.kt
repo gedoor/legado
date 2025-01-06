@@ -6,6 +6,7 @@ import io.legado.app.constant.AppPattern.bookFileRegex
 import io.legado.app.constant.BookType
 import io.legado.app.data.entities.Book
 import io.legado.app.exception.NoStackTraceException
+import io.legado.app.help.book.update
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.webdav.Authorization
 import io.legado.app.lib.webdav.WebDav

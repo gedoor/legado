@@ -396,10 +396,6 @@ data class Book(
         }
     }
 
-    fun update() {
-        appDb.bookDao.update(this)
-    }
-
     fun delete() {
         if (ReadBook.book?.bookUrl == bookUrl) {
             ReadBook.book = null

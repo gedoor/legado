@@ -451,7 +451,8 @@
             android:foregroundServiceType="dataSync"
             android:icon="@drawable/ic_web_service_noti"
             android:label="legado Web Service"
-            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE"
+            tools:targetApi="24">
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE" />
             </intent-filter>

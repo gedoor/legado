@@ -16,6 +16,7 @@ import android.view.View.GONE
 import android.view.View.IMPORTANT_FOR_AUTOFILL_NO_EXCLUDE_DESCENDANTS
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EdgeEffect
 import android.widget.EditText
@@ -32,6 +33,7 @@ import androidx.core.graphics.withTranslation
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.get
+import androidx.core.view.marginBottom
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import io.legado.app.help.config.AppConfig
@@ -273,8 +275,17 @@ fun View.applyStatusBarPadding(withInitialPadding: Boolean = false) {
 fun View.applyNavigationBarPadding(withInitialPadding: Boolean = false) {
     val initialPadding = if (withInitialPadding) bottomPadding else 0
     ViewCompat.setOnApplyWindowInsetsListener(this) { _, windowInsets ->
-        val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
-        bottomPadding = initialPadding + insets.bottom
+        bottomPadding = initialPadding + windowInsets.navigationBarHeight
+        windowInsets
+    }
+}
+
+fun View.applyNavigationBarMargin(withInitialMargin: Boolean = false) {
+    val initialMargin = if (withInitialMargin) marginBottom else 0
+    ViewCompat.setOnApplyWindowInsetsListener(this) { _, windowInsets ->
+        val lp = layoutParams as ViewGroup.MarginLayoutParams
+        lp.bottomMargin = initialMargin + windowInsets.navigationBarHeight
+        layoutParams = lp
         windowInsets
     }
 }

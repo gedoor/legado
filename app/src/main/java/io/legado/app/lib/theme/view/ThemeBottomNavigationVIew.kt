@@ -6,6 +6,7 @@ import android.graphics.drawable.ColorDrawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import io.legado.app.databinding.ViewNavigationBadgeBinding
 import io.legado.app.help.config.AppConfig
@@ -34,6 +35,8 @@ class ThemeBottomNavigationVIew(context: Context, attrs: AttributeSet) :
             isItemHorizontalTranslationEnabled = false
             itemBackground = ColorDrawable(Color.TRANSPARENT)
         }
+
+        ViewCompat.setOnApplyWindowInsetsListener(this, null)
     }
 
     fun addBadgeView(index: Int): BadgeView {

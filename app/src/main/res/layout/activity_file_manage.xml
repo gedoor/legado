@@ -9,19 +9,19 @@
         android:id="@+id/titleBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
         app:contentInsetRight="24dp"
-        app:contentLayout="@layout/view_search" />
+        app:contentLayout="@layout/view_search"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!--path-->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_path"
         android:layout_width="match_parent"
         android:layout_height="24dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
         android:background="@color/background_card"
         android:elevation="5dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
         app:layout_constraintTop_toBottomOf="@+id/titleBar" />
 
     <FrameLayout
@@ -35,6 +35,7 @@
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:clipToPadding="false"
             tools:ignore="SpeakableTextPresentCheck" />
 
         <TextView

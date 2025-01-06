@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
     <io.legado.app.ui.widget.TitleBar
@@ -24,13 +24,13 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:padding="6dp"
-            android:textColor="@color/primaryText"
             android:singleLine="true"
+            android:textColor="@color/primaryText"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintRight_toLeftOf="@+id/tv_remove"
-            tools:text="name"
-            tools:ignore="RtlHardcoded" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="RtlHardcoded"
+            tools:text="name" />
 
         <TextView
             android:id="@+id/tv_reading_time"
@@ -40,21 +40,21 @@
             android:singleLine="true"
             android:textColor="@color/secondaryText"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_book_name"
             app:layout_constraintRight_toLeftOf="@+id/tv_remove"
+            app:layout_constraintTop_toBottomOf="@id/tv_book_name"
             tools:text="readingTime" />
 
         <TextView
             android:id="@+id/tv_remove"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
             android:padding="6dp"
             android:text="@string/clear"
             android:textColor="@color/primaryText"
-            android:background="?attr/selectableItemBackground"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -62,6 +62,7 @@
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clipToPadding="false"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
 </LinearLayout>

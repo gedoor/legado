@@ -18,6 +18,7 @@ import io.legado.app.ui.association.ImportBookSourceDialog
 import io.legado.app.ui.association.ImportReplaceRuleDialog
 import io.legado.app.ui.association.ImportRssSourceDialog
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
+import io.legado.app.utils.applyNavigationBarPadding
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -59,6 +60,7 @@ class RuleSubActivity : BaseActivity<ActivityRuleSubBinding>(),
 
     private fun initView() {
         binding.recyclerView.adapter = adapter
+        binding.recyclerView.applyNavigationBarPadding()
         val itemTouchCallback = ItemTouchCallback(adapter)
         itemTouchCallback.isCanDrag = true
         ItemTouchHelper(itemTouchCallback).attachToRecyclerView(binding.recyclerView)

@@ -37,6 +37,7 @@ import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.file.HandleFileContract
 import io.legado.app.utils.ACache
 import io.legado.app.utils.FileDoc
+import io.legado.app.utils.applyNavigationBarPadding
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.checkWrite
 import io.legado.app.utils.cnCompare
@@ -200,6 +201,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
     private fun initRecyclerView() {
         binding.recyclerView.layoutManager = layoutManager
         binding.recyclerView.adapter = adapter
+        binding.recyclerView.applyNavigationBarPadding()
     }
 
     private fun initBookData() {

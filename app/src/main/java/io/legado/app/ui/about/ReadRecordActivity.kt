@@ -21,6 +21,7 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.search.SearchActivity
+import io.legado.app.utils.applyNavigationBarPadding
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.cnCompare
 import io.legado.app.utils.getInt
@@ -105,6 +106,7 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
             }
         }
         binding.recyclerView.adapter = adapter
+        binding.recyclerView.applyNavigationBarPadding()
     }
 
     private fun initSearchView() {

@@ -16,6 +16,7 @@ import io.legado.app.help.book.ContentProcessor
 import io.legado.app.help.book.getBookSource
 import io.legado.app.help.book.readSimulating
 import io.legado.app.help.book.simulatedTotalChapterNum
+import io.legado.app.help.book.update
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.AudioPlayService

@@ -16,6 +16,7 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.book.bookmark.BookmarkDialog
 import io.legado.app.ui.widget.recycler.UpLinearLayoutManager
 import io.legado.app.ui.widget.recycler.VerticalDivider
+import io.legado.app.utils.applyNavigationBarPadding
 import io.legado.app.utils.setEdgeEffectColor
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -50,6 +51,7 @@ class BookmarkFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_bookmark
         binding.recyclerView.layoutManager = mLayoutManager
         binding.recyclerView.addItemDecoration(VerticalDivider(requireContext()))
         binding.recyclerView.adapter = adapter
+        binding.recyclerView.applyNavigationBarPadding()
     }
 
     override fun upBookmark(searchKey: String?) {

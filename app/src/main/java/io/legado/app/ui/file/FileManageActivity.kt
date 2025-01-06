@@ -23,6 +23,7 @@ import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.file.utils.FilePickerIcon
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.ConvertUtils
+import io.legado.app.utils.applyNavigationBarPadding
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.openFileUri
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -56,6 +57,7 @@ class FileManageActivity : VMBaseActivity<ActivityFileManageBinding, FileManageV
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.addItemDecoration(VerticalDivider(this))
         binding.recyclerView.adapter = fileAdapter
+        binding.recyclerView.applyNavigationBarPadding()
         onBackPressedDispatcher.addCallback(this) {
             if (viewModel.lastDir != viewModel.rootDoc) {
                 gotoLastDir()

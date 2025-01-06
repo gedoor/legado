@@ -34,6 +34,8 @@ import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.book.source.manage.BookSourceActivity
 import io.legado.app.utils.ColorUtils
+import io.legado.app.utils.applyNavigationBarMargin
+import io.legado.app.utils.applyNavigationBarPadding
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.gone
@@ -211,11 +213,14 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         binding.rvHistoryKey.setEdgeEffectColor(primaryColor)
         binding.rvBookshelfSearch.layoutManager = FlexboxLayoutManager(this)
         binding.rvBookshelfSearch.adapter = bookAdapter
+        binding.rvBookshelfSearch.applyNavigationBarMargin()
         binding.rvHistoryKey.layoutManager = FlexboxLayoutManager(this)
         binding.rvHistoryKey.adapter = historyKeyAdapter
+        binding.rvHistoryKey.applyNavigationBarMargin()
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
         binding.recyclerView.itemAnimator = null
+        binding.recyclerView.applyNavigationBarPadding()
         adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                 super.onItemRangeInserted(positionStart, itemCount)
