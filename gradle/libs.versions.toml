@@ -37,7 +37,7 @@ protobufJavalite = "4.26.1"
 quickChineseTransfer = "0.2.13"
 room = "2.6.1"
 splitties = "3.0.0"
-rhino = "1.7.15"
+rhino = "1.8.0"
 desugar = "2.0.4"
 
 activity = "1.9.1"
