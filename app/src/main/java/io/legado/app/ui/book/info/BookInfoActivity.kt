@@ -289,7 +289,7 @@ class BookInfoActivity :
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
         if (ev.action == MotionEvent.ACTION_DOWN) {
             currentFocus?.let {
-                if (it === binding.tvIntro) {
+                if (it === binding.tvIntro && binding.tvIntro.hasSelection()) {
                     it.clearFocus()
                 }
             }
