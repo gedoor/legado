@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.MotionEvent
 import android.widget.CheckBox
 import android.widget.LinearLayout
 import androidx.activity.result.contract.ActivityResultContracts
@@ -285,6 +286,17 @@ class BookInfoActivity :
         }
     }
 
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        if (ev.action == MotionEvent.ACTION_DOWN) {
+            currentFocus?.let {
+                if (it === binding.tvIntro) {
+                    it.clearFocus()
+                }
+            }
+        }
+        return super.dispatchTouchEvent(ev)
+    }
+
     private fun refreshBook() {
         upLoading(true)
         viewModel.getBook()?.let {
@@ -485,6 +497,9 @@ class BookInfoActivity :
             refreshLayout.isRefreshing = false
             refreshBook()
         }
+        refreshLayout?.setOnChildScrollUpCallback { _, _ ->
+            tvIntro.hasSelection()
+        }
     }
 
     private fun setSourceVariable() {
@@ -517,8 +532,9 @@ class BookInfoActivity :
             }
             val book = viewModel.getBook() ?: return@launch
             val variable = withContext(IO) { book.getCustomVariable() }
-            val comment =
-                source.getDisplayVariableComment("""书籍变量可在js中通过book.getVariable("custom")获取""")
+            val comment = source.getDisplayVariableComment(
+                """书籍变量可在js中通过book.getVariable("custom")获取"""
+            )
             showDialogFragment(
                 VariableDialog(
                     getString(R.string.set_book_variable),
