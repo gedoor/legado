@@ -3,6 +3,7 @@ package io.legado.app.ui.book.info
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -159,6 +160,9 @@ class BookInfoActivity :
         binding.flAction.applyNavigationBarPadding()
         binding.tvShelf.setTextColor(getPrimaryTextColor(ColorUtils.isColorLight(bottomBackground)))
         binding.tvToc.text = getString(R.string.toc_s, getString(R.string.loading))
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+            binding.tvIntro.revealOnFocusHint = false
+        }
         viewModel.bookData.observe(this) { showBook(it) }
         viewModel.chapterListData.observe(this) { upLoading(false, it) }
         viewModel.waitDialogData.observe(this) { upWaitDialogStatus(it) }
@@ -497,8 +501,8 @@ class BookInfoActivity :
             refreshLayout.isRefreshing = false
             refreshBook()
         }
-        refreshLayout?.setOnChildScrollUpCallback { _, _ ->
-            tvIntro.hasSelection()
+        refreshLayout?.setOnChildScrollUpCallback { _, target ->
+            target!!.canScrollVertically(-1) || tvIntro.hasSelection()
         }
     }
 
