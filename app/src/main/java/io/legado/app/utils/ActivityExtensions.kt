@@ -162,6 +162,17 @@ fun Activity.setNavigationBarColorAuto(@ColorInt color: Int) {
     }
 }
 
+fun Activity.keepScreenOn(on: Boolean) {
+    val isScreenOn =
+        (window.attributes.flags and WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) != 0
+    if (on == isScreenOn) return
+    if (on) {
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+    } else {
+        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+    }
+}
+
 /////以下方法需要在View完全被绘制出来之后调用，否则判断不了,在比如 onWindowFocusChanged（）方法中可以得到正确的结果/////
 
 /**
