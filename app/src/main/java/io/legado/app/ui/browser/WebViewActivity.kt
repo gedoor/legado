@@ -43,6 +43,7 @@ import io.legado.app.utils.openUrl
 import io.legado.app.utils.sendToClip
 import io.legado.app.utils.setDarkeningAllowed
 import io.legado.app.utils.startActivity
+import io.legado.app.utils.toggleNavigationBar
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
 import java.net.URLDecoder
@@ -239,6 +240,7 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
             binding.customWebView.addView(view)
             customWebViewCallback = callback
             keepScreenOn(true)
+            toggleNavigationBar(false)
         }
 
         override fun onHideCustomView() {
@@ -246,6 +248,7 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
             binding.llView.visible()
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
             keepScreenOn(false)
+            toggleNavigationBar(true)
         }
     }
 
