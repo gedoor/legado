@@ -372,9 +372,9 @@ class AnalyzeRule(
                         Mode.XPath -> getAnalyzeByXPath(it).getElements(sourceRule.rule)
                         else -> getAnalyzeByJSoup(it).getElements(sourceRule.rule)
                     }
-                    if (sourceRule.replaceRegex.isNotEmpty()) {
-                        result = replaceRegex(result.toString(), sourceRule)
-                    }
+//                    if (sourceRule.replaceRegex.isNotEmpty()) {
+//                        result = replaceRegex(result.toString(), sourceRule)
+//                    }
                 }
             }
         }
