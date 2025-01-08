@@ -1175,4 +1175,5 @@ Còn </string>
     <string name="read_aloud_by_media_button_title">耳机按键启动朗读</string>
     <string name="read_aloud_by_media_button_summary">通过耳机按键来启动朗读</string>
     <string name="show_same_source">显示重复书源</string>
+    <string name="theme_config">主题配置</string>
 </resources>

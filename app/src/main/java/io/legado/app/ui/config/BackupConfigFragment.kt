@@ -54,7 +54,6 @@ import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
-import kotlin.collections.set
 import kotlin.coroutines.coroutineContext
 
 class BackupConfigFragment : PreferenceFragment(),
