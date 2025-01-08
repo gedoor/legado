@@ -66,6 +66,7 @@ object BackupConfig {
     //阅读配置
     private val readPrefKeys = arrayOf(
         PreferKey.readStyleSelect,
+        PreferKey.comicStyleSelect,
         PreferKey.shareLayout,
         PreferKey.hideStatusBar,
         PreferKey.hideNavigationBar,
