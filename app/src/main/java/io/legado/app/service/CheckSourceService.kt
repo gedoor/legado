@@ -63,6 +63,7 @@ class CheckSourceService : BaseService() {
         NotificationCompat.Builder(this, AppConst.channelIdReadAloud)
             .setSmallIcon(R.drawable.ic_network_check)
             .setOngoing(true)
+            .setOnlyAlertOnce(true)
             .setContentTitle(getString(R.string.check_book_source))
             .setContentIntent(
                 activityPendingIntent<BookSourceActivity>("activity")

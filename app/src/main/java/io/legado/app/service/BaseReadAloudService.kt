@@ -551,6 +551,7 @@ abstract class BaseReadAloudService : BaseService(),
             .setSmallIcon(R.drawable.ic_volume_up)
             .setSubText(getString(R.string.read_aloud))
             .setOngoing(true)
+            .setOnlyAlertOnce(true)
             .setContentTitle(nTitle)
             .setContentText(nSubtitle)
             .setContentIntent(

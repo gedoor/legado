@@ -568,6 +568,7 @@ class AudioPlayService : BaseService(),
             .setSmallIcon(R.drawable.ic_volume_up)
             .setSubText(getString(R.string.audio))
             .setOngoing(true)
+            .setOnlyAlertOnce(true)
             .setContentTitle(nTitle)
             .setContentText(nSubtitle)
             .setContentIntent(

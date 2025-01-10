@@ -51,6 +51,7 @@ class CacheBookService : BaseService() {
         val builder = NotificationCompat.Builder(this, AppConst.channelIdDownload)
             .setSmallIcon(R.drawable.ic_download)
             .setOngoing(true)
+            .setOnlyAlertOnce(true)
             .setContentTitle(getString(R.string.offline_cache))
             .setContentIntent(activityPendingIntent<CacheActivity>("cacheActivity"))
         builder.addAction(

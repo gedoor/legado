@@ -160,6 +160,7 @@ class ExportBookService : BaseService() {
             .setContentText(notificationContentText)
             .setDeleteIntent(servicePendingIntent<ExportBookService>(IntentAction.stop))
             .setGroup(groupKey)
+            .setOnlyAlertOnce(true)
         if (!finish) {
             notification.setOngoing(true)
             notification.addAction(
