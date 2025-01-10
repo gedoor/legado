@@ -172,6 +172,10 @@ object ReadBook : CoroutineScope by MainScope() {
                 if (book.getImageStyle().isNullOrBlank()) {
                     book.setImageStyle(it.getContentRule().imageStyle)
                 }
+                if (it.getContentRule().imageStyle == Book.imgStyleSingle) {
+                    book.setImageStyle(it.getContentRule().imageStyle)
+                    book.setPageAnim(0)
+                }
             } ?: let {
                 bookSource = null
             }

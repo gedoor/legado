@@ -571,6 +571,8 @@ class ReadBookActivity : BaseReadBookActivity(),
                     imgStyles
                 ) { _, index ->
                     ReadBook.book?.setImageStyle(imgStyles[index])
+                    ReadBook.book?.setPageAnim(0)  // 切换图片样式single后，自动切换为覆盖
+                    binding.readView.upPageAnim()
                     ReadBook.loadContent(false)
                 }
             }
