@@ -565,14 +565,20 @@ class ReadBookActivity : BaseReadBookActivity(),
             R.id.menu_set_charset -> showCharsetConfig()
             R.id.menu_image_style -> {
                 val imgStyles =
-                    arrayListOf(Book.imgStyleDefault, Book.imgStyleFull, Book.imgStyleText, Book.imgStyleSingle)
+                    arrayListOf(
+                        Book.imgStyleDefault, Book.imgStyleFull, Book.imgStyleText,
+                        Book.imgStyleSingle
+                    )
                 selector(
                     R.string.image_style,
                     imgStyles
                 ) { _, index ->
-                    ReadBook.book?.setImageStyle(imgStyles[index])
-                    ReadBook.book?.setPageAnim(0)  // 切换图片样式single后，自动切换为覆盖
-                    binding.readView.upPageAnim()
+                    val imageStyle = imgStyles[index]
+                    ReadBook.book?.setImageStyle(imageStyle)
+                    if (imageStyle == Book.imgStyleSingle) {
+                        ReadBook.book?.setPageAnim(0)  // 切换图片样式single后，自动切换为覆盖
+                        binding.readView.upPageAnim()
+                    }
                     ReadBook.loadContent(false)
                 }
             }

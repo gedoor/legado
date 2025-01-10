@@ -170,11 +170,11 @@ object ReadBook : CoroutineScope by MainScope() {
             appDb.bookSourceDao.getBookSource(book.origin)?.let {
                 bookSource = it
                 if (book.getImageStyle().isNullOrBlank()) {
-                    book.setImageStyle(it.getContentRule().imageStyle)
-                }
-                if (it.getContentRule().imageStyle == Book.imgStyleSingle) {
-                    book.setImageStyle(it.getContentRule().imageStyle)
-                    book.setPageAnim(0)
+                    val imageStyle = it.getContentRule().imageStyle
+                    book.setImageStyle(imageStyle)
+                    if (imageStyle.equals(Book.imgStyleSingle, true)) {
+                        book.setPageAnim(0)
+                    }
                 }
             } ?: let {
                 bookSource = null
