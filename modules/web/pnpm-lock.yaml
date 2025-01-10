@@ -62,7 +62,7 @@ importers:
         version: 10.0.0(eslint@9.12.0)(prettier@3.3.3)
       '@vue/eslint-config-typescript':
         specifier: ^14.0.1
-        version: 14.0.1(eslint-plugin-vue@9.29.0(eslint@9.12.0))(eslint@9.12.0)(typescript@5.5.4)
+        version: 14.0.1(eslint-plugin-vue@9.32.0(eslint@9.12.0))(eslint@9.12.0)(typescript@5.5.4)
       '@vue/tsconfig':
         specifier: ^0.5.1
         version: 0.5.1
@@ -70,8 +70,8 @@ importers:
         specifier: ^9.12.0
         version: 9.12.0
       eslint-plugin-vue:
-        specifier: ^9.29.0
-        version: 9.29.0(eslint@9.12.0)
+        specifier: ^9.32.0
+        version: 9.32.0(eslint@9.12.0)
       npm-run-all2:
         specifier: ^6.2.3
         version: 6.2.3
@@ -807,8 +807,8 @@ packages:
       eslint-config-prettier:
         optional: true
 
-  eslint-plugin-vue@9.29.0:
-    resolution: {integrity: sha512-hamyjrBhNH6Li6R1h1VF9KHfshJlKgKEg3ARbGTn72CMNDSMhWbgC7NdkRDEh25AFW+4SDATzyNM+3gWuZii8g==}
+  eslint-plugin-vue@9.32.0:
+    resolution: {integrity: sha512-b/Y05HYmnB/32wqVcjxjHZzNpwxj1onBOvqW89W+V+XNG1dRuaFbNd3vT9CLbr2LXjEoq+3vn8DanWf7XU22Ug==}
     engines: {node: ^14.17.0 || >=16.0.0}
     peerDependencies:
       eslint: ^6.2.0 || ^7.0.0 || ^8.0.0 || ^9.0.0
@@ -1898,12 +1898,12 @@ snapshots:
     transitivePeerDependencies:
       - '@types/eslint'
 
-  '@vue/eslint-config-typescript@14.0.1(eslint-plugin-vue@9.29.0(eslint@9.12.0))(eslint@9.12.0)(typescript@5.5.4)':
+  '@vue/eslint-config-typescript@14.0.1(eslint-plugin-vue@9.32.0(eslint@9.12.0))(eslint@9.12.0)(typescript@5.5.4)':
     dependencies:
       '@typescript-eslint/eslint-plugin': 8.8.1(@typescript-eslint/parser@8.8.1(eslint@9.12.0)(typescript@5.5.4))(eslint@9.12.0)(typescript@5.5.4)
       '@typescript-eslint/parser': 8.8.1(eslint@9.12.0)(typescript@5.5.4)
       eslint: 9.12.0
-      eslint-plugin-vue: 9.29.0(eslint@9.12.0)
+      eslint-plugin-vue: 9.32.0(eslint@9.12.0)
       typescript-eslint: 8.8.1(eslint@9.12.0)(typescript@5.5.4)
       vue-eslint-parser: 9.4.3(eslint@9.12.0)
     optionalDependencies:
@@ -2175,7 +2175,7 @@ snapshots:
     optionalDependencies:
       eslint-config-prettier: 9.1.0(eslint@9.12.0)
 
-  eslint-plugin-vue@9.29.0(eslint@9.12.0):
+  eslint-plugin-vue@9.32.0(eslint@9.12.0):
     dependencies:
       '@eslint-community/eslint-utils': 4.4.0(eslint@9.12.0)
       eslint: 9.12.0
