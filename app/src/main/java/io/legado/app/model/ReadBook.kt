@@ -169,9 +169,8 @@ object ReadBook : CoroutineScope by MainScope() {
         } else {
             appDb.bookSourceDao.getBookSource(book.origin)?.let {
                 bookSource = it
-                if (book.getImageStyle().isNullOrBlank() || it.getContentRule().imageStyle == Book.imgStyleSingle) {
+                if (book.getImageStyle().isNullOrBlank()) {
                     book.setImageStyle(it.getContentRule().imageStyle)
-                    book.setPageAnim(0)
                 }
             } ?: let {
                 bookSource = null
