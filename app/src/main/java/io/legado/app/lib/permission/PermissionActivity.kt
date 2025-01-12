@@ -120,13 +120,10 @@ class PermissionActivity : AppCompatActivity() {
                             intent,
                             PackageManager.MATCH_DEFAULT_ONLY
                         )
-                        if (activities.indexOfFirst { it.activityInfo.name == className } > -1) {
+                        if (activities.any { it.activityInfo.name == className }) {
                             val component = intent.resolveActivity(packageManager)
                             if (component.className != className) {
-                                intent.setClassName(
-                                    "com.android.settings",
-                                    className
-                                )
+                                intent.setClassName("com.android.settings", className)
                                 settingActivityResultAwait.launch(intent)
                             }
                         }
