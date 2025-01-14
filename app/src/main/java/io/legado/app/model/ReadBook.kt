@@ -170,8 +170,7 @@ object ReadBook : CoroutineScope by MainScope() {
         } else {
             appDb.bookSourceDao.getBookSource(book.origin)?.let {
                 bookSource = it
-                val readConfig = book.readConfig ?: return@let
-                if (readConfig.imageStyle.isNullOrBlank()) {
+                if (book.getImageStyle().isNullOrBlank()) {
                     var imageStyle = it.getContentRule().imageStyle
                     if (imageStyle.isNullOrBlank() && (book.isImage || book.isPdf)) {
                         imageStyle = Book.imgStyleFull

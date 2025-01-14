@@ -238,7 +238,6 @@ data class Book(
 
     fun getImageStyle(): String? {
         return config.imageStyle
-            ?: if (isImage || isPdf) imgStyleFull else null
     }
 
     fun setTtsEngine(ttsEngine: String?) {
