@@ -152,6 +152,7 @@ object PreferKey {
     const val streamReadAloudAudio = "streamReadAloudAudio"
     const val pauseReadAloudWhilePhoneCalls = "pauseReadAloudWhilePhoneCalls"
     const val readAloudByMediaButton = "readAloudByMediaButton"
+    const val toMangeUi="toMangeUi"
 
     const val cPrimary = "colorPrimary"
     const val cAccent = "colorAccent"

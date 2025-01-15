@@ -25,7 +25,19 @@ import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.TitleBar
-import io.legado.app.utils.*
+import io.legado.app.utils.ColorUtils
+import io.legado.app.utils.DebugLog
+import io.legado.app.utils.applyBackgroundTint
+import io.legado.app.utils.applyOpenTint
+import io.legado.app.utils.applyTint
+import io.legado.app.utils.disableAutoFill
+import io.legado.app.utils.fullScreen
+import io.legado.app.utils.hideSoftInput
+import io.legado.app.utils.setLightStatusBar
+import io.legado.app.utils.setNavigationBarColorAuto
+import io.legado.app.utils.setStatusBarColorAuto
+import io.legado.app.utils.toastOnUi
+import io.legado.app.utils.windowSize
 
 
 abstract class BaseActivity<VB : ViewBinding>(
@@ -69,6 +81,7 @@ abstract class BaseActivity<VB : ViewBinding>(
         window.decorView.disableAutoFill()
         initTheme()
         super.onCreate(savedInstanceState)
+        DebugLog.e("name", this::class.simpleName.toString())
         setupSystemBar()
         setContentView(binding.root)
         upBackgroundImage()
@@ -127,10 +140,12 @@ abstract class BaseActivity<VB : ViewBinding>(
                 setTheme(R.style.AppTheme_Dark)
                 window.decorView.applyBackgroundTint(backgroundColor)
             }
+
             Theme.Light -> {
                 setTheme(R.style.AppTheme_Light)
                 window.decorView.applyBackgroundTint(backgroundColor)
             }
+
             else -> {
                 if (ColorUtils.isColorLight(primaryColor)) {
                     setTheme(R.style.AppTheme_Light)
