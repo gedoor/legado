@@ -8,9 +8,14 @@ import android.graphics.PointF
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
-import android.view.*
+import android.view.GestureDetector
 import android.view.GestureDetector.SimpleOnGestureListener
+import android.view.MotionEvent
+import android.view.ScaleGestureDetector
 import android.view.ScaleGestureDetector.OnScaleGestureListener
+import android.view.View
+import android.view.ViewGroup
+import android.view.ViewParent
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.Interpolator
 import android.widget.ImageView
@@ -914,7 +919,7 @@ class PhotoView @JvmOverloads constructor(
         var viewParent: ViewParent = target.parent
         while (viewParent is View) {
             val view: View = viewParent
-            if (view.id == androidx.constraintlayout.widget.R.id.content) return
+            if (view.id == android.R.id.content) return
             position[0] -= view.scrollX
             position[1] -= view.scrollY
             position[0] += view.left
