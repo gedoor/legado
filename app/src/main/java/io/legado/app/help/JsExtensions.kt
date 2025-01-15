@@ -1,5 +1,6 @@
 package io.legado.app.help
 
+import android.content.Intent
 import android.net.Uri
 import android.webkit.WebSettings
 import androidx.annotation.Keep
@@ -945,4 +946,12 @@ interface JsExtensions : JsEncodeUtils {
         return AppConst.androidId
     }
 
+    /**
+     * 新增使用scheme跳转其他应用方法
+     */
+    fun openScheme(url: String) {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        appCtx.startActivity(intent)
+    }
 }
