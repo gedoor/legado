@@ -19,9 +19,17 @@ import io.legado.app.databinding.DialogAddToBookshelfBinding
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.webBook.WebBook
+import io.legado.app.ui.book.manga.ReadMangeActivity
 import io.legado.app.ui.book.read.ReadBookActivity
-import io.legado.app.utils.*
+import io.legado.app.utils.GSON
+import io.legado.app.utils.NetworkUtils
+import io.legado.app.utils.fromJsonObject
+import io.legado.app.utils.invisible
+import io.legado.app.utils.setLayout
+import io.legado.app.utils.startReadOrMangaActivity
+import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import io.legado.app.utils.visible
 
 /**
  * 添加书籍链接到书架，需要对应网站书源
@@ -94,7 +102,7 @@ class AddToBookshelfDialog() : BaseDialogFragment(R.layout.dialog_add_to_bookshe
         binding.tvRead.setOnClickListener {
             viewModel.saveBook {
                 it?.let {
-                    startActivity<ReadBookActivity> {
+                    startReadOrMangaActivity<ReadBookActivity, ReadMangeActivity>(it) {
                         putExtra("bookUrl", it.bookUrl)
                         putExtra("inBookshelf", false)
                     }

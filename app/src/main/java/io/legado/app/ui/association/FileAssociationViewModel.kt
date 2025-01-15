@@ -6,13 +6,14 @@ import androidx.lifecycle.MutableLiveData
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.AppPattern.bookFileRegex
+import io.legado.app.data.entities.Book
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.*
 
 class FileAssociationViewModel(application: Application) : BaseAssociationViewModel(application) {
     val importBookLiveData = MutableLiveData<Uri>()
     val onLineImportLive = MutableLiveData<Uri>()
-    val openBookLiveData = MutableLiveData<String>()
+    val openBookLiveData = MutableLiveData<Book>()
     val notSupportedLiveData = MutableLiveData<Pair<Uri, String>>()
 
     fun dispatchIntent(uri: Uri) {
@@ -60,6 +61,6 @@ class FileAssociationViewModel(application: Application) : BaseAssociationViewMo
 
     fun importBook(uri: Uri) {
         val book = LocalBook.importFile(uri)
-        openBookLiveData.postValue(book.bookUrl)
+        openBookLiveData.postValue(book)
     }
 }
