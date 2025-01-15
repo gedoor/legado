@@ -17,6 +17,7 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
+import io.legado.app.utils.chapterRemoveDuplicates
 import io.legado.app.utils.isTrue
 import io.legado.app.utils.mapAsync
 import kotlinx.coroutines.ensureActive
@@ -128,15 +129,16 @@ object BookChapterList {
         }
         Debug.log(book.origin, "◇目录总数:${list.size}")
         coroutineContext.ensureActive()
-        list.forEachIndexed { index, bookChapter ->
+        val chapterRemoveDuplicatesList=list.chapterRemoveDuplicates()
+        /*list.forEachIndexed { index, bookChapter ->
             bookChapter.index = index
-        }
+        }*/
         val formatJs = tocRule.formatJs
         if (!formatJs.isNullOrBlank()) {
             Context.enter().use {
                 val bindings = ScriptBindings()
                 bindings["gInt"] = 0
-                list.forEachIndexed { index, bookChapter ->
+                chapterRemoveDuplicatesList.forEachIndexed { index, bookChapter ->
                     bindings["index"] = index + 1
                     bindings["chapter"] = bookChapter
                     bindings["title"] = bookChapter.title
@@ -151,20 +153,20 @@ object BookChapterList {
             }
         }
         val replaceRules = ContentProcessor.get(book.name, book.origin).getTitleReplaceRules()
-        book.durChapterTitle = list.getOrElse(book.durChapterIndex) { list.last() }
+        book.durChapterTitle = chapterRemoveDuplicatesList.getOrElse(book.durChapterIndex) { chapterRemoveDuplicatesList.last() }
             .getDisplayTitle(replaceRules, book.getUseReplaceRule())
-        if (book.totalChapterNum < list.size) {
-            book.lastCheckCount = list.size - book.totalChapterNum
+        if (book.totalChapterNum < chapterRemoveDuplicatesList.size) {
+            book.lastCheckCount = chapterRemoveDuplicatesList.size - book.totalChapterNum
             book.latestChapterTime = System.currentTimeMillis()
         }
         book.lastCheckTime = System.currentTimeMillis()
-        book.totalChapterNum = list.size
+        book.totalChapterNum = chapterRemoveDuplicatesList.size
         book.latestChapterTitle =
-            list.getOrElse(book.simulatedTotalChapterNum() - 1) { list.last() }
+            chapterRemoveDuplicatesList.getOrElse(book.simulatedTotalChapterNum() - 1) { chapterRemoveDuplicatesList.last() }
                 .getDisplayTitle(replaceRules, book.getUseReplaceRule())
         coroutineContext.ensureActive()
-        getWordCount(list, book)
-        return list
+        getWordCount(chapterRemoveDuplicatesList, book)
+        return chapterRemoveDuplicatesList
     }
 
     private suspend fun analyzeChapterList(
@@ -269,7 +271,7 @@ object BookChapterList {
         return Pair(chapterList, nextUrlList)
     }
 
-    private fun getWordCount(list: ArrayList<BookChapter>, book: Book) {
+    private fun getWordCount(list: List<BookChapter>, book: Book) {
         if (!AppConfig.tocCountWords) {
             return
         }
