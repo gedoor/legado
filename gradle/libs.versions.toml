@@ -41,7 +41,7 @@ rhino = "1.8.0"
 desugar = "2.1.4"
 
 activity = "1.9.3"
-kotlinxSerialization = "1.7.1"
+kotlinxSerialization = "1.8.0"
 swiperefreshlayout = "1.1.0"
 #noinspection GradleDependency
 recyclerview = "1.2.0"
