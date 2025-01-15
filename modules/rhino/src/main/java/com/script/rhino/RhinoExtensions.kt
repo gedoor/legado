@@ -8,6 +8,7 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
+@Suppress("LEAKED_IN_PLACE_LAMBDA", "WRONG_INVOCATION_KIND")
 @OptIn(ExperimentalContracts::class)
 inline fun <T> suspendContinuation(crossinline block: suspend CoroutineScope.() -> T): T {
     contract {
