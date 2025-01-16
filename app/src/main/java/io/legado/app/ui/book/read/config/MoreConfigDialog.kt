@@ -117,7 +117,7 @@ class MoreConfigDialog : BasePrefDialogFragment() {
 
                 PreferKey.hideNavigationBar -> {
                     ReadBookConfig.hideNavigationBar = getPrefBoolean(PreferKey.hideNavigationBar)
-                    postEvent(EventBus.UP_CONFIG, arrayListOf(0))
+                    postEvent(EventBus.UP_CONFIG, arrayListOf(0, 2))
                 }
 
                 PreferKey.keepLight -> postEvent(key, true)
