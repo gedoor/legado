@@ -17,6 +17,7 @@ import android.view.View.IMPORTANT_FOR_AUTOFILL_NO_EXCLUDE_DESCENDANTS
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.view.ViewPropertyAnimator
 import android.view.inputmethod.InputMethodManager
 import android.widget.EdgeEffect
 import android.widget.EditText
@@ -33,6 +34,8 @@ import androidx.core.graphics.withTranslation
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.get
+import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import androidx.core.view.marginBottom
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
@@ -40,10 +43,12 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.theme.TintHelper
 import io.legado.app.utils.canvasrecorder.CanvasRecorder
 import io.legado.app.utils.canvasrecorder.record
+import kotlinx.coroutines.suspendCancellableCoroutine
 import splitties.systemservices.inputMethodManager
 import splitties.views.bottomPadding
 import splitties.views.topPadding
 import java.lang.reflect.Field
+import kotlin.coroutines.resume
 
 
 private tailrec fun getCompatActivity(context: Context?): AppCompatActivity? {
@@ -297,4 +302,67 @@ fun View.setBackgroundKeepPadding(@DrawableRes backgroundResId: Int) {
     val paddingBottom = paddingBottom
     setBackgroundResource(backgroundResId)
     setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom)
+}
+
+fun View.measureDimension(desiredSize: Int, measureSpec: Int): Int {
+    var result: Int
+    val specMode = View.MeasureSpec.getMode(measureSpec)
+    val specSize = View.MeasureSpec.getSize(measureSpec)
+    if (specMode == View.MeasureSpec.EXACTLY) {
+        result = specSize
+    } else {
+        result = desiredSize
+        if (specMode == View.MeasureSpec.AT_MOST) {
+            result = result.coerceAtMost(specSize)
+        }
+    }
+    return result
+}
+
+// 淡入
+fun View.animateFadeIn(duration: Long = 200): ViewPropertyAnimator {
+    alpha = 0f
+    visibility = View.VISIBLE
+    return animate().alpha(1f).setDuration(duration)
+}
+
+//淡出
+fun View.animateFadeOut(duration: Long = 300): ViewPropertyAnimator {
+    alpha = 1f
+    visibility = View.VISIBLE
+    return animate().alpha(0f).setDuration(duration)
+}
+
+fun View.animateFadeOutInVisibility(duration: Long = 300): ViewPropertyAnimator {
+    alpha = 1f
+    visibility = View.VISIBLE
+    return animate().alpha(0f).setDuration(duration).withEndAction { isInvisible = true }
+}
+
+fun View.animateFadeOutGone(duration: Long = 300): ViewPropertyAnimator {
+    alpha = 1f
+    visibility = View.VISIBLE
+    return animate().alpha(0f).setDuration(duration).withEndAction { isVisible = false }
+}
+
+suspend fun View.suspendAnimateFadeIn(duration: Long = 200) = suspendCancellableCoroutine { continuation ->
+    alpha = 0f
+    visibility = View.VISIBLE
+    animate().alpha(1f).setDuration(duration).also { it.withEndAction { continuation.resume(it) } }
+}
+
+suspend fun View.suspendAnimateFadeOut(duration: Long = 300) = suspendCancellableCoroutine { continuation ->
+    alpha = 1f
+    visibility = View.VISIBLE
+    animate().alpha(0f).setDuration(duration).also { it.withEndAction { continuation.resume(it) } }
+}
+
+//淡出
+fun View.animateCenterOut(duration: Long = 300): ViewPropertyAnimator {
+    alpha = 1f
+    visibility = View.VISIBLE
+    return animate()
+        .scaleX(0f)
+        .scaleY(0f)
+        .setDuration(duration)
 }

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="96dp"
+    android:background="@color/book_ant_10">
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        tools:text="上一章节：第一话" />
+
+
+    <Button
+        android:id="@+id/retry"
+        style="@style/Widget.Material3.Button.TonalButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="重新加载"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:backgroundTint="@color/white"
+        app:cornerRadius="10dp"
+        tools:visibility="visible" />
+
+    <ProgressBar
+        android:id="@+id/loading"
+        app:trackThickness="3dp"
+        style="@style/Widget.Material3.CircularProgressIndicator.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:indeterminate="true"
+        android:visibility="gone"
+        app:indicatorColor="@color/white"
+        app:indicatorSize="36dp"
+        app:trackCornerRadius="99dp"
+        tools:visibility="visible" />
+
+</FrameLayout>
