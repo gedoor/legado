@@ -41,6 +41,7 @@ import io.legado.app.constant.AppConst
 import io.legado.app.data.entities.Book
 import io.legado.app.help.IntentHelp
 import io.legado.app.help.book.isImage
+import io.legado.app.help.config.AppConfig
 import splitties.systemservices.clipboardManager
 import splitties.systemservices.connectivityManager
 import splitties.systemservices.uiModeManager
@@ -59,7 +60,8 @@ inline fun <reified A : Activity, reified M : Activity> Context.startReadOrManga
     book: Book,
     configIntent: Intent.() -> Unit = {},
 ) {
-    val intent = Intent(this, if (book.isImage) M::class.java else A::class.java)
+    val intent =
+        Intent(this, if (book.isImage && AppConfig.showMangeUi) M::class.java else A::class.java)
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     intent.apply(configIntent)
     startActivity(intent)

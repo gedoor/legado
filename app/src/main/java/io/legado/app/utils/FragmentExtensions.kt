@@ -3,7 +3,6 @@
 package io.legado.app.utils
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
@@ -17,6 +16,7 @@ import androidx.lifecycle.Lifecycle
 import io.legado.app.R
 import io.legado.app.data.entities.Book
 import io.legado.app.help.book.isImage
+import io.legado.app.help.config.AppConfig
 import io.legado.app.ui.widget.dialog.TextDialog
 
 inline fun <reified T : DialogFragment> Fragment.showDialogFragment(
@@ -88,7 +88,10 @@ inline fun <reified A : Activity, reified M : Activity> Fragment.startReadOrMang
     book: Book,
     configIntent: Intent.() -> Unit = {},
 ) {
-    val intent = Intent(requireActivity(), if (book.isImage) M::class.java else A::class.java)
+    val intent = Intent(
+        requireActivity(),
+        if (book.isImage && AppConfig.showMangeUi) M::class.java else A::class.java
+    )
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     intent.apply(configIntent)
     startActivity(intent)
