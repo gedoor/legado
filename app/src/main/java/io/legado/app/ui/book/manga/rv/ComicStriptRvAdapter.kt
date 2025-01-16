@@ -35,7 +35,6 @@ class ComicStriptRvAdapter(val onRetry: (nextIndex: Int, isNext: Boolean) -> Uni
                     oldItem.mStateComplete == newItem.mStateComplete
                 } else {
                     oldItem.mMessage == newItem.mMessage
-                    false
                 }
             } else if (oldItem is MangeContent && newItem is MangeContent) {
                 oldItem.mImageUrl == newItem.mImageUrl

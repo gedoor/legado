@@ -27,6 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="重新加载"
+        android:textSize="18sp"
         android:visibility="gone"
         app:backgroundTint="@color/white"
         app:cornerRadius="10dp"

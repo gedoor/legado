@@ -7,6 +7,8 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.databinding.ActivityMangeBinding
 import io.legado.app.model.ReadMange
 import io.legado.app.ui.book.manga.rv.ComicStriptRvAdapter
+import io.legado.app.utils.DebugLog
+import io.legado.app.utils.GSON
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 class ReadMangeActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>(),
@@ -33,6 +35,7 @@ class ReadMangeActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
     }
 
     override fun loadContentFinish(list: MutableList<Any>) {
+        DebugLog.i("tag", GSON.toJson(list))
         mAdapter?.submitList(list) {
 
         }

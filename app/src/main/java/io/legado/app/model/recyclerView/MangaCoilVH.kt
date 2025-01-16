@@ -38,7 +38,7 @@ open class MangaCoilVH<VB : ViewBinding>(val binding: VB) : RecyclerView.ViewHol
 
     @SuppressLint("CheckResult")
     fun loadImageWithRetry(imageUrl: String) {
-        mLoading.isInvisible = false
+        mLoading.isVisible = true
         mRetry?.isGone = true
         val isNull = itemView.tag == null
         if (isNull) {
@@ -59,7 +59,7 @@ open class MangaCoilVH<VB : ViewBinding>(val binding: VB) : RecyclerView.ViewHol
                     target: Target<Drawable>,
                     isFirstResource: Boolean
                 ): Boolean {
-                    mLoading.isInvisible = true
+                    mLoading.isGone = true
                     mRetry?.isVisible = true
                     return false
                 }
@@ -71,7 +71,7 @@ open class MangaCoilVH<VB : ViewBinding>(val binding: VB) : RecyclerView.ViewHol
                     dataSource: DataSource,
                     isFirstResource: Boolean
                 ): Boolean {
-                    mLoading.isInvisible = true
+                    mLoading.isGone = true
                     mRetry?.isGone = true
                     if (isNull) {
                         itemView.post {
@@ -84,18 +84,6 @@ open class MangaCoilVH<VB : ViewBinding>(val binding: VB) : RecyclerView.ViewHol
                             height = WRAP_CONTENT
                         }
                     }
-                    /*itemView.post {
-                        val imageWidth: Int = resource.intrinsicWidth
-                        val imageHeight: Int = resource.intrinsicHeight
-                        val viewWidth: Int = itemView.width
-                        val imageViewHeight = (viewWidth * imageHeight) / imageWidth
-                        itemView.layoutParams.width = viewWidth
-                        itemView.layoutParams.height = imageViewHeight
-                        itemView.updateLayoutParams<ViewGroup.LayoutParams> {
-                            width = viewWidth
-                            height = imageViewHeight
-                        }
-                    }*/
                     return false
                 }
 
