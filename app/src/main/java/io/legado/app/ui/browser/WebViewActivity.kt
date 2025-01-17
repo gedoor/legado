@@ -47,6 +47,7 @@ import io.legado.app.utils.toggleNavigationBar
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
 import java.net.URLDecoder
+import io.legado.app.help.http.CookieManager as AppCookieManager
 
 class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
 
@@ -171,8 +172,7 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
                 userAgentString = it
             }
         }
-        val cookieManager = CookieManager.getInstance()
-        cookieManager.setCookie(url, CookieStore.getCookie(url))
+        AppCookieManager.applyToWebView(url)
         binding.webView.addJavascriptInterface(this, "app")
         binding.webView.setOnLongClickListener {
             val hitTestResult = binding.webView.hitTestResult
