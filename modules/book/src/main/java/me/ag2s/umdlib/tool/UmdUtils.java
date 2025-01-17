@@ -56,6 +56,10 @@ public class UmdUtils {
      * @return 原始字符串
      */
     public static String unicodeBytesToString(byte[] bytes) {
+        //修复一些文件属性空值的问题
+        if (bytes==null){
+            return "";
+        }
         char[] s = new char[bytes.length / 2];
         StringBuilder sb = new StringBuilder();
         int a, b, c;
