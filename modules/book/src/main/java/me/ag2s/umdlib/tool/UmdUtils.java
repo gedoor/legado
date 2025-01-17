@@ -10,6 +10,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Random;
 import java.util.zip.Inflater;
+import java.nio.charset.StandardCharsets;
 
 
 public class UmdUtils {
