@@ -10,6 +10,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
+import android.webkit.CookieManager
 import android.webkit.JavascriptInterface
 import android.webkit.SslErrorHandler
 import android.webkit.URLUtil
@@ -34,6 +35,7 @@ import io.legado.app.constant.AppLog
 import io.legado.app.data.entities.RssSource
 import io.legado.app.databinding.ActivityRssReadBinding
 import io.legado.app.help.config.AppConfig
+import io.legado.app.help.http.CookieStore
 import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.accentColor
@@ -306,6 +308,8 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         }
         viewModel.urlLiveData.observe(this) {
             upJavaScriptEnable()
+            val cookieManager = CookieManager.getInstance()
+            cookieManager.setCookie(it.url, CookieStore.getCookie(it.url))
             binding.webView.settings.userAgentString = it.getUserAgent()
             binding.webView.loadUrl(it.url, it.headerMap)
         }
