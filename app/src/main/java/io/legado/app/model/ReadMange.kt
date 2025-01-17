@@ -16,7 +16,6 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.globalExecutor
 import io.legado.app.model.recyclerView.MangeContent
 import io.legado.app.model.recyclerView.ReaderLoading
-import io.legado.app.utils.DebugLog
 import io.legado.app.utils.runOnUI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
@@ -222,8 +221,7 @@ object ReadMange : CoroutineScope by MainScope() {
             Jsoup.parse(content).select("img").forEach {
                 contentList.add(MangeContent(durChapterIndex, it.attr("src")))
             }
-            DebugLog.i("tag","加载完成---${contentList.size}」")
-            contentList.add(ReaderLoading(durChapterIndex, "下一章,${chapter.title}"))
+            contentList.add(ReaderLoading(durChapterIndex, "已读完${chapter.title}"))
             runOnUI {
                 mCallback?.loadContentFinish(contentList)
             }
