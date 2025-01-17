@@ -35,7 +35,7 @@ class WebtoonFrame : FrameLayout {
      */
     private val flingDetector = GestureDetector(context, FlingListener())
 
-    var doubleTapZoom = true
+    var doubleTapZoom = false
         set(value) {
             field = value
             recycler?.doubleTapZoom = value
