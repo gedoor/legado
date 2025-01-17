@@ -142,10 +142,11 @@ object CookieManager {
     }
 
     fun applyToWebView(url: String) {
+        val baseUrl = NetworkUtils.getBaseUrl(url) ?: return
         val cookies = CookieStore.getCookie(url).splitNotBlank(";")
         val cookieManager = CookieManager.getInstance()
         cookies.forEach {
-            cookieManager.setCookie(url, it)
+            cookieManager.setCookie(baseUrl, it)
         }
     }
 
