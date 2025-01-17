@@ -30,23 +30,7 @@ public class UmdUtils {
             throw new NullPointerException();
         }
 
-        int len = s.length();
-        byte[] ret = new byte[len * 2];
-        int a, b, c;
-        for (int i = 0; i < len; i++) {
-            c = s.charAt(i);
-            a = c >> 8;
-            b = c & 0xFF;
-            if (a < 0) {
-                a += 0xFF;
-            }
-            if (b < 0) {
-                b += 0xFF;
-            }
-            ret[i * 2] = (byte) b;
-            ret[i * 2 + 1] = (byte) a;
-        }
-        return ret;
+        return s.getBytes(StandardCharsets.UTF_16LE);
     }
 
     /**
@@ -60,21 +44,7 @@ public class UmdUtils {
         if (bytes==null){
             return "";
         }
-        char[] s = new char[bytes.length / 2];
-        StringBuilder sb = new StringBuilder();
-        int a, b, c;
-        for (int i = 0; i < s.length; i++) {
-            a = bytes[i * 2 + 1];
-            b = bytes[i * 2];
-            c = (a & 0xff) << 8 | (b & 0xff);
-            if (c < 0) {
-                c += 0xffff;
-            }
-            char[] c1 = Character.toChars(c);
-            sb.append(c1);
-
-        }
-        return sb.toString();
+        return new String(bytes, StandardCharsets.UTF_16LE);
     }
 
     /**
@@ -105,19 +75,19 @@ public class UmdUtils {
      * @throws Exception 解码时失败时
      */
     public static byte[] decompress(byte[] compress) throws Exception {
-        ByteArrayInputStream bais = new ByteArrayInputStream(compress);
-        InflaterInputStream iis = new InflaterInputStream(bais);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        int c = 0;
-        byte[] buf = new byte[BUFFER_SIZE];
-        while (true) {
-            c = iis.read(buf);
+        Inflater inflater = new Inflater();
+        inflater.reset();
+        inflater.setInput(compress);
 
-            if (c == EOF)
-                break;
-            baos.write(buf, 0, c);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(compress.length);
+        try (baos) {
+            byte[] buff = new byte[BUFFER_SIZE];
+            while (!inflater.finished()) {
+                int count = inflater.inflate(buff);
+                baos.write(buff, 0, count);
+            }
         }
-        baos.flush();
+        inflater.end();
         return baos.toByteArray();
     }
 
