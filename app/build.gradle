@@ -280,6 +280,7 @@ dependencies {
     implementation libs.firebase.analytics
     implementation libs.firebase.perf
     implementation libs.subsamplingscaleimageview
+    implementation libs.image.decoder
 
     //LeakCanary, 内存泄露检测
     //debugImplementation('com.squareup.leakcanary:leakcanary-android:2.7')

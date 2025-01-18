@@ -33,8 +33,12 @@
         app:cornerRadius="10dp"
         tools:visibility="visible" />
 
-    <ImageView
+
+
+    <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
         android:id="@+id/image"
+        app:zoomEnabled="false"
+        app:quickScaleEnabled="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:adjustViewBounds="true" />

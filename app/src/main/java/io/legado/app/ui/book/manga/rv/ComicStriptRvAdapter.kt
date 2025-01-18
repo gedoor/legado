@@ -8,8 +8,6 @@ import androidx.annotation.IntRange
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
-import androidx.recyclerview.widget.AsyncListDiffer
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.databinding.BookComicLoadingRvBinding
 import io.legado.app.databinding.BookComicRvBinding
@@ -28,14 +26,13 @@ class ComicStriptRvAdapter(val onRetry: (nextIndex: Int, isNext: Boolean) -> Uni
         private const val CONTENT_VIEW = 1
     }
 
-    private val mDiffCallback: DiffUtil.ItemCallback<Any> = object : DiffUtil.ItemCallback<Any>() {
+
+    private val mList = mutableListOf<Any>()
+
+    /*private val mDiffCallback: DiffUtil.ItemCallback<Any> = object : DiffUtil.ItemCallback<Any>() {
         override fun areItemsTheSame(oldItem: Any, newItem: Any): Boolean {
             return if (oldItem is ReaderLoading && newItem is ReaderLoading) {
-                if (newItem.mMessage == null && oldItem.mMessage == null) {
-                    oldItem.mStateComplete == newItem.mStateComplete
-                } else {
-                    oldItem.mMessage == newItem.mMessage
-                }
+                oldItem.mMessage == newItem.mMessage
             } else if (oldItem is MangeContent && newItem is MangeContent) {
                 oldItem.mImageUrl == newItem.mImageUrl
             } else false
@@ -48,16 +45,18 @@ class ComicStriptRvAdapter(val onRetry: (nextIndex: Int, isNext: Boolean) -> Uni
                 oldItem == newItem
             } else false
         }
-    }
+    }*/
 
-    private val mDiffer = AsyncListDiffer(this, mDiffCallback)
+//    private val mDiffer = AsyncListDiffer(this, mDiffCallback)
 
-    private fun getItem(@IntRange(from = 0) position: Int) = mDiffer.currentList[position]
+    private fun getItem(@IntRange(from = 0) position: Int) = mList[position]
 
-    fun getCurrentList() = mDiffer.currentList
+    fun getCurrentList() = mList
 
-    fun submitList(contents: MutableList<Any>, runnable: Runnable) = mDiffer.submitList(contents) {
-        runnable.run()
+    fun submitList(contents: MutableList<Any>) {
+        val oldPos = mList.size
+        mList.addAll(contents)
+        notifyItemRangeChanged(oldPos, mList.size)
     }
 
     inner class PageViewHolder(binding: BookComicRvBinding) :
@@ -138,7 +137,7 @@ class ComicStriptRvAdapter(val onRetry: (nextIndex: Int, isNext: Boolean) -> Uni
         }
     }
 
-    override fun getItemCount(): Int = mDiffer.currentList.size
+    override fun getItemCount(): Int = mList.size
 
     override fun getItemViewType(position: Int): Int {
         return when (getItem(position)) {

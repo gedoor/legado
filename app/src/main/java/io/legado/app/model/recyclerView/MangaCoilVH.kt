@@ -1,12 +1,12 @@
 package io.legado.app.model.recyclerView
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.Button
-import android.widget.ImageView
 import android.widget.ProgressBar
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
@@ -17,19 +17,23 @@ import androidx.viewbinding.ViewBinding
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.target.Target
+import com.bumptech.glide.request.transition.Transition
+import com.davemorrissey.labs.subscaleview.ImageSource
+import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import io.legado.app.help.glide.ImageLoader
 
 open class MangaCoilVH<VB : ViewBinding>(val binding: VB) : RecyclerView.ViewHolder(binding.root) {
 
     protected lateinit var mLoading: ProgressBar
-    protected lateinit var mImage: ImageView
+    protected lateinit var mImage: SubsamplingScaleImageView
     protected var mRetry: Button? = null
 
     fun initComponent(
         loading: ProgressBar,
-        image: ImageView,
-        button: Button? = null
+        image: SubsamplingScaleImageView,
+        button: Button? = null,
     ) {
         mLoading = loading
         mImage = image
@@ -51,13 +55,13 @@ open class MangaCoilVH<VB : ViewBinding>(val binding: VB) : RecyclerView.ViewHol
         } else {
             itemView.updateLayoutParams<ViewGroup.LayoutParams> { height = MATCH_PARENT }
         }
-        ImageLoader.load(context = itemView.context, imageUrl).apply {
-            addListener(object : RequestListener<Drawable> {
+        ImageLoader.loadBitmap(context = itemView.context, imageUrl).apply {
+            addListener(object : RequestListener<Bitmap> {
                 override fun onLoadFailed(
                     e: GlideException?,
                     model: Any?,
-                    target: Target<Drawable>,
-                    isFirstResource: Boolean
+                    target: Target<Bitmap>,
+                    isFirstResource: Boolean,
                 ): Boolean {
                     mLoading.isGone = true
                     mRetry?.isVisible = true
@@ -65,11 +69,11 @@ open class MangaCoilVH<VB : ViewBinding>(val binding: VB) : RecyclerView.ViewHol
                 }
 
                 override fun onResourceReady(
-                    resource: Drawable,
+                    resource: Bitmap,
                     model: Any,
-                    target: Target<Drawable>?,
+                    target: Target<Bitmap>?,
                     dataSource: DataSource,
-                    isFirstResource: Boolean
+                    isFirstResource: Boolean,
                 ): Boolean {
                     mLoading.isGone = true
                     mRetry?.isGone = true
@@ -86,9 +90,23 @@ open class MangaCoilVH<VB : ViewBinding>(val binding: VB) : RecyclerView.ViewHol
                     }
                     return false
                 }
-
             })
-        }.into(mImage)
+        }.into(object : CustomTarget<Bitmap>() {
+            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                with(mImage) {
+                    setMaxTileSize(2048)
+                    setDoubleTapZoomStyle(SubsamplingScaleImageView.ZOOM_FOCUS_CENTER)
+                    setPanLimit(SubsamplingScaleImageView.PAN_LIMIT_INSIDE)
+                    setMinimumTileDpi(180)
+                    setImage(ImageSource.bitmap(resource))
+                }
+            }
+
+            override fun onLoadCleared(placeholder: Drawable?) {
+
+            }
+
+        })
     }
 
     fun loadCoverImage(imageUrl: String) {

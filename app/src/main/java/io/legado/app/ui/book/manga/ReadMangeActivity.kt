@@ -6,6 +6,7 @@ import androidx.activity.viewModels
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.databinding.ActivityMangeBinding
 import io.legado.app.model.ReadMange
+import io.legado.app.model.recyclerView.ReaderLoading
 import io.legado.app.ui.book.manga.rv.ComicStriptRvAdapter
 import io.legado.app.utils.DebugLog
 import io.legado.app.utils.GSON
@@ -24,6 +25,14 @@ class ReadMangeActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
         }
         binding.mRecyclerMange.adapter = mAdapter
         ReadMange.register(this)
+        binding.mRecyclerMange.setPreScrollListener { dx, dy, position ->
+            if (dy > 0 && position + 2 > mAdapter!!.getCurrentList().size - 3) {
+                if (mAdapter?.getCurrentList()?.last() is ReaderLoading) {
+                    val nextIndex = (mAdapter!!.getCurrentList().last() as ReaderLoading).mNextIndex
+                    ReadMange.moveToNextChapter(nextIndex)
+                }
+            }
+        }
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -35,14 +44,11 @@ class ReadMangeActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
     }
 
     override fun loadContentFinish(list: MutableList<Any>) {
-        DebugLog.i("tag", GSON.toJson(list))
-        mAdapter?.submitList(list) {
-
-        }
+        mAdapter?.submitList(list)
     }
 
     override fun onDestroy() {
+//        ReadMange.unregister(this)
         super.onDestroy()
-        ReadMange.unregister(this)
     }
 }

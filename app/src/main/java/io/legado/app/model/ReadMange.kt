@@ -6,7 +6,6 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.ReadRecord
-import io.legado.app.help.book.BookHelp
 import io.legado.app.help.book.ContentProcessor
 import io.legado.app.help.book.isLocal
 import io.legado.app.help.book.readSimulating
@@ -16,8 +15,10 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.globalExecutor
 import io.legado.app.model.recyclerView.MangeContent
 import io.legado.app.model.recyclerView.ReaderLoading
+import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.runOnUI
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.SupervisorJob
@@ -147,7 +148,7 @@ object ReadMange : CoroutineScope by MainScope() {
         val book = ReadMange.book ?: return removeLoading(chapter.index)
         val bookSource = ReadMange.bookSource
         if (bookSource != null) {
-            CacheBook.getOrCreate(bookSource, book).download(scope, chapter)
+            getContent(bookSource, scope, chapter, book)
         } else {
             val msg = if (book.isLocal) "无内容" else "没有书源"
             contentLoadFinish(
@@ -170,13 +171,7 @@ object ReadMange : CoroutineScope by MainScope() {
             Coroutine.async {
                 val book = ReadMange.book!!
                 appDb.bookChapterDao.getChapter(book.bookUrl, index)?.let { chapter ->
-                    BookHelp.getContent(book, chapter)?.let {
-                        contentLoadFinish(
-                            book,
-                            chapter,
-                            it,
-                        )
-                    } ?: download(
+                    download(
                         downloadScope,
                         chapter,
                     )
@@ -186,6 +181,7 @@ object ReadMange : CoroutineScope by MainScope() {
                 AppLog.put("加载正文出错\n${it.localizedMessage}")
             }
         }
+
     }
 
 
@@ -200,12 +196,9 @@ object ReadMange : CoroutineScope by MainScope() {
      * 取消注册回调
      */
     fun unregister(cb: Callback) {
-        if (mCallback === cb) {
-            mCallback = null
-        }
+        mCallback = null
         downloadScope.coroutineContext.cancelChildren()
         coroutineContext.cancelChildren()
-        ImageProvider.clear()
     }
 
     /**
@@ -216,17 +209,100 @@ object ReadMange : CoroutineScope by MainScope() {
         chapter: BookChapter,
         content: String,
     ) {
+        if (chapter.index !in durChapterIndex - 1..durChapterIndex + 1) {
+            return
+        }
         if (content.isNotEmpty()) {
             val contentList = mutableListOf<Any>()
             Jsoup.parse(content).select("img").forEach {
-                contentList.add(MangeContent(durChapterIndex, it.attr("src")))
+                contentList.add(
+                    MangeContent(
+                        durChapterIndex,
+                        it.attr("src"),
+                        durChapterIndex.plus(1)
+                    )
+                )
             }
-            contentList.add(ReaderLoading(durChapterIndex, "已读完${chapter.title}"))
+            contentList.add(
+                ReaderLoading(
+                    durChapterIndex,
+                    "已读完${chapter.title}",
+                    mNextIndex = durChapterIndex.plus(1)
+                )
+            )
             runOnUI {
                 mCallback?.loadContentFinish(contentList)
             }
         }
 
+    }
+
+    /**
+     * 加载下一章
+     */
+    fun moveToNextChapter(index: Int): Boolean {
+        if (durChapterIndex < simulatedChapterSize - 1) {
+            durChapterPos = 0
+            durChapterIndex = index
+            loadContent(durChapterIndex)
+            saveRead()
+            AppLog.putDebug("moveToNextChapter-curPageChanged()")
+            curPageChanged()
+            return true
+        } else {
+            AppLog.putDebug("跳转下一章失败,没有下一章")
+            return false
+        }
+    }
+
+    fun curPageChanged() {
+        upReadTime()
+    }
+
+    //预下载时候更新目录
+    @Synchronized
+    fun upToc() {
+        val bookSource = bookSource ?: return
+        val book = book ?: return
+        if (!book.canUpdate) return
+        if (System.currentTimeMillis() - book.lastCheckTime < 600000) return
+        book.lastCheckTime = System.currentTimeMillis()
+        WebBook.getChapterList(this, bookSource, book).onSuccess(IO) { cList ->
+            if (book.bookUrl == ReadMange.book?.bookUrl
+                && cList.size > chapterSize
+            ) {
+                appDb.bookChapterDao.delByBook(book.bookUrl)
+                appDb.bookChapterDao.insert(*cList.toTypedArray())
+                saveRead()
+                chapterSize = cList.size
+                simulatedChapterSize = book.simulatedTotalChapterNum()
+                loadContent(durChapterIndex + 1)
+            }
+        }
+    }
+
+    private fun getContent(
+        bookSource: BookSource,
+        scope: CoroutineScope,
+        chapter: BookChapter,
+        book: Book,
+    ) {
+        WebBook.getContent(
+            scope,
+            bookSource,
+            book,
+            chapter,
+            start = CoroutineStart.LAZY,
+            executeContext = IO
+        ).onSuccess { content ->
+            contentLoadFinish(book, chapter, content)
+        }.onError {
+            removeLoading(chapter.index)
+        }.onCancel {
+
+        }.onFinally {
+
+        }.start()
     }
 
     interface Callback {

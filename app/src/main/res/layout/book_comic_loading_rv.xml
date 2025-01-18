@@ -23,6 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="重新加载"
+        android:textSize="18sp"
         android:textStyle="bold"
         android:visibility="gone"
         app:backgroundTint="@color/white"
@@ -31,7 +32,6 @@
 
     <ProgressBar
         android:id="@+id/loading"
-        app:trackThickness="3dp"
         style="@style/Widget.Material3.CircularProgressIndicator.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -41,6 +41,7 @@
         app:indicatorColor="@color/white"
         app:indicatorSize="36dp"
         app:trackCornerRadius="99dp"
+        app:trackThickness="3dp"
         tools:visibility="visible" />
 
 </FrameLayout>
