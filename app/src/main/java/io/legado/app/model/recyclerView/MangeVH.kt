@@ -52,6 +52,7 @@ open class MangeVH<VB : ViewBinding>(val binding: VB) : RecyclerView.ViewHolder(
     fun loadImageWithRetry(imageUrl: String) {
         mLoading.isVisible = true
         mRetry?.isGone = true
+        mProgress.isVisible = true
         val isNull = itemView.tag == null
         if (isNull) {
             itemView.tag = itemView
@@ -66,6 +67,7 @@ open class MangeVH<VB : ViewBinding>(val binding: VB) : RecyclerView.ViewHolder(
         mImage.recycle()
         ProgressManager.removeListener(imageUrl)
         ProgressManager.addListener(imageUrl, object : OnProgressListener {
+            @SuppressLint("SetTextI18n")
             override fun invoke(
                 isComplete: Boolean,
                 percentage: Int,
@@ -87,11 +89,7 @@ open class MangeVH<VB : ViewBinding>(val binding: VB) : RecyclerView.ViewHolder(
                     ): Boolean {
                         mLoading.isGone = true
                         mRetry?.isVisible = true
-                        mRetry?.setOnClickListener {
-                            mLoading.isVisible = true
-                            loadImageWithRetry(imageUrl)
-                        }
-
+                        mProgress.isGone = true
                         return false
                     }
 
@@ -104,6 +102,7 @@ open class MangeVH<VB : ViewBinding>(val binding: VB) : RecyclerView.ViewHolder(
                     ): Boolean {
                         mLoading.isGone = true
                         mRetry?.isGone = true
+                        mProgress.isGone = true
                         if (isNull) {
                             itemView.post {
                                 itemView.updateLayoutParams<ViewGroup.LayoutParams> {

@@ -11,8 +11,8 @@ import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.databinding.BookComicLoadingRvBinding
 import io.legado.app.databinding.BookComicRvBinding
-import io.legado.app.model.recyclerView.MangeVH
 import io.legado.app.model.recyclerView.MangeContent
+import io.legado.app.model.recyclerView.MangeVH
 import io.legado.app.model.recyclerView.ReaderLoading
 import io.legado.app.utils.animateFadeIn
 import io.legado.app.utils.animateFadeOutGone
@@ -43,7 +43,13 @@ class MangeAdapter(val onRetry: (nextIndex: Int, isNext: Boolean) -> Unit) :
         MangeVH<BookComicRvBinding>(binding) {
 
         init {
-            initComponent(binding.loading, binding.image,binding.progress, binding.retry)
+            initComponent(binding.loading, binding.image, binding.progress, binding.retry)
+            binding.retry.setOnClickListener {
+                val item = mList[layoutPosition]
+                if (item is MangeContent) {
+                    loadImageWithRetry(item.mImageUrl)
+                }
+            }
         }
 
         fun onBind(item: MangeContent) {
