@@ -113,7 +113,7 @@ class MangaViewModel(application: Application) : BaseViewModel(application) {
                     ReadMange.simulatedChapterSize = book.simulatedTotalChapterNum()
                     return true
                 }.onFailure {
-                    //todo 加载章节出错
+                    //加载章节出错
                     return false
                 }
         }
@@ -131,7 +131,7 @@ class MangaViewModel(application: Application) : BaseViewModel(application) {
             WebBook.getBookInfoAwait(source, book, canReName = false)
             return true
         } catch (e: Throwable) {
-            // TODO: 加载详情页失败
+            //  加载详情页失败
 //            ReadBook.upMsg("详情页出错: ${e.localizedMessage}")
             return false
         }
@@ -157,7 +157,7 @@ class MangaViewModel(application: Application) : BaseViewModel(application) {
                     }
                 }
             }.onStart {
-                // TODO: 自动换源
+                // 自动换源
 
             }.mapParallelSafe(AppConfig.threadCount) { source ->
                 val book = WebBook.preciseSearchAwait(this, source, name, author).getOrThrow()
@@ -183,7 +183,7 @@ class MangaViewModel(application: Application) : BaseViewModel(application) {
             }.onEmpty {
                 throw NoStackTraceException("没有合适书源")
             }.onCompletion {
-                // TODO: 换源完成
+                // 换源完成
             }.catch {
                 AppLog.put("自动换源失败\n${it.localizedMessage}", it)
                 context.toastOnUi("自动换源失败\n${it.localizedMessage}")
@@ -197,14 +197,14 @@ class MangaViewModel(application: Application) : BaseViewModel(application) {
     fun changeTo(book: Book, toc: List<BookChapter>) {
         changeSourceCoroutine?.cancel()
         changeSourceCoroutine = execute {
-            // TODO: 换源中
+            //换源中
             ReadMange.book?.migrateTo(book, toc)
             book.removeType(BookType.updateError)
             ReadMange.book?.delete()
             appDb.bookDao.insert(book)
             appDb.bookChapterDao.insert(*toc.toTypedArray())
             ReadMange.resetData(book)
-            // TODO:  //换源完成加载内容
+            // //换源完成加载内容
 
         }.onError {
             AppLog.put("换源失败\n$it", it, true)
@@ -220,5 +220,10 @@ class MangaViewModel(application: Application) : BaseViewModel(application) {
         } catch (e: Throwable) {
             return false
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        changeSourceCoroutine?.cancel()
     }
 }

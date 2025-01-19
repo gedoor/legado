@@ -33,14 +33,21 @@
         app:cornerRadius="10dp"
         tools:visibility="visible" />
 
-
+    <TextView
+        android:id="@+id/progress"
+        android:text="0%"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:textColor="@color/black"
+        android:layout_height="wrap_content"/>
 
     <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
         android:id="@+id/image"
-        app:zoomEnabled="false"
-        app:quickScaleEnabled="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:adjustViewBounds="true" />
+        android:adjustViewBounds="true"
+        app:panEnabled="false"
+        app:quickScaleEnabled="false"
+        app:zoomEnabled="false" />
 
 </FrameLayout>

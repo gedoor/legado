@@ -12,7 +12,6 @@ import io.legado.app.data.entities.BaseSource
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.http.CookieManager.cookieJarHeader
 import io.legado.app.help.http.addHeaders
-import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.source.SourceHelp
 import io.legado.app.utils.ImageUtils
 import io.legado.app.utils.isWifiConnect
@@ -26,7 +25,11 @@ import java.io.IOException
 import java.io.InputStream
 
 
-class OkHttpStreamFetcher(private val url: GlideUrl, private val options: Options) :
+class OkHttpStreamFetcher(
+    private val client: Call.Factory,
+    private val url: GlideUrl,
+    private val options: Options,
+) :
     DataFetcher<InputStream>, okhttp3.Callback {
     private var stream: InputStream? = null
     private var responseBody: ResponseBody? = null
@@ -65,7 +68,7 @@ class OkHttpStreamFetcher(private val url: GlideUrl, private val options: Option
         requestBuilder.addHeaders(headerMap)
         val request: Request = requestBuilder.build()
         this.callback = callback
-        call = okHttpClient.newCall(request)
+        call = client.newCall(request)
         call?.enqueue(this)
     }
 
@@ -103,7 +106,9 @@ class OkHttpStreamFetcher(private val url: GlideUrl, private val options: Option
             if (decodeResult == null) {
                 callback?.onLoadFailed(NoStackTraceException("封面二次解密失败"))
             } else {
-                val contentLength: Long = if (decodeResult is ByteArrayInputStream) decodeResult.available().toLong() else Preconditions.checkNotNull(responseBody).contentLength()
+                val contentLength: Long =
+                    if (decodeResult is ByteArrayInputStream) decodeResult.available()
+                        .toLong() else Preconditions.checkNotNull(responseBody).contentLength()
                 stream = ContentLengthInputStream.obtain(decodeResult, contentLength)
                 callback?.onDataReady(stream)
             }

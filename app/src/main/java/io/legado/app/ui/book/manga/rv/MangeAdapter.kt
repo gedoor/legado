@@ -11,14 +11,14 @@ import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.databinding.BookComicLoadingRvBinding
 import io.legado.app.databinding.BookComicRvBinding
-import io.legado.app.model.recyclerView.MangaCoilVH
+import io.legado.app.model.recyclerView.MangeVH
 import io.legado.app.model.recyclerView.MangeContent
 import io.legado.app.model.recyclerView.ReaderLoading
 import io.legado.app.utils.animateFadeIn
 import io.legado.app.utils.animateFadeOutGone
 
 
-class ComicStriptRvAdapter(val onRetry: (nextIndex: Int, isNext: Boolean) -> Unit) :
+class MangeAdapter(val onRetry: (nextIndex: Int, isNext: Boolean) -> Unit) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -28,26 +28,6 @@ class ComicStriptRvAdapter(val onRetry: (nextIndex: Int, isNext: Boolean) -> Uni
 
 
     private val mList = mutableListOf<Any>()
-
-    /*private val mDiffCallback: DiffUtil.ItemCallback<Any> = object : DiffUtil.ItemCallback<Any>() {
-        override fun areItemsTheSame(oldItem: Any, newItem: Any): Boolean {
-            return if (oldItem is ReaderLoading && newItem is ReaderLoading) {
-                oldItem.mMessage == newItem.mMessage
-            } else if (oldItem is MangeContent && newItem is MangeContent) {
-                oldItem.mImageUrl == newItem.mImageUrl
-            } else false
-        }
-
-        override fun areContentsTheSame(oldItem: Any, newItem: Any): Boolean {
-            return if (oldItem is ReaderLoading && newItem is ReaderLoading) {
-                oldItem == newItem
-            } else if (oldItem is MangeContent && newItem is MangeContent) {
-                oldItem == newItem
-            } else false
-        }
-    }*/
-
-//    private val mDiffer = AsyncListDiffer(this, mDiffCallback)
 
     private fun getItem(@IntRange(from = 0) position: Int) = mList[position]
 
@@ -60,10 +40,10 @@ class ComicStriptRvAdapter(val onRetry: (nextIndex: Int, isNext: Boolean) -> Uni
     }
 
     inner class PageViewHolder(binding: BookComicRvBinding) :
-        MangaCoilVH<BookComicRvBinding>(binding) {
+        MangeVH<BookComicRvBinding>(binding) {
 
         init {
-            initComponent(binding.loading, binding.image, binding.retry)
+            initComponent(binding.loading, binding.image,binding.progress, binding.retry)
         }
 
         fun onBind(item: MangeContent) {

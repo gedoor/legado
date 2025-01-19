@@ -7,20 +7,18 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.databinding.ActivityMangeBinding
 import io.legado.app.model.ReadMange
 import io.legado.app.model.recyclerView.ReaderLoading
-import io.legado.app.ui.book.manga.rv.ComicStriptRvAdapter
-import io.legado.app.utils.DebugLog
-import io.legado.app.utils.GSON
+import io.legado.app.ui.book.manga.rv.MangeAdapter
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 class ReadMangeActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>(),
     ReadMange.Callback {
 
-    private var mAdapter: ComicStriptRvAdapter? = null
+    private var mAdapter: MangeAdapter? = null
     override val binding by viewBinding(ActivityMangeBinding::inflate)
     override val viewModel by viewModels<MangaViewModel>()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        mAdapter = ComicStriptRvAdapter { nextIndex, isNext ->
+        mAdapter = MangeAdapter { nextIndex, isNext ->
 
         }
         binding.mRecyclerMange.adapter = mAdapter
@@ -44,11 +42,13 @@ class ReadMangeActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
     }
 
     override fun loadContentFinish(list: MutableList<Any>) {
-        mAdapter?.submitList(list)
+        if (!this.isDestroyed){
+            mAdapter?.submitList(list)
+        }
     }
 
     override fun onDestroy() {
-//        ReadMange.unregister(this)
+        ReadMange.unregister(this)
         super.onDestroy()
     }
 }
