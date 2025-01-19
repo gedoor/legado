@@ -7,7 +7,6 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.ReadRecord
 import io.legado.app.help.book.ContentProcessor
-import io.legado.app.help.book.isLocal
 import io.legado.app.help.book.readSimulating
 import io.legado.app.help.book.simulatedTotalChapterNum
 import io.legado.app.help.config.AppConfig
@@ -16,6 +15,7 @@ import io.legado.app.help.globalExecutor
 import io.legado.app.model.recyclerView.MangeContent
 import io.legado.app.model.recyclerView.ReaderLoading
 import io.legado.app.model.webBook.WebBook
+import io.legado.app.utils.DebugLog
 import io.legado.app.utils.runOnUI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -41,6 +41,7 @@ object ReadMange : CoroutineScope by MainScope() {
     private val loadingChapters = arrayListOf<Int>()
     var simulatedChapterSize = 0
     var mCallback: Callback? = null
+    var mFirstLoading = false
     val downloadScope = CoroutineScope(SupervisorJob() + IO)
 
     fun saveRead(pageChanged: Boolean = false) {
@@ -149,13 +150,6 @@ object ReadMange : CoroutineScope by MainScope() {
         val bookSource = ReadMange.bookSource
         if (bookSource != null) {
             getContent(bookSource, scope, chapter, book)
-        } else {
-            val msg = if (book.isLocal) "无内容" else "没有书源"
-            contentLoadFinish(
-                book,
-                chapter,
-                "加载正文失败\n$msg",
-            )
         }
     }
 
@@ -205,7 +199,6 @@ object ReadMange : CoroutineScope by MainScope() {
      * 内容加载完成
      */
     fun contentLoadFinish(
-        book: Book,
         chapter: BookChapter,
         content: String,
     ) {
@@ -240,7 +233,13 @@ object ReadMange : CoroutineScope by MainScope() {
     /**
      * 加载下一章
      */
-    fun moveToNextChapter(index: Int): Boolean {
+    fun moveToNextChapter(index: Int) {
+        DebugLog.i("tag", "---pos=${index}---${ReadBook.chapterSize - 1}")
+
+        /*if (index > ReadBook.chapterSize - 1) {
+            upToc(index)
+            return
+        }*/
         if (durChapterIndex < simulatedChapterSize - 1) {
             durChapterPos = 0
             durChapterIndex = index
@@ -248,10 +247,8 @@ object ReadMange : CoroutineScope by MainScope() {
             saveRead()
             AppLog.putDebug("moveToNextChapter-curPageChanged()")
             curPageChanged()
-            return true
         } else {
             AppLog.putDebug("跳转下一章失败,没有下一章")
-            return false
         }
     }
 
@@ -259,9 +256,8 @@ object ReadMange : CoroutineScope by MainScope() {
         upReadTime()
     }
 
-    //预下载时候更新目录
     @Synchronized
-    fun upToc() {
+    fun upToc(index: Int) {
         val bookSource = bookSource ?: return
         val book = book ?: return
         if (!book.canUpdate) return
@@ -274,9 +270,11 @@ object ReadMange : CoroutineScope by MainScope() {
                 appDb.bookChapterDao.delByBook(book.bookUrl)
                 appDb.bookChapterDao.insert(*cList.toTypedArray())
                 saveRead()
+                durChapterPos = 0
+                durChapterIndex = index
                 chapterSize = cList.size
                 simulatedChapterSize = book.simulatedTotalChapterNum()
-                loadContent(durChapterIndex + 1)
+                loadContent(durChapterIndex)
             }
         }
     }
@@ -295,17 +293,26 @@ object ReadMange : CoroutineScope by MainScope() {
             start = CoroutineStart.LAZY,
             executeContext = IO
         ).onSuccess { content ->
-            contentLoadFinish(book, chapter, content)
+            runOnUI {
+                mCallback?.loadComplete()
+            }
+            contentLoadFinish(chapter, content)
         }.onError {
             removeLoading(chapter.index)
-        }.onCancel {
-
+            if (!mFirstLoading) {
+                runOnUI {
+                    mCallback?.loadFail()
+                }
+            }
         }.onFinally {
-
+            mFirstLoading = true
         }.start()
     }
 
     interface Callback {
         fun loadContentFinish(list: MutableList<Any>)
+        fun loadComplete()
+        fun loadFail()
+
     }
 }

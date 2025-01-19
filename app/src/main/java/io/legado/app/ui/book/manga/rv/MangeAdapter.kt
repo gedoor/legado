@@ -26,7 +26,6 @@ class MangeAdapter(val onRetry: (nextIndex: Int, isNext: Boolean) -> Unit) :
         private const val CONTENT_VIEW = 1
     }
 
-
     private val mList = mutableListOf<Any>()
 
     private fun getItem(@IntRange(from = 0) position: Int) = mList[position]

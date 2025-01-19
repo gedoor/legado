@@ -3,6 +3,8 @@ package io.legado.app.ui.book.manga
 import android.os.Bundle
 import android.os.Looper
 import androidx.activity.viewModels
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.databinding.ActivityMangeBinding
 import io.legado.app.model.ReadMange
@@ -23,7 +25,8 @@ class ReadMangeActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
         }
         binding.mRecyclerMange.adapter = mAdapter
         ReadMange.register(this)
-        binding.mRecyclerMange.setPreScrollListener { dx, dy, position ->
+        binding.mRecyclerMange.setPreScrollListener { _, dy, position ->
+            ReadMange.durChapterPos = position
             if (dy > 0 && position + 2 > mAdapter!!.getCurrentList().size - 3) {
                 if (mAdapter?.getCurrentList()?.last() is ReaderLoading) {
                     val nextIndex = (mAdapter!!.getCurrentList().last() as ReaderLoading).mNextIndex
@@ -42,9 +45,31 @@ class ReadMangeActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
     }
 
     override fun loadContentFinish(list: MutableList<Any>) {
-        if (!this.isDestroyed){
+        if (!this.isDestroyed) {
             mAdapter?.submitList(list)
+            if (ReadMange.durChapterPos != 0) {
+                binding.mRecyclerMange.scrollToPosition(ReadMange.durChapterPos)
+            }
+
+            if (!ReadMange.mFirstLoading && ReadMange.durChapterPos + 2 > mAdapter!!.getCurrentList().size - 3) {
+                val nextIndex = (mAdapter!!.getCurrentList().last() as ReaderLoading).mNextIndex
+                ReadMange.moveToNextChapter(nextIndex)
+            }
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        ReadMange.saveRead()
+    }
+
+    override fun loadComplete() {
+        binding.flLoading.isGone = true
+    }
+
+    override fun loadFail() {
+        binding.loading.isGone = true
+        binding.retry.isVisible = true
     }
 
     override fun onDestroy() {
