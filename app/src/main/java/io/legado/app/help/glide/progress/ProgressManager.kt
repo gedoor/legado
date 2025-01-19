@@ -10,9 +10,12 @@ import io.legado.app.help.http.DecompressInterceptor
 import io.legado.app.help.http.OkHttpExceptionInterceptor
 import io.legado.app.help.http.OkhttpUncaughtExceptionHandler
 import io.legado.app.help.http.SSLHelper
+import io.legado.app.help.http.cloudflare.AndroidCookieJar
+import io.legado.app.help.http.cloudflare.CloudflareInterceptor
 import okhttp3.ConnectionSpec
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import splitties.init.appCtx
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ThreadFactory
 import java.util.concurrent.ThreadPoolExecutor
@@ -24,6 +27,7 @@ import java.util.concurrent.TimeUnit
  */
 object ProgressManager {
     private val listenersMap = ConcurrentHashMap<String, OnProgressListener>()
+    val cookieJar = AndroidCookieJar()
 
     /**glide 下载进度的主要逻辑 需要在GlideModule注入*/
     fun glideProgressInterceptor(): OkHttpClient {
@@ -44,6 +48,7 @@ object ProgressManager {
             .followRedirects(true)
             .followSslRedirects(true)
             .addInterceptor(OkHttpExceptionInterceptor)
+            .addInterceptor(CloudflareInterceptor(appCtx, cookieJar, AppConfig::userAgent))
             .addInterceptor(Interceptor { chain ->
                 val request = chain.request()
                 val builder = request.newBuilder()
