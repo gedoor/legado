@@ -1,12 +1,12 @@
 [versions]
 
-kotlin = "2.0.20"
-ksp = "2.0.20-1.0.24"
+kotlin = "2.1.0"
+ksp = "2.1.0-1.0.29"
 agp = "8.8.0"
 appcompat = "1.7.0"
 colorpicker = "1.1.0"
 commonsText = "1.13.0"
-constraintlayout = "2.1.4"
+constraintlayout = "2.2.0"
 core = "1.15.0"
 firebaseBom = "33.2.0"
 flexbox = "3.0.0"
@@ -24,7 +24,7 @@ jsonPath = "2.9.0"
 # 若要升级请确保相关代码不会受此变更影响（如AnalyzeByJSoup.kt、JsoupXpath库等）
 jsoup = "1.16.2"
 jsoupxpath = "2.5.3"
-coroutines = "1.8.1"
+coroutines = "1.10.1"
 liveeventbus = "1.8.14"
 markwon = "4.6.2"
 material = "1.12.0"
@@ -41,7 +41,7 @@ rhino = "1.8.0"
 desugar = "2.1.4"
 
 activity = "1.9.3"
-kotlinxSerialization = "1.7.1"
+#kotlinxSerialization = "1.8.0"
 swiperefreshlayout = "1.1.0"
 #noinspection GradleDependency
 recyclerview = "1.2.0"
@@ -151,8 +151,8 @@ kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 
 
-kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
-kotlinx-serialization-protobuf = { module = "org.jetbrains.kotlinx:kotlinx-serialization-protobuf", version.ref = "kotlinxSerialization" }
+#kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
+#kotlinx-serialization-protobuf = { module = "org.jetbrains.kotlinx:kotlinx-serialization-protobuf", version.ref = "kotlinxSerialization" }
 liveeventbus = { module = "com.github.michaellee123:LiveEventBus", version.ref = "liveeventbus" }
 material = { module = "com.google.android.material:material", version.ref = "material" }
 
@@ -173,7 +173,7 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 android-test = { id = "com.android.test", version.ref = "agp" }
 
-androidx-benchmark = { id = "androidx.benchmark", version = "1.3.3" }
+#androidx-benchmark = { id = "androidx.benchmark", version = "1.3.3" }
 
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
@@ -190,6 +190,6 @@ google-services = { id = "com.google.gms.google-services", version = "4.4.2" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 room = { id = "androidx.room", version.ref = "room" }
 
-protobuf = { id = "com.google.protobuf", version = "0.9.4" }
+#protobuf = { id = "com.google.protobuf", version = "0.9.4" }
 
 download = { id = "de.undercouch.download", version = "5.6.0" }

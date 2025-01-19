@@ -3,14 +3,14 @@ package me.ag2s.umdlib.tool;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Random;
-import java.util.zip.InflaterInputStream;
+import java.util.zip.Inflater;
+import java.nio.charset.StandardCharsets;
 
 
 public class UmdUtils {
@@ -30,23 +30,7 @@ public class UmdUtils {
             throw new NullPointerException();
         }
 
-        int len = s.length();
-        byte[] ret = new byte[len * 2];
-        int a, b, c;
-        for (int i = 0; i < len; i++) {
-            c = s.charAt(i);
-            a = c >> 8;
-            b = c & 0xFF;
-            if (a < 0) {
-                a += 0xFF;
-            }
-            if (b < 0) {
-                b += 0xFF;
-            }
-            ret[i * 2] = (byte) b;
-            ret[i * 2 + 1] = (byte) a;
-        }
-        return ret;
+        return s.getBytes(StandardCharsets.UTF_16LE);
     }
 
     /**
@@ -56,21 +40,11 @@ public class UmdUtils {
      * @return 原始字符串
      */
     public static String unicodeBytesToString(byte[] bytes) {
-        char[] s = new char[bytes.length / 2];
-        StringBuilder sb = new StringBuilder();
-        int a, b, c;
-        for (int i = 0; i < s.length; i++) {
-            a = bytes[i * 2 + 1];
-            b = bytes[i * 2];
-            c = (a & 0xff) << 8 | (b & 0xff);
-            if (c < 0) {
-                c += 0xffff;
-            }
-            char[] c1 = Character.toChars(c);
-            sb.append(c1);
-
+        //修复一些文件属性空值的问题
+        if (bytes==null){
+            return "";
         }
-        return sb.toString();
+        return new String(bytes, StandardCharsets.UTF_16LE);
     }
 
     /**
@@ -101,19 +75,19 @@ public class UmdUtils {
      * @throws Exception 解码时失败时
      */
     public static byte[] decompress(byte[] compress) throws Exception {
-        ByteArrayInputStream bais = new ByteArrayInputStream(compress);
-        InflaterInputStream iis = new InflaterInputStream(bais);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        int c = 0;
-        byte[] buf = new byte[BUFFER_SIZE];
-        while (true) {
-            c = iis.read(buf);
+        Inflater inflater = new Inflater();
+        inflater.reset();
+        inflater.setInput(compress);
 
-            if (c == EOF)
-                break;
-            baos.write(buf, 0, c);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(compress.length);
+        try (baos) {
+            byte[] buff = new byte[BUFFER_SIZE];
+            while (!inflater.finished()) {
+                int count = inflater.inflate(buff);
+                baos.write(buff, 0, count);
+            }
         }
-        baos.flush();
+        inflater.end();
         return baos.toByteArray();
     }
 

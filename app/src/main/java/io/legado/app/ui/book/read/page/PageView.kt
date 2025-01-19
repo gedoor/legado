@@ -21,6 +21,7 @@ import io.legado.app.ui.book.read.page.entities.TextPos
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.widget.BatteryView
 import io.legado.app.utils.activity
+import io.legado.app.utils.applyNavigationBarPadding
 import io.legado.app.utils.applyStatusBarPadding
 import io.legado.app.utils.dpToPx
 import io.legado.app.utils.gone
@@ -61,6 +62,7 @@ class PageView(context: Context) : FrameLayout(context) {
         if (!isInEditMode) {
             upStyle()
             binding.vwStatusBar.applyStatusBarPadding()
+            binding.vwNavigationBar.applyNavigationBarPadding()
         }
     }
 
@@ -92,6 +94,7 @@ class PageView(context: Context) : FrameLayout(context) {
             vwTopDivider.backgroundColor = tipDividerColor
             vwBottomDivider.backgroundColor = tipDividerColor
             upStatusBar()
+            upNavigationBar()
             llHeader.setPadding(
                 it.headerPaddingLeft.dpToPx(),
                 it.headerPaddingTop.dpToPx(),
@@ -117,6 +120,10 @@ class PageView(context: Context) : FrameLayout(context) {
     fun upStatusBar() = with(binding.vwStatusBar) {
 //        setPadding(paddingLeft, context.statusBarHeight, paddingRight, paddingBottom)
         isGone = ReadBookConfig.hideStatusBar || readBookActivity?.isInMultiWindow == true
+    }
+
+    fun upNavigationBar() {
+        binding.vwNavigationBar.isGone = ReadBookConfig.hideNavigationBar
     }
 
     /**
