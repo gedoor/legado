@@ -87,8 +87,6 @@ class MangaViewModel(application: Application) : BaseViewModel(application) {
         //开始加载内容
         ReadMange.loadContent()
 
-        //同步进度
-
         //自动换源
         if (!book.isLocal && ReadMange.bookSource == null) {
             autoChangeSource(book.name, book.author)

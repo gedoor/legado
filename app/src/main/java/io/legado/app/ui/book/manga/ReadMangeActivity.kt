@@ -10,6 +10,7 @@ import io.legado.app.databinding.ActivityMangeBinding
 import io.legado.app.model.ReadMange
 import io.legado.app.model.recyclerView.ReaderLoading
 import io.legado.app.ui.book.manga.rv.MangeAdapter
+import io.legado.app.utils.DebugLog
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 class ReadMangeActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>(),
@@ -33,6 +34,12 @@ class ReadMangeActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
                     ReadMange.moveToNextChapter(nextIndex)
                 }
             }
+        }
+        binding.retry.setOnClickListener {
+            binding.loading.isVisible = true
+            binding.retry.isGone = true
+            ReadMange.mFirstLoading = false
+            ReadMange.loadContent()
         }
     }
 
@@ -68,6 +75,7 @@ class ReadMangeActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
     }
 
     override fun loadFail() {
+        DebugLog.e("tag", "执行一次")
         binding.loading.isGone = true
         binding.retry.isVisible = true
     }
