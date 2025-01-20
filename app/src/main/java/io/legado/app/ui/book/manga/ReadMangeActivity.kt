@@ -25,6 +25,7 @@ class ReadMangeActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
 
         }
         binding.mRecyclerMange.adapter = mAdapter
+        binding.mRecyclerMange.itemAnimator = null
         ReadMange.register(this)
         binding.mRecyclerMange.setPreScrollListener { _, dy, position ->
             ReadMange.durChapterPos = position
@@ -53,7 +54,7 @@ class ReadMangeActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
 
     override fun loadContentFinish(list: MutableList<Any>) {
         if (!this.isDestroyed) {
-            mAdapter?.submitList(list)
+            mAdapter?.submitList(list){}
             if (ReadMange.durChapterPos != 0) {
                 binding.mRecyclerMange.scrollToPosition(ReadMange.durChapterPos)
             }
@@ -65,8 +66,8 @@ class ReadMangeActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
         }
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onPause() {
+        super.onPause()
         ReadMange.saveRead()
     }
 

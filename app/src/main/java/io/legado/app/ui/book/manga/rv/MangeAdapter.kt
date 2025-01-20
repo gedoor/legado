@@ -8,6 +8,8 @@ import androidx.annotation.IntRange
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
+import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.databinding.BookComicLoadingRvBinding
 import io.legado.app.databinding.BookComicRvBinding
@@ -26,16 +28,37 @@ class MangeAdapter(val onRetry: (nextIndex: Int, isNext: Boolean) -> Unit) :
         private const val CONTENT_VIEW = 1
     }
 
-    private val mList = mutableListOf<Any>()
+    private val mDiffCallback: DiffUtil.ItemCallback<Any> = object : DiffUtil.ItemCallback<Any>() {
+        override fun areItemsTheSame(oldItem: Any, newItem: Any): Boolean {
+            return if (oldItem is ReaderLoading && newItem is ReaderLoading) {
+                newItem.mMessage == oldItem.mMessage
+            } else if (oldItem is MangeContent && newItem is MangeContent) {
+                oldItem.mImageUrl == newItem.mImageUrl
+            } else false
+        }
 
-    private fun getItem(@IntRange(from = 0) position: Int) = mList[position]
+        override fun areContentsTheSame(oldItem: Any, newItem: Any): Boolean {
+            return if (oldItem is ReaderLoading && newItem is ReaderLoading) {
+                oldItem == newItem
+            } else if (oldItem is MangeContent && newItem is MangeContent) {
+                oldItem == newItem
+            } else false
+        }
+    }
 
-    fun getCurrentList() = mList
+    private val mDiffer = AsyncListDiffer(this, mDiffCallback)
 
-    fun submitList(contents: MutableList<Any>) {
-        val oldPos = mList.size
-        mList.addAll(contents)
-        notifyItemRangeChanged(oldPos, mList.size)
+    private fun getItem(@IntRange(from = 0) position: Int) = mDiffer.currentList[position]
+
+    fun getCurrentList() = mDiffer.currentList
+
+    //全部替换数据
+    fun submitList(contents: MutableList<Any>, runnable: Runnable){
+        val currentList = mDiffer.currentList.toMutableList()
+        currentList.addAll(contents)
+        mDiffer.submitList(currentList) {
+            runnable.run()
+        }
     }
 
     inner class PageViewHolder(binding: BookComicRvBinding) :
@@ -44,7 +67,7 @@ class MangeAdapter(val onRetry: (nextIndex: Int, isNext: Boolean) -> Unit) :
         init {
             initComponent(binding.loading, binding.image, binding.progress, binding.retry)
             binding.retry.setOnClickListener {
-                val item = mList[layoutPosition]
+                val item = mDiffer.currentList[layoutPosition]
                 if (item is MangeContent) {
                     loadImageWithRetry(item.mImageUrl)
                 }
@@ -122,7 +145,7 @@ class MangeAdapter(val onRetry: (nextIndex: Int, isNext: Boolean) -> Unit) :
         }
     }
 
-    override fun getItemCount(): Int = mList.size
+    override fun getItemCount(): Int = mDiffer.currentList.size
 
     override fun getItemViewType(position: Int): Int {
         return when (getItem(position)) {
