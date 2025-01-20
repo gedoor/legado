@@ -15,6 +15,7 @@ import io.legado.app.help.globalExecutor
 import io.legado.app.model.recyclerView.MangeContent
 import io.legado.app.model.recyclerView.ReaderLoading
 import io.legado.app.model.webBook.WebBook
+import io.legado.app.utils.mapIndexed
 import io.legado.app.utils.runOnUI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -22,7 +23,11 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.toList
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Element
 
 @Suppress("MemberVisibilityCanBePrivate")
 object ReadMange : CoroutineScope by MainScope() {
@@ -198,7 +203,7 @@ object ReadMange : CoroutineScope by MainScope() {
     /**
      * 内容加载完成
      */
-    fun contentLoadFinish(
+    suspend fun contentLoadFinish(
         chapter: BookChapter,
         content: String,
     ) {
@@ -206,17 +211,25 @@ object ReadMange : CoroutineScope by MainScope() {
             return
         }
         if (content.isNotEmpty()) {
-            val contentList = mutableListOf<Any>()
-            Jsoup.parse(content).select("img").forEachIndexed { index, element ->
-                contentList.add(
-                    MangeContent(
-                        durChapterIndex,
-                        element.attr("src"),
-                        durChapterIndex.plus(1),
-                        index.plus(1)
-                    )
+            val list = flow<Element> {
+                Jsoup.parse(content).select("img").forEach {
+                    emit(it)
+                }
+            }.mapIndexed { index, element ->
+                MangeContent(
+                    durChapterIndex,
+                    element.attr("src"),
+                    durChapterIndex.plus(1),
+                    index.plus(1)
                 )
-            }
+            }.distinctUntilChangedBy {
+                it.mImageUrl
+            }.mapIndexed { index, mangeContent ->
+                mangeContent.mDurChapterPos = index.plus(1)
+                mangeContent
+            }.toList()
+            val contentList = mutableListOf<Any>()
+            contentList.addAll(list)
             durChapterSize = contentList.size
             contentList.add(
                 ReaderLoading(
