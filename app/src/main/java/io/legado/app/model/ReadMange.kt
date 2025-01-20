@@ -207,12 +207,13 @@ object ReadMange : CoroutineScope by MainScope() {
         }
         if (content.isNotEmpty()) {
             val contentList = mutableListOf<Any>()
-            Jsoup.parse(content).select("img").forEach {
+            Jsoup.parse(content).select("img").forEachIndexed { index, element ->
                 contentList.add(
                     MangeContent(
                         durChapterIndex,
-                        it.attr("src"),
-                        durChapterIndex.plus(1)
+                        element.attr("src"),
+                        durChapterIndex.plus(1),
+                        index.plus(1)
                     )
                 )
             }

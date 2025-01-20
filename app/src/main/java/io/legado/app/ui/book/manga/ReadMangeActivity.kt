@@ -8,6 +8,7 @@ import androidx.core.view.isVisible
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.databinding.ActivityMangeBinding
 import io.legado.app.model.ReadMange
+import io.legado.app.model.recyclerView.MangeContent
 import io.legado.app.model.recyclerView.ReaderLoading
 import io.legado.app.ui.book.manga.rv.MangeAdapter
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -27,7 +28,10 @@ class ReadMangeActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
         binding.mRecyclerMange.itemAnimator = null
         ReadMange.register(this)
         binding.mRecyclerMange.setPreScrollListener { _, dy, position ->
-            ReadMange.durChapterPos = position
+            val content = mAdapter!!.getCurrentList()[position]
+            if (content is MangeContent) {
+                ReadMange.durChapterPos = content.mDurChapterPos
+            }
             upText()
             if (dy > 0 && position + 2 > mAdapter!!.getCurrentList().size - 3) {
                 if (mAdapter?.getCurrentList()?.last() is ReaderLoading) {
