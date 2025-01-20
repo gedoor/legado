@@ -44,7 +44,7 @@ activity = "1.9.3"
 #kotlinxSerialization = "1.8.0"
 swiperefreshlayout = "1.1.0"
 #noinspection GradleDependency
-recyclerview = "1.2.0"
+recyclerview = "1.4.0"
 #noinspection GradleDependency
 viewpager2 = "1.0.0"
 webkit = "1.12.1"
