@@ -25,6 +25,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
@@ -216,18 +217,17 @@ object ReadMange : CoroutineScope by MainScope() {
                 Jsoup.parse(content).select("img").forEach {
                     emit(it)
                 }
-            }.mapIndexed { index, element ->
+            }.map { element ->
+                element.attr("src")
+            }.distinctUntilChangedBy {
+                it
+            }.mapIndexed { index, src ->
                 MangeContent(
                     durChapterIndex,
-                    element.attr("src"),
+                    src,
                     durChapterIndex.plus(1),
                     index.plus(1)
                 )
-            }.distinctUntilChangedBy {
-                it.mImageUrl
-            }.mapIndexed { index, mangeContent ->
-                mangeContent.mDurChapterPos = index.plus(1)
-                mangeContent
             }.toList()
             val contentList = mutableListOf<Any>()
             contentList.addAll(list)
@@ -235,7 +235,7 @@ object ReadMange : CoroutineScope by MainScope() {
             contentList.add(
                 ReaderLoading(
                     durChapterIndex,
-                    "已读完${chapter.title}",
+                    "已读完 ${chapter.title}",
                     mNextChapterIndex = durChapterIndex.plus(1)
                 )
             )
@@ -315,10 +315,10 @@ object ReadMange : CoroutineScope by MainScope() {
             start = CoroutineStart.LAZY,
             executeContext = IO
         ).onSuccess { content ->
+            contentLoadFinish(chapter, content)
             runOnUI {
                 mCallback?.loadComplete()
             }
-            contentLoadFinish(chapter, content)
         }.onError {
             removeLoading(chapter.index)
             runOnUI {
