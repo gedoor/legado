@@ -30,6 +30,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
     var searchFinishLiveData = MutableLiveData<Boolean>()
     var isSearchLiveData = MutableLiveData<Boolean>()
     var searchKey: String = ""
+    var hasMore = true
     private var searchID = 0L
     private val searchModel = SearchModel(viewModelScope, object : SearchModel.CallBack {
 
@@ -45,9 +46,10 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
             searchBookLiveData.postValue(searchBooks)
         }
 
-        override fun onSearchFinish(isEmpty: Boolean) {
+        override fun onSearchFinish(isEmpty: Boolean, hasMore: Boolean) {
             isSearchLiveData.postValue(false)
             searchFinishLiveData.postValue(isEmpty)
+            this@SearchViewModel.hasMore = hasMore
         }
 
         override fun onSearchCancel(exception: Throwable?) {
@@ -99,6 +101,7 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
                 searchID = System.currentTimeMillis()
                 searchBookLiveData.postValue(emptyList())
                 searchKey = key
+                hasMore = true
             }
             if (searchKey.isEmpty()) {
                 return@execute
