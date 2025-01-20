@@ -30,18 +30,15 @@
         app:cornerRadius="10dp"
         tools:visibility="visible" />
 
-    <ProgressBar
+    <io.legado.app.ui.widget.anima.RotateLoading
         android:id="@+id/loading"
-        style="@style/Widget.Material3.CircularProgressIndicator.Small"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:layout_gravity="center"
-        android:indeterminate="true"
+        android:layout_margin="6dp"
         android:visibility="gone"
-        app:indicatorColor="@color/white"
-        app:indicatorSize="36dp"
-        app:trackCornerRadius="99dp"
-        app:trackThickness="3dp"
+        app:loading_color="@color/white"
+        app:loading_width="2dp"
         tools:visibility="visible" />
 
 </FrameLayout>

@@ -10,7 +10,6 @@ import io.legado.app.databinding.ActivityMangeBinding
 import io.legado.app.model.ReadMange
 import io.legado.app.model.recyclerView.ReaderLoading
 import io.legado.app.ui.book.manga.rv.MangeAdapter
-import io.legado.app.utils.DebugLog
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 class ReadMangeActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>(),
@@ -21,7 +20,7 @@ class ReadMangeActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
     override val viewModel by viewModels<MangaViewModel>()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        mAdapter = MangeAdapter { nextIndex, isNext ->
+        mAdapter = MangeAdapter { nextIndex ->
 
         }
         binding.mRecyclerMange.adapter = mAdapter
@@ -29,9 +28,11 @@ class ReadMangeActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
         ReadMange.register(this)
         binding.mRecyclerMange.setPreScrollListener { _, dy, position ->
             ReadMange.durChapterPos = position
+            upText()
             if (dy > 0 && position + 2 > mAdapter!!.getCurrentList().size - 3) {
                 if (mAdapter?.getCurrentList()?.last() is ReaderLoading) {
-                    val nextIndex = (mAdapter!!.getCurrentList().last() as ReaderLoading).mNextIndex
+                    val nextIndex =
+                        (mAdapter!!.getCurrentList().last() as ReaderLoading).mNextChapterIndex
                     ReadMange.moveToNextChapter(nextIndex)
                 }
             }
@@ -54,16 +55,31 @@ class ReadMangeActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
 
     override fun loadContentFinish(list: MutableList<Any>) {
         if (!this.isDestroyed) {
-            mAdapter?.submitList(list){}
+            if (list.size > 1) {
+                binding.infobar.isVisible = true
+                upText()
+            }
+            mAdapter?.submitList(list) {}
             if (ReadMange.durChapterPos != 0) {
                 binding.mRecyclerMange.scrollToPosition(ReadMange.durChapterPos)
             }
 
             if (!ReadMange.mFirstLoading && ReadMange.durChapterPos + 2 > mAdapter!!.getCurrentList().size - 3) {
-                val nextIndex = (mAdapter!!.getCurrentList().last() as ReaderLoading).mNextIndex
+                val nextIndex =
+                    (mAdapter!!.getCurrentList().last() as ReaderLoading).mNextChapterIndex
                 ReadMange.moveToNextChapter(nextIndex)
             }
         }
+    }
+
+    private fun upText() {
+        binding.infobar.update(
+            ReadMange.durChapterIndex,
+            ReadMange.chapterSize,
+            ReadMange.durChapterIndex.minus(1f).div(ReadMange.chapterSize.minus(1f)),
+            ReadMange.durChapterPos,
+            ReadMange.durChapterSize
+        )
     }
 
     override fun onPause() {
@@ -76,13 +92,12 @@ class ReadMangeActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
     }
 
     override fun loadFail() {
-        DebugLog.e("tag", "执行一次")
         binding.loading.isGone = true
         binding.retry.isVisible = true
     }
 
     override fun onDestroy() {
-        ReadMange.unregister(this)
+        ReadMange.unregister()
         super.onDestroy()
     }
 }

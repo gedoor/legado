@@ -20,7 +20,7 @@ import io.legado.app.utils.animateFadeIn
 import io.legado.app.utils.animateFadeOutGone
 
 
-class MangeAdapter(val onRetry: (nextIndex: Int, isNext: Boolean) -> Unit) :
+class MangeAdapter(val onRetry: (nextIndex: Int) -> Unit) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -53,7 +53,7 @@ class MangeAdapter(val onRetry: (nextIndex: Int, isNext: Boolean) -> Unit) :
     fun getCurrentList() = mDiffer.currentList
 
     //全部替换数据
-    fun submitList(contents: MutableList<Any>, runnable: Runnable){
+    fun submitList(contents: MutableList<Any>, runnable: Runnable) {
         val currentList = mDiffer.currentList.toMutableList()
         currentList.addAll(contents)
         mDiffer.submitList(currentList) {
@@ -92,10 +92,7 @@ class MangeAdapter(val onRetry: (nextIndex: Int, isNext: Boolean) -> Unit) :
                     mLoadingAnimator?.cancel()
                     mRetryAnimator = binding.retry.animateFadeOutGone()
                     mLoadingAnimator = binding.loading.animateFadeIn()
-                    val isNext = mLoadNext == true
-                    if (isNext) {
-                        onRetry(mNextIndex, isNext)
-                    }
+                    onRetry(mNextChapterIndex)
                 }
             }
         }

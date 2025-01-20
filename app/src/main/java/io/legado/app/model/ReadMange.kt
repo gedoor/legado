@@ -15,7 +15,6 @@ import io.legado.app.help.globalExecutor
 import io.legado.app.model.recyclerView.MangeContent
 import io.legado.app.model.recyclerView.ReaderLoading
 import io.legado.app.model.webBook.WebBook
-import io.legado.app.utils.DebugLog
 import io.legado.app.utils.runOnUI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -34,6 +33,7 @@ object ReadMange : CoroutineScope by MainScope() {
     val executor = globalExecutor
     var durChapterIndex = 0
     var durChapterPos = 0
+    var durChapterSize = 0
     var chapterSize = 0
     var bookSource: BookSource? = null
     var readStartTime: Long = System.currentTimeMillis()
@@ -189,7 +189,7 @@ object ReadMange : CoroutineScope by MainScope() {
     /**
      * 取消注册回调
      */
-    fun unregister(cb: Callback) {
+    fun unregister() {
         mCallback = null
         downloadScope.coroutineContext.cancelChildren()
         coroutineContext.cancelChildren()
@@ -216,11 +216,12 @@ object ReadMange : CoroutineScope by MainScope() {
                     )
                 )
             }
+            durChapterSize = contentList.size
             contentList.add(
                 ReaderLoading(
                     durChapterIndex,
                     "已读完${chapter.title}",
-                    mNextIndex = durChapterIndex.plus(1)
+                    mNextChapterIndex = durChapterIndex.plus(1)
                 )
             )
             runOnUI {
@@ -234,12 +235,10 @@ object ReadMange : CoroutineScope by MainScope() {
      * 加载下一章
      */
     fun moveToNextChapter(index: Int) {
-        DebugLog.i("tag", "---pos=${index}---${ReadBook.chapterSize - 1}")
-
-        /*if (index > ReadBook.chapterSize - 1) {
+        if (index > chapterSize - 1) {
             upToc(index)
             return
-        }*/
+        }
         if (durChapterIndex < simulatedChapterSize - 1) {
             durChapterPos = 0
             durChapterIndex = index
@@ -275,6 +274,14 @@ object ReadMange : CoroutineScope by MainScope() {
                 chapterSize = cList.size
                 simulatedChapterSize = book.simulatedTotalChapterNum()
                 loadContent(durChapterIndex)
+            } else {
+                durChapterIndex = durChapterIndex.minus(1)
+                saveRead()
+                runOnUI {
+                    val overList = mutableListOf<Any>()
+                    overList.add(ReaderLoading(durChapterIndex, "暂无章节"))
+                    mCallback?.loadContentFinish(overList)
+                }
             }
         }
     }

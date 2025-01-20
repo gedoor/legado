@@ -304,21 +304,6 @@ fun View.setBackgroundKeepPadding(@DrawableRes backgroundResId: Int) {
     setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom)
 }
 
-fun View.measureDimension(desiredSize: Int, measureSpec: Int): Int {
-    var result: Int
-    val specMode = View.MeasureSpec.getMode(measureSpec)
-    val specSize = View.MeasureSpec.getSize(measureSpec)
-    if (specMode == View.MeasureSpec.EXACTLY) {
-        result = specSize
-    } else {
-        result = desiredSize
-        if (specMode == View.MeasureSpec.AT_MOST) {
-            result = result.coerceAtMost(specSize)
-        }
-    }
-    return result
-}
-
 // 淡入
 fun View.animateFadeIn(duration: Long = 200): ViewPropertyAnimator {
     alpha = 0f
@@ -345,17 +330,21 @@ fun View.animateFadeOutGone(duration: Long = 300): ViewPropertyAnimator {
     return animate().alpha(0f).setDuration(duration).withEndAction { isVisible = false }
 }
 
-suspend fun View.suspendAnimateFadeIn(duration: Long = 200) = suspendCancellableCoroutine { continuation ->
-    alpha = 0f
-    visibility = View.VISIBLE
-    animate().alpha(1f).setDuration(duration).also { it.withEndAction { continuation.resume(it) } }
-}
+suspend fun View.suspendAnimateFadeIn(duration: Long = 200) =
+    suspendCancellableCoroutine { continuation ->
+        alpha = 0f
+        visibility = View.VISIBLE
+        animate().alpha(1f).setDuration(duration)
+            .also { it.withEndAction { continuation.resume(it) } }
+    }
 
-suspend fun View.suspendAnimateFadeOut(duration: Long = 300) = suspendCancellableCoroutine { continuation ->
-    alpha = 1f
-    visibility = View.VISIBLE
-    animate().alpha(0f).setDuration(duration).also { it.withEndAction { continuation.resume(it) } }
-}
+suspend fun View.suspendAnimateFadeOut(duration: Long = 300) =
+    suspendCancellableCoroutine { continuation ->
+        alpha = 1f
+        visibility = View.VISIBLE
+        animate().alpha(0f).setDuration(duration)
+            .also { it.withEndAction { continuation.resume(it) } }
+    }
 
 //淡出
 fun View.animateCenterOut(duration: Long = 300): ViewPropertyAnimator {

@@ -11,6 +11,17 @@
         android:layout_height="match_parent"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
+    <io.legado.app.ui.widget.ReaderInfoBarView
+        android:id="@+id/infobar"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:layout_gravity="bottom"
+        android:visibility="gone"
+        android:layout_marginBottom="10dp"
+        tools:visibility="visible" />
+
     <FrameLayout
         android:id="@+id/fl_loading"
         android:layout_width="match_parent"
