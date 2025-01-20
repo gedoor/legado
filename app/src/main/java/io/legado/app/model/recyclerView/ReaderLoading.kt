@@ -4,5 +4,5 @@ data class ReaderLoading(
     val mChapterPagePos: Int = 0,
     val mMessage: String? = null,
     val mNextChapterIndex: Int = 0,
-    val mLoading: Boolean? = null,
+    val mLoading: Boolean = false,
 )

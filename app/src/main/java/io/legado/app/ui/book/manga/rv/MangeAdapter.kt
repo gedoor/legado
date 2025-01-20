@@ -100,22 +100,41 @@ class MangeAdapter(val onRetry: (nextIndex: Int) -> Unit) :
         fun onBind(item: ReaderLoading) {
             val message = item.mMessage
             if (message == null) {
-                if (binding.retry.isGone) {
-                    mRetryAnimator?.cancel()
-                    mRetryAnimator = binding.retry.animateFadeIn()
+                if (item.mLoading){
+                    if (binding.loading.isGone){
+                        mLoadingAnimator?.cancel()
+                        mLoadingAnimator = binding.loading.animateFadeIn()
+                    }
+
+                    if (binding.retry.isVisible) {
+                        mRetryAnimator?.cancel()
+                        mRetryAnimator = binding.retry.animateFadeOutGone()
+                    }
+                }else{
+                    if (binding.retry.isGone) {
+                        mRetryAnimator?.cancel()
+                        mRetryAnimator = binding.retry.animateFadeIn()
+                    }
+
+                    if (binding.loading.isVisible){
+                        mLoadingAnimator?.cancel()
+                        mLoadingAnimator = binding.loading.animateFadeOutGone()
+                    }
                 }
-                binding.text.text = null
+
             } else {
                 if (binding.retry.isVisible) {
                     mRetryAnimator?.cancel()
                     mRetryAnimator = binding.retry.animateFadeOutGone()
                 }
-                binding.text.text = message
+
+                if (binding.loading.isVisible) {
+                    mLoadingAnimator?.cancel()
+                    mLoadingAnimator = binding.loading.animateFadeOutGone()
+                }
             }
-            if (binding.loading.isVisible) {
-                mLoadingAnimator?.cancel()
-                mLoadingAnimator = binding.loading.animateFadeOutGone()
-            }
+
+            binding.text.text = message
         }
     }
 

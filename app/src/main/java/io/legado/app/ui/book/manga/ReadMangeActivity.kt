@@ -9,6 +9,7 @@ import androidx.core.view.isVisible
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.databinding.ActivityMangeBinding
 import io.legado.app.model.ReadMange
+import io.legado.app.model.ReadMange.mFirstLoading
 import io.legado.app.model.recyclerView.MangeContent
 import io.legado.app.model.recyclerView.ReaderLoading
 import io.legado.app.ui.book.manga.rv.MangeAdapter
@@ -47,7 +48,7 @@ class ReadMangeActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
         binding.retry.setOnClickListener {
             binding.loading.isVisible = true
             binding.retry.isGone = true
-            ReadMange.mFirstLoading = false
+            mFirstLoading = false
             ReadMange.loadContent()
         }
     }
@@ -62,20 +63,23 @@ class ReadMangeActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
 
     override fun loadContentFinish(list: MutableList<Any>) {
         if (!this.isDestroyed) {
-            if (list.size > 1) {
-                binding.infobar.isVisible = true
-                upText()
-            }
             mAdapter?.submitList(list) {}
-            if (ReadMange.durChapterPos != 0) {
-                binding.mRecyclerMange.scrollToPosition(ReadMange.durChapterPos)
-            }
+            if (!mFirstLoading) {
+                if (list.size > 1) {
+                    binding.infobar.isVisible = true
+                    upText()
+                }
+                if (ReadMange.durChapterPos != 0) {
+                    binding.mRecyclerMange.scrollToPosition(ReadMange.durChapterPos)
+                }
 
-            if (!ReadMange.mFirstLoading && ReadMange.durChapterPos + 2 > mAdapter!!.getCurrentList().size - 3) {
-                val nextIndex =
-                    (mAdapter!!.getCurrentList().last() as ReaderLoading).mNextChapterIndex
-                ReadMange.moveToNextChapter(nextIndex)
+                if (ReadMange.durChapterPos + 2 > mAdapter!!.getCurrentList().size - 3) {
+                    val nextIndex =
+                        (mAdapter!!.getCurrentList().last() as ReaderLoading).mNextChapterIndex
+                    ReadMange.moveToNextChapter(nextIndex)
+                }
             }
+            mFirstLoading = true
         }
     }
 
@@ -99,8 +103,12 @@ class ReadMangeActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
     }
 
     override fun loadFail() {
-        binding.loading.isGone = true
-        binding.retry.isVisible = true
+        if (!mFirstLoading) {
+            binding.loading.isGone = true
+            binding.retry.isVisible = true
+            mFirstLoading = true
+        }
+
     }
 
     override fun onDestroy() {

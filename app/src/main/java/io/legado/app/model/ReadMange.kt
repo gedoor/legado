@@ -196,6 +196,7 @@ object ReadMange : CoroutineScope by MainScope() {
      */
     fun unregister() {
         mCallback = null
+        mFirstLoading = false
         downloadScope.coroutineContext.cancelChildren()
         coroutineContext.cancelChildren()
     }
@@ -320,13 +321,9 @@ object ReadMange : CoroutineScope by MainScope() {
             contentLoadFinish(chapter, content)
         }.onError {
             removeLoading(chapter.index)
-            if (!mFirstLoading) {
-                runOnUI {
-                    mCallback?.loadFail()
-                }
+            runOnUI {
+                mCallback?.loadFail()
             }
-        }.onFinally {
-            mFirstLoading = true
         }.start()
     }
 
