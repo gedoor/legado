@@ -3,6 +3,7 @@ package io.legado.app.ui.book.manga
 import android.os.Bundle
 import android.os.Looper
 import androidx.activity.viewModels
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import io.legado.app.base.VMBaseActivity
@@ -11,6 +12,7 @@ import io.legado.app.model.ReadMange
 import io.legado.app.model.recyclerView.MangeContent
 import io.legado.app.model.recyclerView.ReaderLoading
 import io.legado.app.ui.book.manga.rv.MangeAdapter
+import io.legado.app.utils.immersionFullScreen
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 class ReadMangeActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>(),
@@ -21,6 +23,7 @@ class ReadMangeActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
     override val viewModel by viewModels<MangaViewModel>()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
+        immersionFullScreen(WindowInsetsControllerCompat(window, binding.root))
         mAdapter = MangeAdapter { nextIndex ->
 
         }
