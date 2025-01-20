@@ -33,7 +33,7 @@ class ReadMangeActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
         binding.mRecyclerMange.setPreScrollListener { _, dy, position ->
             val content = mAdapter!!.getCurrentList()[position]
             if (content is MangeContent) {
-                ReadMange.durChapterPos = content.mDurChapterPos
+                ReadMange.durChapterPos = content.mDurChapterPos.minus(1)
             }
             upText()
             if (dy > 0 && position + 2 > mAdapter!!.getCurrentList().size - 3) {
