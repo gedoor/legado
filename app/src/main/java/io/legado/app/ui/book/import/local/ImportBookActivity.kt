@@ -101,7 +101,7 @@ class ImportBookActivity : BaseImportBookActivity<ImportBookViewModel>(),
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            R.id.menu_del_selection -> viewModel.deleteDoc(adapter.selectedUris) {
+            R.id.menu_del_selection -> viewModel.deleteDoc(adapter.selected) {
                 adapter.removeSelection()
             }
         }
@@ -118,8 +118,11 @@ class ImportBookActivity : BaseImportBookActivity<ImportBookViewModel>(),
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onClickSelectBarMainAction() {
-        viewModel.addToBookshelf(adapter.selectedUris) {
-            adapter.selectedUris.clear()
+        viewModel.addToBookshelf(adapter.selected) {
+            adapter.selected.forEach {
+                it.isOnBookShelf = true
+            }
+            adapter.selected.clear()
             adapter.notifyDataSetChanged()
         }
     }
@@ -129,6 +132,7 @@ class ImportBookActivity : BaseImportBookActivity<ImportBookViewModel>(),
         binding.tvEmptyMsg.setText(R.string.empty_msg_import_book)
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
+        binding.recyclerView.recycledViewPool.setMaxRecycledViews(0, 15)
         binding.selectActionBar.setMainActionText(R.string.add_to_bookshelf)
         binding.selectActionBar.inflateMenu(R.menu.import_book_sel)
         binding.selectActionBar.setOnMenuItemClickListener(this)
@@ -212,7 +216,7 @@ class ImportBookActivity : BaseImportBookActivity<ImportBookViewModel>(),
         viewModel.sort = sort
         putPrefInt(PreferKey.localBookImportSort, sort)
         if (scanDocJob?.isActive != true) {
-            viewModel.dataCallback?.setItems(adapter.getItems())
+            viewModel.dataCallback?.upAdapter()
         }
     }
 
@@ -234,7 +238,7 @@ class ImportBookActivity : BaseImportBookActivity<ImportBookViewModel>(),
             path = path + doc.name + File.separator
         }
         binding.tvPath.text = path
-        adapter.selectedUris.clear()
+        adapter.selected.clear()
         adapter.clearItems()
         viewModel.loadDoc(lastDoc)
     }
@@ -295,7 +299,7 @@ class ImportBookActivity : BaseImportBookActivity<ImportBookViewModel>(),
     }
 
     override fun upCountView() {
-        binding.selectActionBar.upCountView(adapter.selectedUris.size, adapter.checkableCount)
+        binding.selectActionBar.upCountView(adapter.selected.size, adapter.checkableCount)
     }
 
     override fun startRead(fileDoc: FileDoc) {
