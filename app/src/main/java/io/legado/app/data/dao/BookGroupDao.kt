@@ -27,26 +27,26 @@ interface BookGroupDao {
         """
         with const as (SELECT sum(groupId) sumGroupId FROM book_groups where groupId > 0)
         SELECT book_groups.* FROM book_groups, const 
-        where (groupId >= 0 and show > 0 and exists (select `group` from books where books.`group` = book_groups.groupId))
+        where (groupId >= 0 and show > 0 and exists (select 1 from books where `group` & book_groups.groupId > 0))
         or (groupId = -1 and show > 0)
-        or (groupId = -2 and show > 0 and (select count(*) from books where type & ${BookType.local} > 0) > 0)
-        or (groupId = -3 and show > 0 and (select count(*) from books where type & ${BookType.audio} > 0) > 0)
-        or (groupId = -11 and show > 0 and (select count(*) from books where type & ${BookType.updateError} > 0) > 0)
+        or (groupId = -2 and show > 0 and exists (select 1 from books where type & ${BookType.local} > 0))
+        or (groupId = -3 and show > 0 and exists (select 1 from books where type & ${BookType.audio} > 0))
+        or (groupId = -11 and show > 0 and exists (select 1 from books where type & ${BookType.updateError} > 0))
         or (groupId = -4 and show > 0 
-            and (
-                select count(*) from books 
+            and exists (
+                select 1 from books 
                 where type & ${BookType.audio} = 0
                 and type & ${BookType.local} = 0
                 and const.sumGroupId & `group` = 0
-            ) > 0
+            )
         )
         or (groupId = -5 and show > 0 
-            and (
-                select count(*) from books 
+            and exists (
+                select 1 from books 
                 where type & ${BookType.audio} = 0
                 and type & ${BookType.local} > 0
                 and const.sumGroupId & `group` = 0
-            ) > 0
+            )
         )
         ORDER BY `order`"""
     )
