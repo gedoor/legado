@@ -11,6 +11,7 @@ import io.legado.app.constant.BookType
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BaseBook
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.config.AppConfig
@@ -346,4 +347,16 @@ fun tryParesExportFileName(jsStr: String): Boolean {
         RhinoScriptEngine.eval(jsStr, bindings)
         true
     }.getOrDefault(false)
+}
+
+fun List<BookChapter>.removeTitleRepeatChapter():List<BookChapter> {
+    val set = mutableSetOf<String>()
+    val list = mutableListOf<BookChapter>()
+    this.forEach {
+        if (!set.contains(it.title)) {
+            set.add(it.title)
+            list.add(it)
+        }
+    }
+    return list
 }
