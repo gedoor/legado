@@ -8,14 +8,11 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.constant.AppConst
 import io.legado.app.databinding.ItemImportBookBinding
-import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.ConvertUtils
 import io.legado.app.utils.FileDoc
 import io.legado.app.utils.gone
 import io.legado.app.utils.invisible
 import io.legado.app.utils.visible
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 
 
 class ImportBookAdapter(context: Context, val callBack: CallBack) :
@@ -86,10 +83,6 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
                 }
             }
         }
-    }
-
-    private fun isOnBookShelf(fileDoc: FileDoc): Boolean {
-        return LocalBook.isOnBookShelf(fileDoc.name)
     }
 
     private fun upCheckableCount() {
