@@ -6,7 +6,6 @@ import androidx.activity.viewModels
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
-import androidx.lifecycle.lifecycleScope
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.databinding.ActivityMangeBinding
 import io.legado.app.model.ReadMange
@@ -16,10 +15,6 @@ import io.legado.app.model.recyclerView.ReaderLoading
 import io.legado.app.ui.book.manga.rv.MangeAdapter
 import io.legado.app.utils.immersionFullScreen
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class ReadMangeActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>(),
     ReadMange.Callback {
@@ -68,28 +63,24 @@ class ReadMangeActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
 
     override fun loadContentFinish(list: MutableList<Any>) {
         if (!this.isDestroyed) {
-            mAdapter?.submitList(list) {}
-            if (!mFirstLoading) {
-                if (list.size > 1) {
-                    binding.infobar.isVisible = true
-                    upText()
-                }
-                if (ReadMange.durChapterPos != 0) {
-                    lifecycleScope.launch {
-                        withContext(Dispatchers.IO) {
-                            delay(200)
-                        }
+            mAdapter?.submitList(list) {
+                if (!mFirstLoading) {
+                    if (list.size > 1) {
+                        binding.infobar.isVisible = true
+                        upText()
+                    }
+                    if (ReadMange.durChapterPos != 0) {
                         binding.mRecyclerMange.scrollToPosition(ReadMange.durChapterPos)
                     }
-                }
 
-                if (ReadMange.durChapterPos + 2 > mAdapter!!.getCurrentList().size - 3) {
-                    val nextIndex =
-                        (mAdapter!!.getCurrentList().last() as ReaderLoading).mNextChapterIndex
-                    ReadMange.moveToNextChapter(nextIndex)
+                    if (ReadMange.durChapterPos + 2 > mAdapter!!.getCurrentList().size - 3) {
+                        val nextIndex =
+                            (mAdapter!!.getCurrentList().last() as ReaderLoading).mNextChapterIndex
+                        ReadMange.moveToNextChapter(nextIndex)
+                    }
                 }
+                mFirstLoading = true
             }
-            mFirstLoading = true
         }
     }
 
