@@ -3,7 +3,6 @@ package io.legado.app.ui.book.manga.rv
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import android.view.ViewPropertyAnimator
 import androidx.annotation.IntRange
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -16,8 +15,6 @@ import io.legado.app.databinding.BookComicRvBinding
 import io.legado.app.model.recyclerView.MangaVH
 import io.legado.app.model.recyclerView.MangeContent
 import io.legado.app.model.recyclerView.ReaderLoading
-import io.legado.app.utils.animateFadeIn
-import io.legado.app.utils.animateFadeOutGone
 
 
 class MangaAdapter(val onRetry: (nextIndex: Int) -> Unit) :
@@ -82,17 +79,11 @@ class MangaAdapter(val onRetry: (nextIndex: Int) -> Unit) :
 
     inner class PageMoreViewHolder(val binding: BookComicLoadingRvBinding) :
         RecyclerView.ViewHolder(binding.root) {
-
-        private var mRetryAnimator: ViewPropertyAnimator? = null
-        private var mLoadingAnimator: ViewPropertyAnimator? = null
-
         init {
             binding.retry.setOnClickListener {
                 (getItem(absoluteAdapterPosition) as ReaderLoading).apply {
-                    mRetryAnimator?.cancel()
-                    mLoadingAnimator?.cancel()
-                    mRetryAnimator = binding.retry.animateFadeOutGone()
-                    mLoadingAnimator = binding.loading.animateFadeIn()
+                    binding.loading.isVisible = true
+                    binding.retry.isGone = true
                     onRetry(mNextChapterIndex)
                 }
             }
@@ -102,26 +93,11 @@ class MangaAdapter(val onRetry: (nextIndex: Int) -> Unit) :
             val message = item.mMessage
             if (message == null) {
                 if (item.mLoading) {
-                    mLoadingAnimator?.cancel()
-                    binding.loading.isVisible=true
-                    mRetryAnimator?.cancel()
-                    mRetryAnimator = binding.retry.animateFadeOutGone()
+                    binding.loading.isVisible = true
+                    binding.retry.isGone = true
                 } else {
-                    mRetryAnimator?.cancel()
-                    mRetryAnimator = binding.retry.animateFadeIn()
-                    mLoadingAnimator?.cancel()
-                    mLoadingAnimator = binding.loading.animateFadeOutGone()
-                }
-
-            } else {
-                if (binding.retry.isVisible) {
-                    mRetryAnimator?.cancel()
-                    mRetryAnimator = binding.retry.animateFadeOutGone()
-                }
-
-                if (binding.loading.isVisible) {
-                    mLoadingAnimator?.cancel()
-                    mLoadingAnimator = binding.loading.animateFadeOutGone()
+                    binding.loading.isGone = true
+                    binding.retry.isVisible = true
                 }
             }
 

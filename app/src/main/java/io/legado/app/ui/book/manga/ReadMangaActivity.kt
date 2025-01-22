@@ -110,7 +110,6 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
         if (!mFirstLoading) {
             binding.llLoading.isGone = true
             binding.retry.isVisible = true
-            mFirstLoading = true
         }
 
     }
