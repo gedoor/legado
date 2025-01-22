@@ -300,7 +300,7 @@ fun Book.getExportFileName(suffix: String): String {
 fun Book.getExportFileName(
     suffix: String,
     epubIndex: Int,
-    jsStr: String? = AppConfig.episodeExportFileName
+    jsStr: String? = AppConfig.episodeExportFileName,
 ): String {
     // 默认规则
     val default = "$name 作者：${getRealAuthor()} [${epubIndex}].$suffix"
@@ -360,5 +360,6 @@ fun List<BookChapter>.removeConsecutiveDuplicates(): List<BookChapter> {
 }
 
 private fun normalize(str: String): String {
-    return str.replace("\\d+".toRegex(), "").replace("\\s+".toRegex(), "")
+    val regex = "[\\u4e00-\\u9fa5]".toRegex()
+    return regex.findAll(str).map { it.value }.joinToString("")
 }
