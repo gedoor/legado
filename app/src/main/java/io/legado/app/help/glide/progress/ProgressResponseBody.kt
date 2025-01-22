@@ -43,7 +43,7 @@ class ProgressResponseBody internal constructor(private val url: String, private
         }
     }
 
-    internal interface InternalProgressListener {
+    interface InternalProgressListener {
         fun onProgress(url: String, bytesRead: Long, totalBytes: Long)
     }
 

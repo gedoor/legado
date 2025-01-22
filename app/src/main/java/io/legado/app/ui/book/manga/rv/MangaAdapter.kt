@@ -13,8 +13,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.databinding.BookComicLoadingRvBinding
 import io.legado.app.databinding.BookComicRvBinding
+import io.legado.app.model.recyclerView.MangaVH
 import io.legado.app.model.recyclerView.MangeContent
-import io.legado.app.model.recyclerView.MangeVH
 import io.legado.app.model.recyclerView.ReaderLoading
 import io.legado.app.utils.animateFadeIn
 import io.legado.app.utils.animateFadeOutGone
@@ -62,13 +62,14 @@ class MangaAdapter(val onRetry: (nextIndex: Int) -> Unit) :
     }
 
     inner class PageViewHolder(binding: BookComicRvBinding) :
-        MangeVH<BookComicRvBinding>(binding) {
+        MangaVH<BookComicRvBinding>(binding) {
 
         init {
             initComponent(binding.loading, binding.image, binding.progress, binding.retry)
             binding.retry.setOnClickListener {
                 val item = mDiffer.currentList[layoutPosition]
                 if (item is MangeContent) {
+                    binding.image.recycle()
                     loadImageWithRetry(item.mImageUrl)
                 }
             }
@@ -100,8 +101,8 @@ class MangaAdapter(val onRetry: (nextIndex: Int) -> Unit) :
         fun onBind(item: ReaderLoading) {
             val message = item.mMessage
             if (message == null) {
-                if (item.mLoading){
-                    if (binding.loading.isGone){
+                if (item.mLoading) {
+                    if (binding.loading.isGone) {
                         mLoadingAnimator?.cancel()
                         mLoadingAnimator = binding.loading.animateFadeIn()
                     }
@@ -110,13 +111,13 @@ class MangaAdapter(val onRetry: (nextIndex: Int) -> Unit) :
                         mRetryAnimator?.cancel()
                         mRetryAnimator = binding.retry.animateFadeOutGone()
                     }
-                }else{
+                } else {
                     if (binding.retry.isGone) {
                         mRetryAnimator?.cancel()
                         mRetryAnimator = binding.retry.animateFadeIn()
                     }
 
-                    if (binding.loading.isVisible){
+                    if (binding.loading.isVisible) {
                         mLoadingAnimator?.cancel()
                         mLoadingAnimator = binding.loading.animateFadeOutGone()
                     }
@@ -175,6 +176,7 @@ class MangaAdapter(val onRetry: (nextIndex: Int) -> Unit) :
         super.onViewRecycled(vh)
         when (vh) {
             is PageViewHolder -> {
+                vh.binding.image.recycle()
                 vh.itemView.updateLayoutParams<ViewGroup.LayoutParams> { height = MATCH_PARENT }
             }
         }

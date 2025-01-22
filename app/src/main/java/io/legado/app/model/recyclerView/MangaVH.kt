@@ -29,7 +29,7 @@ import io.legado.app.help.glide.progress.ProgressManager
 import io.legado.app.utils.printOnDebug
 import java.io.File
 
-open class MangeVH<VB : ViewBinding>(val binding: VB) : RecyclerView.ViewHolder(binding.root) {
+open class MangaVH<VB : ViewBinding>(val binding: VB) : RecyclerView.ViewHolder(binding.root) {
 
     protected lateinit var mLoading: ProgressBar
     protected lateinit var mImage: SubsamplingScaleImageView
@@ -78,7 +78,7 @@ open class MangeVH<VB : ViewBinding>(val binding: VB) : RecyclerView.ViewHolder(
             }
         })
         try {
-            Glide.with(itemView.context)
+            Glide.with(mImage)
                 .download(imageUrl)
                 .addListener(object : RequestListener<File> {
                     override fun onLoadFailed(

@@ -21,6 +21,8 @@ import io.legado.app.help.JsExtensions
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.exoplayer.ExoPlayerHelper
 import io.legado.app.help.glide.GlideHeaders
+import io.legado.app.help.glide.progress.ProgressManager.LISTENER
+import io.legado.app.help.glide.progress.ProgressResponseBody
 import io.legado.app.help.http.BackstageWebView
 import io.legado.app.help.http.CookieManager
 import io.legado.app.help.http.CookieManager.mergeCookies
@@ -348,42 +350,42 @@ class AnalyzeUrl(
                 fetchRecord = concurrentRecordMap[source.getKey()]
                 if (fetchRecord == null) {
                     fetchRecord = ConcurrentRecord(rateIndex > 0, System.currentTimeMillis(), 1)
-                    concurrentRecordMap[source.getKey()] = fetchRecord
+                    concurrentRecordMap[source.getKey()] = fetchRecord!!
                     return fetchRecord
                 }
             }
         }
         val waitTime: Int = synchronized(fetchRecord!!) {
             try {
-                if (!fetchRecord.isConcurrent) {
+                if (!fetchRecord!!.isConcurrent) {
                     //并发控制非 次数/毫秒
-                    if (fetchRecord.frequency > 0) {
+                    if (fetchRecord!!.frequency > 0) {
                         //已经有访问线程,直接等待
                         return@synchronized concurrentRate.toInt()
                     }
                     //没有线程访问,判断还剩多少时间可以访问
-                    val nextTime = fetchRecord.time + concurrentRate.toInt()
+                    val nextTime = fetchRecord!!.time + concurrentRate.toInt()
                     if (System.currentTimeMillis() >= nextTime) {
-                        fetchRecord.time = System.currentTimeMillis()
-                        fetchRecord.frequency = 1
+                        fetchRecord!!.time = System.currentTimeMillis()
+                        fetchRecord!!.frequency = 1
                         return@synchronized 0
                     }
                     return@synchronized (nextTime - System.currentTimeMillis()).toInt()
                 } else {
                     //并发控制为 次数/毫秒
                     val sj = concurrentRate.substring(rateIndex + 1)
-                    val nextTime = fetchRecord.time + sj.toInt()
+                    val nextTime = fetchRecord!!.time + sj.toInt()
                     if (System.currentTimeMillis() >= nextTime) {
                         //已经过了限制时间,重置开始时间
-                        fetchRecord.time = System.currentTimeMillis()
-                        fetchRecord.frequency = 1
+                        fetchRecord!!.time = System.currentTimeMillis()
+                        fetchRecord!!.frequency = 1
                         return@synchronized 0
                     }
                     val cs = concurrentRate.substring(0, rateIndex)
-                    if (fetchRecord.frequency > cs.toInt()) {
+                    if (fetchRecord!!.frequency > cs.toInt()) {
                         return@synchronized (nextTime - System.currentTimeMillis()).toInt()
                     } else {
-                        fetchRecord.frequency += 1
+                        fetchRecord!!.frequency += 1
                         return@synchronized 0
                     }
                 }
@@ -557,6 +559,19 @@ class AnalyzeUrl(
             return client
         }
         return client.newBuilder()
+            .addNetworkInterceptor { chain ->
+                val request = chain.request()
+                val networkResponse = chain.proceed(request)
+                networkResponse.newBuilder()
+                    .body(
+                        ProgressResponseBody(
+                            request.url.toString(),
+                            LISTENER,
+                            networkResponse.body!!
+                        )
+                    )
+                    .build()
+            }
             .readTimeout(readTimeout, TimeUnit.MILLISECONDS)
             .callTimeout(max(60 * 1000L, readTimeout * 2), TimeUnit.MILLISECONDS)
             .build()

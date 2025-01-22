@@ -109,7 +109,7 @@ object ProgressManager {
         }
     }
 
-    private val LISTENER = object : ProgressResponseBody.InternalProgressListener {
+    val LISTENER = object : ProgressResponseBody.InternalProgressListener {
         override fun onProgress(url: String, bytesRead: Long, totalBytes: Long) {
             getProgressListener(url)?.let {
                 val percentage = (bytesRead * 1f / totalBytes * 100f).toInt()
