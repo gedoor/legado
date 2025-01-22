@@ -137,7 +137,7 @@
 
         <!-- 阅读漫画界面 -->
         <activity
-            android:name=".ui.book.manga.ReadMangeActivity"
+            android:name=".ui.book.manga.ReadMangaActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:exported="true"
             android:launchMode="singleTask">

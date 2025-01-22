@@ -2,7 +2,6 @@ package io.legado.app.ui.book.import
 
 import android.os.Bundle
 import android.view.MotionEvent
-import android.widget.EditText
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModel
 import io.legado.app.R
@@ -16,7 +15,7 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.model.localBook.LocalBook
-import io.legado.app.ui.book.manga.ReadMangeActivity
+import io.legado.app.ui.book.manga.ReadMangaActivity
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.file.HandleFileContract
 import io.legado.app.utils.ArchiveUtils
@@ -24,7 +23,6 @@ import io.legado.app.utils.FileDoc
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.hideSoftInput
 import io.legado.app.utils.shouldHideSoftInput
-import io.legado.app.utils.startActivity
 import io.legado.app.utils.startReadOrMangaActivity
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -101,7 +99,7 @@ abstract class BaseImportBookActivity<VM : ViewModel> : VMBaseActivity<ActivityI
     abstract fun onSearchTextChange(newText: String?)
 
     protected fun startReadBook(book: Book) {
-        startReadOrMangaActivity<ReadBookActivity, ReadMangeActivity>(book) {
+        startReadOrMangaActivity<ReadBookActivity, ReadMangaActivity>(book) {
             putExtra("bookUrl", book.bookUrl)
         }
     }

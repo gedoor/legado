@@ -19,7 +19,7 @@ import io.legado.app.databinding.DialogAddToBookshelfBinding
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.webBook.WebBook
-import io.legado.app.ui.book.manga.ReadMangeActivity
+import io.legado.app.ui.book.manga.ReadMangaActivity
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.utils.GSON
 import io.legado.app.utils.NetworkUtils
@@ -102,7 +102,7 @@ class AddToBookshelfDialog() : BaseDialogFragment(R.layout.dialog_add_to_bookshe
         binding.tvRead.setOnClickListener {
             viewModel.saveBook {
                 it?.let {
-                    startReadOrMangaActivity<ReadBookActivity, ReadMangeActivity>(it) {
+                    startReadOrMangaActivity<ReadBookActivity, ReadMangaActivity>(it) {
                         putExtra("bookUrl", it.bookUrl)
                         putExtra("inBookshelf", false)
                     }

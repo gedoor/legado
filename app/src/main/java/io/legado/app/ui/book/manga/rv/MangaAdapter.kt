@@ -20,7 +20,7 @@ import io.legado.app.utils.animateFadeIn
 import io.legado.app.utils.animateFadeOutGone
 
 
-class MangeAdapter(val onRetry: (nextIndex: Int) -> Unit) :
+class MangaAdapter(val onRetry: (nextIndex: Int) -> Unit) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {

@@ -12,20 +12,20 @@ import io.legado.app.model.ReadMange
 import io.legado.app.model.ReadMange.mFirstLoading
 import io.legado.app.model.recyclerView.MangeContent
 import io.legado.app.model.recyclerView.ReaderLoading
-import io.legado.app.ui.book.manga.rv.MangeAdapter
+import io.legado.app.ui.book.manga.rv.MangaAdapter
 import io.legado.app.utils.immersionFullScreen
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
-class ReadMangeActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>(),
+class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>(),
     ReadMange.Callback {
 
-    private var mAdapter: MangeAdapter? = null
+    private var mAdapter: MangaAdapter? = null
     override val binding by viewBinding(ActivityMangeBinding::inflate)
     override val viewModel by viewModels<MangaViewModel>()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         immersionFullScreen(WindowInsetsControllerCompat(window, binding.root))
-        mAdapter = MangeAdapter { nextIndex ->
+        mAdapter = MangaAdapter { nextIndex ->
 
         }
         binding.mRecyclerMange.adapter = mAdapter

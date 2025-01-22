@@ -28,7 +28,7 @@ import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.book.audio.AudioPlayActivity
 import io.legado.app.ui.book.info.BookInfoActivity
-import io.legado.app.ui.book.manga.ReadMangeActivity
+import io.legado.app.ui.book.manga.ReadMangaActivity
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.main.MainViewModel
 import io.legado.app.utils.cnCompare
@@ -245,7 +245,7 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
                     putExtra("bookUrl", book.bookUrl)
                 }
 
-            else -> startReadOrMangaActivity<ReadBookActivity, ReadMangeActivity>(book) {
+            else -> startReadOrMangaActivity<ReadBookActivity, ReadMangaActivity>(book) {
                 putExtra("bookUrl", book.bookUrl)
             }
         }

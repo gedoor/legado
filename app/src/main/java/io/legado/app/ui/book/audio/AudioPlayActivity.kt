@@ -31,7 +31,7 @@ import io.legado.app.model.BookCover
 import io.legado.app.service.AudioPlayService
 import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.book.changesource.ChangeBookSourceDialog
-import io.legado.app.ui.book.manga.ReadMangeActivity
+import io.legado.app.ui.book.manga.ReadMangaActivity
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.book.toc.TocActivityResult
@@ -220,7 +220,7 @@ class AudioPlayActivity :
                     AudioPlay.book?.delete()
                     appDb.bookDao.insert(book)
                 }
-                startReadOrMangaActivity<ReadBookActivity,ReadMangeActivity>(book) {
+                startReadOrMangaActivity<ReadBookActivity,ReadMangaActivity>(book) {
                     putExtra("bookUrl", book.bookUrl)
                 }
                 finish()

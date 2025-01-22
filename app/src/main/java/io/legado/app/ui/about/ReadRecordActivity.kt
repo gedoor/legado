@@ -19,7 +19,7 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.LocalConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryTextColor
-import io.legado.app.ui.book.manga.ReadMangeActivity
+import io.legado.app.ui.book.manga.ReadMangaActivity
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.utils.applyNavigationBarPadding
@@ -193,7 +193,7 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
                         if (book == null) {
                             SearchActivity.start(this@ReadRecordActivity, item.bookName)
                         } else {
-                            startReadOrMangaActivity<ReadBookActivity, ReadMangeActivity>(book) {
+                            startReadOrMangaActivity<ReadBookActivity, ReadMangaActivity>(book) {
                                 putExtra("bookUrl", book.bookUrl)
                             }
                         }
