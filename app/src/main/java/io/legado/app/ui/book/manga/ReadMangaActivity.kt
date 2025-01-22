@@ -46,7 +46,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
             }
         }
         binding.retry.setOnClickListener {
-            binding.loading.isVisible = true
+            binding.llLoading.isVisible = true
             binding.retry.isGone = true
             mFirstLoading = false
             ReadMange.loadContent()
@@ -74,7 +74,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
                         val nextIndex =
                             (mAdapter!!.getCurrentList().last() as ReaderLoading).mNextChapterIndex
                         ReadMange.moveToNextChapter(nextIndex)
-                    }else{
+                    } else {
                         if (ReadMange.durChapterPos != 0) {
                             binding.mRecyclerMange.scrollToPosition(ReadMange.durChapterPos)
                         }
@@ -97,7 +97,9 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
 
     override fun onPause() {
         super.onPause()
-        ReadMange.saveRead()
+        if (ReadMange.inBookshelf) {
+            ReadMange.saveRead()
+        }
     }
 
     override fun loadComplete() {
@@ -106,12 +108,15 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
 
     override fun loadFail() {
         if (!mFirstLoading) {
-            binding.loading.isGone = true
+            binding.llLoading.isGone = true
             binding.retry.isVisible = true
             mFirstLoading = true
         }
 
     }
+
+    override val chapterList: MutableList<Any>
+        get() = mAdapter!!.getCurrentList()
 
     override fun onDestroy() {
         ReadMange.unregister()

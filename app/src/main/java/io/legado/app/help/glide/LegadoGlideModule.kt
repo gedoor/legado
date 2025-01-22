@@ -13,7 +13,6 @@ import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.module.AppGlideModule
 import com.bumptech.glide.request.RequestOptions
 import io.legado.app.help.glide.progress.ProgressManager.glideProgressInterceptor
-import io.legado.app.utils.externalCache
 import java.io.InputStream
 
 

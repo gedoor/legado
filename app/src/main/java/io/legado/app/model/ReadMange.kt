@@ -144,6 +144,12 @@ object ReadMange : CoroutineScope by MainScope() {
         }
     }
 
+    fun loading(index: Int): Boolean {
+        synchronized(this) {
+            return loadingChapters.contains(index)
+        }
+    }
+
 
     /**
      * 下载正文
@@ -250,6 +256,12 @@ object ReadMange : CoroutineScope by MainScope() {
      * 加载下一章
      */
     fun moveToNextChapter(index: Int) {
+
+        if (loading(index)) {
+            return
+        }
+        mCallback?.loadContentFinish(mutableListOf(ReaderLoading(mLoading = true)))
+
         if (index > chapterSize - 1) {
             upToc(index)
             return
@@ -293,9 +305,14 @@ object ReadMange : CoroutineScope by MainScope() {
                 durChapterIndex = durChapterIndex.minus(1)
                 saveRead()
                 runOnUI {
-                    val overList = mutableListOf<Any>()
-                    overList.add(ReaderLoading(durChapterIndex, "暂无章节"))
-                    mCallback?.loadContentFinish(overList)
+                    mCallback?.loadContentFinish(
+                        mutableListOf(
+                            ReaderLoading(
+                                durChapterIndex,
+                                "暂无章节"
+                            )
+                        )
+                    )
                 }
             }
         }
@@ -331,6 +348,6 @@ object ReadMange : CoroutineScope by MainScope() {
         fun loadContentFinish(list: MutableList<Any>)
         fun loadComplete()
         fun loadFail()
-
+        val chapterList: MutableList<Any>
     }
 }

@@ -102,25 +102,15 @@ class MangaAdapter(val onRetry: (nextIndex: Int) -> Unit) :
             val message = item.mMessage
             if (message == null) {
                 if (item.mLoading) {
-                    if (binding.loading.isGone) {
-                        mLoadingAnimator?.cancel()
-                        mLoadingAnimator = binding.loading.animateFadeIn()
-                    }
-
-                    if (binding.retry.isVisible) {
-                        mRetryAnimator?.cancel()
-                        mRetryAnimator = binding.retry.animateFadeOutGone()
-                    }
+                    mLoadingAnimator?.cancel()
+                    binding.loading.isVisible=true
+                    mRetryAnimator?.cancel()
+                    mRetryAnimator = binding.retry.animateFadeOutGone()
                 } else {
-                    if (binding.retry.isGone) {
-                        mRetryAnimator?.cancel()
-                        mRetryAnimator = binding.retry.animateFadeIn()
-                    }
-
-                    if (binding.loading.isVisible) {
-                        mLoadingAnimator?.cancel()
-                        mLoadingAnimator = binding.loading.animateFadeOutGone()
-                    }
+                    mRetryAnimator?.cancel()
+                    mRetryAnimator = binding.retry.animateFadeIn()
+                    mLoadingAnimator?.cancel()
+                    mLoadingAnimator = binding.loading.animateFadeOutGone()
                 }
 
             } else {
