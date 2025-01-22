@@ -12,18 +12,23 @@ import io.legado.app.utils.FileDoc
 import io.legado.app.utils.delete
 import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.list
+import io.legado.app.utils.mapParallel
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.Channel.Factory.UNLIMITED
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.isActive
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.withContext
 import java.util.Collections
-import kotlin.coroutines.coroutineContext
 
 class ImportBookViewModel(application: Application) : BaseViewModel(application) {
     var rootDoc: FileDoc? = null
@@ -98,6 +103,8 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
         }.onError {
             context.toastOnUi("添加书架失败，请尝试重新选择文件夹")
             AppLog.put("添加书架失败\n${it.localizedMessage}", it)
+        }.onSuccess {
+            context.toastOnUi("添加书架成功")
         }.onFinally {
             finally.invoke()
         }
@@ -128,47 +135,32 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
         }
     }
 
-    suspend fun scanDoc(
-        fileDoc: FileDoc,
-        isRoot: Boolean,
-        finally: (suspend () -> Unit)? = null
-    ) {
-        if (isRoot) {
-            dataCallback?.clear()
-        }
-        if (!coroutineContext.isActive) {
-            finally?.invoke()
-            return
-        }
-        kotlin.runCatching {
-            val list = ArrayList<FileDoc>()
-            fileDoc.list()!!.forEach { docItem ->
-                if (!coroutineContext.isActive) {
-                    finally?.invoke()
-                    return
+    suspend fun scanDoc(fileDoc: FileDoc) {
+        dataCallback?.clear()
+        val channel = Channel<FileDoc>(UNLIMITED)
+        var n = 1
+        channel.trySend(fileDoc)
+        val list = arrayListOf<FileDoc>()
+        channel.consumeAsFlow()
+            .mapParallel(64) { fileDoc ->
+                fileDoc.list()!!
+            }.onEach { fileDocs ->
+                n--
+                list.clear()
+                fileDocs.forEach {
+                    if (it.isDir) {
+                        n++
+                        channel.trySend(it)
+                    } else {
+                        list.add(it)
+                    }
                 }
-                if (docItem.isDir) {
-                    scanDoc(docItem, false)
-                } else if (docItem.name.matches(bookFileRegex) || docItem.name.matches(
-                        archiveFileRegex
-                    )
-                ) {
-                    list.add(docItem)
-                }
-            }
-            if (!coroutineContext.isActive) {
-                finally?.invoke()
-                return
-            }
-            if (list.isNotEmpty()) {
                 dataCallback?.addItems(list)
-            }
-        }.onFailure {
-            context.toastOnUi("扫描文件夹出错\n${it.localizedMessage}")
-        }
-        if (isRoot) {
-            finally?.invoke()
-        }
+            }.takeWhile {
+                n > 0
+            }.catch {
+                context.toastOnUi("扫描文件夹出错\n${it.localizedMessage}")
+            }.collect()
     }
 
     fun updateCallBackFlow(filterKey: String?) {

@@ -5,7 +5,7 @@ import io.legado.app.utils.FileDoc
 
 data class ImportBook(
     val file: FileDoc,
-    var isOnBookShelf: Boolean = LocalBook.isOnBookShelf(file.name)
+    var isOnBookShelf: Boolean = !file.isDir && LocalBook.isOnBookShelf(file.name)
 ) {
     val name get() = file.name
     val isDir get() = file.isDir

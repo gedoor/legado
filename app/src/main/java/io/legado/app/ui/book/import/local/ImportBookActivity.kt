@@ -253,10 +253,9 @@ class ImportBookActivity : BaseImportBookActivity<ImportBookViewModel>(),
             binding.refreshProgressBar.isAutoLoading = true
             scanDocJob?.cancel()
             scanDocJob = lifecycleScope.launch(IO) {
-                viewModel.scanDoc(lastDoc, true) {
-                    withContext(Main) {
-                        binding.refreshProgressBar.isAutoLoading = false
-                    }
+                viewModel.scanDoc(lastDoc)
+                withContext(Main) {
+                    binding.refreshProgressBar.isAutoLoading = false
                 }
             }
         }
