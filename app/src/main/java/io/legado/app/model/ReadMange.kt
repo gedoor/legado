@@ -260,7 +260,6 @@ object ReadMange : CoroutineScope by MainScope() {
         if (loading(index)) {
             return
         }
-        mCallback?.loadContentFinish(mutableListOf(ReaderLoading(mLoading = true)))
 
         if (index > chapterSize - 1) {
             upToc(index)
