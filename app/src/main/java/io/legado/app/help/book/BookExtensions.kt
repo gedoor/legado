@@ -16,7 +16,6 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.config.AppConfig
 import io.legado.app.model.localBook.LocalBook
-import io.legado.app.ui.book.manga.helper.ChapterRecognition
 import io.legado.app.utils.FileDoc
 import io.legado.app.utils.exists
 import io.legado.app.utils.find
@@ -350,14 +349,16 @@ fun tryParesExportFileName(jsStr: String): Boolean {
     }.getOrDefault(false)
 }
 
-fun List<BookChapter>.removeTitleRepeatChapter(): List<BookChapter> {
-    /*for (sChapter in this) {
-        var parseIndex = ChapterRecognition.parseChapterNumber(sChapter.title).toInt()
-        if (parseIndex == 0) {
-            parseIndex = sChapter.index
+fun List<BookChapter>.removeConsecutiveDuplicates(): List<BookChapter> {
+    return this.mapIndexed { _, bookChapter ->
+        bookChapter.apply {
+            parseTitle = normalize(title)
         }
-        sChapter.parseIndex = parseIndex
+    }.distinctBy {
+        it.parseTitle
     }
-    return this.distinctBy { it.parseIndex }*/
-    return this
+}
+
+private fun normalize(str: String): String {
+    return str.replace("\\d+".toRegex(), "").replace("\\s+".toRegex(), "")
 }
