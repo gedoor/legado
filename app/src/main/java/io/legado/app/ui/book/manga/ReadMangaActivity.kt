@@ -69,14 +69,15 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
                         binding.infobar.isVisible = true
                         upText()
                     }
-                    if (ReadMange.durChapterPos != 0) {
-                        binding.mRecyclerMange.scrollToPosition(ReadMange.durChapterPos)
-                    }
 
                     if (ReadMange.durChapterPos + 2 > mAdapter!!.getCurrentList().size - 3) {
                         val nextIndex =
                             (mAdapter!!.getCurrentList().last() as ReaderLoading).mNextChapterIndex
                         ReadMange.moveToNextChapter(nextIndex)
+                    }else{
+                        if (ReadMange.durChapterPos != 0) {
+                            binding.mRecyclerMange.scrollToPosition(ReadMange.durChapterPos)
+                        }
                     }
                 }
                 mFirstLoading = true
