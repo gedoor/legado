@@ -1181,5 +1181,5 @@
     <string name="show_same_source">显示重复书源</string>
     <string name="theme_config">主题配置</string>
     <string name="show_mange_ui">漫画浏览</string>
-    <string name="book_reader_info_bar">章节. %1$d/%2$d  页数. %3$d/%4$d -> %5$s%%</string>
+    <string name="book_reader_info_bar">页数. %1$d/%2$d  章节. %3$d/%4$d -> %5$s%%</string>
 </resources>
