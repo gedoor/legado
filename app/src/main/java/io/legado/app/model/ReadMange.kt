@@ -208,6 +208,20 @@ object ReadMange : CoroutineScope by MainScope() {
     fun unregister() {
         mCallback = null
         mFirstLoading = false
+        gameOver = false
+        inBookshelf = false
+        tocChanged = false
+        chapterChanged = false
+        book = null
+        durChapterCount = 0
+        durChapterPos = 0
+        durChapterPagePos = 0
+        durChapterPageCount = 0
+        bookSource = null
+        chapterTitle = ""
+        loadingChapters.clear()
+        simulatedChapterSize = 0
+        mTopChapter = null
         downloadScope.coroutineContext.cancelChildren()
         coroutineContext.cancelChildren()
     }
@@ -337,7 +351,7 @@ object ReadMange : CoroutineScope by MainScope() {
                 mCallback?.loadComplete()
             }
             if (durChapterPagePos >= durChapterPageCount.minus(1)) {
-                gameOver=true
+                gameOver = true
                 runOnUI {
                     mCallback?.noData()
                 }
