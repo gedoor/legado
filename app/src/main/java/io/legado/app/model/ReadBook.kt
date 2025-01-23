@@ -167,6 +167,9 @@ object ReadBook : CoroutineScope by MainScope() {
     fun upWebBook(book: Book) {
         if (book.isLocal) {
             bookSource = null
+            if (book.getImageStyle().isNullOrBlank() && (book.isImage || book.isPdf)) {
+                book.setImageStyle(Book.imgStyleFull)
+            }
         } else {
             appDb.bookSourceDao.getBookSource(book.origin)?.let {
                 bookSource = it

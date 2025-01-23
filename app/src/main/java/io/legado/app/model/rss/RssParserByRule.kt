@@ -10,7 +10,7 @@ import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.RuleData
 import io.legado.app.utils.NetworkUtils
 import splitties.init.appCtx
-import java.util.*
+import java.util.Locale
 
 @Keep
 object RssParserByRule {
@@ -19,6 +19,7 @@ object RssParserByRule {
     fun parseXML(
         sortName: String,
         sortUrl: String,
+        redirectUrl: String,
         body: String?,
         rssSource: RssSource,
         ruleData: RuleData
@@ -40,7 +41,7 @@ object RssParserByRule {
             val articleList = mutableListOf<RssArticle>()
             val analyzeRule = AnalyzeRule(ruleData, rssSource)
             analyzeRule.setContent(body).setBaseUrl(sortUrl)
-            analyzeRule.setRedirectUrl(sortUrl)
+            analyzeRule.setRedirectUrl(redirectUrl)
             var reverse = false
             if (ruleArticles.startsWith("-")) {
                 reverse = true

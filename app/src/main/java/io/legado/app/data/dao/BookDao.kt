@@ -132,8 +132,11 @@ interface BookDao {
     @Query("select 1 from books where bookUrl = :bookUrl")
     fun has(bookUrl: String): Boolean?
 
-    @Query("select 1 from books where originName = :fileName or origin like '%' || :fileName")
-    fun hasFile(fileName: String): Boolean?
+    @Query(
+        """select exists(select 1 from books where type & ${BookType.local} > 0 
+        and (originName = :fileName or (origin != '${BookType.localTag}' and origin like '%' || :fileName)))"""
+    )
+    fun hasFile(fileName: String): Boolean
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg book: Book)

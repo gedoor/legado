@@ -45,7 +45,7 @@ object Rss {
         )
         val res = analyzeUrl.getStrResponseAwait()
         checkRedirect(rssSource, res)
-        return RssParserByRule.parseXML(sortName, sortUrl, res.body, rssSource, ruleData)
+        return RssParserByRule.parseXML(sortName, sortUrl, res.url, res.body, rssSource, ruleData)
     }
 
     fun getContent(
@@ -79,6 +79,7 @@ object Rss {
         val analyzeRule = AnalyzeRule(rssArticle, rssSource)
         analyzeRule.setContent(res.body)
             .setBaseUrl(NetworkUtils.getAbsoluteURL(rssArticle.origin, rssArticle.link))
+            .setRedirectUrl(res.url)
         return analyzeRule.getString(ruleContent)
     }
 

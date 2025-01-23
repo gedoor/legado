@@ -339,13 +339,22 @@ class AnalyzeByJSoup(doc: Any) {
                 if (indexes[ix] is Triple<*, *, *>) { //区间
                     val (startX, endX, stepX) = indexes[ix] as Triple<Int?, Int?, Int> //还原储存时的类型
 
-                    val start = if (startX == null) 0 //左端省略表示0
-                    else if (startX >= 0) if (startX < len) startX else len - 1 //右端越界，设置为最大索引
-                    else if (-startX <= len) len + startX /* 将负索引转正 */ else 0 //左端越界，设置为最小索引
+                    var start = startX ?: 0 // 左端省略表示0
+                    if (start < 0) start += len // 将负索引转正
 
-                    val end = if (endX == null) len - 1 //右端省略表示 len - 1
-                    else if (endX >= 0) if (endX < len) endX else len - 1 //右端越界，设置为最大索引
-                    else if (-endX <= len) len + endX /* 将负索引转正 */ else 0 //左端越界，设置为最小索引
+                    var end = endX ?: (len - 1) // 右端省略表示 len - 1
+                    if (end < 0) end += len // 将负索引转正
+
+                    if ((start < 0 && end < 0) || (start >= len && end >= len)) {
+                        // start 和 end 同侧左右端越界，无效索引
+                        continue
+                    }
+
+                    if (start >= len) start = len - 1 // 右端越界，设置为最大索引
+                    else if (start < 0) start = 0 // 左端越界，设置为最小索引
+
+                    if (end >= len) end = len - 1 // 右端越界，设置为最大索引
+                    else if (end < 0) end = 0 // 左端越界，设置为最小索引
 
                     if (start == end || stepX >= len) { //两端相同，区间里只有一个数。或间隔过大，区间实际上仅有首位
 
