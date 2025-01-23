@@ -309,15 +309,7 @@ object ReadMange : CoroutineScope by MainScope() {
                 durChapterPagePos = durChapterPagePos.minus(1)
                 saveRead()
                 runOnUI {
-                    mCallback?.loadContentFinish(
-                        mutableListOf(
-                            ReaderLoading(
-                                durChapterPagePos,
-                                "暂无章节",
-                                mNextChapterIndex = -1
-                            )
-                        )
-                    )
+                    mCallback?.noData()
                 }
             }
         }
@@ -353,6 +345,7 @@ object ReadMange : CoroutineScope by MainScope() {
         fun loadContentFinish(list: MutableList<Any>)
         fun loadComplete()
         fun loadFail()
+        fun noData()
         val chapterList: MutableList<Any>
     }
 }

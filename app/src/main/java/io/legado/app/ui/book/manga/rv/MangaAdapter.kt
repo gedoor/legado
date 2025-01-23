@@ -1,15 +1,17 @@
 package io.legado.app.ui.book.manga.rv
 
+import android.util.SparseArray
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import androidx.annotation.IntRange
-import androidx.core.view.isGone
-import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewbinding.ViewBinding
+import io.legado.app.base.adapter.ItemViewHolder
+import io.legado.app.base.adapter.RecyclerAdapter.Companion.TYPE_FOOTER_VIEW
 import io.legado.app.databinding.BookComicLoadingRvBinding
 import io.legado.app.databinding.BookComicRvBinding
 import io.legado.app.model.recyclerView.MangaVH
@@ -17,7 +19,7 @@ import io.legado.app.model.recyclerView.MangeContent
 import io.legado.app.model.recyclerView.ReaderLoading
 
 
-class MangaAdapter(val onRetry: (nextIndex: Int) -> Unit) :
+class MangaAdapter :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -79,36 +81,22 @@ class MangaAdapter(val onRetry: (nextIndex: Int) -> Unit) :
 
     inner class PageMoreViewHolder(val binding: BookComicLoadingRvBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        init {
-            binding.retry.setOnClickListener {
-                (getItem(absoluteAdapterPosition) as ReaderLoading).apply {
-                    binding.loading.isVisible = true
-                    binding.retry.isGone = true
-                    onRetry(mNextChapterIndex)
-                }
-            }
-        }
-
         fun onBind(item: ReaderLoading) {
             val message = item.mMessage
-            if (message == null) {
-                if (item.mLoading) {
-                    binding.loading.isVisible = true
-                    binding.retry.isGone = true
-                } else {
-                    binding.loading.isGone = true
-                    binding.retry.isVisible = true
-                }
-            }
-
             binding.text.text = message
         }
     }
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return when (viewType) {
-            LOADING_VIEW -> PageMoreViewHolder(
+
+        return when {
+
+            viewType >= TYPE_FOOTER_VIEW -> {
+                ItemViewHolder(footerItems.get(viewType).invoke(parent))
+            }
+
+            viewType == LOADING_VIEW -> PageMoreViewHolder(
                 BookComicLoadingRvBinding.inflate(
                     LayoutInflater.from(
                         parent.context
@@ -116,7 +104,7 @@ class MangaAdapter(val onRetry: (nextIndex: Int) -> Unit) :
                 )
             )
 
-            CONTENT_VIEW -> PageViewHolder(
+            viewType == CONTENT_VIEW -> PageViewHolder(
                 BookComicRvBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
@@ -124,19 +112,25 @@ class MangaAdapter(val onRetry: (nextIndex: Int) -> Unit) :
                 )
             )
 
+
             else -> error("Unknown view type!")
         }
     }
 
-    override fun getItemCount(): Int = mDiffer.currentList.size
+    override fun getItemCount(): Int = getActualItemCount() + getFooterCount()
 
     override fun getItemViewType(position: Int): Int {
-        return when (getItem(position)) {
-            is MangeContent -> CONTENT_VIEW
-            is ReaderLoading -> LOADING_VIEW
+        return when {
+            isFooter(position) -> TYPE_FOOTER_VIEW + position - getActualItemCount()
+            getItem(position) is MangeContent -> CONTENT_VIEW
+            getItem(position) is ReaderLoading -> LOADING_VIEW
             else -> error("Unknown view type!")
         }
     }
+
+    fun getFooterCount() = footerItems.size()
+
+    private fun isFooter(position: Int) = position >= getActualItemCount()
 
     override fun onViewRecycled(vh: RecyclerView.ViewHolder) {
         super.onViewRecycled(vh)
@@ -152,6 +146,34 @@ class MangaAdapter(val onRetry: (nextIndex: Int) -> Unit) :
         when (vh) {
             is PageViewHolder -> vh.onBind(getItem(position) as MangeContent)
             is PageMoreViewHolder -> vh.onBind(getItem(position) as ReaderLoading)
+        }
+    }
+
+
+    private val footerItems: SparseArray<(parent: ViewGroup) -> ViewBinding> by lazy { SparseArray() }
+
+    @Synchronized
+    fun addFooterView(footer: ((parent: ViewGroup) -> ViewBinding)) {
+        kotlin.runCatching {
+            val index = getActualItemCount() + footerItems.size()
+            footerItems.put(TYPE_FOOTER_VIEW + footerItems.size(), footer)
+            notifyItemInserted(index)
+        }
+    }
+
+    /**
+     * 除去header和footer
+     */
+    fun getActualItemCount() = getCurrentList().size
+
+    @Synchronized
+    fun removeFooterView(footer: ((parent: ViewGroup) -> ViewBinding)) {
+        kotlin.runCatching {
+            val index = footerItems.indexOfValue(footer)
+            if (index >= 0) {
+                footerItems.remove(index)
+                notifyItemRemoved(getActualItemCount() + index - 2)
+            }
         }
     }
 }

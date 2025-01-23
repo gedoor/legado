@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="96dp"
@@ -14,32 +13,4 @@
         android:textColor="@android:color/white"
         android:textStyle="bold"
         tools:text="上一章节：第一话" />
-
-
-    <Button
-        android:id="@+id/retry"
-        style="@style/Widget.Material3.Button.TonalButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="重新加载"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:visibility="gone"
-        app:backgroundTint="@color/white"
-        app:cornerRadius="10dp"
-        tools:visibility="visible" />
-
-    <io.legado.app.ui.widget.anima.RotateLoading
-        android:id="@+id/loading"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:layout_gravity="center"
-        android:layout_margin="6dp"
-        android:visibility="gone"
-        app:loading_color="@color/white"
-        app:loading_width="2dp"
-        tools:visibility="visible" />
-
 </FrameLayout>
