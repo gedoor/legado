@@ -6,6 +6,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.ReadRecord
+import io.legado.app.help.CacheManager
 import io.legado.app.help.book.ContentProcessor
 import io.legado.app.help.book.readSimulating
 import io.legado.app.help.book.simulatedTotalChapterNum
@@ -49,6 +50,7 @@ object ReadMange : CoroutineScope by MainScope() {
     var simulatedChapterSize = 0
     var mCallback: Callback? = null
     var mFirstLoading = false
+    var mTopChapter: BookChapter? = null
     val downloadScope = CoroutineScope(SupervisorJob() + IO)
 
     fun saveRead(pageChanged: Boolean = false) {
@@ -155,7 +157,7 @@ object ReadMange : CoroutineScope by MainScope() {
     /**
      * 下载正文
      */
-    private fun download(
+    private suspend fun download(
         scope: CoroutineScope,
         chapter: BookChapter,
     ) {
@@ -216,6 +218,10 @@ object ReadMange : CoroutineScope by MainScope() {
         chapter: BookChapter,
         content: String,
     ) {
+        if (mTopChapter != null && mTopChapter?.title != chapter.title) {
+            CacheManager.delete(mTopChapter?.url ?: "")
+        }
+        mTopChapter = chapter
         chapterTitle = chapter.title
         if (chapter.index !in durChapterPagePos - 1..durChapterPagePos + 1) {
             return
@@ -317,13 +323,18 @@ object ReadMange : CoroutineScope by MainScope() {
         }
     }
 
-    private fun getContent(
+    private suspend fun getContent(
         bookSource: BookSource,
         scope: CoroutineScope,
         chapter: BookChapter,
         book: Book,
     ) {
-        WebBook.getContent(
+        CacheManager.get(chapter.url)?.apply {
+            contentLoadFinish(chapter, this)
+            runOnUI {
+                mCallback?.loadComplete()
+            }
+        } ?: WebBook.getContent(
             scope,
             bookSource,
             book,
@@ -331,6 +342,7 @@ object ReadMange : CoroutineScope by MainScope() {
             start = CoroutineStart.LAZY,
             executeContext = IO
         ).onSuccess { content ->
+            CacheManager.put(chapter.url, content)
             contentLoadFinish(chapter, content)
             runOnUI {
                 mCallback?.loadComplete()
