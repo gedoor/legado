@@ -79,7 +79,10 @@ class MangaViewModel(application: Application) : BaseViewModel(application) {
             return
         }
 
-        if ((ReadMange.durChapterPageCount  == 0 || book.isLocalModified()) && !loadChapterListAwait(book)) {
+        if ((ReadMange.durChapterPageCount == 0 || book.isLocalModified()) && !loadChapterListAwait(
+                book
+            )
+        ) {
             return
         }
         ensureChapterExist()
@@ -97,23 +100,22 @@ class MangaViewModel(application: Application) : BaseViewModel(application) {
     private suspend fun loadChapterListAwait(book: Book): Boolean {
         ReadMange.bookSource?.let {
             val oldBook = book.copy()
-            WebBook.getChapterListAwait(it, book, true)
-                .onSuccess { cList ->
-                    if (oldBook.bookUrl == book.bookUrl) {
-                        appDb.bookDao.update(book)
-                    } else {
-                        appDb.bookDao.insert(book)
-                        BookHelp.updateCacheFolder(oldBook, book)
-                    }
-                    appDb.bookChapterDao.delByBook(oldBook.bookUrl)
-                    appDb.bookChapterDao.insert(*cList.toTypedArray())
-                    ReadMange.durChapterPageCount  = cList.size
-                    ReadMange.simulatedChapterSize = book.simulatedTotalChapterNum()
-                    return true
-                }.onFailure {
-                    //加载章节出错
-                    return false
+            WebBook.getChapterListAwait(it, book, true).onSuccess { cList ->
+                if (oldBook.bookUrl == book.bookUrl) {
+                    appDb.bookDao.update(book)
+                } else {
+                    appDb.bookDao.insert(book)
+                    BookHelp.updateCacheFolder(oldBook, book)
                 }
+                appDb.bookChapterDao.delByBook(oldBook.bookUrl)
+                appDb.bookChapterDao.insert(*cList.toTypedArray())
+                ReadMange.durChapterPageCount = cList.size
+                ReadMange.simulatedChapterSize = book.simulatedTotalChapterNum()
+                return true
+            }.onFailure {
+                //加载章节出错
+                return false
+            }
         }
 
         return true
@@ -202,8 +204,9 @@ class MangaViewModel(application: Application) : BaseViewModel(application) {
             appDb.bookDao.insert(book)
             appDb.bookChapterDao.insert(*toc.toTypedArray())
             ReadMange.resetData(book)
-            // //换源完成加载内容
-
+            toc.find { it.title.contains(ReadMange.chapterTitle) }?.run {
+                ReadMange.loadContent(index)
+            } ?: ReadMange.loadContent()
         }.onError {
             AppLog.put("换源失败\n$it", it, true)
         }.onFinally {
@@ -217,6 +220,15 @@ class MangaViewModel(application: Application) : BaseViewModel(application) {
             return true
         } catch (e: Throwable) {
             return false
+        }
+    }
+
+    fun openChapter(index: Int, durChapterPos: Int = 0) {
+        if (index < ReadMange.durChapterPageCount) {
+            ReadMange.durChapterPagePos = index
+            ReadMange.durChapterPos = durChapterPos
+            ReadMange.saveRead()
+            ReadMange.loadContent(index)
         }
     }
 

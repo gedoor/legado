@@ -42,6 +42,7 @@ object ReadMange : CoroutineScope by MainScope() {
     var durChapterCount = 0
     var durChapterPos = 0
     var bookSource: BookSource? = null
+    var chapterTitle: String = ""
     var readStartTime: Long = System.currentTimeMillis()
     private val readRecord = ReadRecord()
     private val loadingChapters = arrayListOf<Int>()
@@ -215,6 +216,7 @@ object ReadMange : CoroutineScope by MainScope() {
         chapter: BookChapter,
         content: String,
     ) {
+        chapterTitle = chapter.title
         if (chapter.index !in durChapterPagePos - 1..durChapterPagePos + 1) {
             return
         }

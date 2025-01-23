@@ -8,22 +8,29 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookChapter
+import io.legado.app.data.entities.BookSource
 import io.legado.app.databinding.ActivityMangeBinding
 import io.legado.app.databinding.ViewLoadMoreBinding
+import io.legado.app.help.book.isImage
 import io.legado.app.model.ReadMange
 import io.legado.app.model.ReadMange.mFirstLoading
 import io.legado.app.model.recyclerView.MangeContent
 import io.legado.app.model.recyclerView.ReaderLoading
+import io.legado.app.ui.book.changesource.ChangeBookSourceDialog
 import io.legado.app.ui.book.manga.rv.MangaAdapter
+import io.legado.app.ui.book.toc.TocActivityResult
 import io.legado.app.ui.widget.recycler.LoadMoreView
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.gone
 import io.legado.app.utils.immersionFullScreen
+import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
 
 class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>(),
-    ReadMange.Callback {
+    ReadMange.Callback, ChangeBookSourceDialog.CallBack {
 
     private val mAdapter: MangaAdapter by lazy {
         MangaAdapter()
@@ -35,6 +42,14 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
             getLoadingText().setTextColor(getCompatColor(R.color.white))
         }
     }
+
+    //打开目录返回选择章节返回结果
+    private val tocActivity =
+        registerForActivityResult(TocActivityResult()) {
+            it?.let {
+                viewModel.openChapter(it.first, it.second)
+            }
+        }
     override val binding by viewBinding(ActivityMangeBinding::inflate)
     override val viewModel by viewModels<MangaViewModel>()
 
@@ -84,6 +99,16 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
             }
         }
         loadMoreView.gone()
+
+        //打开换源界面
+        /*ReadMange.book?.let {
+            showDialogFragment(ChangeBookSourceDialog(it.name, it.author))
+        }*/
+
+        //打开目录
+        /*ReadMange.book?.let {
+            tocActivity.launch(it.bookUrl)
+        }*/
     }
 
     private fun scrollToBottom(forceLoad: Boolean = false, index: Int) {
@@ -174,5 +199,16 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
     override fun onDestroy() {
         ReadMange.unregister()
         super.onDestroy()
+    }
+
+    override val oldBook: Book?
+        get() = ReadMange.book
+
+    override fun changeTo(source: BookSource, book: Book, toc: List<BookChapter>) {
+        if (book.isImage) {
+            viewModel.changeTo(book, toc)
+        } else {
+            toastOnUi("所选择的源不是漫画源")
+        }
     }
 }
