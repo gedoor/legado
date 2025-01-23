@@ -79,7 +79,7 @@ class MangaViewModel(application: Application) : BaseViewModel(application) {
             return
         }
 
-        if ((ReadMange.chapterSize == 0 || book.isLocalModified()) && !loadChapterListAwait(book)) {
+        if ((ReadMange.durChapterPageCount  == 0 || book.isLocalModified()) && !loadChapterListAwait(book)) {
             return
         }
         ensureChapterExist()
@@ -107,7 +107,7 @@ class MangaViewModel(application: Application) : BaseViewModel(application) {
                     }
                     appDb.bookChapterDao.delByBook(oldBook.bookUrl)
                     appDb.bookChapterDao.insert(*cList.toTypedArray())
-                    ReadMange.chapterSize = cList.size
+                    ReadMange.durChapterPageCount  = cList.size
                     ReadMange.simulatedChapterSize = book.simulatedTotalChapterNum()
                     return true
                 }.onFailure {
@@ -136,8 +136,8 @@ class MangaViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private fun ensureChapterExist() {
-        if (ReadMange.simulatedChapterSize > 0 && ReadMange.durChapterIndex > ReadMange.simulatedChapterSize - 1) {
-            ReadMange.durChapterIndex = ReadMange.simulatedChapterSize - 1
+        if (ReadMange.simulatedChapterSize > 0 && ReadMange.durChapterPagePos > ReadMange.simulatedChapterSize - 1) {
+            ReadMange.durChapterPagePos = ReadMange.simulatedChapterSize - 1
         }
     }
 

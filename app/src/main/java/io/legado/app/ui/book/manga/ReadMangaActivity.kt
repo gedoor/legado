@@ -32,16 +32,27 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
         binding.mRecyclerMange.itemAnimator = null
         ReadMange.register(this)
         binding.mRecyclerMange.setPreScrollListener { _, dy, position ->
-            val content = mAdapter!!.getCurrentList()[position]
-            if (content is MangeContent) {
-                ReadMange.durChapterPos = content.mDurChapterPos.minus(1)
-            }
-            upText()
             if (dy > 0 && position + 2 > mAdapter!!.getCurrentList().size - 3) {
                 if (mAdapter?.getCurrentList()?.last() is ReaderLoading) {
                     val nextIndex =
                         (mAdapter!!.getCurrentList().last() as ReaderLoading).mNextChapterIndex
-                    ReadMange.moveToNextChapter(nextIndex)
+                    if (nextIndex != -1) {
+                        ReadMange.moveToNextChapter(nextIndex)
+                    }
+                }
+            }
+        }
+        binding.mRecyclerMange.setNestedPreScrollListener { _, _, position ->
+            if(mAdapter!!.getCurrentList().isNotEmpty()){
+                val content = mAdapter!!.getCurrentList()[position]
+                if (content is MangeContent) {
+                    ReadMange.durChapterPos = content.mDurChapterPos.minus(1)
+                    upText(
+                        content.mChapterPagePos,
+                        content.mChapterPageCount,
+                        content.mDurChapterPos,
+                        content.mDurChapterCount
+                    )
                 }
             }
         }
@@ -67,7 +78,12 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
                 if (!mFirstLoading) {
                     if (list.size > 1) {
                         binding.infobar.isVisible = true
-                        upText()
+                        upText(
+                            ReadMange.durChapterPagePos,
+                            ReadMange.durChapterPageCount,
+                            ReadMange.durChapterPos,
+                            ReadMange.durChapterCount
+                        )
                     }
 
                     if (ReadMange.durChapterPos + 2 > mAdapter!!.getCurrentList().size - 3) {
@@ -85,13 +101,18 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
         }
     }
 
-    private fun upText() {
+    private fun upText(
+        chapterPagePos: Int,
+        chapterPageCount: Int,
+        chapterPos: Int,
+        chapterCount: Int
+    ) {
         binding.infobar.update(
-            ReadMange.durChapterIndex,
-            ReadMange.chapterSize,
-            ReadMange.durChapterIndex.minus(1f).div(ReadMange.chapterSize.minus(1f)),
-            ReadMange.durChapterPos,
-            ReadMange.durChapterSize
+            chapterPagePos,
+            chapterPageCount,
+            chapterPagePos.minus(1f).div(chapterPageCount.minus(1f)),
+            chapterPos,
+            chapterCount
         )
     }
 
