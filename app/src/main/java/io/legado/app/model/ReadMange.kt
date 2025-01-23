@@ -50,6 +50,7 @@ object ReadMange : CoroutineScope by MainScope() {
     var simulatedChapterSize = 0
     var mCallback: Callback? = null
     var mFirstLoading = false
+    var gameOver = false
     var mTopChapter: BookChapter? = null
     val downloadScope = CoroutineScope(SupervisorJob() + IO)
 
@@ -316,6 +317,7 @@ object ReadMange : CoroutineScope by MainScope() {
             } else {
                 durChapterPagePos = durChapterPagePos.minus(1)
                 saveRead()
+                gameOver = true
                 runOnUI {
                     mCallback?.noData()
                 }
@@ -333,6 +335,12 @@ object ReadMange : CoroutineScope by MainScope() {
             contentLoadFinish(chapter, this)
             runOnUI {
                 mCallback?.loadComplete()
+            }
+            if (durChapterPagePos >= durChapterPageCount.minus(1)) {
+                gameOver=true
+                runOnUI {
+                    mCallback?.noData()
+                }
             }
         } ?: WebBook.getContent(
             scope,

@@ -94,7 +94,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
             ViewLoadMoreBinding.bind(loadMoreView)
         }
         loadMoreView.setOnClickListener {
-            if (!loadMoreView.isLoading) {
+            if (!loadMoreView.isLoading && !ReadMange.gameOver) {
                 scrollToBottom(true, ReadMange.durChapterPagePos)
             }
         }
@@ -112,7 +112,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
     }
 
     private fun scrollToBottom(forceLoad: Boolean = false, index: Int) {
-        if ((loadMoreView.hasMore && !loadMoreView.isLoading) || forceLoad) {
+        if ((loadMoreView.hasMore && !loadMoreView.isLoading) && !ReadMange.gameOver || forceLoad) {
             loadMoreView.hasMore()
             ReadMange.moveToNextChapter(index)
         }
@@ -143,7 +143,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
                     if (ReadMange.durChapterPos + 2 > mAdapter.getCurrentList().size - 3) {
                         val nextIndex =
                             (mAdapter.getCurrentList().last() as ReaderLoading).mNextChapterIndex
-                        ReadMange.moveToNextChapter(nextIndex)
+                        scrollToBottom(index = nextIndex)
                     } else {
                         if (ReadMange.durChapterPos != 0) {
                             binding.mRecyclerMange.scrollToPosition(ReadMange.durChapterPos)
