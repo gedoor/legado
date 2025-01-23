@@ -9,7 +9,7 @@ interface RssReadRecordDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertRecord(vararg rssReadRecord: RssReadRecord)
 
-    @Query("select * from rssReadRecords")
+    @Query("select * from rssReadRecords order by readTime desc")
     fun getRecord(): List<RssReadRecord>
 
     @get:Query("select count(1) from rssReadRecords")
