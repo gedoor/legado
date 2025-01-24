@@ -497,6 +497,8 @@ object ReadMange : CoroutineScope by MainScope() {
                                 downloadFailChapters.remove(chapter.index)
                             },
                             error = {
+                                downloadFailChapters[chapter.index] =
+                                    (downloadFailChapters[chapter.index] ?: 0) + 1
                                 removeDownloadLoading(chapter.index)
                             })
                     }
