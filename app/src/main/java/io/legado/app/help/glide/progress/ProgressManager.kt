@@ -112,8 +112,12 @@ object ProgressManager {
     val LISTENER = object : ProgressResponseBody.InternalProgressListener {
         override fun onProgress(url: String, bytesRead: Long, totalBytes: Long) {
             getProgressListener(url)?.let {
-                val percentage = (bytesRead * 1f / totalBytes * 100f).toInt()
-                val isComplete = percentage >= 100
+                var percentage = (bytesRead * 1f / totalBytes * 100f).toInt()
+                var isComplete = percentage >= 100
+                if (percentage <= -100) {
+                    percentage = 0
+                    isComplete = true
+                }
                 it.invoke(isComplete, percentage, bytesRead, totalBytes)
                 if (isComplete) {
                     removeListener(url)
