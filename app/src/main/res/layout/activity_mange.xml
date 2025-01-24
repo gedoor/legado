@@ -22,11 +22,25 @@
         android:visibility="gone"
         tools:visibility="visible" />
 
+    <io.legado.app.ui.book.read.MangaMenu
+        android:id="@+id/mangaMenu"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+    <View
+        android:id="@+id/navigation_bar"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/background_menu"
+        android:layout_gravity="bottom" />
+
     <FrameLayout
         android:id="@+id/fl_loading"
-        android:background="@color/white"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/white">
 
         <LinearLayout
             android:id="@+id/ll_loading"
@@ -50,8 +64,8 @@
                 android:id="@+id/tv_loading_message"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="正在加载中..."
                 android:layout_marginTop="10dp"
+                android:text="正在加载中..."
                 android:textColor="@color/black" />
         </LinearLayout>
 
