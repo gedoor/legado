@@ -6,8 +6,9 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.ReadRecord
-import io.legado.app.help.CacheManager
+import io.legado.app.help.book.BookHelp
 import io.legado.app.help.book.ContentProcessor
+import io.legado.app.help.book.isLocal
 import io.legado.app.help.book.readSimulating
 import io.legado.app.help.book.simulatedTotalChapterNum
 import io.legado.app.help.config.AppConfig
@@ -21,15 +22,20 @@ import io.legado.app.utils.runOnUI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.launch
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
+import kotlin.math.min
 
 @Suppress("MemberVisibilityCanBePrivate")
 object ReadMange : CoroutineScope by MainScope() {
@@ -52,6 +58,10 @@ object ReadMange : CoroutineScope by MainScope() {
     var mFirstLoading = false
     var gameOver = false
     var mTopChapter: BookChapter? = null
+    var preDownloadTask: Job? = null
+    val downloadedChapters = hashSetOf<Int>()
+    val downloadFailChapters = hashMapOf<Int, Int>()
+    private val downloadLoadingChapters = arrayListOf<Int>()
     val downloadScope = CoroutineScope(SupervisorJob() + IO)
 
     fun saveRead(pageChanged: Boolean = false) {
@@ -142,6 +152,21 @@ object ReadMange : CoroutineScope by MainScope() {
         }
     }
 
+    private fun addDownloadLoading(index: Int): Boolean {
+        synchronized(this) {
+            if (downloadLoadingChapters.contains(index)) return false
+            downloadLoadingChapters.add(index)
+            return true
+        }
+    }
+
+
+    fun removeDownloadLoading(index: Int) {
+        synchronized(this) {
+            downloadLoadingChapters.remove(index)
+        }
+    }
+
     fun removeLoading(index: Int) {
         synchronized(this) {
             loadingChapters.remove(index)
@@ -156,9 +181,9 @@ object ReadMange : CoroutineScope by MainScope() {
 
 
     /**
-     * 下载正文
+     * 获取正文
      */
-    private suspend fun download(
+    private suspend fun getContent(
         scope: CoroutineScope,
         chapter: BookChapter,
     ) {
@@ -181,7 +206,7 @@ object ReadMange : CoroutineScope by MainScope() {
             Coroutine.async {
                 val book = ReadMange.book!!
                 appDb.bookChapterDao.getChapter(book.bookUrl, index)?.let { chapter ->
-                    download(
+                    getContent(
                         downloadScope,
                         chapter,
                     )
@@ -206,22 +231,28 @@ object ReadMange : CoroutineScope by MainScope() {
      * 取消注册回调
      */
     fun unregister() {
-        mCallback = null
-        mFirstLoading = false
-        gameOver = false
         inBookshelf = false
         tocChanged = false
         chapterChanged = false
         book = null
-        durChapterCount = 0
-        durChapterPos = 0
         durChapterPagePos = 0
         durChapterPageCount = 0
+        durChapterPos = 0
+        durChapterCount = 0
         bookSource = null
         chapterTitle = ""
         loadingChapters.clear()
         simulatedChapterSize = 0
+        mCallback = null
+        mFirstLoading = false
+        gameOver = false
         mTopChapter = null
+        preDownloadTask?.cancel()
+        preDownloadTask = null
+        downloadedChapters.clear()
+        downloadFailChapters.clear()
+        downloadLoadingChapters.clear()
+        executor.asCoroutineDispatcher().cancelChildren()
         downloadScope.coroutineContext.cancelChildren()
         coroutineContext.cancelChildren()
     }
@@ -232,9 +263,14 @@ object ReadMange : CoroutineScope by MainScope() {
     suspend fun contentLoadFinish(
         chapter: BookChapter,
         content: String,
+        book: Book
     ) {
-        if (mTopChapter != null && mTopChapter?.title != chapter.title) {
-            CacheManager.delete(mTopChapter?.url ?: "")
+        if (mTopChapter != null && mTopChapter!!.title != chapterTitle && BookHelp.hasContent(
+                book,
+                mTopChapter!!
+            )
+        ) {
+            BookHelp.delContent(book, chapter)
         }
         mTopChapter = chapter
         chapterTitle = chapter.title
@@ -277,7 +313,6 @@ object ReadMange : CoroutineScope by MainScope() {
                 mCallback?.loadContentFinish(contentList)
             }
         }
-
     }
 
     /**
@@ -307,6 +342,7 @@ object ReadMange : CoroutineScope by MainScope() {
 
     fun curPageChanged() {
         upReadTime()
+        preDownload()
     }
 
     @Synchronized
@@ -345,36 +381,150 @@ object ReadMange : CoroutineScope by MainScope() {
         chapter: BookChapter,
         book: Book,
     ) {
-        CacheManager.get(chapter.url)?.apply {
-            contentLoadFinish(chapter, this)
-            runOnUI {
-                mCallback?.loadComplete()
-            }
-            if (durChapterPagePos >= durChapterPageCount.minus(1)) {
-                gameOver = true
+        if (BookHelp.hasContent(book, chapter)) {
+            BookHelp.getContent(book, chapter)?.apply {
+                contentLoadFinish(chapter, this, book)
                 runOnUI {
-                    mCallback?.noData()
+                    mCallback?.loadComplete()
                 }
-            }
-        } ?: WebBook.getContent(
+                if (durChapterPagePos >= durChapterPageCount.minus(1)) {
+                    gameOver = true
+                    runOnUI {
+                        mCallback?.noData()
+                    }
+                }
+            } ?: downloadNetworkContent(bookSource, scope, chapter, book, success = {
+                contentLoadFinish(chapter, it, book)
+                runOnUI {
+                    mCallback?.loadComplete()
+                }
+            }, error = {
+                removeLoading(chapter.index)
+                runOnUI {
+                    mCallback?.loadFail()
+                }
+            })
+        } else {
+            downloadNetworkContent(bookSource, scope, chapter, book, success = {
+                contentLoadFinish(chapter, it, book)
+                runOnUI {
+                    mCallback?.loadComplete()
+                }
+            }, error = {
+                removeLoading(chapter.index)
+                runOnUI {
+                    mCallback?.loadFail()
+                }
+            })
+        }
+    }
+
+    private fun downloadNetworkContent(
+        bookSource: BookSource,
+        scope: CoroutineScope,
+        chapter: BookChapter,
+        book: Book,
+        success: suspend (String) -> Unit = {},
+        error: suspend () -> Unit = {},
+    ) {
+        WebBook.getContent(
             scope,
             bookSource,
             book,
             chapter,
             start = CoroutineStart.LAZY,
-            executeContext = IO
+            executeContext = IO,
+            needSave = true
         ).onSuccess { content ->
-            CacheManager.put(chapter.url, content)
-            contentLoadFinish(chapter, content)
-            runOnUI {
-                mCallback?.loadComplete()
-            }
+            success.invoke(content)
         }.onError {
-            removeLoading(chapter.index)
-            runOnUI {
-                mCallback?.loadFail()
-            }
+            error.invoke()
         }.start()
+    }
+
+    private fun preDownload() {
+        if (book?.isLocal == true) return
+        executor.execute {
+            if (AppConfig.preDownloadNum < 2) {
+                return@execute
+            }
+            preDownloadTask?.cancel()
+            preDownloadTask = launch(IO) {
+                //预下载
+                launch {
+                    val maxChapterIndex =
+                        min(durChapterPagePos + AppConfig.preDownloadNum, durChapterPageCount)
+                    for (i in durChapterPagePos.plus(2)..maxChapterIndex) {
+                        if (downloadedChapters.contains(i)) continue
+                        if ((downloadFailChapters[i] ?: 0) >= 3) continue
+                        downloadIndex(i)
+                    }
+                }
+                launch {
+                    val minChapterIndex = durChapterPagePos - min(5, AppConfig.preDownloadNum)
+                    for (i in durChapterPagePos.minus(2) downTo minChapterIndex) {
+                        if (downloadedChapters.contains(i)) continue
+                        if ((downloadFailChapters[i] ?: 0) >= 3) continue
+                        downloadIndex(i)
+                    }
+                }
+            }
+        }
+    }
+
+    private suspend fun downloadIndex(index: Int) {
+        if (index < 0) return
+        if (index > durChapterPageCount - 1) {
+            upToc()
+            return
+        }
+        val book = book ?: return
+        if (addDownloadLoading(index)) {
+            try {
+                appDb.bookChapterDao.getChapter(book.bookUrl, index)?.let { chapter ->
+                    if (BookHelp.hasContent(book, chapter)) {
+                        removeDownloadLoading(chapter.index)
+                        downloadedChapters.add(chapter.index)
+                    } else {
+                        delay(1000)
+                        downloadNetworkContent(
+                            bookSource!!,
+                            downloadScope,
+                            chapter,
+                            book,
+                            success = {
+                                downloadedChapters.add(chapter.index)
+                                downloadFailChapters.remove(chapter.index)
+                            },
+                            error = {
+                                removeDownloadLoading(chapter.index)
+                            })
+                    }
+                } ?: removeDownloadLoading(index)
+            } catch (e: Exception) {
+                removeLoading(index)
+            }
+        }
+    }
+
+    @Synchronized
+    fun upToc() {
+        val bookSource = bookSource ?: return
+        val book = book ?: return
+        if (!book.canUpdate) return
+        if (System.currentTimeMillis() - book.lastCheckTime < 600000) return
+        book.lastCheckTime = System.currentTimeMillis()
+        WebBook.getChapterList(this, bookSource, book).onSuccess(IO) { cList ->
+            if (book.bookUrl == ReadMange.book?.bookUrl
+                && cList.size > durChapterPageCount
+            ) {
+                appDb.bookChapterDao.delByBook(book.bookUrl)
+                appDb.bookChapterDao.insert(*cList.toTypedArray())
+                saveRead()
+                durChapterPageCount = cList.size
+                simulatedChapterSize = book.simulatedTotalChapterNum()
+            }
+        }
     }
 
     interface Callback {
