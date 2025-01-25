@@ -21,6 +21,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.sync.Semaphore
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.CoroutineContext
 
@@ -338,6 +339,7 @@ object CacheBook {
         fun download(
             scope: CoroutineScope,
             chapter: BookChapter,
+            semaphore: Semaphore?,
             resetPageOffset: Boolean = false
         ) {
             if (onDownloadSet.contains(chapter.index)) {

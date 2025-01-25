@@ -312,6 +312,8 @@ class ReadBookActivity : BaseReadBookActivity(),
         upSystemUiVisibility()
         if (hasFocus) {
             binding.readMenu.upBrightnessState()
+        } else if (!menuLayoutIsVisible) {
+            ReadBook.cancelPreDownloadTask()
         }
     }
 
@@ -356,6 +358,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         autoPageStop()
         backupJob?.cancel()
         ReadBook.saveRead()
+        ReadBook.cancelPreDownloadTask()
         unregisterReceiver(timeBatteryReceiver)
         upSystemUiVisibility()
         if (!BuildConfig.DEBUG) {

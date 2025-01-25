@@ -47,7 +47,6 @@ import io.legado.app.utils.toStringArray
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
-import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.runBlocking
 import okio.use
 import org.jsoup.Connection
@@ -83,11 +82,11 @@ interface JsExtensions : JsEncodeUtils {
 
     fun getSource(): BaseSource?
 
+    private val rhinoContext: RhinoContext
+        get() = Context.getCurrentContext() as RhinoContext
+
     private val context: CoroutineContext
-        get() {
-            val rhinoContext = Context.getCurrentContext() as RhinoContext
-            return rhinoContext.coroutineContext ?: EmptyCoroutineContext
-        }
+        get() = rhinoContext.coroutineContext ?: EmptyCoroutineContext
 
     /**
      * 访问网络,返回String
@@ -361,7 +360,7 @@ interface JsExtensions : JsEncodeUtils {
         } else headers
         val rateLimiter = ConcurrentRateLimiter(getSource())
         val response = rateLimiter.withLimitBlocking {
-            context.ensureActive()
+            rhinoContext.ensureActive()
             Jsoup.connect(urlStr)
                 .sslSocketFactory(SSLHelper.unsafeSSLSocketFactory)
                 .ignoreContentType(true)
@@ -382,7 +381,7 @@ interface JsExtensions : JsEncodeUtils {
         } else headers
         val rateLimiter = ConcurrentRateLimiter(getSource())
         val response = rateLimiter.withLimitBlocking {
-            context.ensureActive()
+            rhinoContext.ensureActive()
             Jsoup.connect(urlStr)
                 .sslSocketFactory(SSLHelper.unsafeSSLSocketFactory)
                 .ignoreContentType(true)
@@ -403,7 +402,7 @@ interface JsExtensions : JsEncodeUtils {
         } else headers
         val rateLimiter = ConcurrentRateLimiter(getSource())
         val response = rateLimiter.withLimitBlocking {
-            context.ensureActive()
+            rhinoContext.ensureActive()
             Jsoup.connect(urlStr)
                 .sslSocketFactory(SSLHelper.unsafeSSLSocketFactory)
                 .ignoreContentType(true)
@@ -897,7 +896,8 @@ interface JsExtensions : JsEncodeUtils {
         s ?: return null
         val matcher = AppPattern.titleNumPattern.matcher(s)
         if (matcher.find()) {
-            return "${matcher.group(1)}${StringUtils.stringToInt(matcher.group(2))}${matcher.group(3)}"
+            val intStr = StringUtils.stringToInt(matcher.group(2))
+            return "${matcher.group(1)}${intStr}${matcher.group(3)}"
         }
         return s
     }
