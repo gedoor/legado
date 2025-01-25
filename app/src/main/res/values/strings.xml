@@ -1133,6 +1133,7 @@
     <string name="exit_app">Exit</string>
     <string name="result_analyzed">Analyzed</string>
     <string name="bookshelf_px_4">Comprehensive</string>
+    <string name="bookshelf_px_5">Sort by author</string>
     <string name="effective_replaces">Effective replacement</string>
     <string name="export_book">Export Book</string>
     <string name="export_book_notification_content">Exporting (%1$s), with %2$d to be exported.</string>

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:padding="16dp">
 
     <LinearLayout
         android:id="@+id/ll_group_style"
@@ -172,6 +172,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/bookshelf_px_4"
+                tools:ignore="TouchTargetSizeCheck" />
+
+            <RadioButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/bookshelf_px_5"
                 tools:ignore="TouchTargetSizeCheck" />
 
         </RadioGroup>
