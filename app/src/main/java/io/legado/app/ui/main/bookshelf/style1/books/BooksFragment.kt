@@ -178,6 +178,10 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
                     4 -> list.sortedByDescending {
                         max(it.latestChapterTime, it.durChapterTime)
                     }
+                    // 按作者排序
+                    5 -> list.sortedWith { o1, o2 ->
+                        o1.author.cnCompare(o2.author)
+                    }
 
                     else -> list.sortedByDescending { it.durChapterTime }
                 }

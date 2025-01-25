@@ -1127,6 +1127,7 @@ Còn </string>
      <string name="exit_app">Thoát khỏi phần mềm</string>
     <string name="result_analyzed">Analyzed</string>
     <string name="bookshelf_px_4">Comprehensive</string>
+    <string name="bookshelf_px_5">Sắp xếp theo tác giả</string>
     <string name="effective_replaces">起效的替换</string>
     <string name="export_book">导出书籍</string>
     <string name="export_book_notification_content">正在导出(%1$s),还有%2$d本待导出</string>

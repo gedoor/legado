@@ -1130,6 +1130,7 @@
     <string name="exit_app">退出软件</string>
     <string name="result_analyzed">解析示例</string>
     <string name="bookshelf_px_4">綜合排序</string>
+    <string name="bookshelf_px_5">按作者</string>
     <string name="effective_replaces">起效的替换</string>
     <string name="export_book">导出书籍</string>
     <string name="export_book_notification_content">正在导出(%1$s),还有%2$d本待导出</string>
