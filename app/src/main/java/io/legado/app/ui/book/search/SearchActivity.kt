@@ -83,6 +83,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     private var historyFlowJob: Job? = null
     private var booksFlowJob: Job? = null
     private var precisionSearchMenuItem: MenuItem? = null
+    private var isManualStopSearch = false
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.llInputHelp.setBackgroundColor(backgroundColor)
@@ -180,6 +181,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
             override fun onQueryTextSubmit(query: String): Boolean {
                 searchView.clearFocus()
                 query.trim().let { searchKey ->
+                    isManualStopSearch = false
                     viewModel.saveSearchKey(searchKey)
                     viewModel.searchKey = ""
                     viewModel.search(searchKey)
@@ -234,6 +236,14 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
                 }
             }
         })
+        binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (!recyclerView.canScrollVertically(1)) {
+                    scrollToBottom()
+                }
+            }
+        })
     }
 
     private fun initOtherView() {
@@ -244,6 +254,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
                 .create()
         binding.fbStartStop.setOnClickListener {
             if (viewModel.isSearchLiveData.value == true) {
+                isManualStopSearch = true
                 viewModel.stop()
                 binding.refreshProgressBar.isAutoLoading = false
             } else {
@@ -292,6 +303,21 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
                 .requestFocus()
         } else {
             searchView.setQuery(key, true)
+        }
+    }
+
+    /**
+     * 滚动到底部事件
+     */
+    private fun scrollToBottom() {
+        if (isManualStopSearch) {
+            return
+        }
+        if (viewModel.isSearchLiveData.value == false
+            && viewModel.searchKey.isNotEmpty()
+            && viewModel.hasMore
+        ) {
+            viewModel.search("")
         }
     }
 
