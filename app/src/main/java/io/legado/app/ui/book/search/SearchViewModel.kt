@@ -47,9 +47,9 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
         }
 
         override fun onSearchFinish(isEmpty: Boolean, hasMore: Boolean) {
+            this@SearchViewModel.hasMore = hasMore
             isSearchLiveData.postValue(false)
             searchFinishLiveData.postValue(isEmpty)
-            this@SearchViewModel.hasMore = hasMore
         }
 
         override fun onSearchCancel(exception: Throwable?) {
