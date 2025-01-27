@@ -745,7 +745,7 @@ class AnalyzeRule(
             bindings["title"] = chapter?.title
             bindings["src"] = content
             bindings["nextChapterUrl"] = nextChapterUrl
-            bindings["rssArticle"] = rssArticle
+            bindings["rssArticle"] = rssArticle?.copy()
         }
         val scope = RhinoScriptEngine.getRuntimeScope(bindings)
         source?.getShareScope()?.let {
