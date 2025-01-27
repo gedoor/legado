@@ -1,6 +1,7 @@
 package io.legado.app.base.adapter
 
 import android.content.Context
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
@@ -23,6 +24,10 @@ abstract class DiffRecyclerAdapter<ITEM, VB : ViewBinding>(protected val context
         AsyncListDiffer(this, diffItemCallback).apply {
             addListListener { _, _ ->
                 onCurrentListChanged()
+                if (keepScrollPosition) {
+                    layoutManager?.onRestoreInstanceState(layoutState)
+                    layoutState = null
+                }
             }
         }
     }
@@ -30,9 +35,14 @@ abstract class DiffRecyclerAdapter<ITEM, VB : ViewBinding>(protected val context
     private var itemClickListener: ((holder: ItemViewHolder, item: ITEM) -> Unit)? = null
     private var itemLongClickListener: ((holder: ItemViewHolder, item: ITEM) -> Boolean)? = null
 
+    private var layoutManager: RecyclerView.LayoutManager? = null
+    private var layoutState: Parcelable? = null
+
     var itemAnimation: ItemAnimation? = null
 
     abstract val diffItemCallback: DiffUtil.ItemCallback<ITEM>
+
+    open val keepScrollPosition = false
 
     fun setOnItemClickListener(listener: (holder: ItemViewHolder, item: ITEM) -> Unit) {
         itemClickListener = listener
@@ -48,6 +58,9 @@ abstract class DiffRecyclerAdapter<ITEM, VB : ViewBinding>(protected val context
 
     fun setItems(items: List<ITEM>?) {
         kotlin.runCatching {
+            if (keepScrollPosition) {
+                layoutState = layoutManager?.onSaveInstanceState()
+            }
             asyncListDiffer.submitList(items?.toMutableList())
         }
     }
@@ -161,6 +174,7 @@ abstract class DiffRecyclerAdapter<ITEM, VB : ViewBinding>(protected val context
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
         val manager = recyclerView.layoutManager
+        layoutManager = manager
         if (manager is GridLayoutManager) {
             manager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int {
