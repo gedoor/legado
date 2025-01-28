@@ -8,7 +8,6 @@ import androidx.annotation.DrawableRes
 import androidx.lifecycle.Lifecycle
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
-import com.bumptech.glide.request.RequestOptions
 import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.isContentScheme
 import io.legado.app.utils.isDataUrl
@@ -55,8 +54,7 @@ object ImageLoader {
     }
 
     fun loadBitmap(context: Context, path: String?): RequestBuilder<Bitmap> {
-        val requestManager = Glide.with(context).asBitmap()
-            .apply(RequestOptions.decodeTypeOf(Any::class.java))
+        val requestManager = Glide.with(context).`as`(Bitmap::class.java)
         return when {
             path.isNullOrEmpty() -> requestManager.load(path)
             path.isDataUrl() -> requestManager.load(path)
