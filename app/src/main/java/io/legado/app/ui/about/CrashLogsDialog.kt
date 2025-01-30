@@ -124,7 +124,7 @@ class CrashLogsDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
                             list.addAll(it)
                         }
                 }
-                return@execute list.sortedByDescending { it.name }
+                return@execute list.sortedByDescending { it.name }.distinctBy { it.name }
             }.onSuccess {
                 logLiveData.postValue(it)
             }

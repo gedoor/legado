@@ -22,6 +22,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
@@ -36,6 +37,7 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
     var sort = context.getPrefInt(PreferKey.localBookImportSort)
     var dataCallback: DataCallback? = null
     var dataFlowStart: (() -> Unit)? = null
+    var filterKey: String? = null
     val dataFlow = callbackFlow<List<ImportBook>> {
 
         val list = Collections.synchronizedList(ArrayList<ImportBook>())
@@ -62,16 +64,6 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
                 trySend(emptyList())
             }
 
-            override fun screen(key: String?) {
-                if (key.isNullOrBlank()) {
-                    trySend(list)
-                } else {
-                    trySend(
-                        list.filter { it.name.contains(key) }
-                    )
-                }
-            }
-
             override fun upAdapter() {
                 trySend(list)
             }
@@ -85,13 +77,18 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
             dataCallback = null
         }
 
-    }.map { docList ->
+    }.conflate().map { docList ->
+        val docList = docList.toList()
+        val filterKey = filterKey
+        val skipFilter = filterKey.isNullOrBlank()
         val comparator = when (sort) {
             2 -> compareBy<ImportBook>({ !it.isDir }, { -it.lastModified })
             1 -> compareBy({ !it.isDir }, { -it.size })
             else -> compareBy { !it.isDir }
         } then compareBy(AlphanumComparator) { it.name }
-        docList.sortedWith(comparator)
+        docList.asSequence().filter {
+            skipFilter || it.name.contains(filterKey)
+        }.sortedWith(comparator).toList()
     }.flowOn(IO)
 
     fun addToBookshelf(bookList: HashSet<ImportBook>, finally: () -> Unit) {
@@ -164,7 +161,8 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
     }
 
     fun updateCallBackFlow(filterKey: String?) {
-        dataCallback?.screen(filterKey)
+        this.filterKey = filterKey
+        dataCallback?.upAdapter()
     }
 
     interface DataCallback {
@@ -174,8 +172,6 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
         fun addItems(fileDocs: List<FileDoc>)
 
         fun clear()
-
-        fun screen(key: String?)
 
         fun upAdapter()
 
