@@ -12,6 +12,7 @@ import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
+import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewbinding.ViewBinding
@@ -87,6 +88,9 @@ abstract class BaseActivity<VB : ViewBinding>(
             findViewById<TitleBar>(R.id.title_bar)
                 ?.onMultiWindowModeChanged(isInMultiWindowMode, fullScreen)
         }
+        onBackPressedDispatcher.addCallback(this) {
+            finish()
+        }
         observeLiveBus()
         onActivityCreated(savedInstanceState)
     }
@@ -138,10 +142,12 @@ abstract class BaseActivity<VB : ViewBinding>(
                 setTheme(R.style.AppTheme_Dark)
                 window.decorView.applyBackgroundTint(backgroundColor)
             }
+
             Theme.Light -> {
                 setTheme(R.style.AppTheme_Light)
                 window.decorView.applyBackgroundTint(backgroundColor)
             }
+
             else -> {
                 if (ColorUtils.isColorLight(primaryColor)) {
                     setTheme(R.style.AppTheme_Light)
