@@ -22,7 +22,6 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
@@ -77,7 +76,7 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
             dataCallback = null
         }
 
-    }.conflate().map { docList ->
+    }.map { docList ->
         val docList = docList.toList()
         val filterKey = filterKey
         val skipFilter = filterKey.isNullOrBlank()
