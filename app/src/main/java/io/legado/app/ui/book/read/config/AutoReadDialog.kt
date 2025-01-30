@@ -22,6 +22,7 @@ import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import java.util.Locale
 
 
 class AutoReadDialog : BaseDialogFragment(R.layout.dialog_auto_read) {
@@ -74,21 +75,21 @@ class AutoReadDialog : BaseDialogFragment(R.layout.dialog_auto_read) {
     }
 
     private fun initData() {
-        val speed = if (ReadBookConfig.autoReadSpeed < 2) 2 else ReadBookConfig.autoReadSpeed
-        binding.tvReadSpeed.text = String.format("%ds", speed)
+        val speed = if (ReadBookConfig.autoReadSpeed < 1) 1 else ReadBookConfig.autoReadSpeed
+        binding.tvReadSpeed.text = String.format(Locale.ROOT, "%ds", speed)
         binding.seekAutoRead.progress = speed
     }
 
     private fun initOnChange() {
         binding.seekAutoRead.setOnSeekBarChangeListener(object : SeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                val speed = if (progress < 2) 2 else progress
-                binding.tvReadSpeed.text = String.format("%ds", speed)
+                val speed = if (progress < 1) 1 else progress
+                binding.tvReadSpeed.text = String.format(Locale.ROOT,"%ds", speed)
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 ReadBookConfig.autoReadSpeed =
-                    if (binding.seekAutoRead.progress < 2) 2 else binding.seekAutoRead.progress
+                    if (binding.seekAutoRead.progress < 1) 1 else binding.seekAutoRead.progress
                 upTtsSpeechRate()
             }
         })
