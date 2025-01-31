@@ -354,7 +354,8 @@ object CacheBook {
                 book,
                 chapter,
                 start = CoroutineStart.LAZY,
-                executeContext = IO
+                executeContext = IO,
+                semaphore = semaphore
             ).onSuccess { content ->
                 onSuccess(chapter)
                 ReadBook.downloadedChapters.add(chapter.index)
