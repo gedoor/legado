@@ -105,7 +105,7 @@ class AnalyzeUrl(
     private var retry: Int = 0
     private var useWebView: Boolean = false
     private var webJs: String? = null
-    private val enabledCookieJar = source?.enabledCookieJar ?: false
+    private val enabledCookieJar = source?.enabledCookieJar == true
     private val domain: String
     private var webViewDelayTime: Long = 0
     private val concurrentRateLimiter = ConcurrentRateLimiter(source)
@@ -551,6 +551,8 @@ class AnalyzeUrl(
         }
         if (enabledCookieJar) {
             headerMap[CookieManager.cookieJarHeader] = "1"
+        } else {
+            headerMap.remove(CookieManager.cookieJarHeader)
         }
     }
 

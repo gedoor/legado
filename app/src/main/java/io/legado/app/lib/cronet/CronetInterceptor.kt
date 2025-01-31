@@ -3,8 +3,15 @@ package io.legado.app.lib.cronet
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.Keep
+import io.legado.app.help.http.CookieManager
+import io.legado.app.help.http.CookieManager.cookieJarHeader
 import io.legado.app.utils.printOnDebug
-import okhttp3.*
+import okhttp3.Call
+import okhttp3.CookieJar
+import okhttp3.HttpUrl
+import okhttp3.Interceptor
+import okhttp3.Request
+import okhttp3.Response
 import java.io.IOException
 
 @Keep
@@ -28,7 +35,12 @@ class CronetInterceptor(private val cookieJar: CookieJar) : Interceptor {
             builder.removeHeader("Keep-Alive")
             builder.removeHeader("Accept-Encoding")
 
-            val newReq = builder.build()
+            var newReq = builder.build()
+
+            if (newReq.header(cookieJarHeader) != null) {
+                newReq = CookieManager.loadRequest(newReq)
+            }
+
             return proceedWithCronet(newReq, chain.call(), chain.readTimeoutMillis())!!
         } catch (e: Exception) {
             cronetException = e
