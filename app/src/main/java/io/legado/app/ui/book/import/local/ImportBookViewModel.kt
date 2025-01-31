@@ -138,7 +138,7 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
         channel.trySend(fileDoc)
         val list = arrayListOf<FileDoc>()
         channel.consumeAsFlow()
-            .mapParallel(64) { fileDoc ->
+            .mapParallel(16) { fileDoc ->
                 fileDoc.list()!!
             }.onEach { fileDocs ->
                 n--
