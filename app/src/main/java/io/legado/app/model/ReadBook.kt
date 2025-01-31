@@ -562,7 +562,7 @@ object ReadBook : CoroutineScope by MainScope() {
                             it,
                             upContent,
                             resetPageOffset,
-                            success
+                            success = success
                         )
                     } ?: download(
                         downloadScope,
@@ -685,10 +685,11 @@ object ReadBook : CoroutineScope by MainScope() {
         content: String,
         upContent: Boolean = true,
         resetPageOffset: Boolean,
+        canceled: Boolean = false,
         success: (() -> Unit)? = null
     ) {
         removeLoading(chapter.index)
-        if (chapter.index !in durChapterIndex - 1..durChapterIndex + 1) {
+        if (canceled || chapter.index !in durChapterIndex - 1..durChapterIndex + 1) {
             return
         }
         Coroutine.async {
