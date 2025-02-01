@@ -53,7 +53,6 @@ object BookList {
                 getInfoItem(
                     bookSource,
                     analyzeRule,
-                    analyzeUrl,
                     body,
                     baseUrl,
                     ruleData.getVariable()
@@ -85,7 +84,7 @@ object BookList {
         if (collections.isEmpty() && bookSource.bookUrlPattern.isNullOrEmpty()) {
             Debug.log(bookSource.bookSourceUrl, "└列表为空,按详情页解析")
             getInfoItem(
-                bookSource, analyzeRule, analyzeUrl, body, baseUrl, ruleData.getVariable()
+                bookSource, analyzeRule, body, baseUrl, ruleData.getVariable()
             )?.let { searchBook ->
                 searchBook.infoHtml = body
                 bookList.add(searchBook)
@@ -134,13 +133,12 @@ object BookList {
     private suspend fun getInfoItem(
         bookSource: BookSource,
         analyzeRule: AnalyzeRule,
-        analyzeUrl: AnalyzeUrl,
         body: String,
         baseUrl: String,
         variable: String?
     ): SearchBook? {
         val book = Book(variable = variable)
-        book.bookUrl = NetworkUtils.getAbsoluteURL(analyzeUrl.url, analyzeUrl.ruleUrl)
+        book.bookUrl = baseUrl
         book.origin = bookSource.bookSourceUrl
         book.originName = bookSource.bookSourceName
         book.originOrder = bookSource.customOrder
