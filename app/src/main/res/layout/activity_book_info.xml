@@ -105,27 +105,38 @@
                             android:paddingRight="10dp"
                             android:paddingBottom="3dp">
 
-                            <TextView
-                                android:id="@+id/tv_name"
+                            <HorizontalScrollView
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginBottom="6dp"
-                                android:gravity="center"
-                                android:includeFontPadding="false"
-                                android:singleLine="true"
-                                android:text="@string/book_name"
-                                android:textColor="@color/primaryText"
-                                android:textSize="18sp"
-                                tools:ignore="RtlHardcoded" />
+                                android:layout_height="match_parent"
+                                android:scrollbars="none">
+                                <TextView
+                                    android:id="@+id/tv_name"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginBottom="6dp"
+                                    android:gravity="center"
+                                    android:layout_gravity="center"
+                                    android:includeFontPadding="false"
+                                    android:singleLine="true"
+                                    android:text="@string/book_name"
+                                    android:textColor="@color/primaryText"
+                                    android:textSize="18sp"
+                                    tools:ignore="RtlHardcoded" />
+                            </HorizontalScrollView>
 
-                            <io.legado.app.ui.widget.LabelsBar
-                                android:id="@+id/lb_kind"
+                            <HorizontalScrollView
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:layout_marginBottom="6dp"
-                                android:gravity="center"
-                                android:visibility="gone" />
+                                android:layout_height="match_parent"
+                                android:scrollbars="none">
+                                <io.legado.app.ui.widget.LabelsBar
+                                    android:id="@+id/lb_kind"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:gravity="center"
+                                    android:layout_marginBottom="6dp"
+                                    android:visibility="gone" />
+                            </HorizontalScrollView>
 
                         </LinearLayout>
 
