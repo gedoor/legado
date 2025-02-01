@@ -6,19 +6,31 @@
     android:background="?android:attr/selectableItemBackground"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/text_title"
-        android:text="@string/title"
+    <HorizontalScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textIsSelectable="true" />
+        android:layout_height="match_parent"
+        android:scrollbars="none">
+        <TextView
+            android:id="@+id/text_title"
+            android:text="@string/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:ellipsize="none" />
+    </HorizontalScrollView>
 
-    <TextView
-        android:id="@+id/text_record"
-        android:text="@string/read_record"
+    <HorizontalScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:autoLink="web"
-        android:textIsSelectable="true" />
+        android:layout_height="match_parent"
+        android:scrollbars="none">
+        <TextView
+            android:id="@+id/text_record"
+            android:text="@string/read_record"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autoLink="web"
+            android:singleLine="true"
+            android:ellipsize="none" />
+    </HorizontalScrollView>
 
 </LinearLayout>

@@ -2,6 +2,7 @@ package io.legado.app.ui.rss.article
 
 import android.content.Context
 import android.os.Bundle
+import android.text.method.ScrollingMovementMethod
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
@@ -76,6 +77,8 @@ class ReadRecordDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
             item: RssReadRecord,
             payloads: MutableList<Any>
         ) {
+            binding.textTitle.movementMethod = ScrollingMovementMethod()
+            binding.textRecord.movementMethod = ScrollingMovementMethod()
             binding.textTitle.text = item.title
             binding.textRecord.text = item.record
         }
