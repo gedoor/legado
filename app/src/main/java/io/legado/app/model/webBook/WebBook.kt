@@ -79,7 +79,8 @@ object WebBook {
             analyzeUrl = analyzeUrl,
             baseUrl = res.url,
             body = res.body,
-            isSearch = true
+            isSearch = true,
+            isRedirect = res.raw.priorResponse?.isRedirect == true
         )
     }
 
