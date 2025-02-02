@@ -106,8 +106,9 @@
                             android:paddingBottom="3dp">
 
                             <HorizontalScrollView
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
                                 android:layout_marginBottom="6dp"
                                 android:scrollbars="none">
 
@@ -115,8 +116,6 @@
                                     android:id="@+id/tv_name"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:gravity="center"
                                     android:includeFontPadding="false"
                                     android:singleLine="true"
                                     android:text="@string/book_name"
@@ -126,8 +125,9 @@
                             </HorizontalScrollView>
 
                             <HorizontalScrollView
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
                                 android:layout_marginBottom="6dp"
                                 android:scrollbars="none">
 
@@ -135,8 +135,6 @@
                                     android:id="@+id/lb_kind"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:gravity="center"
                                     android:visibility="gone" />
                             </HorizontalScrollView>
 

@@ -240,7 +240,7 @@ class EpubFile(var book: Book) {
             it.attr("src", it.attr("xlink:href"))
         }
         bodyElement.select("img").forEach {
-            val src = it.attr("src").encodeURI()
+            val src = it.attr("src").trim().encodeURI()
             val href = res.href.encodeURI()
             val resolvedHref = URLDecoder.decode(URI(href).resolve(src).toString(), "UTF-8")
             it.attr("src", resolvedHref)

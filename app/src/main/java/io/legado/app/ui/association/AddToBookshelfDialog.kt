@@ -19,8 +19,13 @@ import io.legado.app.databinding.DialogAddToBookshelfBinding
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.webBook.WebBook
-import io.legado.app.ui.book.read.ReadBookActivity
-import io.legado.app.utils.*
+import io.legado.app.ui.book.info.BookInfoActivity
+import io.legado.app.utils.GSON
+import io.legado.app.utils.NetworkUtils
+import io.legado.app.utils.fromJsonObject
+import io.legado.app.utils.setLayout
+import io.legado.app.utils.startActivity
+import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 /**
@@ -66,7 +71,6 @@ class AddToBookshelfDialog() : BaseDialogFragment(R.layout.dialog_add_to_bookshe
         viewModel.loadStateLiveData.observe(this) {
             if (it) {
                 binding.rotateLoading.visible()
-                binding.bookInfo.invisible()
             } else {
                 binding.rotateLoading.gone()
             }
@@ -76,31 +80,17 @@ class AddToBookshelfDialog() : BaseDialogFragment(R.layout.dialog_add_to_bookshe
             dismiss()
         }
         viewModel.load(bookUrl) {
-            binding.bookInfo.visible()
-            binding.tvName.text = it.name
-            binding.tvAuthor.text = it.author
-            binding.tvOrigin.text = it.originName
+            viewModel.saveSearchBook(it) {
+                startActivity<BookInfoActivity> {
+                    putExtra("name", it.name)
+                    putExtra("author", it.author)
+                    putExtra("bookUrl", it.bookUrl)
+                }
+                dismiss()
+            }
         }
         binding.tvCancel.setOnClickListener {
             dismiss()
-        }
-        binding.tvOk.setOnClickListener {
-            viewModel.saveBook {
-                it?.let {
-                    dismiss()
-                } ?: toastOnUi(R.string.no_book)
-            }
-        }
-        binding.tvRead.setOnClickListener {
-            viewModel.saveBook {
-                it?.let {
-                    startActivity<ReadBookActivity> {
-                        putExtra("bookUrl", it.bookUrl)
-                        putExtra("inBookshelf", false)
-                    }
-                    dismiss()
-                } ?: toastOnUi(R.string.no_book)
-            }
         }
     }
 
@@ -168,12 +158,13 @@ class AddToBookshelfDialog() : BaseDialogFragment(R.layout.dialog_add_to_bookshe
             }.getOrNull()
         }
 
-        fun saveBook(success: (book: Book?) -> Unit) {
+        fun saveSearchBook(book: Book, success: () -> Unit) {
             execute {
-                book?.save()
-                book
+                val searchBook = book.toSearchBook()
+                appDb.searchBookDao.insert(searchBook)
+                searchBook
             }.onSuccess {
-                success.invoke(it)
+                success.invoke()
             }
         }
 
