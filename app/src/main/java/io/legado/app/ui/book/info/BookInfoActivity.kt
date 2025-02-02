@@ -501,9 +501,6 @@ class BookInfoActivity :
             refreshLayout.isRefreshing = false
             refreshBook()
         }
-        refreshLayout?.setOnChildScrollUpCallback { _, target ->
-            target!!.canScrollVertically(-1) || tvIntro.hasSelection()
-        }
     }
 
     private fun setSourceVariable() {
