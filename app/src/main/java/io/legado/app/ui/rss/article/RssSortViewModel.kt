@@ -77,17 +77,17 @@ class RssSortViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun getRecord(): List<RssReadRecord> {
-        return appDb.rssReadRecordDao.getRecord()
+    fun getRecords(): List<RssReadRecord> {
+        return appDb.rssReadRecordDao.getRecords()
     }
 
-    fun countRead() : Int {
-        return appDb.rssReadRecordDao.countRead
+    fun countRecords() : Int {
+        return appDb.rssReadRecordDao.countRecords
     }
 
-    fun delReadRecord() {
+    fun deleteAllRecord() {
         execute {
-            appDb.rssReadRecordDao.deleteRecord()
+            appDb.rssReadRecordDao.deleteAllRecord()
         }
     }
 

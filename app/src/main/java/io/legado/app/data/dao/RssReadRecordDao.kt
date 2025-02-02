@@ -10,12 +10,12 @@ interface RssReadRecordDao {
     fun insertRecord(vararg rssReadRecord: RssReadRecord)
 
     @Query("select * from rssReadRecords order by readTime desc")
-    fun getRecord(): List<RssReadRecord>
+    fun getRecords(): List<RssReadRecord>
 
     @get:Query("select count(1) from rssReadRecords")
-    val countRead: Int
+    val countRecords: Int
 
     @Query("delete from rssReadRecords")
-    fun deleteRecord()
+    fun deleteAllRecord()
 
 }

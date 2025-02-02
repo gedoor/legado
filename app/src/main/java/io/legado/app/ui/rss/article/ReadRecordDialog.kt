@@ -2,7 +2,6 @@ package io.legado.app.ui.rss.article
 
 import android.content.Context
 import android.os.Bundle
-import android.text.method.ScrollingMovementMethod
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
@@ -44,18 +43,18 @@ class ReadRecordDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
             recyclerView.layoutManager = LinearLayoutManager(requireContext())
             recyclerView.adapter = adapter
         }
-        adapter.setItems(viewModel.getRecord())
+        adapter.setItems(viewModel.getRecords())
     }
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_clear -> {
                 alert(R.string.draw) {
-                    val countRead = viewModel.countRead()
+                    val countRead = viewModel.countRecords()
                     setMessage(getString(R.string.sure_del) + "\n" + countRead + " " + getString(R.string.read_record))
                     noButton()
-                    yesButton{
-                        viewModel.delReadRecord()
+                    yesButton {
+                        viewModel.deleteAllRecord()
                         adapter.clearItems()
                     }
                 }
@@ -77,8 +76,6 @@ class ReadRecordDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
             item: RssReadRecord,
             payloads: MutableList<Any>
         ) {
-            binding.textTitle.movementMethod = ScrollingMovementMethod()
-            binding.textRecord.movementMethod = ScrollingMovementMethod()
             binding.textTitle.text = item.title
             binding.textRecord.text = item.record
         }
