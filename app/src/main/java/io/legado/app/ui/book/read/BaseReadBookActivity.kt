@@ -219,6 +219,7 @@ abstract class BaseReadBookActivity :
         upNavigationBar()
         when {
             binding.readMenu.isVisible -> super.upNavigationBarColor()
+            binding.searchMenu.bottomMenuVisible -> super.upNavigationBarColor()
             bottomDialog > 0 -> super.upNavigationBarColor()
             !AppConfig.immNavigationBar -> super.upNavigationBarColor()
             else -> setNavigationBarColorAuto(ReadBookConfig.bgMeanColor)
@@ -228,7 +229,7 @@ abstract class BaseReadBookActivity :
     @SuppressLint("RtlHardcoded")
     private fun upNavigationBar() {
         binding.navigationBar.run {
-            if (bottomDialog > 0 || binding.readMenu.isVisible) {
+            if (bottomDialog > 0 || binding.readMenu.isVisible || binding.searchMenu.bottomMenuVisible) {
 //                val navigationBarHeight =
 //                    if (ReadBookConfig.hideNavigationBar) navigationBarHeight else 0
 //                when (navigationBarGravity) {

@@ -59,6 +59,7 @@ class SearchMenu @JvmOverloads constructor(
         get() = searchResultList.getOrNull(currentSearchResultIndex)
     val previousSearchResult: SearchResult?
         get() = searchResultList.getOrNull(lastSearchResultIndex)
+    val bottomMenuVisible get() = binding.llBottomMenu.isVisible
 
     init {
         initAnimation()

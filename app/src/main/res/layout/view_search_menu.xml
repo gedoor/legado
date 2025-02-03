@@ -109,7 +109,7 @@
         <LinearLayout
             android:id="@+id/ll_bottom_bg"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:baselineAligned="false"
             android:orientation="horizontal">
 
@@ -122,8 +122,8 @@
             <!--结果按钮-->
             <LinearLayout
                 android:id="@+id/ll_search_results"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:contentDescription="结果"
@@ -137,7 +137,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
+                    android:adjustViewBounds="true"
                     android:contentDescription="结果"
+                    android:maxHeight="20dp"
                     android:src="@drawable/ic_toc"
                     app:tint="@color/primaryText"
                     tools:ignore="NestedWeights" />
@@ -162,8 +164,8 @@
             <!--调节按钮-->
             <LinearLayout
                 android:id="@+id/ll_main_menu"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:contentDescription="@string/read_aloud"
@@ -176,7 +178,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
+                    android:adjustViewBounds="true"
                     android:contentDescription="@string/main_menu"
+                    android:maxHeight="20dp"
                     android:src="@drawable/ic_menu"
                     app:tint="@color/primaryText"
                     tools:ignore="NestedWeights" />
@@ -200,8 +204,8 @@
             <!--界面按钮-->
             <LinearLayout
                 android:id="@+id/ll_search_exit"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:contentDescription="退出"
@@ -214,7 +218,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
+                    android:adjustViewBounds="true"
                     android:contentDescription="退出"
+                    android:maxHeight="20dp"
                     android:src="@drawable/ic_auto_page_stop"
                     app:tint="@color/primaryText"
                     tools:ignore="NestedWeights" />

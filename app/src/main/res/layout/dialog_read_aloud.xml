@@ -6,14 +6,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/background_menu"
+    android:orientation="vertical"
     android:paddingLeft="16dp"
-    android:paddingRight="16dp"
     android:paddingTop="6dp"
-    android:paddingBottom="6dp"
-    android:orientation="vertical">
+    android:paddingRight="16dp"
+    android:paddingBottom="6dp">
 
     <LinearLayout
-
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -47,9 +46,9 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:tooltipText="@string/prev_sentence"
             android:contentDescription="@string/prev_sentence"
             android:src="@drawable/ic_skip_previous"
+            android:tooltipText="@string/prev_sentence"
             app:tint="@color/primaryText"
             tools:ignore="UnusedAttribute" />
 
@@ -60,9 +59,9 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:tooltipText="@string/audio_play"
             android:contentDescription="@string/audio_play"
             android:src="@drawable/ic_play_24dp"
+            android:tooltipText="@string/audio_play"
             app:tint="@color/primaryText"
             tools:ignore="UnusedAttribute" />
 
@@ -74,8 +73,8 @@
             android:layout_marginRight="8dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/stop"
-            android:tooltipText="@string/stop"
             android:src="@drawable/ic_stop_black_24dp"
+            android:tooltipText="@string/stop"
             app:tint="@color/primaryText"
             tools:ignore="UnusedAttribute" />
 
@@ -87,8 +86,8 @@
             android:layout_marginRight="8dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/next_sentence"
-            android:tooltipText="@string/next_sentence"
             android:src="@drawable/ic_skip_next"
+            android:tooltipText="@string/next_sentence"
             app:tint="@color/primaryText"
             tools:ignore="UnusedAttribute" />
 
@@ -127,10 +126,10 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:tooltipText="@string/set_timer"
             android:contentDescription="@string/set_timer"
             android:src="@drawable/ic_time_add_24dp"
             android:tint="@color/primaryText"
+            android:tooltipText="@string/set_timer"
             tools:ignore="UnusedAttribute" />
 
         <io.legado.app.lib.theme.view.ThemeSeekBar
@@ -145,8 +144,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:textColor="@color/primaryText"
-            android:text="@string/timer_m" />
+            android:text="@string/timer_m"
+            android:textColor="@color/primaryText" />
 
     </LinearLayout>
 
@@ -184,8 +183,8 @@
             <Space
                 android:layout_width="0dp"
                 android:layout_height="1dp"
-                android:layout_weight="1"
-                android:layout_gravity="center" />
+                android:layout_gravity="center"
+                android:layout_weight="1" />
 
             <io.legado.app.lib.theme.view.ThemeSwitch
                 android:id="@+id/cb_tts_follow_sys"
@@ -201,19 +200,19 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="6dp"
-            android:paddingRight="6dp"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_tts_speech_reduce"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:tooltipText="@string/tts_speech_reduce"
                 android:contentDescription="@string/tts_speech_reduce"
                 android:src="@drawable/ic_reduce"
                 android:tint="@color/primaryText"
+                android:tooltipText="@string/tts_speech_reduce"
                 tools:ignore="UnusedAttribute" />
 
             <io.legado.app.lib.theme.view.ThemeSeekBar
@@ -227,10 +226,10 @@
                 android:id="@+id/iv_tts_speech_add"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:tooltipText="@string/tts_speech_add"
                 android:contentDescription="@string/tts_speech_add"
                 android:src="@drawable/ic_add"
                 android:tint="@color/primaryText"
+                android:tooltipText="@string/tts_speech_add"
                 tools:ignore="UnusedAttribute" />
 
         </LinearLayout>
@@ -239,7 +238,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:baselineAligned="false"
         android:orientation="horizontal">
@@ -247,8 +246,8 @@
         <!--目录按钮-->
         <LinearLayout
             android:id="@+id/ll_catalog"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:clickable="true"
             android:contentDescription="@string/chapter_list"
@@ -261,7 +260,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
+                android:adjustViewBounds="true"
                 android:contentDescription="@string/chapter_list"
+                android:maxHeight="20dp"
                 android:src="@drawable/ic_toc"
                 app:tint="@color/primaryText"
                 tools:ignore="NestedWeights" />
@@ -272,9 +273,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="3dp"
-                android:text="@string/chapter_list"
-                android:singleLine="true"
                 android:ellipsize="middle"
+                android:singleLine="true"
+                android:text="@string/chapter_list"
                 android:textColor="@color/primaryText"
                 android:textSize="12sp" />
         </LinearLayout>
@@ -286,8 +287,8 @@
         <!--调节按钮-->
         <LinearLayout
             android:id="@+id/ll_main_menu"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:clickable="true"
             android:contentDescription="@string/read_aloud"
@@ -301,7 +302,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
+                android:adjustViewBounds="true"
                 android:contentDescription="@string/main_menu"
+                android:maxHeight="20dp"
                 android:src="@drawable/ic_menu"
                 app:tint="@color/primaryText"
                 tools:ignore="NestedWeights" />
@@ -326,8 +329,8 @@
         <!--界面按钮-->
         <LinearLayout
             android:id="@+id/ll_to_backstage"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:clickable="true"
             android:contentDescription="@string/to_backstage"
@@ -340,7 +343,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
+                android:adjustViewBounds="true"
                 android:contentDescription="@string/to_backstage"
+                android:maxHeight="20dp"
                 android:src="@drawable/ic_visibility_off"
                 app:tint="@color/primaryText"
                 tools:ignore="NestedWeights" />
@@ -351,9 +356,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="3dp"
-                android:text="@string/to_backstage"
-                android:singleLine="true"
                 android:ellipsize="middle"
+                android:singleLine="true"
+                android:text="@string/to_backstage"
                 android:textColor="@color/primaryText"
                 android:textSize="12sp" />
         </LinearLayout>
@@ -365,8 +370,8 @@
         <!--设置按钮-->
         <LinearLayout
             android:id="@+id/ll_setting"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:clickable="true"
             android:contentDescription="@string/setting"
@@ -379,7 +384,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
+                android:adjustViewBounds="true"
                 android:contentDescription="@string/aloud_config"
+                android:maxHeight="20dp"
                 android:src="@drawable/ic_settings"
                 app:tint="@color/primaryText"
                 tools:ignore="NestedWeights" />
@@ -390,9 +397,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="3dp"
-                android:text="@string/setting"
-                android:singleLine="true"
                 android:ellipsize="middle"
+                android:singleLine="true"
+                android:text="@string/setting"
                 android:textColor="@color/primaryText"
                 android:textSize="12sp" />
         </LinearLayout>
