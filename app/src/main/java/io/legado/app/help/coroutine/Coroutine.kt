@@ -130,6 +130,11 @@ class Coroutine<T>(
         block: suspend CoroutineScope.() -> Unit
     ): Coroutine<T> {
         this.cancel = VoidCallback(context, block)
+        job.invokeOnCompletion {
+            if (it is CancellationException && it !is ActivelyCancelException) {
+                cancel()
+            }
+        }
         return this@Coroutine
     }
 
@@ -156,11 +161,7 @@ class Coroutine<T>(
     }
 
     fun start() {
-        if (startOption === CoroutineStart.LAZY && isCancelled) {
-            cancel()
-        } else {
-            job.start()
-        }
+        job.start()
     }
 
     private fun executeInternal(
@@ -176,9 +177,6 @@ class Coroutine<T>(
                 success?.let { dispatchCallback(this, value, it) }
             } catch (e: Throwable) {
                 e.printOnDebug()
-                if (e is CancellationException && e !is ActivelyCancelException && isCancelled) {
-                    this@Coroutine.cancel()
-                }
                 val consume: Boolean = errorReturn?.value?.let { value ->
                     success?.let { dispatchCallback(this, value, it) }
                     true
