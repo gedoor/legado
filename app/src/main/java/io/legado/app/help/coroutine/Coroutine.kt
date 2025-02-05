@@ -146,9 +146,9 @@ class Coroutine<T>(
         cancel?.let {
             DEFAULT.launch(executeContext) {
                 if (null == it.context) {
-                    it.block.invoke(scope)
+                    it.block.invoke(this)
                 } else {
-                    withContext(scope.coroutineContext + it.context) {
+                    withContext(it.context) {
                         it.block.invoke(this)
                     }
                 }
