@@ -2,6 +2,7 @@ package io.legado.app.help.coroutine
 
 import io.legado.app.utils.printOnDebug
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CompletionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -25,7 +26,7 @@ import kotlin.coroutines.CoroutineContext
 class Coroutine<T>(
     val scope: CoroutineScope,
     context: CoroutineContext = Dispatchers.IO,
-    val startOption: CoroutineStart = CoroutineStart.DEFAULT,
+    startOption: CoroutineStart = CoroutineStart.DEFAULT,
     val executeContext: CoroutineContext = Dispatchers.Main,
     block: suspend CoroutineScope.() -> T
 ) {
@@ -56,6 +57,9 @@ class Coroutine<T>(
 
     private var timeMillis: Long? = null
     private var errorReturn: Result<T>? = null
+
+    private val lazyWaiter =
+        if (startOption === CoroutineStart.LAZY) CompletableDeferred<Unit>() else null
 
     val isCancelled: Boolean
         get() = job.isCancelled
@@ -156,15 +160,16 @@ class Coroutine<T>(
     }
 
     fun start() {
-        job.start()
+        lazyWaiter?.complete(Unit)
     }
 
     private fun executeInternal(
         context: CoroutineContext,
         block: suspend CoroutineScope.() -> T
     ): Job {
-        return (scope.plus(executeContext)).launch(start = startOption) {
+        return (scope.plus(executeContext)).launch(start = CoroutineStart.ATOMIC) {
             try {
+                lazyWaiter?.await()
                 start?.let { dispatchVoidCallback(this, it) }
                 ensureActive()
                 val value = executeBlock(this, context, timeMillis ?: 0L, block)
