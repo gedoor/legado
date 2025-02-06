@@ -16,6 +16,7 @@ import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.config.AppConfig
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.FileDoc
+import io.legado.app.utils.GSON
 import io.legado.app.utils.exists
 import io.legado.app.utils.find
 import io.legado.app.utils.inputStream
@@ -254,6 +255,26 @@ fun Book.sync(oldBook: Book) {
 
 fun Book.update() {
     appDb.bookDao.update(this)
+}
+
+fun Book.updateTo(newBook: Book): Book {
+    newBook.durChapterIndex = durChapterIndex
+    newBook.durChapterTitle = durChapterTitle
+    newBook.durChapterPos = durChapterPos
+    newBook.durChapterTime = durChapterTime
+    newBook.group = group
+    newBook.order = order
+    newBook.customCoverUrl = customCoverUrl
+    newBook.customIntro = customIntro
+    newBook.customTag = customTag
+    newBook.canUpdate = canUpdate
+    newBook.readConfig = readConfig
+    val variableMap = variableMap.toMutableMap()
+    variableMap.putAll(newBook.variableMap)
+    newBook.variableMap.clear()
+    newBook.variableMap.putAll(variableMap)
+    newBook.variable = GSON.toJson(variableMap)
+    return newBook
 }
 
 fun Book.getBookSource(): BookSource? {
