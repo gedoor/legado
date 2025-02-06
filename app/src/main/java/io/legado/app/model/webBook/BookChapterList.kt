@@ -123,8 +123,8 @@ object BookChapterList {
         coroutineContext.ensureActive()
         //去重
         val lh = LinkedHashSet(chapterList)
-        val removeTitleList=ArrayList(lh).removeConsecutiveDuplicates()
-        val list = ArrayList(removeTitleList)
+//        val removeTitleList=ArrayList(lh).removeConsecutiveDuplicates()
+        val list = ArrayList(lh)
         if (!book.getReverseToc()) {
             list.reverse()
         }

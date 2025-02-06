@@ -10,11 +10,12 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowInsets
-import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.Book
@@ -33,6 +34,7 @@ import io.legado.app.model.recyclerView.ReaderLoading
 import io.legado.app.ui.book.changesource.ChangeBookSourceDialog
 import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.book.manga.rv.MangaAdapter
+import io.legado.app.ui.book.manga.rv.PreloadScrollListener
 import io.legado.app.ui.book.read.MangaMenu
 import io.legado.app.ui.book.read.ReadBookActivity.Companion.RESULT_DELETED
 import io.legado.app.ui.book.toc.TocActivityResult
@@ -40,7 +42,6 @@ import io.legado.app.ui.widget.recycler.LoadMoreView
 import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.StartActivityContract
 import io.legado.app.utils.getCompatColor
-import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.gone
 import io.legado.app.utils.immersionFullScreen
 import io.legado.app.utils.setLightStatusBar
@@ -112,6 +113,13 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
                 }
             }
         }
+
+        binding.mRecyclerMange.addOnScrollListener(
+            PreloadScrollListener(
+                binding.mRecyclerMange.layoutManager as LinearLayoutManager,
+                10
+            )
+        )
         binding.retry.setOnClickListener {
             binding.llLoading.isVisible = true
             binding.retry.isGone = true
@@ -223,6 +231,11 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
     override fun onDestroy() {
         ReadMange.unregister()
         super.onDestroy()
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        Glide.get(this).clearMemory()
     }
 
     override val oldBook: Book?
