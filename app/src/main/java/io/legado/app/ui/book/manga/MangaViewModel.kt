@@ -44,7 +44,6 @@ class MangaViewModel(application: Application) : BaseViewModel(application) {
         execute {
             ReadMange.inBookshelf = intent.getBooleanExtra("inBookshelf", true)
             ReadMange.tocChanged = intent.getBooleanExtra("tocChanged", false)
-            ReadMange.chapterChanged = intent.getBooleanExtra("chapterChanged", false)
             val bookUrl = intent.getStringExtra("bookUrl")
             val book = when {
                 bookUrl.isNullOrEmpty() -> appDb.bookDao.lastReadBook
@@ -225,6 +224,7 @@ class MangaViewModel(application: Application) : BaseViewModel(application) {
 
     fun openChapter(index: Int, durChapterPos: Int = 0) {
         if (index < ReadMange.durChapterPageCount) {
+            ReadMange.chapterChanged=true
             ReadMange.durChapterPagePos = index
             ReadMange.durChapterPos = durChapterPos
             ReadMange.saveRead()

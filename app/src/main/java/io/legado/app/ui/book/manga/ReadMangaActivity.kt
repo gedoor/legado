@@ -44,6 +44,7 @@ import io.legado.app.utils.StartActivityContract
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.gone
 import io.legado.app.utils.immersionFullScreen
+import io.legado.app.utils.printOnDebug
 import io.legado.app.utils.setLightStatusBar
 import io.legado.app.utils.setNavigationBarColorAuto
 import io.legado.app.utils.showDialogFragment
@@ -70,6 +71,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
     private val tocActivity =
         registerForActivityResult(TocActivityResult()) {
             it?.let {
+                binding.flLoading.isVisible = true
                 viewModel.openChapter(it.first, it.second)
             }
         }
@@ -104,16 +106,21 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
                 if (mAdapter.getCurrentList()
                         .isNotEmpty() && position <= mAdapter.getCurrentList().lastIndex
                 ) {
-                    val content = mAdapter.getCurrentList()[position]
-                    if (content is MangeContent) {
-                        ReadMange.durChapterPos = content.mDurChapterPos.minus(1)
-                        upText(
-                            content.mChapterPagePos,
-                            content.mChapterPageCount,
-                            content.mDurChapterPos,
-                            content.mDurChapterCount
-                        )
+                    try {
+                        val content = mAdapter.getCurrentList()[position]
+                        if (content is MangeContent) {
+                            ReadMange.durChapterPos = content.mDurChapterPos.minus(1)
+                            upText(
+                                content.mChapterPagePos,
+                                content.mChapterPageCount,
+                                content.mDurChapterPos,
+                                content.mDurChapterCount
+                            )
+                        }
+                    } catch (e: Exception) {
+                        e.printOnDebug()
                     }
+
                 }
             }
             addOnScrollListener(
@@ -190,6 +197,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
                         }
                     }
                 }
+                ReadMange.chapterChanged = false
                 loadMoreView.visible()
                 mFirstLoading = true
                 loadMoreView.stopLoad()
@@ -251,6 +259,8 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
 
     override fun changeTo(source: BookSource, book: Book, toc: List<BookChapter>) {
         if (book.isImage) {
+            binding.flLoading.isVisible = true
+            ReadMange.chapterChanged = true
             viewModel.changeTo(book, toc)
         } else {
             toastOnUi("所选择的源不是漫画源")

@@ -14,6 +14,7 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter.Companion.TYPE_FOOTER_VIEW
 import io.legado.app.databinding.BookComicLoadingRvBinding
 import io.legado.app.databinding.BookComicRvBinding
+import io.legado.app.model.ReadMange
 import io.legado.app.model.recyclerView.MangaVH
 import io.legado.app.model.recyclerView.MangeContent
 import io.legado.app.model.recyclerView.ReaderLoading
@@ -55,9 +56,16 @@ class MangaAdapter :
     fun submitList(contents: MutableList<Any>, runnable: Runnable) {
         val currentList = mDiffer.currentList.toMutableList()
         currentList.addAll(contents)
-        mDiffer.submitList(currentList) {
-            runnable.run()
+        if (ReadMange.chapterChanged) {
+            mDiffer.submitList(contents) {
+                runnable.run()
+            }
+        } else {
+            mDiffer.submitList(currentList) {
+                runnable.run()
+            }
         }
+
     }
 
     inner class PageViewHolder(binding: BookComicRvBinding) :
