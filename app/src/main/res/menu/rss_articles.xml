@@ -28,13 +28,13 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/menu_clear"
-        android:title="@string/clear"
+        android:id="@+id/menu_read_record"
+        android:title="@string/read_record"
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/menu_del_read_record"
-        android:title="@string/del_read_record"
+        android:id="@+id/menu_clear"
+        android:title="@string/clear"
         app:showAsAction="never" />
 
 </menu>

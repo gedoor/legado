@@ -154,8 +154,10 @@ class BookSourceAdapter(context: Context, val callBack: CallBack) :
 
     override fun onCurrentListChanged() {
         callBack.upCountView()
-        handler.post {
-            notifyItemRangeChanged(0, itemCount, bundleOf("upSourceHost" to null))
+        if (showSourceHost) {
+            handler.post {
+                notifyItemRangeChanged(0, itemCount, bundleOf("upSourceHost" to null))
+            }
         }
     }
 

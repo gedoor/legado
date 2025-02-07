@@ -41,36 +41,30 @@ class PhotoDialog() : BaseDialogFragment(R.layout.dialog_photo_view) {
     @SuppressLint("CheckResult")
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         val arguments = arguments ?: return
-        arguments.getString("src")?.let { src ->
-            ImageProvider.bitmapLruCache.get(src)?.let {
-                binding.photoView.setImageBitmap(it)
-                return
-            }
-            val file = ReadBook.book?.let { book ->
-                BookHelp.getImage(book, src)
-            }
-            if (file?.exists() == true) {
-                ImageLoader.load(requireContext(), file)
-                    .error(R.drawable.image_loading_error)
-                    .dontTransform()
-                    .downsample(DownsampleStrategy.NONE)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .into(binding.photoView)
-            } else {
-                ImageLoader.load(requireContext(), src).apply {
-                    arguments.getString("sourceOrigin")?.let { sourceOrigin ->
-                        apply(
-                            RequestOptions().set(
-                                OkHttpModelLoader.sourceOriginOption,
-                                sourceOrigin
-                            )
-                        )
-                    }
-                }.error(BookCover.defaultDrawable)
-                    .dontTransform()
-                    .downsample(DownsampleStrategy.NONE)
-                    .into(binding.photoView)
-            }
+        val src = arguments.getString("src") ?: return
+        ImageProvider.get(src)?.let {
+            binding.photoView.setImageBitmap(it)
+            return
+        }
+        val file = ReadBook.book?.let { book ->
+            BookHelp.getImage(book, src)
+        }
+        if (file?.exists() == true) {
+            ImageLoader.load(requireContext(), file)
+                .error(R.drawable.image_loading_error)
+                .dontTransform()
+                .downsample(DownsampleStrategy.NONE)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .into(binding.photoView)
+        } else {
+            ImageLoader.load(requireContext(), src).apply {
+                arguments.getString("sourceOrigin")?.let { sourceOrigin ->
+                    apply(RequestOptions().set(OkHttpModelLoader.sourceOriginOption, sourceOrigin))
+                }
+            }.error(BookCover.defaultDrawable)
+                .dontTransform()
+                .downsample(DownsampleStrategy.NONE)
+                .into(binding.photoView)
         }
     }
 

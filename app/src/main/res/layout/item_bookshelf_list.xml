@@ -32,8 +32,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_name"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/iv_cover">
+        app:layout_constraintTop_toTopOf="@+id/tv_name">
 
         <io.legado.app.ui.widget.text.BadgeView
             android:id="@+id/bv_unread"

@@ -18,6 +18,8 @@ import io.legado.app.utils.visible
 class SearchAdapter(context: Context, val callBack: CallBack) :
     DiffRecyclerAdapter<SearchBook, ItemSearchBinding>(context) {
 
+    override val keepScrollPosition = true
+
     override val diffItemCallback: DiffUtil.ItemCallback<SearchBook>
         get() = object : DiffUtil.ItemCallback<SearchBook>() {
 

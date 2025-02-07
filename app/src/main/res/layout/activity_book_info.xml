@@ -35,7 +35,7 @@
             android:layout_height="0dp"
             android:layout_weight="1">
 
-            <ScrollView
+            <androidx.core.widget.NestedScrollView
                 android:id="@+id/scroll_view"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -105,27 +105,38 @@
                             android:paddingRight="10dp"
                             android:paddingBottom="3dp">
 
-                            <TextView
-                                android:id="@+id/tv_name"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginBottom="6dp"
-                                android:gravity="center"
-                                android:includeFontPadding="false"
-                                android:singleLine="true"
-                                android:text="@string/book_name"
-                                android:textColor="@color/primaryText"
-                                android:textSize="18sp"
-                                tools:ignore="RtlHardcoded" />
-
-                            <io.legado.app.ui.widget.LabelsBar
-                                android:id="@+id/lb_kind"
-                                android:layout_width="match_parent"
+                            <HorizontalScrollView
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:layout_marginBottom="6dp"
-                                android:gravity="center"
-                                android:visibility="gone" />
+                                android:scrollbars="none">
+
+                                <TextView
+                                    android:id="@+id/tv_name"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:includeFontPadding="false"
+                                    android:singleLine="true"
+                                    android:text="@string/book_name"
+                                    android:textColor="@color/primaryText"
+                                    android:textSize="18sp"
+                                    tools:ignore="RtlHardcoded" />
+                            </HorizontalScrollView>
+
+                            <HorizontalScrollView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginBottom="6dp"
+                                android:scrollbars="none">
+
+                                <io.legado.app.ui.widget.LabelsBar
+                                    android:id="@+id/lb_kind"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:visibility="gone" />
+                            </HorizontalScrollView>
 
                         </LinearLayout>
 
@@ -363,7 +374,7 @@
 
                 </LinearLayout>
 
-            </ScrollView>
+            </androidx.core.widget.NestedScrollView>
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

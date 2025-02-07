@@ -20,6 +20,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.isActive
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.coroutineContext
 
@@ -77,7 +79,8 @@ object WebBook {
             analyzeUrl = analyzeUrl,
             baseUrl = res.url,
             body = res.body,
-            isSearch = true
+            isSearch = true,
+            isRedirect = res.raw.priorResponse?.isRedirect == true
         )
     }
 
@@ -282,9 +285,14 @@ object WebBook {
         context: CoroutineContext = Dispatchers.IO,
         start: CoroutineStart = CoroutineStart.DEFAULT,
         executeContext: CoroutineContext = Dispatchers.Main,
+        semaphore: Semaphore? = null,
     ): Coroutine<String> {
         return Coroutine.async(scope, context, start = start, executeContext = executeContext) {
-            getContentAwait(bookSource, book, bookChapter, nextChapterUrl, needSave)
+            semaphore?.withPermit {
+                getContentAwait(bookSource, book, bookChapter, nextChapterUrl, needSave)
+            } ?: run {
+                getContentAwait(bookSource, book, bookChapter, nextChapterUrl, needSave)
+            }
         }
     }
 

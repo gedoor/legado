@@ -129,8 +129,8 @@ interface BookDao {
     @get:Query("select max(`order`) from books")
     val maxOrder: Int
 
-    @Query("select 1 from books where bookUrl = :bookUrl")
-    fun has(bookUrl: String): Boolean?
+    @Query("select exists(select 1 from books where bookUrl = :bookUrl)")
+    fun has(bookUrl: String): Boolean
 
     @Query(
         """select exists(select 1 from books where type & ${BookType.local} > 0 

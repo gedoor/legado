@@ -14,7 +14,6 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.databinding.ActivityRssArtivlesBinding
 import io.legado.app.help.source.sortUrls
-import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.ui.rss.source.edit.RssSourceEditActivity
@@ -92,8 +91,8 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
                 upFragments()
             }
 
-            R.id.menu_del_read_record -> {
-                delReadRecord()
+            R.id.menu_read_record -> {
+                showDialogFragment<ReadRecordDialog>()
             }
         }
         return super.onCompatOptionsItemSelected(item)
@@ -111,17 +110,6 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
                 binding.tabLayout.visible()
             }
             adapter.notifyDataSetChanged()
-        }
-    }
-
-    private fun delReadRecord() {
-        alert(R.string.draw) {
-            val countRead = viewModel.countRead()
-            setMessage(getString(R.string.sure_del) + "\n" + countRead + " " + getString(R.string.read_record))
-            noButton()
-            yesButton(){
-                viewModel.delReadRecord()
-            }
         }
     }
 

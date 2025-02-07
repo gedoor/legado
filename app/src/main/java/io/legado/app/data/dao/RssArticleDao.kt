@@ -2,7 +2,6 @@ package io.legado.app.data.dao
 
 import androidx.room.*
 import io.legado.app.data.entities.RssArticle
-import io.legado.app.data.entities.RssReadRecord
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -37,14 +36,5 @@ interface RssArticleDao {
 
     @Query("delete from rssArticles where origin = :origin")
     fun delete(origin: String)
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertRecord(vararg rssReadRecord: RssReadRecord)
-
-    @get:Query("select count(1) from rssReadRecords")
-    val countRead: Int
-
-    @Query("delete from rssReadRecords")
-    fun deleteRecord()
 
 }

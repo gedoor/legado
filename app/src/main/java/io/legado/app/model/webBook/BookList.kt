@@ -32,6 +32,7 @@ object BookList {
         baseUrl: String,
         body: String?,
         isSearch: Boolean = true,
+        isRedirect: Boolean = false
     ): ArrayList<SearchBook> {
         body ?: throw NoStackTraceException(
             appCtx.getString(
@@ -56,7 +57,8 @@ object BookList {
                     analyzeUrl,
                     body,
                     baseUrl,
-                    ruleData.getVariable()
+                    ruleData.getVariable(),
+                    isRedirect
                 )?.let { searchBook ->
                     searchBook.infoHtml = body
                     bookList.add(searchBook)
@@ -85,7 +87,8 @@ object BookList {
         if (collections.isEmpty() && bookSource.bookUrlPattern.isNullOrEmpty()) {
             Debug.log(bookSource.bookSourceUrl, "└列表为空,按详情页解析")
             getInfoItem(
-                bookSource, analyzeRule, analyzeUrl, body, baseUrl, ruleData.getVariable()
+                bookSource, analyzeRule, analyzeUrl, body, baseUrl, ruleData.getVariable(),
+                isRedirect
             )?.let { searchBook ->
                 searchBook.infoHtml = body
                 bookList.add(searchBook)
@@ -137,10 +140,15 @@ object BookList {
         analyzeUrl: AnalyzeUrl,
         body: String,
         baseUrl: String,
-        variable: String?
+        variable: String?,
+        isRedirect: Boolean
     ): SearchBook? {
         val book = Book(variable = variable)
-        book.bookUrl = NetworkUtils.getAbsoluteURL(analyzeUrl.url, analyzeUrl.ruleUrl)
+        book.bookUrl = if (isRedirect) {
+            baseUrl
+        } else {
+            NetworkUtils.getAbsoluteURL(analyzeUrl.url, analyzeUrl.ruleUrl)
+        }
         book.origin = bookSource.bookSourceUrl
         book.originName = bookSource.bookSourceName
         book.originOrder = bookSource.customOrder

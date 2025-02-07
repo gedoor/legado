@@ -364,21 +364,6 @@ data class Book(
         return newBook
     }
 
-    fun updateTo(newBook: Book): Book {
-        newBook.durChapterIndex = durChapterIndex
-        newBook.durChapterTitle = durChapterTitle
-        newBook.durChapterPos = durChapterPos
-        newBook.durChapterTime = durChapterTime
-        newBook.group = group
-        newBook.order = order
-        newBook.customCoverUrl = customCoverUrl
-        newBook.customIntro = customIntro
-        newBook.customTag = customTag
-        newBook.canUpdate = canUpdate
-        newBook.readConfig = readConfig
-        return newBook
-    }
-
     fun createBookMark(): Bookmark {
         return Bookmark(
             bookName = name,
