@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
+import com.bumptech.glide.Glide
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter.Companion.TYPE_FOOTER_VIEW
 import io.legado.app.databinding.BookComicLoadingRvBinding
@@ -146,6 +147,7 @@ class MangaAdapter :
             is PageViewHolder -> {
                 vh.binding.image.recycle()
                 vh.itemView.updateLayoutParams<ViewGroup.LayoutParams> { height = MATCH_PARENT }
+                Glide.with(vh.binding.image).clear(vh.binding.image)
             }
         }
     }
