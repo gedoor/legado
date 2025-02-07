@@ -300,6 +300,13 @@ object ReadMange : CoroutineScope by MainScope() {
                 }
             }
             val contentList = mutableListOf<Any>()
+            contentList.add(
+                ReaderLoading(
+                    durChapterPagePos,
+                    "阅读 ${chapter.title}",
+                    mNextChapterIndex = durChapterPagePos.plus(1)
+                )
+            )
             contentList.addAll(list)
             durChapterCount = contentList.size
             contentList.add(
