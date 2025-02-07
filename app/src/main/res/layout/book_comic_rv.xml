@@ -8,15 +8,25 @@
     android:contentDescription="@null">
 
 
-    <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
+    <!--<com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
         android:id="@+id/image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:adjustViewBounds="true"
         app:panEnabled="false"
         app:quickScaleEnabled="false"
-        app:zoomEnabled="false" />
+        app:zoomEnabled="false" />-->
 
+    <com.github.panpf.zoomimage.GlideZoomImageView
+        android:id="@+id/image"
+        android:adjustViewBounds="true"
+        app:contentScale="fillWidth"
+        app:threeStepScale="false"
+        app:rubberBandScale="false"
+        app:limitOffsetWithinBaseVisibleRect="false"
+        app:animateScale="false"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
     <ProgressBar
         android:id="@+id/loading"

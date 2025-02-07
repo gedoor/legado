@@ -40,6 +40,7 @@ import io.legado.app.ui.book.read.ReadBookActivity.Companion.RESULT_DELETED
 import io.legado.app.ui.book.toc.TocActivityResult
 import io.legado.app.ui.widget.recycler.LoadMoreView
 import io.legado.app.utils.ColorUtils
+import io.legado.app.utils.DebugLog
 import io.legado.app.utils.StartActivityContract
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.gone
@@ -193,6 +194,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
                             (mAdapter.getCurrentList().last() as ReaderLoading).mNextChapterIndex
                         scrollToBottom(index = nextIndex)
                     } else {
+                        DebugLog.d("tag","当前位置---${ReadMange.durChapterPos}")
                         if (ReadMange.durChapterPos != 0) {
                             binding.mRecyclerMange.scrollToPosition(ReadMange.durChapterPos)
                         }

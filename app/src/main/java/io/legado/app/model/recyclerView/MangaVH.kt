@@ -2,7 +2,6 @@ package io.legado.app.model.recyclerView
 
 import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
@@ -19,11 +18,8 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.target.Target
-import com.bumptech.glide.request.transition.Transition
-import com.davemorrissey.labs.subscaleview.ImageSource
-import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
+import com.github.panpf.zoomimage.GlideZoomImageView
 import io.legado.app.help.glide.progress.OnProgressListener
 import io.legado.app.help.glide.progress.ProgressManager
 import io.legado.app.utils.printOnDebug
@@ -32,13 +28,13 @@ import java.io.File
 open class MangaVH<VB : ViewBinding>(val binding: VB) : RecyclerView.ViewHolder(binding.root) {
 
     protected lateinit var mLoading: ProgressBar
-    protected lateinit var mImage: SubsamplingScaleImageView
+    protected lateinit var mImage: GlideZoomImageView
     protected lateinit var mProgress: TextView
     protected var mRetry: Button? = null
 
     fun initComponent(
         loading: ProgressBar,
-        image: SubsamplingScaleImageView,
+        image: GlideZoomImageView,
         progress: TextView,
         button: Button? = null,
     ) {
@@ -64,7 +60,7 @@ open class MangaVH<VB : ViewBinding>(val binding: VB) : RecyclerView.ViewHolder(
         } else {
             itemView.updateLayoutParams<ViewGroup.LayoutParams> { height = MATCH_PARENT }
         }
-        mImage.recycle()
+//        mImage.recycle()
         ProgressManager.removeListener(imageUrl)
         ProgressManager.addListener(imageUrl, object : OnProgressListener {
             @SuppressLint("SetTextI18n")
@@ -79,12 +75,12 @@ open class MangaVH<VB : ViewBinding>(val binding: VB) : RecyclerView.ViewHolder(
         })
         try {
             Glide.with(mImage)
-                .download(imageUrl)
-                .addListener(object : RequestListener<File> {
+                .load(imageUrl)
+                .addListener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(
                         e: GlideException?,
                         model: Any?,
-                        target: Target<File>,
+                        target: Target<Drawable>,
                         isFirstResource: Boolean,
                     ): Boolean {
                         mLoading.isGone = true
@@ -94,9 +90,9 @@ open class MangaVH<VB : ViewBinding>(val binding: VB) : RecyclerView.ViewHolder(
                     }
 
                     override fun onResourceReady(
-                        resource: File,
+                        resource: Drawable,
                         model: Any,
-                        target: Target<File>?,
+                        target: Target<Drawable>?,
                         dataSource: DataSource,
                         isFirstResource: Boolean,
                     ): Boolean {
@@ -116,7 +112,9 @@ open class MangaVH<VB : ViewBinding>(val binding: VB) : RecyclerView.ViewHolder(
                         }
                         return false
                     }
-                }).into(object : CustomTarget<File>() {
+                }).into(mImage)
+
+            /*.into(object : CustomTarget<File>() {
                     override fun onResourceReady(resource: File, transition: Transition<in File>?) {
                         with(mImage) {
                             setDoubleTapZoomStyle(SubsamplingScaleImageView.ZOOM_FOCUS_CENTER)
@@ -143,7 +141,7 @@ open class MangaVH<VB : ViewBinding>(val binding: VB) : RecyclerView.ViewHolder(
                         mImage.recycle()
                     }
 
-                })
+                })*/
         } catch (e: Exception) {
             e.printOnDebug()
         }
