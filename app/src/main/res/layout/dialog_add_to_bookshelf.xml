@@ -95,7 +95,7 @@
         android:layout_height="wrap_content"
         android:padding="16dp"
         android:text="@string/ok"
-        android:visibility="invisible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/book_info" />
