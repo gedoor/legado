@@ -40,7 +40,6 @@ import io.legado.app.ui.book.read.ReadBookActivity.Companion.RESULT_DELETED
 import io.legado.app.ui.book.toc.TocActivityResult
 import io.legado.app.ui.widget.recycler.LoadMoreView
 import io.legado.app.utils.ColorUtils
-import io.legado.app.utils.DebugLog
 import io.legado.app.utils.StartActivityContract
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.gone
@@ -194,12 +193,14 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
                             (mAdapter.getCurrentList().last() as ReaderLoading).mNextChapterIndex
                         scrollToBottom(index = nextIndex)
                     } else {
-                        DebugLog.d("tag","当前位置---${ReadMange.durChapterPos}")
-                        if (ReadMange.durChapterPos != 0) {
-                            binding.mRecyclerMange.scrollToPosition(ReadMange.durChapterPos)
-                        }
+                        binding.mRecyclerMange.scrollToPosition(ReadMange.durChapterPos)
                     }
                 }
+
+                if (ReadMange.chapterChanged) {
+                    binding.mRecyclerMange.scrollToPosition(ReadMange.durChapterPos)
+                }
+
                 ReadMange.chapterChanged = false
                 loadMoreView.visible()
                 mFirstLoading = true
@@ -232,7 +233,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
     }
 
     override fun loadFail() {
-        if (!mFirstLoading||ReadMange.chapterChanged) {
+        if (!mFirstLoading || ReadMange.chapterChanged) {
             binding.llLoading.isGone = true
             binding.retry.isVisible = true
         } else {
