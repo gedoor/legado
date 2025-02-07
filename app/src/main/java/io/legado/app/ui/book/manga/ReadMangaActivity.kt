@@ -232,7 +232,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
     }
 
     override fun loadFail() {
-        if (!mFirstLoading) {
+        if (!mFirstLoading||ReadMange.chapterChanged) {
             binding.llLoading.isGone = true
             binding.retry.isVisible = true
         } else {

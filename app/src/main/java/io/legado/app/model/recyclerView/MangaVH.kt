@@ -23,7 +23,6 @@ import com.github.panpf.zoomimage.GlideZoomImageView
 import io.legado.app.help.glide.progress.OnProgressListener
 import io.legado.app.help.glide.progress.ProgressManager
 import io.legado.app.utils.printOnDebug
-import java.io.File
 
 open class MangaVH<VB : ViewBinding>(val binding: VB) : RecyclerView.ViewHolder(binding.root) {
 
@@ -60,7 +59,6 @@ open class MangaVH<VB : ViewBinding>(val binding: VB) : RecyclerView.ViewHolder(
         } else {
             itemView.updateLayoutParams<ViewGroup.LayoutParams> { height = MATCH_PARENT }
         }
-//        mImage.recycle()
         ProgressManager.removeListener(imageUrl)
         ProgressManager.addListener(imageUrl, object : OnProgressListener {
             @SuppressLint("SetTextI18n")
@@ -113,35 +111,6 @@ open class MangaVH<VB : ViewBinding>(val binding: VB) : RecyclerView.ViewHolder(
                         return false
                     }
                 }).into(mImage)
-
-            /*.into(object : CustomTarget<File>() {
-                    override fun onResourceReady(resource: File, transition: Transition<in File>?) {
-                        with(mImage) {
-                            setDoubleTapZoomStyle(SubsamplingScaleImageView.ZOOM_FOCUS_CENTER)
-                            setPanLimit(SubsamplingScaleImageView.PAN_LIMIT_INSIDE)
-                            setMinimumTileDpi(180)
-                            setOnImageEventListener(
-                                object : SubsamplingScaleImageView.DefaultOnImageEventListener() {
-                                    override fun onReady() {
-                                        mLoading.isGone = true
-                                        mRetry?.isGone = true
-                                    }
-
-                                    override fun onImageLoadError(e: Exception) {
-                                        mLoading.isGone = true
-                                        mRetry?.isVisible = true
-                                    }
-                                },
-                            )
-                            setImage(ImageSource.uri(itemView.context, Uri.fromFile(resource)))
-                        }
-                    }
-
-                    override fun onLoadCleared(placeholder: Drawable?) {
-                        mImage.recycle()
-                    }
-
-                })*/
         } catch (e: Exception) {
             e.printOnDebug()
         }
