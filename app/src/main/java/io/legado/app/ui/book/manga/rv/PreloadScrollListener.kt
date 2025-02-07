@@ -19,7 +19,7 @@ class PreloadScrollListener(
         if (totalItemCount == 0) return
 
         val lastVisible = layoutManager.findLastVisibleItemPosition()
-        val firstVisible = layoutManager.findFirstVisibleItemPosition()
+//        val firstVisible = layoutManager.findFirstVisibleItemPosition()
 
         // 向前预加载
         val preloadEnd = (lastVisible + preloadCount).coerceAtMost(totalItemCount - 1)
@@ -27,11 +27,11 @@ class PreloadScrollListener(
             preloadItem(recyclerView, i)
         }
 
-        // 向后预加载
+/*        // 向后预加载
         val preloadStart = (firstVisible - preloadCount).coerceAtLeast(0)
         for (i in preloadStart until firstVisible) {
             preloadItem(recyclerView, i)
-        }
+        }*/
     }
 
     private fun preloadItem(recyclerView: RecyclerView, position: Int) {
