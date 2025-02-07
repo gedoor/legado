@@ -33,6 +33,7 @@ class WebViewModel(application: Application) : BaseViewModel(application) {
     val headerMap: HashMap<String, String> = hashMapOf()
     var sourceVerificationEnable: Boolean = false
     var refetchAfterSuccess: Boolean = true
+    var sourceName: String = ""
     var sourceOrigin: String = ""
 
     fun initData(
@@ -43,6 +44,7 @@ class WebViewModel(application: Application) : BaseViewModel(application) {
             this@WebViewModel.intent = intent
             val url = intent.getStringExtra("url")
                 ?: throw NoStackTraceException("url不能为空")
+            sourceName = intent.getStringExtra("sourceName") ?: ""
             sourceOrigin = intent.getStringExtra("sourceOrigin") ?: ""
             sourceVerificationEnable = intent.getBooleanExtra("sourceVerificationEnable", false)
             refetchAfterSuccess = intent.getBooleanExtra("refetchAfterSuccess", true)
@@ -120,6 +122,22 @@ class WebViewModel(application: Application) : BaseViewModel(application) {
                     success.invoke()
                 }
             }
+        }
+    }
+
+    fun disableSource(block: () -> Unit) {
+        execute {
+            appDb.bookSourceDao.enable(sourceOrigin, false)
+        }.onSuccess {
+            block.invoke()
+        }
+    }
+
+    fun deleteSource(block: () -> Unit) {
+        execute {
+            appDb.bookSourceDao.delete(sourceOrigin)
+        }.onSuccess {
+            block.invoke()
         }
     }
 

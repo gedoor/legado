@@ -400,7 +400,7 @@ object ChapterProvider {
                         durY = adjustHeight // 将 Y 坐标设置为居中位置
                     }
                 }
-                
+
                 else -> {
                     if (size.width > visibleWidth) {
                         height = size.height * visibleWidth / size.width
@@ -473,7 +473,10 @@ object ChapterProvider {
     ): Pair<Int, Float> {
         var absStartX = x
         val layout = if (ReadBookConfig.useZhLayout) {
-            ZhLayout(text, textPaint, visibleWidth, emptyList(), emptyList())
+            ZhLayout(
+                text, textPaint, visibleWidth, emptyList(), emptyList(),
+                ReadBookConfig.paragraphIndent.length
+            )
         } else {
             StaticLayout(text, textPaint, visibleWidth, Layout.Alignment.ALIGN_NORMAL, 0f, 0f, true)
         }
@@ -605,7 +608,9 @@ object ChapterProvider {
         sbLength: Int
     ) {
         val lastLine = textPages.last().lines.lastOrNull { it.paragraphNum > 0 }
-            ?: textPages.getOrNull(textPages.lastIndex - 1)?.lines?.lastOrNull { it.paragraphNum > 0 }
+            ?: textPages.getOrNull(
+                textPages.lastIndex - 1
+            )?.lines?.lastOrNull { it.paragraphNum > 0 }
         val paragraphNum = when {
             lastLine == null -> 1
             lastLine.isParagraphEnd -> lastLine.paragraphNum + 1

@@ -7,6 +7,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.viewModels
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
@@ -19,6 +20,7 @@ import io.legado.app.databinding.DialogVerificationCodeViewBinding
 import io.legado.app.help.glide.ImageLoader
 import io.legado.app.help.glide.OkHttpModelLoader
 import io.legado.app.help.source.SourceVerificationHelp
+import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.model.ImageProvider
 import io.legado.app.ui.widget.dialog.PhotoDialog
@@ -49,6 +51,7 @@ class VerificationCodeDialog() : BaseDialogFragment(R.layout.dialog_verification
     }
 
     val binding by viewBinding(DialogVerificationCodeViewBinding::bind)
+    val viewModel by viewModels<VerificationCodeViewModel>()
 
     override fun onStart() {
         super.onStart()
@@ -60,6 +63,7 @@ class VerificationCodeDialog() : BaseDialogFragment(R.layout.dialog_verification
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?): Unit = binding.run {
         initMenu()
         val arguments = arguments ?: return@run
+        viewModel.initData(arguments)
         toolBar.setBackgroundColor(primaryColor)
         toolBar.subtitle = arguments.getString("sourceName")
         sourceOrigin = arguments.getString("sourceOrigin")
@@ -118,6 +122,24 @@ class VerificationCodeDialog() : BaseDialogFragment(R.layout.dialog_verification
                 val verificationCode = binding.verificationCode.text.toString()
                 SourceVerificationHelp.setResult(sourceOrigin!!, verificationCode)
                 dismiss()
+            }
+
+            R.id.menu_disable_source -> {
+                viewModel.disableSource {
+                    dismiss()
+                }
+            }
+
+            R.id.menu_delete_source -> {
+                alert(R.string.draw) {
+                    setMessage(getString(R.string.sure_del) + "\n" + viewModel.sourceName)
+                    noButton()
+                    yesButton {
+                        viewModel.deleteSource {
+                            dismiss()
+                        }
+                    }
+                }
             }
         }
         return false
