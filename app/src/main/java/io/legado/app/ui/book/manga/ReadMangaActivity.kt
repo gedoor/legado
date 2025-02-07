@@ -91,6 +91,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
         binding.mRecyclerMange.run {
             adapter = mAdapter
             itemAnimator = null
+            setItemViewCacheSize(20)
             setPreScrollListener { _, _, dy, position ->
                 if (dy > 0 && position + 2 > mAdapter.getCurrentList().size - 3) {
                     if (mAdapter.getCurrentList().last() is ReaderLoading) {
