@@ -1,10 +1,14 @@
 package io.legado.app.ui.book.manga.rv
 
 import android.content.Context
+import android.graphics.RectF
 import android.util.AttributeSet
+import android.view.MotionEvent
+import android.view.ViewConfiguration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.utils.findCenterViewPosition
+import kotlin.math.abs
 
 class WebtoonRecyclerView @JvmOverloads constructor(
     context: Context,
@@ -21,7 +25,16 @@ class WebtoonRecyclerView @JvmOverloads constructor(
 
     private var mPreScrollListener: IComicPreScroll? = null
     private var mNestedPreScrollListener: IComicPreScroll? = null
+    private var mToucheMiddle: (() -> Unit)? = null
+    private val mcRect = RectF()
+    private var isMove = false
 
+    //起始点
+    private var startX: Float = 0f
+    private var startY: Float = 0f
+    private val slopSquare by lazy { ViewConfiguration.get(context).scaledTouchSlop }
+
+    fun onToucheMiddle(init: () -> Unit) = apply { this.mToucheMiddle = init }
     override fun onScrolled(dx: Int, dy: Int) {
         super.onScrolled(dx, dy)
         val layoutManager = layoutManager
@@ -49,9 +62,9 @@ class WebtoonRecyclerView @JvmOverloads constructor(
         val position = findCenterViewPosition()
         if (position != NO_POSITION && position != mLastCenterViewPosition) {
             mLastCenterViewPosition = position
-            mPreScrollListener?.onPreScrollListener(this,dx, dy, position)
+            mPreScrollListener?.onPreScrollListener(this, dx, dy, position)
         }
-        mNestedPreScrollListener?.onPreScrollListener(this,dx, dy, position)
+        mNestedPreScrollListener?.onPreScrollListener(this, dx, dy, position)
         return super.dispatchNestedPreScroll(dx, dy, consumed, offsetInWindow, type)
     }
 
@@ -64,7 +77,36 @@ class WebtoonRecyclerView @JvmOverloads constructor(
     }
 
     fun interface IComicPreScroll {
+        fun onPreScrollListener(recyclerView: RecyclerView, dx: Int, dy: Int, position: Int)
+    }
 
-        fun onPreScrollListener(recyclerView: RecyclerView,dx: Int, dy: Int, position: Int)
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        mcRect.set(width * 0.33f, height * 0.33f, width * 0.66f, height * 0.66f)
+    }
+
+    override fun dispatchTouchEvent(e: MotionEvent?): Boolean {
+        when {
+            e?.action == MotionEvent.ACTION_DOWN -> {
+                startY = e.y
+                startX = e.x
+                isMove = false
+            }
+
+            e?.action == MotionEvent.ACTION_MOVE -> {
+                val absX = abs(startX - e.x)
+                val absY = abs(startY - e.y)
+                if (!isMove) {
+                    isMove = absX > slopSquare || absY > slopSquare
+                }
+            }
+
+            e?.action == MotionEvent.ACTION_UP -> {
+                if (mcRect.contains(startX, startY) && !isMove) {
+                    mToucheMiddle?.invoke()
+                }
+            }
+        }
+        return super.dispatchTouchEvent(e)
     }
 }

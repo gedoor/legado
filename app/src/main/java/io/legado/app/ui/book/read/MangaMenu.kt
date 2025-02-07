@@ -26,7 +26,6 @@ import io.legado.app.model.ReadMange
 import io.legado.app.ui.browser.WebViewActivity
 import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.ConstraintModify
-import io.legado.app.utils.DebugLog
 import io.legado.app.utils.activity
 import io.legado.app.utils.applyNavigationBarPadding
 import io.legado.app.utils.dpToPx
@@ -85,7 +84,7 @@ class MangaMenu @JvmOverloads constructor(
             binding.titleBar.invisible()
             isMenuOutAnimating = false
             canShowMenu = false
-            callBack.upSystemUiVisibility()
+            callBack.upSystemUiVisibility(false)
         }
 
         override fun onAnimationRepeat(animation: Animation) = Unit
@@ -94,7 +93,7 @@ class MangaMenu @JvmOverloads constructor(
         override fun onAnimationStart(animation: Animation) {
             binding.tvSourceAction.text =
                 ReadMange.bookSource?.bookSourceName ?: context.getString(R.string.book_source)
-            callBack.upSystemUiVisibility()
+            callBack.upSystemUiVisibility(true)
             binding.tvSourceAction.isGone = false
         }
 
@@ -168,7 +167,7 @@ class MangaMenu @JvmOverloads constructor(
         menuTopOut.setAnimationListener(menuOutListener)
     }
 
-    fun runMenuOut(anim: Boolean = !AppConfig.isEInkMode, onMenuOutEnd: (() -> Unit)? = null) {
+    fun runMenuOut(anim: Boolean = !AppConfig.isEInkMode) {
         if (isMenuOutAnimating) {
             return
         }
@@ -183,7 +182,6 @@ class MangaMenu @JvmOverloads constructor(
     }
 
     fun runMenuIn(anim: Boolean = !AppConfig.isEInkMode) {
-        DebugLog.i("tag","----执行到这里")
         this.visible()
         binding.titleBar.visible()
         if (anim) {
@@ -232,7 +230,7 @@ class MangaMenu @JvmOverloads constructor(
 
     interface CallBack {
         fun openBookInfoActivity()
-        fun upSystemUiVisibility()
+        fun upSystemUiVisibility(value:Boolean)
     }
 
 }

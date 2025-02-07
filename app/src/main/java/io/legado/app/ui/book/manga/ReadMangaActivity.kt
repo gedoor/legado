@@ -85,41 +85,49 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         immersionFullScreen(WindowInsetsControllerCompat(window, binding.root))
-        binding.mRecyclerMange.adapter = mAdapter
-        binding.mRecyclerMange.itemAnimator = null
         ReadMange.register(this)
-        binding.mRecyclerMange.setPreScrollListener { _, _, dy, position ->
-            if (dy > 0 && position + 2 > mAdapter.getCurrentList().size - 3) {
-                if (mAdapter.getCurrentList().last() is ReaderLoading) {
-                    val nextIndex =
-                        (mAdapter.getCurrentList().last() as ReaderLoading).mNextChapterIndex
-                    if (nextIndex != -1) {
-                        scrollToBottom(false, nextIndex)
+        binding.mRecyclerMange.run {
+            adapter = mAdapter
+            itemAnimator = null
+            setPreScrollListener { _, _, dy, position ->
+                if (dy > 0 && position + 2 > mAdapter.getCurrentList().size - 3) {
+                    if (mAdapter.getCurrentList().last() is ReaderLoading) {
+                        val nextIndex =
+                            (mAdapter.getCurrentList().last() as ReaderLoading).mNextChapterIndex
+                        if (nextIndex != -1) {
+                            scrollToBottom(false, nextIndex)
+                        }
                     }
                 }
             }
-        }
-        binding.mRecyclerMange.setNestedPreScrollListener { _, _, _, position ->
-            if (mAdapter.getCurrentList().isNotEmpty()) {
-                val content = mAdapter.getCurrentList()[position]
-                if (content is MangeContent) {
-                    ReadMange.durChapterPos = content.mDurChapterPos.minus(1)
-                    upText(
-                        content.mChapterPagePos,
-                        content.mChapterPageCount,
-                        content.mDurChapterPos,
-                        content.mDurChapterCount
-                    )
+            setNestedPreScrollListener { _, _, _, position ->
+                if (mAdapter.getCurrentList()
+                        .isNotEmpty() && position <= mAdapter.getCurrentList().lastIndex
+                ) {
+                    val content = mAdapter.getCurrentList()[position]
+                    if (content is MangeContent) {
+                        ReadMange.durChapterPos = content.mDurChapterPos.minus(1)
+                        upText(
+                            content.mChapterPagePos,
+                            content.mChapterPageCount,
+                            content.mDurChapterPos,
+                            content.mDurChapterCount
+                        )
+                    }
+                }
+            }
+            addOnScrollListener(
+                PreloadScrollListener(
+                    binding.mRecyclerMange.layoutManager as LinearLayoutManager,
+                    10
+                )
+            )
+            onToucheMiddle {
+                if (!binding.mangaMenu.isVisible) {
+                    binding.mangaMenu.runMenuIn()
                 }
             }
         }
-
-        binding.mRecyclerMange.addOnScrollListener(
-            PreloadScrollListener(
-                binding.mRecyclerMange.layoutManager as LinearLayoutManager,
-                10
-            )
-        )
         binding.retry.setOnClickListener {
             binding.llLoading.isVisible = true
             binding.retry.isGone = true
@@ -277,7 +285,6 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
     }
 
     override fun upNavigationBarColor() {
-        upNavigationBar()
         when {
             binding.mangaMenu.isVisible -> super.upNavigationBarColor()
             !AppConfig.immNavigationBar -> super.upNavigationBarColor()
@@ -286,14 +293,8 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
     }
 
     @SuppressLint("RtlHardcoded")
-    private fun upNavigationBar() {
-        binding.navigationBar.run {
-            if (binding.mangaMenu.isVisible) {
-                visible()
-            } else {
-                gone()
-            }
-        }
+    private fun upNavigationBar(value: Boolean) {
+        binding.mangaMenu.isVisible = value
     }
 
     override fun openBookInfoActivity() {
@@ -305,9 +306,13 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
         }
     }
 
-    override fun upSystemUiVisibility() {
+    override fun upSystemUiVisibility(value: Boolean) {
         upSystemUiVisibility(isInMultiWindow, !menuLayoutIsVisible, false)
         upNavigationBarColor()
+        upNavigationBar(value)
+        if (!value) {
+            immersionFullScreen(WindowInsetsControllerCompat(window, binding.root))
+        }
     }
 
     /**
