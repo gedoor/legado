@@ -3,6 +3,7 @@ package io.legado.app.ui.book.manga.rv
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import io.legado.app.model.recyclerView.MangeContent
 
 class PreloadScrollListener(
@@ -31,6 +32,7 @@ class PreloadScrollListener(
             val url = item.mImageUrl
             Glide.with(recyclerView)
                 .load(url)
+                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                 .preload()
         }
 
