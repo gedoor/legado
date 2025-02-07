@@ -76,7 +76,9 @@ class MangaAdapter :
         init {
             initComponent(binding.loading, binding.image, binding.progress, binding.retry)
             binding.image.zoomable.disabledGestureTypesState.value =
-                GestureType.DOUBLE_TAP_SCALE or GestureType.ONE_FINGER_SCALE or GestureType.TWO_FINGER_SCALE
+                GestureType.DOUBLE_TAP_SCALE or GestureType.ONE_FINGER_SCALE or
+                        GestureType.TWO_FINGER_SCALE or GestureType.KEYBOARD_DRAG or
+                        GestureType.ONE_FINGER_DRAG or GestureType.KEYBOARD_SCALE or GestureType.MOUSE_WHEEL_SCALE
             binding.retry.setOnClickListener {
                 val item = mDiffer.currentList[layoutPosition]
                 if (item is MangeContent) {
