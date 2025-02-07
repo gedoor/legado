@@ -18,7 +18,8 @@ class ZhLayout(
     textPaint: TextPaint,
     width: Int,
     words: List<String>,
-    widths: List<Float>
+    widths: List<Float>,
+    indentSize: Int
 ) : Layout(text, textPaint, width, Alignment.ALIGN_NORMAL, 0f, 0f) {
     companion object {
         private val postPanc = hashSetOf(
@@ -97,8 +98,9 @@ class ZhLayout(
                 /*特殊标点使用难保证显示效果，所以不考虑间隔，直接查找到能满足条件的分割字*/
                 var breakLength = 0
                 if (reCheck && index > 2) {
+                    val startPos = if (line == 0) indentSize else getLineStart(line)
                     breakMod = BreakMod.NORMAL
-                    for (i in (index) downTo 1) {
+                    for (i in (index) downTo 1 + startPos) {
                         if (i == index) {
                             breakIndex = 0
                             cwPre = 0f
