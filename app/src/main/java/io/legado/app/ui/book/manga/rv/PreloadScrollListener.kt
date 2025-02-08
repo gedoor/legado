@@ -11,6 +11,7 @@ class PreloadScrollListener(
     private val preloadCount: Int = 3,
 ) : RecyclerView.OnScrollListener() {
 
+    private val mHasSet = mutableSetOf<String>()
     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
         super.onScrolled(recyclerView, dx, dy)
 
@@ -30,11 +31,12 @@ class PreloadScrollListener(
         val item = adapter.getCurrentList()[position]
         if (item is MangeContent) {
             val url = item.mImageUrl
-            Glide.with(recyclerView)
-                .load(url)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .preload()
+            if (mHasSet.add(url)) {
+                Glide.with(recyclerView)
+                    .load(url)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .preload()
+            }
         }
-
     }
 }
