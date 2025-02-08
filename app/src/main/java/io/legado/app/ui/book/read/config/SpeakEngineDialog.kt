@@ -216,7 +216,7 @@ class SpeakEngineDialog() : BaseDialogFragment(R.layout.dialog_recycler_view),
             customView { alertBinding.root }
             okButton {
                 alertBinding.editView.text?.toString()?.let { url ->
-                    if (!cacheUrls.contains(url)) {
+                    if (url.isAbsUrl() && !cacheUrls.contains(url)) {
                         cacheUrls.add(0, url)
                         aCache.put(ttsUrlKey, cacheUrls.joinToString(","))
                     }

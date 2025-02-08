@@ -132,7 +132,8 @@ class BookInfoEditActivity :
         book.addType(bookType)
         val customCoverUrl = tieCoverUrl.text?.toString()
         book.customCoverUrl = if (customCoverUrl == book.coverUrl) null else customCoverUrl
-        book.customIntro = tieBookIntro.text?.toString()
+        val customIntro = tieBookIntro.text?.toString()
+        book.customIntro = if (customIntro == book.intro) null else customIntro
         BookHelp.updateCacheFolder(oldBook, book)
         viewModel.saveBook(book) {
             setResult(Activity.RESULT_OK)
