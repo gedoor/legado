@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/rootView"
     android:layout_width="match_parent"
+    android:background="@color/book_ant_10"
     android:layout_height="match_parent"
     android:contentDescription="@null">
 
@@ -20,6 +21,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:progressTint="@color/white"
+        android:indeterminateTint="@color/white"
         android:indeterminate="true"
         app:indicatorColor="@color/white"
         app:indicatorSize="36dp"
@@ -34,6 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="重新加载"
+        android:textColor="@color/white"
         android:textSize="18sp"
         android:visibility="gone"
         app:backgroundTint="@color/white"
@@ -46,7 +50,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="0%"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:visibility="gone"
         tools:visibility="visible" />
 

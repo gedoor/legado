@@ -19,12 +19,12 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.target.Target
-import com.bumptech.glide.request.transition.Transition
 import com.github.panpf.zoomimage.GlideZoomImageView
+import io.legado.app.R
 import io.legado.app.help.glide.progress.OnProgressListener
 import io.legado.app.help.glide.progress.ProgressManager
+import io.legado.app.utils.getCompatDrawable
 import io.legado.app.utils.printOnDebug
 
 open class MangaVH<VB : ViewBinding>(val binding: VB) : RecyclerView.ViewHolder(binding.root) {
@@ -78,6 +78,8 @@ open class MangaVH<VB : ViewBinding>(val binding: VB) : RecyclerView.ViewHolder(
             mImage.tag = imageUrl
             Glide.with(mImage)
                 .load(imageUrl)
+                .placeholder(mImage.context.getCompatDrawable(R.color.book_ant_10))
+                .error(mImage.context.getCompatDrawable(R.color.book_ant_10))
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .addListener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(
@@ -89,6 +91,11 @@ open class MangaVH<VB : ViewBinding>(val binding: VB) : RecyclerView.ViewHolder(
                         mLoading.isGone = true
                         mRetry?.isVisible = true
                         mProgress.isGone = true
+                        itemView.post {
+                            itemView.updateLayoutParams<ViewGroup.LayoutParams> {
+                                height = MATCH_PARENT
+                            }
+                        }
                         return false
                     }
 
@@ -115,21 +122,7 @@ open class MangaVH<VB : ViewBinding>(val binding: VB) : RecyclerView.ViewHolder(
                         }
                         return false
                     }
-                }).into(object : CustomTarget<Drawable>() {
-                    override fun onResourceReady(
-                        resource: Drawable,
-                        transition: Transition<in Drawable>?
-                    ) {
-                        if (mImage.tag == imageUrl) {
-                            mImage.setImageDrawable(resource)
-                        }
-                    }
-
-                    override fun onLoadCleared(placeholder: Drawable?) {
-
-                    }
-
-                })
+                }).into(mImage)
         } catch (e: Exception) {
             e.printOnDebug()
         }

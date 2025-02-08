@@ -16,6 +16,7 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter.Companion.TYPE_FOOTER_VIEW
 import io.legado.app.databinding.BookComicLoadingRvBinding
 import io.legado.app.databinding.BookComicRvBinding
+import io.legado.app.help.glide.progress.ProgressManager
 import io.legado.app.model.ReadMange
 import io.legado.app.model.recyclerView.MangaVH
 import io.legado.app.model.recyclerView.MangeContent
@@ -151,6 +152,9 @@ class MangaAdapter :
             is PageViewHolder -> {
                 vh.itemView.updateLayoutParams<ViewGroup.LayoutParams> { height = MATCH_PARENT }
                 Glide.with(vh.binding.image).clear(vh.binding.image)
+                if (vh.binding.image.tag is String) {
+                    ProgressManager.removeListener(vh.binding.image.tag as String)
+                }
             }
         }
     }
