@@ -292,7 +292,13 @@ class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
                 }
                 ivDelete.setOnClickListener {
                     getItem(holder.layoutPosition)?.let { item ->
-                        viewModel.del(item)
+                        alert(R.string.draw) {
+                            setMessage(getString(R.string.sure_del) + "\n" + item.name)
+                            noButton()
+                            yesButton {
+                                viewModel.del(item)
+                            }
+                        }
                     }
                 }
             }

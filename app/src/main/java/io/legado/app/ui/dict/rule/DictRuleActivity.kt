@@ -140,6 +140,7 @@ class DictRuleActivity : VMBaseActivity<ActivityDictRuleBinding, DictRuleViewMod
                 mode = HandleFileContract.FILE
                 allowExtensions = arrayOf("txt", "json")
             }
+
             R.id.menu_import_onLine -> showImportDialog()
             R.id.menu_import_qr -> qrCodeResult.launch()
             R.id.menu_import_default -> viewModel.importDefault()
@@ -150,8 +151,14 @@ class DictRuleActivity : VMBaseActivity<ActivityDictRuleBinding, DictRuleViewMod
 
     override fun onMenuItemClick(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_enable_selection -> viewModel.enableSelection(*adapter.selection.toTypedArray())
-            R.id.menu_disable_selection -> viewModel.disableSelection(*adapter.selection.toTypedArray())
+            R.id.menu_enable_selection -> {
+                viewModel.enableSelection(*adapter.selection.toTypedArray())
+            }
+
+            R.id.menu_disable_selection -> {
+                viewModel.disableSelection(*adapter.selection.toTypedArray())
+            }
+
             R.id.menu_export_selection -> exportResult.launch {
                 mode = HandleFileContract.EXPORT
                 fileData = HandleFileContract.FileData(
@@ -185,7 +192,13 @@ class DictRuleActivity : VMBaseActivity<ActivityDictRuleBinding, DictRuleViewMod
     }
 
     override fun delete(rule: DictRule) {
-        viewModel.delete(rule)
+        alert(R.string.draw) {
+            setMessage(getString(R.string.sure_del) + "\n" + rule.name)
+            noButton()
+            yesButton {
+                viewModel.delete(rule)
+            }
+        }
     }
 
     override fun edit(rule: DictRule) {
