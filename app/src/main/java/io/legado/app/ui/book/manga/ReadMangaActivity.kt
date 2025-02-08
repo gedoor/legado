@@ -16,6 +16,9 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader
+import com.bumptech.glide.request.target.Target.SIZE_ORIGINAL
+import com.bumptech.glide.util.FixedPreloadSizeProvider
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.Book
@@ -34,7 +37,6 @@ import io.legado.app.model.recyclerView.ReaderLoading
 import io.legado.app.ui.book.changesource.ChangeBookSourceDialog
 import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.book.manga.rv.MangaAdapter
-import io.legado.app.ui.book.manga.rv.PreloadScrollListener
 import io.legado.app.ui.book.read.MangaMenu
 import io.legado.app.ui.book.read.ReadBookActivity.Companion.RESULT_DELETED
 import io.legado.app.ui.book.toc.TocActivityResult
@@ -56,9 +58,21 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
     ReadMange.Callback, ChangeBookSourceDialog.CallBack, MangaMenu.CallBack {
 
     private val menuLayoutIsVisible get() = binding.mangaMenu.isVisible
-    private val mAdapter: MangaAdapter by lazy {
-        MangaAdapter()
+
+    private val mLayoutManager by lazy {
+        LinearLayoutManager(this@ReadMangaActivity)
     }
+    private val mAdapter: MangaAdapter by lazy {
+        MangaAdapter(this@ReadMangaActivity)
+    }
+    private val mSizeProvider by lazy {
+        FixedPreloadSizeProvider<Any>(SIZE_ORIGINAL, SIZE_ORIGINAL)
+    }
+
+    private val mRecyclerViewPreloader by lazy {
+        RecyclerViewPreloader(Glide.with(this), mAdapter, mSizeProvider, 10)
+    }
+
     private val loadMoreView by lazy {
         LoadMoreView(this).apply {
             setBackgroundColor(getCompatColor(R.color.book_ant_10))
@@ -91,7 +105,10 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
         binding.mRecyclerMange.run {
             adapter = mAdapter
             itemAnimator = null
-            setItemViewCacheSize(20)
+            layoutManager = mLayoutManager
+            mLayoutManager.initialPrefetchItemCount = 4
+            mLayoutManager.isItemPrefetchEnabled = true
+            setItemViewCacheSize(AppConfig.preDownloadNum)
             setPreScrollListener { _, _, dy, position ->
                 if (dy > 0 && position + 2 > mAdapter.getCurrentList().size - 3) {
                     if (mAdapter.getCurrentList().last() is ReaderLoading) {
@@ -124,12 +141,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
 
                 }
             }
-            addOnScrollListener(
-                PreloadScrollListener(
-                    binding.mRecyclerMange.layoutManager as LinearLayoutManager,
-                    10
-                )
-            )
+            addOnScrollListener(mRecyclerViewPreloader)
             onToucheMiddle {
                 if (!binding.mangaMenu.isVisible) {
                     binding.mangaMenu.runMenuIn()

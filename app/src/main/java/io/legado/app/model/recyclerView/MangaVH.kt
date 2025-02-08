@@ -1,6 +1,7 @@
 package io.legado.app.model.recyclerView
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.drawable.Drawable
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
@@ -16,10 +17,10 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.bumptech.glide.request.target.Target.SIZE_ORIGINAL
 import com.github.panpf.zoomimage.GlideZoomImageView
 import io.legado.app.R
 import io.legado.app.help.glide.progress.OnProgressListener
@@ -27,7 +28,8 @@ import io.legado.app.help.glide.progress.ProgressManager
 import io.legado.app.utils.getCompatDrawable
 import io.legado.app.utils.printOnDebug
 
-open class MangaVH<VB : ViewBinding>(val binding: VB) : RecyclerView.ViewHolder(binding.root) {
+open class MangaVH<VB : ViewBinding>(val binding: VB, private val context: Context) :
+    RecyclerView.ViewHolder(binding.root) {
 
     protected lateinit var mLoading: ProgressBar
     protected lateinit var mImage: GlideZoomImageView
@@ -76,11 +78,11 @@ open class MangaVH<VB : ViewBinding>(val binding: VB) : RecyclerView.ViewHolder(
         })
         try {
             mImage.tag = imageUrl
-            Glide.with(mImage)
+            Glide.with(context)
                 .load(imageUrl)
-                .placeholder(mImage.context.getCompatDrawable(R.color.book_ant_10))
-                .error(mImage.context.getCompatDrawable(R.color.book_ant_10))
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .override(SIZE_ORIGINAL, SIZE_ORIGINAL)
+                .placeholder(context.getCompatDrawable(R.color.book_ant_10))
+                .error(context.getCompatDrawable(R.color.book_ant_10))
                 .addListener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(
                         e: GlideException?,

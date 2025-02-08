@@ -1,5 +1,6 @@
 package io.legado.app.ui.book.manga.rv
 
+import android.content.Context
 import android.util.SparseArray
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -11,7 +12,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.bumptech.glide.Glide
+import com.bumptech.glide.ListPreloader.PreloadModelProvider
+import com.bumptech.glide.RequestBuilder
+import com.bumptech.glide.request.target.Target.SIZE_ORIGINAL
 import com.github.panpf.zoomimage.zoom.GestureType
+import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter.Companion.TYPE_FOOTER_VIEW
 import io.legado.app.databinding.BookComicLoadingRvBinding
@@ -21,10 +26,12 @@ import io.legado.app.model.ReadMange
 import io.legado.app.model.recyclerView.MangaVH
 import io.legado.app.model.recyclerView.MangeContent
 import io.legado.app.model.recyclerView.ReaderLoading
+import io.legado.app.utils.getCompatDrawable
+import java.util.Collections
 
 
-class MangaAdapter :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class MangaAdapter(private val context: Context) :
+    RecyclerView.Adapter<RecyclerView.ViewHolder>(), PreloadModelProvider<Any> {
 
     companion object {
         private const val LOADING_VIEW = 0
@@ -72,7 +79,7 @@ class MangaAdapter :
     }
 
     inner class PageViewHolder(binding: BookComicRvBinding) :
-        MangaVH<BookComicRvBinding>(binding) {
+        MangaVH<BookComicRvBinding>(binding, context) {
 
         init {
             initComponent(binding.loading, binding.image, binding.progress, binding.retry)
@@ -192,5 +199,22 @@ class MangaAdapter :
                 notifyItemRemoved(getActualItemCount() + index - 2)
             }
         }
+    }
+
+    override fun getPreloadItems(position: Int): MutableList<Any> {
+        if (getCurrentList().isEmpty()) return Collections.emptyList()
+        if (position >= getCurrentList().size) return Collections.emptyList()
+        return getCurrentList().subList(position, position + 1)
+    }
+
+    override fun getPreloadRequestBuilder(item: Any): RequestBuilder<*>? {
+        if (item is MangeContent) {
+            return Glide.with(context)
+                .load(item.mImageUrl)
+                .override(SIZE_ORIGINAL, SIZE_ORIGINAL)
+                .placeholder(context.getCompatDrawable(R.color.book_ant_10))
+                .error(context.getCompatDrawable(R.color.book_ant_10))
+        }
+        return null
     }
 }

@@ -282,6 +282,7 @@ dependencies {
     implementation libs.firebase.perf
 //    implementation libs.subsamplingscaleimageview
     implementation libs.zoom.imageview
+    implementation libs.glide.recyclerview
 
     //LeakCanary, 内存泄露检测
     //debugImplementation('com.squareup.leakcanary:leakcanary-android:2.7')

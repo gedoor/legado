@@ -8,8 +8,7 @@
     <io.legado.app.ui.book.manga.rv.WebtoonRecyclerView
         android:id="@+id/mRecyclerMange"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+        android:layout_height="match_parent"/>
 
     <io.legado.app.ui.widget.ReaderInfoBarView
         android:id="@+id/infobar"
