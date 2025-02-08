@@ -227,10 +227,13 @@ interface JsExtensions : JsEncodeUtils {
      * 使用内置浏览器打开链接，并等待网页结果
      */
     fun startBrowserAwait(url: String, title: String, refetchAfterSuccess: Boolean): StrResponse {
+        val source = getSource()
         val body = SourceVerificationHelp.getVerificationResult(
-            getSource(), url, title, true, refetchAfterSuccess
+            source, url, title, true, refetchAfterSuccess
         )
-        return StrResponse(url, body)
+        val sourceOrigin = source?.getKey()
+        val realUrl = SourceVerificationHelp.getResult("$sourceOrigin:realUrl") ?: url
+        return StrResponse(realUrl, body)
     }
 
     fun startBrowserAwait(url: String, title: String): StrResponse {

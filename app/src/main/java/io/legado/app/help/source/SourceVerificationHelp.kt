@@ -36,12 +36,14 @@ object SourceVerificationHelp {
         source
             ?: throw NoStackTraceException("getVerificationResult parameter source cannot be null")
 
-        clearResult(source.getKey())
+        val sourceOrigin = source.getKey()
+        clearResult(sourceOrigin)
+        clearResult("$sourceOrigin:realUrl")
 
         if (!useBrowser) {
             appCtx.startActivity<VerificationCodeActivity> {
                 putExtra("imageUrl", url)
-                putExtra("sourceOrigin", source.getKey())
+                putExtra("sourceOrigin", sourceOrigin)
                 putExtra("sourceName", source.getTag())
                 IntentData.put(getVerificationResultKey(source), Thread.currentThread())
             }
@@ -50,7 +52,7 @@ object SourceVerificationHelp {
         }
 
         var waitUserInput = false
-        while (getResult(source.getKey()) == null) {
+        while (getResult(sourceOrigin) == null) {
             if (!waitUserInput) {
                 AppLog.putDebug("等待返回验证结果...")
                 waitUserInput = true
@@ -58,7 +60,7 @@ object SourceVerificationHelp {
             LockSupport.parkNanos(this, waitTime)
         }
 
-        return getResult(source.getKey())!!.let {
+        return getResult(sourceOrigin)!!.let {
             it.ifBlank {
                 throw NoStackTraceException("验证结果为空")
             }
