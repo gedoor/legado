@@ -32,7 +32,7 @@ class PreloadScrollListener(
             val url = item.mImageUrl
             Glide.with(recyclerView)
                 .load(url)
-                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .preload()
         }
 

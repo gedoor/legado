@@ -16,9 +16,12 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.target.Target
+import com.bumptech.glide.request.transition.Transition
 import com.github.panpf.zoomimage.GlideZoomImageView
 import io.legado.app.help.glide.progress.OnProgressListener
 import io.legado.app.help.glide.progress.ProgressManager
@@ -72,8 +75,10 @@ open class MangaVH<VB : ViewBinding>(val binding: VB) : RecyclerView.ViewHolder(
             }
         })
         try {
+            mImage.tag = imageUrl
             Glide.with(mImage)
                 .load(imageUrl)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .addListener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(
                         e: GlideException?,
@@ -110,7 +115,21 @@ open class MangaVH<VB : ViewBinding>(val binding: VB) : RecyclerView.ViewHolder(
                         }
                         return false
                     }
-                }).into(mImage)
+                }).into(object : CustomTarget<Drawable>() {
+                    override fun onResourceReady(
+                        resource: Drawable,
+                        transition: Transition<in Drawable>?
+                    ) {
+                        if (mImage.tag == imageUrl) {
+                            mImage.setImageDrawable(resource)
+                        }
+                    }
+
+                    override fun onLoadCleared(placeholder: Drawable?) {
+
+                    }
+
+                })
         } catch (e: Exception) {
             e.printOnDebug()
         }
