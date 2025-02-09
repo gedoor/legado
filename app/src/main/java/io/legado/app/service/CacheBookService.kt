@@ -178,6 +178,7 @@ class CacheBookService : BaseService() {
                         }
                     }
                 }
+                delay(100)
             }
         }
     }
