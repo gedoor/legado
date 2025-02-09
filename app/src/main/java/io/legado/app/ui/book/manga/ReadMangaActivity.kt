@@ -66,7 +66,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
         MangaAdapter(this@ReadMangaActivity)
     }
     private val mSizeProvider by lazy {
-        FixedPreloadSizeProvider<Any>(SIZE_ORIGINAL, SIZE_ORIGINAL)
+        FixedPreloadSizeProvider<Any>(this@ReadMangaActivity.resources.displayMetrics.widthPixels, SIZE_ORIGINAL)
     }
 
     private val mRecyclerViewPreloader by lazy {

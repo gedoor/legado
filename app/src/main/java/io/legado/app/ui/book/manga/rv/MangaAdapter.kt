@@ -211,7 +211,7 @@ class MangaAdapter(private val context: Context) :
         if (item is MangeContent) {
             return Glide.with(context)
                 .load(item.mImageUrl)
-                .override(SIZE_ORIGINAL, SIZE_ORIGINAL)
+                .override(context.resources.displayMetrics.widthPixels, SIZE_ORIGINAL)
                 .placeholder(context.getCompatDrawable(R.color.book_ant_10))
                 .error(context.getCompatDrawable(R.color.book_ant_10))
         }
