@@ -140,10 +140,9 @@ class CacheBookService : BaseService() {
             cacheBook.addDownload(start, end2)
             notificationContent = CacheBook.downloadSummary
             upCacheBookNotification()
-            synchronized(this) {
-                if (downloadJob == null) {
-                    download()
-                }
+        }.onFinally {
+            if (downloadJob == null) {
+                download()
             }
         }
     }
