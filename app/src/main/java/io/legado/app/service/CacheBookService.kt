@@ -165,7 +165,7 @@ class CacheBookService : BaseService() {
         downloadJob = lifecycleScope.launch(cachePool) {
             while (isActive) {
                 if (!CacheBook.isRun) {
-                    CacheBook.stop(this@CacheBookService)
+                    stopSelf()
                     return@launch
                 }
                 CacheBook.cacheBookMap.forEach {
