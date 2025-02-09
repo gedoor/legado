@@ -89,8 +89,10 @@ object CacheBook {
     }
 
     fun stop(context: Context) {
-        context.startService<CacheBookService> {
-            action = IntentAction.stop
+        if (CacheBookService.isRun) {
+            context.startService<CacheBookService> {
+                action = IntentAction.stop
+            }
         }
     }
 
