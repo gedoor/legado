@@ -7,9 +7,6 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.core.content.ContextCompat
-import io.legado.app.model.ReadMange
-import io.legado.app.model.analyzeRule.AnalyzeUrl
-import io.legado.app.utils.ImageUtils
 import io.legado.app.utils.isOutdated
 import io.legado.app.utils.toastOnUi
 import okhttp3.Cookie
@@ -17,7 +14,6 @@ import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
-import okhttp3.ResponseBody.Companion.toResponseBody
 import splitties.init.appCtx
 import java.io.IOException
 import java.util.concurrent.CountDownLatch
@@ -45,25 +41,7 @@ class CloudflareInterceptor(
             val oldCookie = cookieManager.get(request.url)
                 .firstOrNull { it.name == "cf_clearance" }
             resolveWithWebView(request, oldCookie)
-            val analyzeResponse = AnalyzeUrl(
-                request.url.toString(),
-                source = ReadMange.bookSource
-            ).getResponse()
-            if (ReadMange.isMangaLookModel) {
-                return analyzeResponse.body?.bytes()?.let {
-                    val modifiedBytes = ImageUtils.decode(
-                        request.url.toString(),
-                        it,
-                        isCover = false,
-                        ReadMange.bookSource,
-                        ReadMange.book
-                    )
-                    analyzeResponse.newBuilder()
-                        .body(modifiedBytes?.toResponseBody(analyzeResponse.body?.contentType()))
-                        .build()
-                } ?: analyzeResponse
-            }
-            return analyzeResponse
+            return chain.proceed(request)
         } catch (e: CloudflareBypassException) {
             throw IOException("无法绕过 Cloudflare", e)
         } catch (e: Exception) {

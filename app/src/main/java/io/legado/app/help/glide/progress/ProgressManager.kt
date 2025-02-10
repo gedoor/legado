@@ -12,9 +12,14 @@ import io.legado.app.help.http.OkhttpUncaughtExceptionHandler
 import io.legado.app.help.http.SSLHelper
 import io.legado.app.help.http.cloudflare.AndroidCookieJar
 import io.legado.app.help.http.cloudflare.CloudflareInterceptor
+import io.legado.app.model.ReadMange
+import io.legado.app.model.analyzeRule.AnalyzeUrl
+import io.legado.app.utils.ImageUtils
+import kotlinx.coroutines.runBlocking
 import okhttp3.ConnectionSpec
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.ResponseBody.Companion.toResponseBody
 import splitties.init.appCtx
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ThreadFactory
@@ -60,7 +65,28 @@ object ProgressManager {
                 builder.addHeader("Keep-Alive", "300")
                 builder.addHeader("Connection", "Keep-Alive")
                 builder.addHeader("Cache-Control", "no-cache")
-                chain.proceed(builder.build())
+                runBlocking {
+                    if (ReadMange.isMangaLookModel) {
+                        val analyzeUrl = AnalyzeUrl(
+                            request.url.toString(),
+                            source = ReadMange.bookSource
+                        )
+                        val bytes = analyzeUrl.getByteArrayAwait()
+                        val modifiedBytes = ImageUtils.decode(
+                            request.url.toString(),
+                            bytes,
+                            isCover = false,
+                            ReadMange.bookSource,
+                            ReadMange.book
+                        )
+                        val res = chain.proceed(request)
+                        res.newBuilder()
+                            .body(modifiedBytes?.toResponseBody(res.body?.contentType()))
+                            .build()
+                    } else {
+                        chain.proceed(builder.build())
+                    }
+                }
             })
             .addNetworkInterceptor { chain ->
                 var request = chain.request()
