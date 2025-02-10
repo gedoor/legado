@@ -103,16 +103,20 @@ interface BaseSource : JsExtensions {
      */
     fun getHeaderMap(hasLoginHeader: Boolean = false) = HashMap<String, String>().apply {
         header?.let {
-            val json = when {
-                it.startsWith("@js:", true) -> evalJS(it.substring(4)).toString()
-                it.startsWith("<js>", true) -> evalJS(
-                    it.substring(4, it.lastIndexOf("<"))
-                ).toString()
+            try {
+                val json = when {
+                    it.startsWith("@js:", true) -> evalJS(it.substring(4)).toString()
+                    it.startsWith("<js>", true) -> evalJS(
+                        it.substring(4, it.lastIndexOf("<"))
+                    ).toString()
 
-                else -> it
-            }
-            GSON.fromJsonObject<Map<String, String>>(json).getOrNull()?.let { map ->
-                putAll(map)
+                    else -> it
+                }
+                GSON.fromJsonObject<Map<String, String>>(json).getOrNull()?.let { map ->
+                    putAll(map)
+                }
+            } catch (e: Exception) {
+                AppLog.put("getHeaderMap 出错\n$e", e)
             }
         }
         if (!has(AppConst.UA_NAME, true)) {

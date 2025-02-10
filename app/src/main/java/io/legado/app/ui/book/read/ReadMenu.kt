@@ -23,6 +23,7 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.LocalConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.help.config.ThemeConfig
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.Selector
 import io.legado.app.lib.theme.accentColor
@@ -346,11 +347,13 @@ class ReadMenu @JvmOverloads constructor(
             if (AppConfig.readUrlInBrowser) {
                 context.openUrl(tvChapterUrl.text.toString().substringBefore(",{"))
             } else {
-                context.startActivity<WebViewActivity> {
-                    val url = tvChapterUrl.text.toString()
-                    putExtra("title", tvChapterName.text)
-                    putExtra("url", url)
-                    IntentData.put(url, ReadBook.bookSource?.getHeaderMap(true))
+                Coroutine.async {
+                    context.startActivity<WebViewActivity> {
+                        val url = tvChapterUrl.text.toString()
+                        putExtra("title", tvChapterName.text)
+                        putExtra("url", url)
+                        IntentData.put(url, ReadBook.bookSource?.getHeaderMap(true))
+                    }
                 }
             }
         }

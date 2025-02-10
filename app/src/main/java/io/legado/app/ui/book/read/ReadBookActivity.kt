@@ -1293,7 +1293,7 @@ class ReadBookActivity : BaseReadBookActivity(),
                     analyzeRule.setBaseUrl(chapter.url)
                     analyzeRule.chapter = chapter
                     analyzeRule.evalJS(payAction).toString()
-                }.onSuccess {
+                }.onSuccess(IO) {
                     if (it.isAbsUrl()) {
                         startActivity<WebViewActivity> {
                             putExtra("title", getString(R.string.chapter_pay))
