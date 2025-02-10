@@ -428,7 +428,7 @@ cookie.removeCookie(url)
 > 保存至数据库和缓存文件(50M)，保存的内容较大时请使用`getFile putFile`
 ```js
 保存
-cache.put(key: String, value: Any , saveTime: Int)
+cache.put(key: String, value: String, saveTime: Int)
 读取数据库
 cache.get(key: String): String?
 删除
