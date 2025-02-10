@@ -4,9 +4,7 @@ import android.content.Context
 import android.util.SparseArray
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import androidx.annotation.IntRange
-import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -82,7 +80,13 @@ class MangaAdapter(private val context: Context) :
         MangaVH<BookComicRvBinding>(binding, context) {
 
         init {
-            initComponent(binding.loading, binding.image, binding.progress, binding.retry,binding.flProgress)
+            initComponent(
+                binding.loading,
+                binding.image,
+                binding.progress,
+                binding.retry,
+                binding.flProgress
+            )
             binding.image.zoomable.disabledGestureTypesState.value =
                 GestureType.DOUBLE_TAP_SCALE or GestureType.ONE_FINGER_SCALE or
                         GestureType.TWO_FINGER_SCALE or GestureType.KEYBOARD_DRAG or
