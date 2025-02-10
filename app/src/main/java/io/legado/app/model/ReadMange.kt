@@ -61,7 +61,7 @@ object ReadMange : CoroutineScope by MainScope() {
     val downloadedChapters = hashSetOf<Int>()
     val downloadFailChapters = hashMapOf<Int, Int>()
     private val downloadLoadingChapters = arrayListOf<Int>()
-    var isMangaLookModel=false
+    var isMangaLookModel = false
     val downloadScope = CoroutineScope(SupervisorJob() + IO)
 
     fun saveRead(pageChanged: Boolean = false) {
@@ -86,7 +86,7 @@ object ReadMange : CoroutineScope by MainScope() {
 
     fun upData(book: Book) {
         ReadMange.book = book
-        isMangaLookModel=true
+        isMangaLookModel = true
         durChapterPageCount = appDb.bookChapterDao.getChapterCount(book.bookUrl)
         simulatedChapterSize = if (book.readSimulating()) {
             book.simulatedTotalChapterNum()
@@ -107,7 +107,7 @@ object ReadMange : CoroutineScope by MainScope() {
 
     fun resetData(book: Book) {
         ReadMange.book = book
-        isMangaLookModel=true
+        isMangaLookModel = true
         readRecord.bookName = book.name
         readRecord.readTime = appDb.readRecordDao.getReadTime(book.name) ?: 0
         durChapterPageCount = appDb.bookChapterDao.getChapterCount(book.bookUrl)
@@ -238,7 +238,7 @@ object ReadMange : CoroutineScope by MainScope() {
         chapterChanged = false
         book = null
         durChapterPagePos = 0
-        isMangaLookModel=false
+        isMangaLookModel = false
         durChapterPageCount = 0
         durChapterPos = 0
         durChapterCount = 0
