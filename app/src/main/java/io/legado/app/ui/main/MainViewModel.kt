@@ -230,6 +230,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                         }
                     }
                 }
+                delay(100)
             }
         }
     }
