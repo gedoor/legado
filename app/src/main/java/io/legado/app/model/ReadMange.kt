@@ -412,7 +412,7 @@ object ReadMange : CoroutineScope by MainScope() {
             }, error = {
                 removeLoading(chapter.index)
                 runOnUI {
-                    mCallback?.loadFail()
+                    mCallback?.loadFail("加载内容失败")
                 }
             })
         } else {
@@ -424,7 +424,7 @@ object ReadMange : CoroutineScope by MainScope() {
             }, error = {
                 removeLoading(chapter.index)
                 runOnUI {
-                    mCallback?.loadFail()
+                    mCallback?.loadFail("加载内容失败")
                 }
             })
         }
@@ -543,7 +543,7 @@ object ReadMange : CoroutineScope by MainScope() {
     interface Callback {
         fun loadContentFinish(list: MutableList<Any>)
         fun loadComplete()
-        fun loadFail()
+        fun loadFail(msg:String)
         fun noData()
         val chapterList: MutableList<Any>
     }

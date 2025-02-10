@@ -66,7 +66,10 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
         MangaAdapter(this@ReadMangaActivity)
     }
     private val mSizeProvider by lazy {
-        FixedPreloadSizeProvider<Any>(this@ReadMangaActivity.resources.displayMetrics.widthPixels, SIZE_ORIGINAL)
+        FixedPreloadSizeProvider<Any>(
+            this@ReadMangaActivity.resources.displayMetrics.widthPixels,
+            SIZE_ORIGINAL
+        )
     }
 
     private val mRecyclerViewPreloader by lazy {
@@ -151,7 +154,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
         }
         binding.retry.setOnClickListener {
             binding.llLoading.isVisible = true
-            binding.retry.isGone = true
+            binding.llRetry.isGone = true
             mFirstLoading = false
             ReadMange.loadContent()
         }
@@ -245,10 +248,11 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
         binding.flLoading.isGone = true
     }
 
-    override fun loadFail() {
+    override fun loadFail(msg: String) {
         if (!mFirstLoading || ReadMange.chapterChanged) {
             binding.llLoading.isGone = true
-            binding.retry.isVisible = true
+            binding.llRetry.isVisible = true
+            binding.tvMsg.text = msg
         } else {
             loadMoreView.error(null, "加载失败，点击重试")
         }

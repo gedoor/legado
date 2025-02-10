@@ -113,6 +113,7 @@ class MangaViewModel(application: Application) : BaseViewModel(application) {
                 return true
             }.onFailure {
                 //加载章节出错
+                ReadMange.mCallback?.loadFail("加载目录失败")
                 return false
             }
         }
@@ -224,7 +225,7 @@ class MangaViewModel(application: Application) : BaseViewModel(application) {
 
     fun openChapter(index: Int, durChapterPos: Int = 0) {
         if (index < ReadMange.durChapterPageCount) {
-            ReadMange.chapterChanged=true
+            ReadMange.chapterChanged = true
             ReadMange.durChapterPagePos = index
             ReadMange.durChapterPos = durChapterPos
             ReadMange.saveRead()
