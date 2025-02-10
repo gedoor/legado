@@ -42,7 +42,7 @@ open class MangaVH<VB : ViewBinding>(val binding: VB, private val context: Conte
         image: GlideZoomImageView,
         progress: TextView,
         button: Button? = null,
-        flProgress: FrameLayout
+        flProgress: FrameLayout,
     ) {
         mLoading = loading
         mImage = image
@@ -53,6 +53,7 @@ open class MangaVH<VB : ViewBinding>(val binding: VB, private val context: Conte
 
     @SuppressLint("CheckResult")
     fun loadImageWithRetry(imageUrl: String) {
+        mFlProgress.isVisible = true
         mLoading.isVisible = true
         mRetry?.isGone = true
         mProgress.isVisible = true

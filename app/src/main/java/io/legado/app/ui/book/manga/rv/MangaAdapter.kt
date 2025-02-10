@@ -4,7 +4,9 @@ import android.content.Context
 import android.util.SparseArray
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import androidx.annotation.IntRange
+import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -161,6 +163,9 @@ class MangaAdapter(private val context: Context) :
         super.onViewRecycled(vh)
         when (vh) {
             is PageViewHolder -> {
+                vh.itemView.updateLayoutParams<ViewGroup.LayoutParams> {
+                    height = MATCH_PARENT
+                }
                 Glide.with(vh.binding.image).clear(vh.binding.image)
                 if (vh.binding.image.tag is String) {
                     ProgressManager.removeListener(vh.binding.image.tag as String)
