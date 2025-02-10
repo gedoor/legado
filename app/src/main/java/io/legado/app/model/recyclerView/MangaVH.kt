@@ -86,10 +86,8 @@ open class MangaVH<VB : ViewBinding>(val binding: VB, private val context: Conte
                         mLoading.isGone = true
                         mRetry?.isVisible = true
                         mProgress.isGone = true
-                        itemView.post {
-                            itemView.updateLayoutParams<ViewGroup.LayoutParams> {
-                                height = MATCH_PARENT
-                            }
+                        itemView.updateLayoutParams<ViewGroup.LayoutParams> {
+                            height = MATCH_PARENT
                         }
                         return false
                     }
@@ -102,10 +100,8 @@ open class MangaVH<VB : ViewBinding>(val binding: VB, private val context: Conte
                         isFirstResource: Boolean,
                     ): Boolean {
                         mFlProgress.isGone = true
-                        itemView.post {
-                            itemView.updateLayoutParams<ViewGroup.LayoutParams> {
-                                height = WRAP_CONTENT
-                            }
+                        itemView.updateLayoutParams<ViewGroup.LayoutParams> {
+                            height = WRAP_CONTENT
                         }
                         return false
                     }

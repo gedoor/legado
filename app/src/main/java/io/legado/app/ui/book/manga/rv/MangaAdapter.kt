@@ -157,7 +157,6 @@ class MangaAdapter(private val context: Context) :
         super.onViewRecycled(vh)
         when (vh) {
             is PageViewHolder -> {
-                vh.itemView.updateLayoutParams<ViewGroup.LayoutParams> { height = MATCH_PARENT }
                 Glide.with(vh.binding.image).clear(vh.binding.image)
                 if (vh.binding.image.tag is String) {
                     ProgressManager.removeListener(vh.binding.image.tag as String)

@@ -106,6 +106,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
             adapter = mAdapter
             itemAnimator = null
             layoutManager = mLayoutManager
+            setHasFixedSize(true)
             mLayoutManager.initialPrefetchItemCount = 4
             mLayoutManager.isItemPrefetchEnabled = true
             setItemViewCacheSize(AppConfig.preDownloadNum)
