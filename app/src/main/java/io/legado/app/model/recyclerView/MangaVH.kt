@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
@@ -76,6 +77,7 @@ open class MangaVH<VB : ViewBinding>(val binding: VB, private val context: Conte
                 .override(context.resources.displayMetrics.widthPixels, SIZE_ORIGINAL)
                 .placeholder(context.getCompatDrawable(R.color.book_ant_10))
                 .error(context.getCompatDrawable(R.color.book_ant_10))
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .addListener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(
                         e: GlideException?,

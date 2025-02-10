@@ -17,6 +17,7 @@ import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.ImageUtils
 import kotlinx.coroutines.runBlocking
 import okhttp3.ConnectionSpec
+import okhttp3.Dispatcher
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody.Companion.toResponseBody
@@ -51,6 +52,10 @@ object ProgressManager {
             .hostnameVerifier(SSLHelper.unsafeHostnameVerifier)
             .connectionSpecs(specs)
             .followRedirects(true)
+            .dispatcher(Dispatcher().apply {
+                maxRequests = 5
+                maxRequestsPerHost = 3
+            })
             .followSslRedirects(true)
             .addInterceptor(OkHttpExceptionInterceptor)
             .addInterceptor(CloudflareInterceptor(appCtx, cookieJar, AppConfig::userAgent))

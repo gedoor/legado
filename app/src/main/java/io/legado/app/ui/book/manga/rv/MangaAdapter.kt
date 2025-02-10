@@ -14,6 +14,7 @@ import androidx.viewbinding.ViewBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.ListPreloader.PreloadModelProvider
 import com.bumptech.glide.RequestBuilder
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.Target.SIZE_ORIGINAL
 import com.github.panpf.zoomimage.zoom.GestureType
 import io.legado.app.R
@@ -166,7 +167,7 @@ class MangaAdapter(private val context: Context) :
                 vh.itemView.updateLayoutParams<ViewGroup.LayoutParams> {
                     height = MATCH_PARENT
                 }
-                Glide.with(vh.binding.image).clear(vh.binding.image)
+                Glide.with(context).clear(vh.binding.image)
                 if (vh.binding.image.tag is String) {
                     ProgressManager.removeListener(vh.binding.image.tag as String)
                 }
@@ -222,6 +223,7 @@ class MangaAdapter(private val context: Context) :
                 .override(context.resources.displayMetrics.widthPixels, SIZE_ORIGINAL)
                 .placeholder(context.getCompatDrawable(R.color.book_ant_10))
                 .error(context.getCompatDrawable(R.color.book_ant_10))
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
         }
         return null
     }
