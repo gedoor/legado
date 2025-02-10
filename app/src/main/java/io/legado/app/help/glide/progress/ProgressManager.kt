@@ -16,6 +16,7 @@ import io.legado.app.model.ReadMange
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.ImageUtils
 import kotlinx.coroutines.runBlocking
+import okhttp3.ConnectionPool
 import okhttp3.ConnectionSpec
 import okhttp3.Dispatcher
 import okhttp3.Interceptor
@@ -52,6 +53,7 @@ object ProgressManager {
             .hostnameVerifier(SSLHelper.unsafeHostnameVerifier)
             .connectionSpecs(specs)
             .followRedirects(true)
+            .connectionPool(ConnectionPool(5, 5, TimeUnit.MINUTES))
             .dispatcher(Dispatcher().apply {
                 maxRequests = 5
                 maxRequestsPerHost = 3
