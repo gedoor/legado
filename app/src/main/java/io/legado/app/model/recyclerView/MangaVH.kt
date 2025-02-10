@@ -7,10 +7,10 @@ import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.view.isGone
-import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.RecyclerView
@@ -34,6 +34,7 @@ open class MangaVH<VB : ViewBinding>(val binding: VB, private val context: Conte
     protected lateinit var mLoading: ProgressBar
     protected lateinit var mImage: GlideZoomImageView
     protected lateinit var mProgress: TextView
+    protected lateinit var mFlProgress: FrameLayout
     protected var mRetry: Button? = null
 
     fun initComponent(
@@ -41,11 +42,13 @@ open class MangaVH<VB : ViewBinding>(val binding: VB, private val context: Conte
         image: GlideZoomImageView,
         progress: TextView,
         button: Button? = null,
+        flProgress: FrameLayout
     ) {
         mLoading = loading
         mImage = image
         mRetry = button
         mProgress = progress
+        mFlProgress = flProgress
     }
 
     @SuppressLint("CheckResult")
@@ -53,17 +56,6 @@ open class MangaVH<VB : ViewBinding>(val binding: VB, private val context: Conte
         mLoading.isVisible = true
         mRetry?.isGone = true
         mProgress.isVisible = true
-        val isNull = itemView.tag == null
-        if (isNull) {
-            itemView.tag = itemView
-            itemView.post {
-                itemView.updateLayoutParams<ViewGroup.LayoutParams> {
-                    height = MATCH_PARENT
-                }
-            }
-        } else {
-            itemView.updateLayoutParams<ViewGroup.LayoutParams> { height = MATCH_PARENT }
-        }
         ProgressManager.removeListener(imageUrl)
         ProgressManager.addListener(imageUrl, object : OnProgressListener {
             @SuppressLint("SetTextI18n")
@@ -90,6 +82,7 @@ open class MangaVH<VB : ViewBinding>(val binding: VB, private val context: Conte
                         target: Target<Drawable>,
                         isFirstResource: Boolean,
                     ): Boolean {
+                        mFlProgress.isVisible = true
                         mLoading.isGone = true
                         mRetry?.isVisible = true
                         mProgress.isGone = true
@@ -108,16 +101,8 @@ open class MangaVH<VB : ViewBinding>(val binding: VB, private val context: Conte
                         dataSource: DataSource,
                         isFirstResource: Boolean,
                     ): Boolean {
-                        mLoading.isGone = true
-                        mRetry?.isGone = true
-                        mProgress.isGone = true
-                        if (isNull) {
-                            itemView.post {
-                                itemView.updateLayoutParams<ViewGroup.LayoutParams> {
-                                    height = WRAP_CONTENT
-                                }
-                            }
-                        } else {
+                        mFlProgress.isGone = true
+                        itemView.post {
                             itemView.updateLayoutParams<ViewGroup.LayoutParams> {
                                 height = WRAP_CONTENT
                             }
@@ -129,9 +114,5 @@ open class MangaVH<VB : ViewBinding>(val binding: VB, private val context: Conte
             e.printOnDebug()
         }
 
-    }
-
-    fun loadCoverImage(imageUrl: String) {
-        mLoading.isInvisible = false
     }
 }

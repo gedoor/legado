@@ -82,7 +82,7 @@ class MangaAdapter(private val context: Context) :
         MangaVH<BookComicRvBinding>(binding, context) {
 
         init {
-            initComponent(binding.loading, binding.image, binding.progress, binding.retry)
+            initComponent(binding.loading, binding.image, binding.progress, binding.retry,binding.flProgress)
             binding.image.zoomable.disabledGestureTypesState.value =
                 GestureType.DOUBLE_TAP_SCALE or GestureType.ONE_FINGER_SCALE or
                         GestureType.TWO_FINGER_SCALE or GestureType.KEYBOARD_DRAG or

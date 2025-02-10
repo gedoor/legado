@@ -1,6 +1,7 @@
 package io.legado.app.model
 
 import io.legado.app.constant.AppLog
+import io.legado.app.constant.AppPattern
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
@@ -17,6 +18,7 @@ import io.legado.app.help.globalExecutor
 import io.legado.app.model.recyclerView.MangeContent
 import io.legado.app.model.recyclerView.ReaderLoading
 import io.legado.app.model.webBook.WebBook
+import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.mapIndexed
 import io.legado.app.utils.runOnUI
 import kotlinx.coroutines.CoroutineScope
@@ -30,11 +32,8 @@ import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Element
 import kotlin.math.min
 
 @Suppress("MemberVisibilityCanBePrivate")
@@ -62,6 +61,7 @@ object ReadMange : CoroutineScope by MainScope() {
     val downloadedChapters = hashSetOf<Int>()
     val downloadFailChapters = hashMapOf<Int, Int>()
     private val downloadLoadingChapters = arrayListOf<Int>()
+    var isMangaLookModel=false
     val downloadScope = CoroutineScope(SupervisorJob() + IO)
 
     fun saveRead(pageChanged: Boolean = false) {
@@ -86,6 +86,7 @@ object ReadMange : CoroutineScope by MainScope() {
 
     fun upData(book: Book) {
         ReadMange.book = book
+        isMangaLookModel=true
         durChapterPageCount = appDb.bookChapterDao.getChapterCount(book.bookUrl)
         simulatedChapterSize = if (book.readSimulating()) {
             book.simulatedTotalChapterNum()
@@ -106,6 +107,7 @@ object ReadMange : CoroutineScope by MainScope() {
 
     fun resetData(book: Book) {
         ReadMange.book = book
+        isMangaLookModel=true
         readRecord.bookName = book.name
         readRecord.readTime = appDb.readRecordDao.getReadTime(book.name) ?: 0
         durChapterPageCount = appDb.bookChapterDao.getChapterCount(book.bookUrl)
@@ -236,6 +238,7 @@ object ReadMange : CoroutineScope by MainScope() {
         chapterChanged = false
         book = null
         durChapterPagePos = 0
+        isMangaLookModel=false
         durChapterPageCount = 0
         durChapterPos = 0
         durChapterCount = 0
@@ -278,12 +281,13 @@ object ReadMange : CoroutineScope by MainScope() {
             return
         }
         if (content.isNotEmpty()) {
-            val list = flow<Element> {
-                Jsoup.parse(content).select("img").forEach {
-                    emit(it)
+            val list = flow {
+                val matcher = AppPattern.imgPattern.matcher(content)
+                while (matcher.find()) {
+                    val src = matcher.group(1) ?: continue
+                    val mSrc = NetworkUtils.getAbsoluteURL(chapter.url, src)
+                    emit(mSrc)
                 }
-            }.map { element ->
-                element.attr("src")
             }.distinctUntilChangedBy {
                 it
             }.mapIndexed { index, src ->
