@@ -93,6 +93,7 @@ object PreferKey {
     const val cronet = "Cronet"
     const val antiAlias = "antiAlias"
     const val bitmapCacheSize = "bitmapCacheSize"
+    const val bitmapRetainNum = "bitmapRetainNum"
     const val preDownloadNum = "preDownloadNum"
     const val autoRefresh = "auto_refresh"
     const val defaultToRead = "defaultToRead"
