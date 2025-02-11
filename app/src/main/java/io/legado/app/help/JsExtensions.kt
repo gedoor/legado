@@ -2,6 +2,8 @@ package io.legado.app.help
 
 import android.net.Uri
 import android.webkit.WebSettings
+import android.app.AlertDialog
+import android.content.Intent
 import androidx.annotation.Keep
 import cn.hutool.core.codec.Base64
 import cn.hutool.core.util.HexUtil
@@ -21,6 +23,7 @@ import io.legado.app.help.source.SourceVerificationHelp
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.analyzeRule.QueryTTF
+import io.legado.app.ui.javascript.ConfirmationDialogActivity
 import io.legado.app.utils.ArchiveUtils
 import io.legado.app.utils.ChineseUtils
 import io.legado.app.utils.EncoderUtils
@@ -45,9 +48,11 @@ import io.legado.app.utils.readText
 import io.legado.app.utils.stackTraceStr
 import io.legado.app.utils.toStringArray
 import io.legado.app.utils.toastOnUi
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import okio.use
 import org.jsoup.Connection
 import org.jsoup.Jsoup
@@ -958,4 +963,17 @@ interface JsExtensions : JsEncodeUtils {
         return AppConst.androidId
     }
 
+    fun openUrl(url: String) {
+        try {
+            val intent = Intent(appCtx, ConfirmationDialogActivity::class.java).apply {
+                data = Uri.parse(url)
+                putExtra("sourceTag", getSource()?.getTag() ?: "") // 添加来源标签参数
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            appCtx.startActivity(intent)
+        } catch (e: Exception) {
+            AppLog.put("启动跳转对话框失败", e)
+            appCtx.toastOnUi("启动跳转确认失败")
+        }
+    }
 }

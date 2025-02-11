@@ -127,4 +127,16 @@
         <item name="android:layout_width">wrap_content</item>
     </style>
 
+    <!-- 基础透明主题 -->
+    <style name="Theme.Translucent" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <!-- 无标题栏变体 -->
+    <style name="Theme.Translucent.NoTitleBar" parent="Theme.Translucent">
+        <item name="windowNoTitle">true</item>
+    </style>
+
 </resources>
