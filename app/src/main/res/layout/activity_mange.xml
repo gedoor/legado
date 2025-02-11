@@ -66,6 +66,7 @@
             android:id="@+id/ll_retry"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:visibility="gone"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -83,8 +84,6 @@
                 android:layout_gravity="center"
                 android:text="重新加载"
                 android:textSize="18sp"
-                android:visibility="gone"
-                app:backgroundTint="@color/white"
                 app:cornerRadius="10dp"
                 tools:visibility="visible" />
         </LinearLayout>
