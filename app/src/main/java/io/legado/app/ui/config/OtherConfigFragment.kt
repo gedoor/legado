@@ -68,6 +68,7 @@ class OtherConfigFragment : PreferenceFragment(),
         }
         upPreferenceSummary(PreferKey.checkSource, CheckSource.summary)
         upPreferenceSummary(PreferKey.bitmapCacheSize, AppConfig.bitmapCacheSize.toString())
+        upPreferenceSummary(PreferKey.bitmapRetainNum, AppConfig.bitmapRetainNum.toString())
         upPreferenceSummary(PreferKey.sourceEditMaxLine, AppConfig.sourceEditMaxLine.toString())
     }
 
@@ -132,6 +133,14 @@ class OtherConfigFragment : PreferenceFragment(),
                         ImageProvider.bitmapLruCache.resize(ImageProvider.cacheSize)
                     }
             }
+            PreferKey.bitmapRetainNum -> NumberPickerDialog(requireContext())
+                .setTitle(getString(R.string.bitmap_retain_number))
+                .setMaxValue(999)
+                .setMinValue(0)
+                .setValue(AppConfig.bitmapRetainNum)
+                .show {
+                    AppConfig.bitmapRetainNum = it
+                }
 
             PreferKey.sourceEditMaxLine -> {
                 NumberPickerDialog(requireContext())
@@ -203,6 +212,10 @@ class OtherConfigFragment : PreferenceFragment(),
                 upPreferenceSummary(key, AppConfig.bitmapCacheSize.toString())
             }
 
+            PreferKey.bitmapRetainNum -> {
+                upPreferenceSummary(key, AppConfig.bitmapRetainNum.toString())
+            }
+
             PreferKey.sourceEditMaxLine -> {
                 upPreferenceSummary(key, AppConfig.sourceEditMaxLine.toString())
             }
@@ -219,6 +232,8 @@ class OtherConfigFragment : PreferenceFragment(),
             PreferKey.webPort -> preference.summary = getString(R.string.web_port_summary, value)
             PreferKey.bitmapCacheSize -> preference.summary =
                 getString(R.string.bitmap_cache_size_summary, value)
+            PreferKey.bitmapRetainNum -> preference.summary =
+                getString(R.string.bitmap_retain_number_summary, value)
 
             PreferKey.sourceEditMaxLine -> preference.summary =
                 getString(R.string.source_edit_max_line_summary, value)

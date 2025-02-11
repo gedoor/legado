@@ -110,6 +110,11 @@
             android:title="@string/bitmap_cache_size" />
 
         <io.legado.app.lib.prefs.Preference
+            android:key="bitmapRetainNum"
+            android:summary="@string/bitmap_retain_number_summary"
+            android:title="@string/bitmap_retain_number" />
+
+        <io.legado.app.lib.prefs.Preference
             android:key="preDownloadNum"
             android:summary="@string/pre_download_s"
             android:title="@string/pre_download" />

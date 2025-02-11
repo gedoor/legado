@@ -5,6 +5,7 @@ import android.os.ParcelFileDescriptor
 import androidx.documentfile.provider.DocumentFile
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern
+import io.legado.app.constant.BookType
 import io.legado.app.constant.EventBus
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
@@ -96,6 +97,7 @@ object BookHelp {
             val bookFolderNames = hashSetOf<String>()
             val originNames = hashSetOf<String>()
             appDb.bookDao.all.forEach {
+                clearComicCache(it)
                 bookFolderNames.add(it.getFolderName())
                 if (it.isEpub) originNames.add(it.originName)
             }
@@ -116,6 +118,48 @@ object BookHelp {
             FileUtils.delete("$filesDir/shareBookSource.json")
             FileUtils.delete("$filesDir/shareRssSource.json")
             FileUtils.delete("$filesDir/books.json")
+        }
+    }
+
+    //清除已经看过的漫画数据
+    private fun clearComicCache(book: Book) {
+        //只处理漫画
+        if (book.type == BookType.image) {
+            //为0的时候，不清除已缓存数据
+            if (AppConfig.bitmapRetainNum == 0) {
+                return
+            }
+            //向前保留设定数量，向后保留预下载数量
+            val startIndex = book.durChapterIndex - AppConfig.bitmapRetainNum
+            val endIndex = book.durChapterIndex + AppConfig.preDownloadNum
+            val chapterList = appDb.bookChapterDao.getChapterList(
+                book.bookUrl,
+                startIndex,
+                endIndex
+            )
+            val imgNames = hashSetOf<String>()
+            //获取需要保留章节的图片信息
+            chapterList.forEach {
+                val content = getContent(book, it)
+                if (content != null) {
+                    val matcher = AppPattern.imgPattern.matcher(content)
+                    while (matcher.find()) {
+                        val src = matcher.group(1) ?: continue
+                        val mSrc = NetworkUtils.getAbsoluteURL(it.url, src)
+                        imgNames.add("${MD5Utils.md5Encode16(mSrc)}.${getImageSuffix(mSrc)}")
+                    }
+                }
+            }
+            downloadDir.getFile(
+                cacheFolderName,
+                book.getFolderName(),
+                cacheImageFolderName
+            ).listFiles()?.forEach { imgFile ->
+                if (!imgNames.contains(imgFile.name)){
+                    imgFile.delete()
+                }
+            }
+
         }
     }
 
