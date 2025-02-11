@@ -88,7 +88,11 @@ object ProgressManager {
                         )
                         val res = chain.proceed(request)
                         res.newBuilder()
-                            .body(modifiedBytes?.toResponseBody(res.body?.contentType()))
+                            .body(ProgressResponseBody(
+                                request.url.toString(),
+                                LISTENER,
+                                modifiedBytes?.toResponseBody(res.body?.contentType())!!
+                            ))
                             .build()
                     } else {
                         chain.proceed(builder.build())
