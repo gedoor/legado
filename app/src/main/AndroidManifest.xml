@@ -433,6 +433,13 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".ui.javascript.ConfirmationDialogActivity"
+            android:theme="@style/Theme.Translucent.NoTitleBar"
+            android:excludeFromRecents="true"
+            android:taskAffinity=""
+            android:launchMode="singleInstance"/>
+
         <service
             android:name=".service.CheckSourceService"
             android:foregroundServiceType="dataSync" />

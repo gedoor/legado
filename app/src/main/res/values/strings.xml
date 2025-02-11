@@ -1183,4 +1183,5 @@
     <string name="theme_config">主题配置</string>
     <string name="menu_download_after">Download the chapter after</string>
     <string name="menu_download_all">Download all chapter</string>
+    <string name="error_occurred" translatable="false">打开失败</string>
 </resources>
