@@ -68,6 +68,7 @@ class OtherConfigFragment : PreferenceFragment(),
         }
         upPreferenceSummary(PreferKey.checkSource, CheckSource.summary)
         upPreferenceSummary(PreferKey.bitmapCacheSize, AppConfig.bitmapCacheSize.toString())
+        upPreferenceSummary(PreferKey.imageRetainNum, AppConfig.imageRetainNum.toString())
         upPreferenceSummary(PreferKey.sourceEditMaxLine, AppConfig.sourceEditMaxLine.toString())
     }
 
@@ -132,6 +133,14 @@ class OtherConfigFragment : PreferenceFragment(),
                         ImageProvider.bitmapLruCache.resize(ImageProvider.cacheSize)
                     }
             }
+            PreferKey.imageRetainNum -> NumberPickerDialog(requireContext())
+                .setTitle(getString(R.string.image_retain_number))
+                .setMaxValue(999)
+                .setMinValue(0)
+                .setValue(AppConfig.imageRetainNum)
+                .show {
+                    AppConfig.imageRetainNum = it
+                }
 
             PreferKey.sourceEditMaxLine -> {
                 NumberPickerDialog(requireContext())
@@ -203,6 +212,10 @@ class OtherConfigFragment : PreferenceFragment(),
                 upPreferenceSummary(key, AppConfig.bitmapCacheSize.toString())
             }
 
+            PreferKey.imageRetainNum -> {
+                upPreferenceSummary(key, AppConfig.imageRetainNum.toString())
+            }
+
             PreferKey.sourceEditMaxLine -> {
                 upPreferenceSummary(key, AppConfig.sourceEditMaxLine.toString())
             }
@@ -219,6 +232,8 @@ class OtherConfigFragment : PreferenceFragment(),
             PreferKey.webPort -> preference.summary = getString(R.string.web_port_summary, value)
             PreferKey.bitmapCacheSize -> preference.summary =
                 getString(R.string.bitmap_cache_size_summary, value)
+            PreferKey.imageRetainNum -> preference.summary =
+                getString(R.string.image_retain_number_summary, value)
 
             PreferKey.sourceEditMaxLine -> preference.summary =
                 getString(R.string.source_edit_max_line_summary, value)
