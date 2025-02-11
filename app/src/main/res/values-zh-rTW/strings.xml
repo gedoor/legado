@@ -1005,8 +1005,8 @@
     <string name="add_remote_book">远程書籍</string>
     <string name="bitmap_cache_size_summary">目前最大快取 %1$s MB</string>
     <string name="bitmap_cache_size">圖片繪製快取</string>
-    <string name="bitmap_retain_number_summary">保留已讀章節數量 %s</string>
-    <string name="bitmap_retain_number">漫畫保留數量</string>
+    <string name="image_retain_number_summary">保留已讀章節數量 %s</string>
+    <string name="image_retain_number">漫畫保留數量</string>
     <string name="export_pics_file">TXT匯出圖片</string>
     <!-- string end -->
     <string name="error_decode_bitmap">圖片解碼失敗</string>

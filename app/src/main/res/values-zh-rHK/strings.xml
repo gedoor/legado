@@ -1003,8 +1003,8 @@
     <string name="add_remote_book">远程书籍</string>
     <string name="bitmap_cache_size_summary">当前最大缓存 %1$s MB</string>
     <string name="bitmap_cache_size">图片绘制缓存</string>
-    <string name="bitmap_retain_number_summary">保留已讀章節數量 %s</string>
-    <string name="bitmap_retain_number">漫畫保留數量</string>
+    <string name="image_retain_number_summary">保留已讀章節數量 %s</string>
+    <string name="image_retain_number">漫畫保留數量</string>
     <string name="export_pics_file">TXT导出图片</string>
     <!-- string end -->
     <string name="error_decode_bitmap">图片解码失败</string>

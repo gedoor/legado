@@ -1003,8 +1003,8 @@
     <string name="add_remote_book">RemoteBook</string>
     <string name="bitmap_cache_size_summary">Current cache max size %1$s MB</string>
     <string name="bitmap_cache_size">bitmap cache size</string>
-    <string name="bitmap_retain_number_summary">Keep the number of chapters read %s</string>
-    <string name="bitmap_retain_number">Number of manga reservations</string>
+    <string name="image_retain_number_summary">Keep the number of chapters read %s</string>
+    <string name="image_retain_number">Number of manga reservations</string>
     <string name="export_pics_file">Export Picture Files</string>
     <!-- string end -->
     <string name="error_decode_bitmap">Fail to decode bitmap</string>

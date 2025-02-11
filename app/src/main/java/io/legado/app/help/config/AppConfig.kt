@@ -554,10 +554,10 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             appCtx.putPrefInt(PreferKey.bitmapCacheSize, value)
         }
 
-    var bitmapRetainNum: Int
-        get() = appCtx.getPrefInt(PreferKey.bitmapRetainNum, 0)
+    var imageRetainNum: Int
+        get() = appCtx.getPrefInt(PreferKey.imageRetainNum, 0)
         set(value) {
-            appCtx.putPrefInt(PreferKey.bitmapRetainNum, value)
+            appCtx.putPrefInt(PreferKey.imageRetainNum, value)
         }
 
     var showReadTitleBarAddition: Boolean
