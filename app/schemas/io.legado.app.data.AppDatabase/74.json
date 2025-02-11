@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 74,
-    "identityHash": "c492bca5d9c4b4b34a0808d8cce9e7ba",
+    "identityHash": "891d9a1c1df6e4f40ff3d0dacf6c14fb",
     "entities": [
       {
         "tableName": "books",
@@ -503,7 +503,7 @@
       },
       {
         "tableName": "chapters",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`url` TEXT NOT NULL, `title` TEXT NOT NULL, `isVolume` INTEGER NOT NULL, `baseUrl` TEXT NOT NULL, `bookUrl` TEXT NOT NULL, `index` INTEGER NOT NULL, `isVip` INTEGER NOT NULL, `isPay` INTEGER NOT NULL, `resourceUrl` TEXT, `tag` TEXT, `wordCount` TEXT, `start` INTEGER, `end` INTEGER, `startFragmentId` TEXT, `endFragmentId` TEXT, `variable` TEXT, PRIMARY KEY(`url`, `bookUrl`), FOREIGN KEY(`bookUrl`) REFERENCES `books`(`bookUrl`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`url` TEXT NOT NULL, `title` TEXT NOT NULL, `isVolume` INTEGER NOT NULL, `baseUrl` TEXT NOT NULL, `bookUrl` TEXT NOT NULL, `index` INTEGER NOT NULL, `isVip` INTEGER NOT NULL, `isPay` INTEGER NOT NULL, `resourceUrl` TEXT, `tag` TEXT, `wordCount` TEXT, `start` INTEGER, `end` INTEGER, `startFragmentId` TEXT, `endFragmentId` TEXT, `variable` TEXT, `parseTitle` TEXT, PRIMARY KEY(`url`, `bookUrl`), FOREIGN KEY(`bookUrl`) REFERENCES `books`(`bookUrl`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "url",
@@ -598,6 +598,12 @@
           {
             "fieldPath": "variable",
             "columnName": "variable",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "parseTitle",
+            "columnName": "parseTitle",
             "affinity": "TEXT",
             "notNull": false
           }
@@ -1391,25 +1397,13 @@
       },
       {
         "tableName": "rssReadRecords",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`record` TEXT NOT NULL, `title` TEXT, `readTime` INTEGER, `read` INTEGER NOT NULL, PRIMARY KEY(`record`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`record` TEXT NOT NULL, `read` INTEGER NOT NULL, PRIMARY KEY(`record`))",
         "fields": [
           {
             "fieldPath": "record",
             "columnName": "record",
             "affinity": "TEXT",
             "notNull": true
-          },
-          {
-            "fieldPath": "title",
-            "columnName": "title",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "readTime",
-            "columnName": "readTime",
-            "affinity": "INTEGER",
-            "notNull": false
           },
           {
             "fieldPath": "read",
@@ -1924,7 +1918,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c492bca5d9c4b4b34a0808d8cce9e7ba')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '891d9a1c1df6e4f40ff3d0dacf6c14fb')"
     ]
   }
 }

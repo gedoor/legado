@@ -11,6 +11,7 @@ import io.legado.app.constant.BookType
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BaseBook
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.config.AppConfig
@@ -320,7 +321,7 @@ fun Book.getExportFileName(suffix: String): String {
 fun Book.getExportFileName(
     suffix: String,
     epubIndex: Int,
-    jsStr: String? = AppConfig.episodeExportFileName
+    jsStr: String? = AppConfig.episodeExportFileName,
 ): String {
     // 默认规则
     val default = "$name 作者：${getRealAuthor()} [${epubIndex}].$suffix"
@@ -367,4 +368,19 @@ fun tryParesExportFileName(jsStr: String): Boolean {
         RhinoScriptEngine.eval(jsStr, bindings)
         true
     }.getOrDefault(false)
+}
+
+fun List<BookChapter>.removeConsecutiveDuplicates(): List<BookChapter> {
+    return this.mapIndexed { _, bookChapter ->
+        bookChapter.apply {
+            parseTitle = normalize(title)
+        }
+    }.distinctBy {
+        it.parseTitle
+    }
+}
+
+private fun normalize(str: String): String {
+    val regex = "[\\u4e00-\\u9fa5]".toRegex()
+    return regex.findAll(str).map { it.value }.joinToString("")
 }

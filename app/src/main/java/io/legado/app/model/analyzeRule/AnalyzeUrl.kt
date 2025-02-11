@@ -21,6 +21,8 @@ import io.legado.app.help.JsExtensions
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.exoplayer.ExoPlayerHelper
 import io.legado.app.help.glide.GlideHeaders
+import io.legado.app.help.glide.progress.ProgressManager.LISTENER
+import io.legado.app.help.glide.progress.ProgressResponseBody
 import io.legado.app.help.http.BackstageWebView
 import io.legado.app.help.http.CookieManager
 import io.legado.app.help.http.CookieManager.mergeCookies
@@ -455,6 +457,19 @@ class AnalyzeUrl(
             return client
         }
         return client.newBuilder()
+            .addNetworkInterceptor { chain ->
+                val request = chain.request()
+                val networkResponse = chain.proceed(request)
+                networkResponse.newBuilder()
+                    .body(
+                        ProgressResponseBody(
+                            request.url.toString(),
+                            LISTENER,
+                            networkResponse.body!!
+                        )
+                    )
+                    .build()
+            }
             .readTimeout(readTimeout, TimeUnit.MILLISECONDS)
             .callTimeout(max(60 * 1000L, readTimeout * 2), TimeUnit.MILLISECONDS)
             .build()

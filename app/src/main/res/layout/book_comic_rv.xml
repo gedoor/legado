@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/book_ant_10"
+    android:contentDescription="@null">
+
+    <com.github.panpf.zoomimage.GlideZoomImageView
+        android:id="@+id/image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:adjustViewBounds="true"
+        app:contentScale="fillWidth" />
+
+    <FrameLayout
+        android:id="@+id/fl_progress"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/book_ant_10">
+
+        <ProgressBar
+            android:id="@+id/loading"
+            style="@style/Widget.Material3.CircularProgressIndicator.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:indeterminateTint="@color/white"
+            android:progressTint="@color/white"
+            app:indicatorColor="@color/white"
+            app:indicatorSize="36dp"
+            app:trackCornerRadius="99dp"
+            app:trackThickness="3dp" />
+
+
+        <Button
+            android:id="@+id/retry"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="重新加载"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:visibility="gone"
+            app:backgroundTint="@color/white"
+            app:cornerRadius="10dp"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="0%"
+            android:textColor="@color/white"
+            android:visibility="gone"
+            tools:visibility="visible" />
+    </FrameLayout>
+
+</FrameLayout>

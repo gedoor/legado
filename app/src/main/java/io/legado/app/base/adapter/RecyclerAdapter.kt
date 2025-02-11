@@ -475,7 +475,7 @@ abstract class RecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Co
 
     companion object {
         private const val TYPE_HEADER_VIEW = Int.MIN_VALUE
-        private const val TYPE_FOOTER_VIEW = Int.MAX_VALUE - 999
+        const val TYPE_FOOTER_VIEW = Int.MAX_VALUE - 999
         private val handler by lazy { buildMainHandler() }
     }
 

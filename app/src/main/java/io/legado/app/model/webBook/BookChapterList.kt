@@ -12,6 +12,7 @@ import io.legado.app.data.entities.rule.TocRule
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.exception.TocEmptyException
 import io.legado.app.help.book.ContentProcessor
+import io.legado.app.help.book.removeConsecutiveDuplicates
 import io.legado.app.help.book.simulatedTotalChapterNum
 import io.legado.app.help.config.AppConfig
 import io.legado.app.model.Debug
@@ -122,6 +123,7 @@ object BookChapterList {
         coroutineContext.ensureActive()
         //去重
         val lh = LinkedHashSet(chapterList)
+//        val removeTitleList=ArrayList(lh).removeConsecutiveDuplicates()
         val list = ArrayList(lh)
         if (!book.getReverseToc()) {
             list.reverse()

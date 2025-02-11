@@ -1,0 +1,21 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.main.MainActivity"
+    tools:ignore="AlwaysShowAction">
+
+    <group android:id="@+id/menu_group_on_line">
+        <item
+            android:id="@+id/menu_change_source"
+            android:icon="@drawable/ic_exchange"
+            android:title="@string/change_origin"
+            app:showAsAction="always" />
+
+        <item
+            android:id="@+id/menu_catalog"
+            android:icon="@drawable/ic_toc"
+            android:title="@string/chapter_list"
+            app:showAsAction="always" />
+
+    </group>
+</menu>
