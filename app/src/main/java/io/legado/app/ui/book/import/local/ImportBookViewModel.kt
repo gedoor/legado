@@ -147,7 +147,9 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
                     if (it.isDir) {
                         n++
                         channel.trySend(it)
-                    } else {
+                    } else if (it.name.matches(bookFileRegex)
+                        || it.name.matches(archiveFileRegex)
+                    ) {
                         list.add(it)
                     }
                 }

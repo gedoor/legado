@@ -27,6 +27,7 @@ import io.legado.app.help.book.isSameNameAuthor
 import io.legado.app.help.book.isWebFile
 import io.legado.app.help.book.removeType
 import io.legado.app.help.book.simulatedTotalChapterNum
+import io.legado.app.help.book.updateTo
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.webdav.ObjectNotFoundException
 import io.legado.app.model.AudioPlay
@@ -191,8 +192,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                     }
                     bookData.postValue(it)
                     if (inBookshelf) {
-                        val dbBook1 = appDb.bookDao.getBook(it.bookUrl)
-                        if (dbBook1 == null) {
+                        if (!appDb.bookDao.has(it.bookUrl)) {
                             /**
                              * 来自搜索，同一本书，不同 bookUrl
                              */

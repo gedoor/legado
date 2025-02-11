@@ -389,7 +389,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     private fun searchFinally() {
         binding.refreshProgressBar.isAutoLoading = false
         binding.refreshProgressBar.gone()
-        if (viewModel.hasMore) {
+        if (!isManualStopSearch && viewModel.hasMore) {
             binding.fbStartStop.setImageResource(R.drawable.ic_play_24dp)
         } else {
             binding.fbStartStop.invisible()

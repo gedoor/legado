@@ -23,4 +23,16 @@
         android:title="@string/full_screen"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/menu_disable_source"
+        android:title="@string/disable_source"
+        android:visible="false"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_delete_source"
+        android:title="@string/delete_source"
+        android:visible="false"
+        app:showAsAction="never" />
+
 </menu>

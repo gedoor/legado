@@ -130,6 +130,11 @@ class Coroutine<T>(
         block: suspend CoroutineScope.() -> Unit
     ): Coroutine<T> {
         this.cancel = VoidCallback(context, block)
+        job.invokeOnCompletion {
+            if (it is CancellationException && it !is ActivelyCancelException) {
+                cancel()
+            }
+        }
         return this@Coroutine
     }
 
@@ -141,9 +146,9 @@ class Coroutine<T>(
         cancel?.let {
             DEFAULT.launch(executeContext) {
                 if (null == it.context) {
-                    it.block.invoke(scope)
+                    it.block.invoke(this)
                 } else {
-                    withContext(scope.coroutineContext + it.context) {
+                    withContext(it.context) {
                         it.block.invoke(this)
                     }
                 }
@@ -172,9 +177,6 @@ class Coroutine<T>(
                 success?.let { dispatchCallback(this, value, it) }
             } catch (e: Throwable) {
                 e.printOnDebug()
-                if (e is CancellationException && e !is ActivelyCancelException && isCancelled) {
-                    this@Coroutine.cancel()
-                }
                 val consume: Boolean = errorReturn?.value?.let { value ->
                     success?.let { dispatchCallback(this, value, it) }
                     true
