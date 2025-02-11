@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
 import io.legado.app.R
@@ -16,7 +17,14 @@ class ConfirmationDialogActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // 必须先设置布局再获取控件
         setContentView(R.layout.confirmation_dialog)
+
+        // 正确顺序：先设置布局再获取视图
+        val messageView = findViewById<TextView>(R.id.message)
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        val btnNegative = findViewById<AccentTextView>(R.id.btn_negative)
+        val btnPositive = findViewById<AccentTextView>(R.id.btn_positive)
 
         val url = intent?.dataString
         if (url.isNullOrBlank()) {
@@ -24,11 +32,14 @@ class ConfirmationDialogActivity : AppCompatActivity() {
             return
         }
 
-        findViewById<Toolbar>(R.id.toolbar).setNavigationOnClickListener { finish() }
+        // 处理来源标签显示
+        val sourceTag = intent.getStringExtra("sourceTag").takeIf { !it.isNullOrBlank() } ?: "当前来源"
+        messageView.text = "$sourceTag 正在请求跳转外部链接/应用，是否跳转？"
 
-        findViewById<AccentTextView>(R.id.btn_negative).setOnClickListener { finish() }
-
-        findViewById<AccentTextView>(R.id.btn_positive).setOnClickListener {
+        // 设置其他组件
+        toolbar.setNavigationOnClickListener { finish() }
+        btnNegative.setOnClickListener { finish() }
+        btnPositive.setOnClickListener {
             try {
                 startActivity(
                     Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {

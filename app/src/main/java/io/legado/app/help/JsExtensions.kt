@@ -967,6 +967,7 @@ interface JsExtensions : JsEncodeUtils {
         try {
             val intent = Intent(appCtx, ConfirmationDialogActivity::class.java).apply {
                 data = Uri.parse(url)
+                putExtra("sourceTag", getSource()?.getTag() ?: "") // 添加来源标签参数
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
             appCtx.startActivity(intent)
