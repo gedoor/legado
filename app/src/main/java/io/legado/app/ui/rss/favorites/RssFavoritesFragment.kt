@@ -12,6 +12,7 @@ import io.legado.app.constant.AppLog
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssStar
 import io.legado.app.databinding.FragmentRssArticlesBinding
+import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.rss.read.ReadRssActivity
 import io.legado.app.ui.widget.recycler.VerticalDivider
@@ -71,6 +72,16 @@ class RssFavoritesFragment() : VMBaseFragment<RssFavoritesViewModel>(R.layout.fr
             putExtra("title", rssStar.title)
             putExtra("origin", rssStar.origin)
             putExtra("link", rssStar.link)
+        }
+    }
+
+    override fun delStar(rssStar: RssStar) {
+        alert(R.string.draw) {
+            setMessage(getString(R.string.sure_del) + "\n<" + rssStar.title + ">")
+            noButton()
+            yesButton {
+                appDb.rssStarDao.delete(rssStar.origin, rssStar.link)
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 package io.legado.app.help
 
+import android.content.Intent
 import android.net.Uri
 import android.webkit.WebSettings
 import androidx.annotation.Keep
@@ -21,6 +22,7 @@ import io.legado.app.help.source.SourceVerificationHelp
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.analyzeRule.QueryTTF
+import io.legado.app.ui.javascript.ConfirmationDialogActivity
 import io.legado.app.utils.ArchiveUtils
 import io.legado.app.utils.ChineseUtils
 import io.legado.app.utils.EncoderUtils
@@ -956,6 +958,32 @@ interface JsExtensions : JsEncodeUtils {
 
     fun androidId(): String {
         return AppConst.androidId
+    }
+
+    fun openUrl(url: String) {
+        openUrl(url, null)
+    }
+
+    // 新增 mimeType 参数，默认为 null（保持兼容性）
+    fun openUrl(url: String, mimeType: String? = null) {
+        try {
+            val intent = Intent(appCtx, ConfirmationDialogActivity::class.java).apply {
+                // 同时设置 Data 和 Type（避免单独设置 data/type 导致冲突）
+                if (mimeType != null) {
+                    setDataAndType(Uri.parse(url), mimeType)
+                } else {
+                    data = Uri.parse(url)
+                }
+                putExtra("sourceTag", getSource()?.getTag() ?: "")
+                // 可选：添加 MIME 类型到 Extra 供后续逻辑使用
+                putExtra("mimeType", mimeType)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            appCtx.startActivity(intent)
+        } catch (e: Exception) {
+            AppLog.put("启动跳转对话框失败", e)
+            appCtx.toastOnUi("启动跳转确认失败")
+        }
     }
 
 }
