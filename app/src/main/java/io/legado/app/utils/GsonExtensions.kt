@@ -65,10 +65,13 @@ inline fun <reified T> Gson.fromJsonArray(json: String?): Result<List<T>> {
         if (json == null) {
             throw JsonSyntaxException("解析字符串为空")
         }
-        fromJson(
-            json,
-            TypeToken.getParameterized(List::class.java, T::class.java).type
-        ) as List<T>
+        val type = TypeToken.getParameterized(List::class.java, T::class.java).type
+        val list = fromJson(json, type) as List<T?>
+        if (list.contains(null)) {
+            throw JsonSyntaxException("存在null")
+        }
+        @Suppress("UNCHECKED_CAST")
+        list as List<T>
     }
 }
 
@@ -88,10 +91,13 @@ inline fun <reified T> Gson.fromJsonArray(inputStream: InputStream?): Result<Lis
             throw JsonSyntaxException("解析流为空")
         }
         val reader = InputStreamReader(inputStream)
-        fromJson(
-            reader,
-            TypeToken.getParameterized(List::class.java, T::class.java).type
-        ) as List<T>
+        val type = TypeToken.getParameterized(List::class.java, T::class.java).type
+        val list = fromJson(reader, type) as List<T?>
+        if (list.contains(null)) {
+            throw JsonSyntaxException("存在null")
+        }
+        @Suppress("UNCHECKED_CAST")
+        list as List<T>
     }
 }
 
@@ -150,6 +156,7 @@ class IntJsonDeserializer : JsonDeserializer<Int?> {
                     null
                 }
             }
+
             else -> null
         }
     }
@@ -182,6 +189,7 @@ class MapDeserializerDoubleAsIntFix :
                 }
                 return list
             }
+
             json.isJsonObject -> {
                 val map: MutableMap<String, Any?> =
                     LinkedTreeMap()
@@ -193,15 +201,18 @@ class MapDeserializerDoubleAsIntFix :
                 }
                 return map
             }
+
             json.isJsonPrimitive -> {
                 val prim = json.asJsonPrimitive
                 when {
                     prim.isBoolean -> {
                         return prim.asBoolean
                     }
+
                     prim.isString -> {
                         return prim.asString
                     }
+
                     prim.isNumber -> {
                         val num: Number = prim.asNumber
                         // here you can handle double int/long values

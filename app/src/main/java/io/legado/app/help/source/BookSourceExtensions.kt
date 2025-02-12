@@ -64,8 +64,8 @@ suspend fun BookSource.exploreKinds(): List<ExploreKind> {
                     }
                 }
                 if (ruleStr.isJsonArray()) {
-                    GSON.fromJsonArray<ExploreKind?>(ruleStr).getOrThrow().let {
-                        kinds.addAll(it.filterNotNull())
+                    GSON.fromJsonArray<ExploreKind>(ruleStr).getOrThrow().let {
+                        kinds.addAll(it)
                     }
                 } else {
                     ruleStr.split("(&&|\n)+".toRegex()).forEach { kindStr ->
