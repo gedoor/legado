@@ -15,6 +15,7 @@ import io.legado.app.help.http.cloudflare.CloudflareInterceptor
 import io.legado.app.model.ReadMange
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.ImageUtils
+import io.legado.app.utils.runOnUI
 import kotlinx.coroutines.runBlocking
 import okhttp3.ConnectionPool
 import okhttp3.ConnectionSpec
@@ -155,7 +156,9 @@ object ProgressManager {
                     percentage = 0
                     isComplete = true
                 }
-                it.invoke(isComplete, percentage, bytesRead, totalBytes)
+                runOnUI {
+                    it.invoke(isComplete, percentage, bytesRead, totalBytes)
+                }
                 if (isComplete) {
                     removeListener(url)
                 }

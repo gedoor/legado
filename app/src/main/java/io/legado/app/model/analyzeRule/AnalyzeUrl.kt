@@ -457,6 +457,19 @@ class AnalyzeUrl(
             return client
         }
         return client.newBuilder()
+            .addNetworkInterceptor { chain ->
+                val request = chain.request()
+                val networkResponse = chain.proceed(request)
+                networkResponse.newBuilder()
+                    .body(
+                        ProgressResponseBody(
+                            request.url.toString(),
+                            LISTENER,
+                            networkResponse.body!!
+                        )
+                    )
+                    .build()
+            }
             .readTimeout(readTimeout, TimeUnit.MILLISECONDS)
             .callTimeout(max(60 * 1000L, readTimeout * 2), TimeUnit.MILLISECONDS)
             .build()
