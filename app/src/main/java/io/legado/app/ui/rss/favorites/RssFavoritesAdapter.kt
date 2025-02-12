@@ -75,9 +75,17 @@ class RssFavoritesAdapter(context: Context, val callBack: CallBack) :
                 callBack.readRss(it)
             }
         }
+        holder.itemView.setOnLongClickListener {
+            getItem(holder.layoutPosition)?.let {
+                callBack.delStar(it)
+            }
+            true
+        }
     }
 
     interface CallBack {
         fun readRss(rssStar: RssStar)
+
+        fun delStar(rssStar: RssStar)
     }
 }
