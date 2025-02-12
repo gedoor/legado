@@ -443,3 +443,10 @@ cache.getFromMemory(key: String): Any?
 cache.putMemory(key: String, value: Any)
 
 ```
+
+## 跳转外部链接/应用函数
+```js
+// 跳转外部链接，传入http链接或者scheme跳转到浏览器或其他应用
+java.openUrl(url:String)
+// 指定mimeType，可以跳转指定类型应用，例如（video/*）
+java.openUrl(url:String,mimeType:String)
