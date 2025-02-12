@@ -22,7 +22,7 @@ class ConfirmationDialogActivity : AppCompatActivity() {
 
         // 正确顺序：先设置布局再获取视图
         val messageView = findViewById<TextView>(R.id.message)
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        val toolbar = findViewById<Toolbar>(R.id.tool_bar)
         val btnNegative = findViewById<AccentTextView>(R.id.btn_negative)
         val btnPositive = findViewById<AccentTextView>(R.id.btn_positive)
 

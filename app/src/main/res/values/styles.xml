@@ -80,6 +80,7 @@
 
     <style name="ToolbarTitle" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/primaryText</item>
     </style>
 
     //*******************Widget Style**********************************//
