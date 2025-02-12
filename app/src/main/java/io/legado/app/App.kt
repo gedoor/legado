@@ -89,8 +89,9 @@ class App : Application() {
             Backup.clearCache()
             //初始化简繁转换引擎
             when (AppConfig.chineseConverterType) {
-                1 -> launch {
+                1 -> {
                     ChineseUtils.fixT2sDict()
+                    ChineseUtils.preLoad(true, TransType.TRADITIONAL_TO_SIMPLE)
                 }
 
                 2 -> ChineseUtils.preLoad(true, TransType.SIMPLE_TO_TRADITIONAL)
