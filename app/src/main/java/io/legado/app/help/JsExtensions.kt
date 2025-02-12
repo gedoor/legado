@@ -963,11 +963,19 @@ interface JsExtensions : JsEncodeUtils {
         return AppConst.androidId
     }
 
-    fun openUrl(url: String) {
+    // 新增 mimeType 参数，默认为 null（保持兼容性）
+    fun openUrl(url: String, mimeType: String? = null) {
         try {
             val intent = Intent(appCtx, ConfirmationDialogActivity::class.java).apply {
-                data = Uri.parse(url)
-                putExtra("sourceTag", getSource()?.getTag() ?: "") // 添加来源标签参数
+                // 同时设置 Data 和 Type（避免单独设置 data/type 导致冲突）
+                if (mimeType != null) {
+                    setDataAndType(Uri.parse(url), mimeType)
+                } else {
+                    data = Uri.parse(url)
+                }
+                putExtra("sourceTag", getSource()?.getTag() ?: "")
+                // 可选：添加 MIME 类型到 Extra 供后续逻辑使用
+                putExtra("mimeType", mimeType)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
             appCtx.startActivity(intent)
@@ -976,4 +984,5 @@ interface JsExtensions : JsEncodeUtils {
             appCtx.toastOnUi("启动跳转确认失败")
         }
     }
+
 }
