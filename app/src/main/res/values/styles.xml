@@ -139,4 +139,9 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="ToolbarTitleX" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/primaryText</item>
+    </style>
+
 </resources>
