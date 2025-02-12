@@ -20,7 +20,7 @@
             android:theme="?attr/actionBarStyle"
             app:popupTheme="@style/AppTheme.PopupOverlay"
             app:title="跳转确认"
-            app:titleTextAppearance="@style/ToolbarTitle" />
+            app:titleTextAppearance="@style/ToolbarTitleX" />
 
         <TextView
             android:id="@+id/message"
