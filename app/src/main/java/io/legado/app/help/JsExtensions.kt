@@ -1,9 +1,8 @@
 package io.legado.app.help
 
+import android.content.Intent
 import android.net.Uri
 import android.webkit.WebSettings
-import android.app.AlertDialog
-import android.content.Intent
 import androidx.annotation.Keep
 import cn.hutool.core.codec.Base64
 import cn.hutool.core.util.HexUtil
@@ -48,11 +47,9 @@ import io.legado.app.utils.readText
 import io.legado.app.utils.stackTraceStr
 import io.legado.app.utils.toStringArray
 import io.legado.app.utils.toastOnUi
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import okio.use
 import org.jsoup.Connection
 import org.jsoup.Jsoup
@@ -961,6 +958,10 @@ interface JsExtensions : JsEncodeUtils {
 
     fun androidId(): String {
         return AppConst.androidId
+    }
+
+    fun openUrl(url: String) {
+        openUrl(url, null)
     }
 
     // 新增 mimeType 参数，默认为 null（保持兼容性）
