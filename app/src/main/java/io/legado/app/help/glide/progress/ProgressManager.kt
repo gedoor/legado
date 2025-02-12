@@ -53,11 +53,11 @@ object ProgressManager {
             .hostnameVerifier(SSLHelper.unsafeHostnameVerifier)
             .connectionSpecs(specs)
             .followRedirects(true)
-            .connectionPool(ConnectionPool(5, 5, TimeUnit.MINUTES))
+            /*.connectionPool(ConnectionPool(5, 5, TimeUnit.MINUTES))
             .dispatcher(Dispatcher().apply {
                 maxRequests = 5
                 maxRequestsPerHost = 3
-            })
+            })*/
             .followSslRedirects(true)
             .addInterceptor(OkHttpExceptionInterceptor)
             .addInterceptor(CloudflareInterceptor(appCtx, cookieJar, AppConfig::userAgent))
