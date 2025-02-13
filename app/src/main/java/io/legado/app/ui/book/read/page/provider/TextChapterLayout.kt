@@ -186,6 +186,9 @@ class TextChapterLayout(
         val contents = bookContent.textList
         var absStartX = paddingLeft
         var durY = 0f
+        val imageStyle = book.getImageStyle()
+        val isSingleImageStyle = imageStyle.equals(Book.imgStyleSingle, true)
+
         if (ReadBookConfig.titleMode != 2 || bookChapter.isVolume || contents.isEmpty()) {
             //标题非隐藏
             displayTitle.splitNotBlank("\n").forEach { text ->
@@ -195,7 +198,7 @@ class TextChapterLayout(
                     titlePaint,
                     titlePaintTextHeight,
                     titlePaintFontMetrics,
-                    book.getImageStyle(),
+                    imageStyle,
                     isTitle = true,
                     emptyContent = contents.isEmpty(),
                     isVolumeTitle = bookChapter.isVolume
@@ -207,6 +210,17 @@ class TextChapterLayout(
             pendingTextPage.lines.last().isParagraphEnd = true
             stringBuilder.append("\n")
             durY += titleBottomSpacing
+
+            // 如果是单图模式且当前页有内容，强制分页
+            if (isSingleImageStyle && pendingTextPage.lines.isNotEmpty()) {
+                pendingTextPage.height = durY
+                textPages.add(pendingTextPage)
+                onPageCompleted()
+                pendingTextPage = TextPage()
+                stringBuilder.clear()
+                absStartX = paddingLeft
+                durY = 0f
+            }
         }
         val sb = StringBuffer()
         contents.forEach { content ->
@@ -273,6 +287,15 @@ class TextChapterLayout(
                         absStartX = it.first
                         durY = it.second
                     }
+                    if (isSingleImageStyle) {
+                        pendingTextPage.height = durY
+                        textPages.add(pendingTextPage)
+                        onPageCompleted()
+                        pendingTextPage = TextPage()
+                        stringBuilder.clear()
+                        absStartX = paddingLeft
+                        durY = 0f
+                    }
                     start = matcher.end()
                 }
                 if (start < content.length) {
@@ -293,7 +316,9 @@ class TextChapterLayout(
                     }
                 }
             }
-            pendingTextPage.lines.last().isParagraphEnd = true
+            if (pendingTextPage.lines.isNotEmpty()) {
+                pendingTextPage.lines.last().isParagraphEnd = true
+            }
             stringBuilder.append("\n")
         }
         textPages.add(pendingTextPage)
