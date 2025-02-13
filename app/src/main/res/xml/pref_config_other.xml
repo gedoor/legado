@@ -48,6 +48,12 @@
             android:title="@string/show_mange_ui"
             app:iconSpaceReserved="false" />
 
+        <io.legado.app.lib.prefs.SwitchPreference
+            android:defaultValue="true"
+            android:key="disableMangaScaling"
+            android:title="@string/disable_manga_scaling"
+            app:iconSpaceReserved="false" />
+
         <io.legado.app.lib.prefs.NameListPreference
             android:defaultValue="bookshelf"
             android:key="defaultHomePage"
