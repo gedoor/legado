@@ -83,9 +83,11 @@ abstract class PageDelegate(protected val readView: ReadView) {
 
     protected fun stopScroll() {
         isStarted = false
-        isMoved = false
-        isRunning = false
-        readView.postInvalidate()
+        readView.post {
+            isMoved = false
+            isRunning = false
+            readView.invalidate()
+        }
     }
 
     @CallSuper
