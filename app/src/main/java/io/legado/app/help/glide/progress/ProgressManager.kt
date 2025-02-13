@@ -1,33 +1,22 @@
 package io.legado.app.help.glide.progress
 
 import android.text.TextUtils
-import io.legado.app.constant.AppConst
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.http.CookieManager
 import io.legado.app.help.http.CookieManager.cookieJarHeader
-import io.legado.app.help.http.Cronet
-import io.legado.app.help.http.DecompressInterceptor
-import io.legado.app.help.http.OkHttpExceptionInterceptor
-import io.legado.app.help.http.OkhttpUncaughtExceptionHandler
-import io.legado.app.help.http.SSLHelper
 import io.legado.app.help.http.cloudflare.AndroidCookieJar
 import io.legado.app.help.http.cloudflare.CloudflareInterceptor
+import io.legado.app.help.http.getOkHttpClient
 import io.legado.app.model.ReadMange
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.ImageUtils
 import io.legado.app.utils.runOnUI
 import kotlinx.coroutines.runBlocking
-import okhttp3.ConnectionPool
-import okhttp3.ConnectionSpec
-import okhttp3.Dispatcher
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody.Companion.toResponseBody
 import splitties.init.appCtx
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.ThreadFactory
-import java.util.concurrent.ThreadPoolExecutor
-import java.util.concurrent.TimeUnit
 
 /**
  * 进度监听器管理类
@@ -39,40 +28,11 @@ object ProgressManager {
 
     /**glide 下载进度的主要逻辑 需要在GlideModule注入*/
     fun glideProgressInterceptor(): OkHttpClient {
-        val specs = arrayListOf(
-            ConnectionSpec.MODERN_TLS,
-            ConnectionSpec.COMPATIBLE_TLS,
-            ConnectionSpec.CLEARTEXT
-        )
-        val builder = OkHttpClient.Builder()
-            .connectTimeout(15, TimeUnit.SECONDS)
-            .writeTimeout(15, TimeUnit.SECONDS)
-            .readTimeout(60, TimeUnit.SECONDS)
-            .callTimeout(60, TimeUnit.SECONDS)
-            .sslSocketFactory(SSLHelper.unsafeSSLSocketFactory, SSLHelper.unsafeTrustManager)
-            .retryOnConnectionFailure(true)
-            .hostnameVerifier(SSLHelper.unsafeHostnameVerifier)
-            .connectionSpecs(specs)
-            .followRedirects(true)
-            /*.connectionPool(ConnectionPool(5, 5, TimeUnit.MINUTES))
-            .dispatcher(Dispatcher().apply {
-                maxRequests = 5
-                maxRequestsPerHost = 3
-            })*/
-            .followSslRedirects(true)
-            .addInterceptor(OkHttpExceptionInterceptor)
-            .addInterceptor(CloudflareInterceptor(appCtx, cookieJar, AppConfig::userAgent))
-            .addInterceptor(Interceptor { chain ->
+        return getOkHttpClient {
+            addInterceptor(CloudflareInterceptor(appCtx, cookieJar, AppConfig::userAgent))
+            addInterceptor(Interceptor { chain ->
                 val request = chain.request()
                 val builder = request.newBuilder()
-                if (request.header(AppConst.UA_NAME) == null) {
-                    builder.addHeader(AppConst.UA_NAME, AppConfig.userAgent)
-                } else if (request.header(AppConst.UA_NAME) == "null") {
-                    builder.removeHeader(AppConst.UA_NAME)
-                }
-                builder.addHeader("Keep-Alive", "300")
-                builder.addHeader("Connection", "Keep-Alive")
-                builder.addHeader("Cache-Control", "no-cache")
                 runBlocking {
                     if (ReadMange.isMangaLookModel) {
                         val analyzeUrl = AnalyzeUrl(
@@ -89,18 +49,21 @@ object ProgressManager {
                         )
                         val res = chain.proceed(request)
                         res.newBuilder()
-                            .body(ProgressResponseBody(
-                                request.url.toString(),
-                                LISTENER,
-                                modifiedBytes?.toResponseBody(res.body?.contentType())!!
-                            ))
+                            .body(
+                                ProgressResponseBody(
+                                    request.url.toString(),
+                                    LISTENER,
+                                    modifiedBytes?.toResponseBody(res.body?.contentType())!!
+                                )
+                            )
                             .build()
                     } else {
                         chain.proceed(builder.build())
                     }
                 }
             })
-            .addNetworkInterceptor { chain ->
+
+            addNetworkInterceptor { chain ->
                 var request = chain.request()
                 val enableCookieJar = request.header(cookieJarHeader) != null
 
@@ -124,25 +87,6 @@ object ProgressManager {
                         )
                     )
                     .build()
-            }
-        if (AppConfig.isCronet) {
-            if (Cronet.loader?.install() == true) {
-                Cronet.interceptor?.let {
-                    builder.addInterceptor(it)
-                }
-            }
-        }
-        builder.addInterceptor(DecompressInterceptor)
-        return builder.build().apply {
-            val okHttpName =
-                OkHttpClient::class.java.name.removePrefix("okhttp3.").removeSuffix("Client")
-            val executor = dispatcher.executorService as ThreadPoolExecutor
-            val threadName = "$okHttpName Dispatcher"
-            executor.threadFactory = ThreadFactory { runnable ->
-                Thread(runnable, threadName).apply {
-                    isDaemon = false
-                    uncaughtExceptionHandler = OkhttpUncaughtExceptionHandler
-                }
             }
         }
     }

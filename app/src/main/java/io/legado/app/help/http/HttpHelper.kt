@@ -46,6 +46,10 @@ val cookieJar by lazy {
 }
 
 val okHttpClient: OkHttpClient by lazy {
+    getOkHttpClient()
+}
+
+fun getOkHttpClient(builderEx:OkHttpClient.Builder.()->Unit={}):OkHttpClient{
     val specs = arrayListOf(
         ConnectionSpec.MODERN_TLS,
         ConnectionSpec.COMPATIBLE_TLS,
@@ -95,6 +99,7 @@ val okHttpClient: OkHttpClient by lazy {
             }
             networkResponse
         }
+    builderEx.invoke(builder)
     if (AppConfig.isCronet) {
         if (Cronet.loader?.install() == true) {
             Cronet.interceptor?.let {
@@ -103,7 +108,7 @@ val okHttpClient: OkHttpClient by lazy {
         }
     }
     builder.addInterceptor(DecompressInterceptor)
-    builder.build().apply {
+    return builder.build().apply {
         val okHttpName =
             OkHttpClient::class.java.name.removePrefix("okhttp3.").removeSuffix("Client")
         val executor = dispatcher.executorService as ThreadPoolExecutor
