@@ -287,15 +287,6 @@ class TextChapterLayout(
                         absStartX = it.first
                         durY = it.second
                     }
-                    if (isSingleImageStyle) {
-                        pendingTextPage.height = durY
-                        textPages.add(pendingTextPage)
-                        onPageCompleted()
-                        pendingTextPage = TextPage()
-                        stringBuilder.clear()
-                        absStartX = paddingLeft
-                        durY = 0f
-                    }
                     start = matcher.end()
                 }
                 if (start < content.length) {
