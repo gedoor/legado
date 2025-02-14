@@ -87,6 +87,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
         NetworkChangedListener(this)
     }
 
+    private var justInitData: Boolean = false
     private var syncDialog: AlertDialog? = null
 
     private val loadMoreView by lazy {
@@ -201,6 +202,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
             viewModel.initData(intent)
             false
         }
+        justInitData = true
     }
 
     override fun loadContentFinish(list: MutableList<Any>) {
@@ -255,7 +257,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
         networkChangedListener.register()
         networkChangedListener.onNetworkChanged = {
             // 当网络是可用状态且无需初始化时同步进度（初始化中已有同步进度逻辑）
-            if (AppConfig.syncBookProgressPlus && NetworkUtils.isAvailable()) {
+            if (AppConfig.syncBookProgressPlus && NetworkUtils.isAvailable()&&!justInitData) {
                 ReadMange.syncProgress({ progress -> sureNewProgress(progress) })
             }
         }
