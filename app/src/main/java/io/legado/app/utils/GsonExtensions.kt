@@ -68,7 +68,9 @@ inline fun <reified T> Gson.fromJsonArray(json: String?): Result<List<T>> {
         val type = TypeToken.getParameterized(List::class.java, T::class.java).type
         val list = fromJson(json, type) as List<T?>
         if (list.contains(null)) {
-            throw JsonSyntaxException("存在null")
+            throw JsonSyntaxException(
+                "列表不能存在null元素，可能是json格式错误，通常为列表存在多余的逗号所致"
+            )
         }
         @Suppress("UNCHECKED_CAST")
         list as List<T>
@@ -94,7 +96,9 @@ inline fun <reified T> Gson.fromJsonArray(inputStream: InputStream?): Result<Lis
         val type = TypeToken.getParameterized(List::class.java, T::class.java).type
         val list = fromJson(reader, type) as List<T?>
         if (list.contains(null)) {
-            throw JsonSyntaxException("存在null")
+            throw JsonSyntaxException(
+                "列表不能存在null元素，可能是json格式错误，通常为列表存在多余的逗号所致"
+            )
         }
         @Suppress("UNCHECKED_CAST")
         list as List<T>
