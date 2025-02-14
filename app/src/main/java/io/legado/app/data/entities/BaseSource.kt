@@ -116,7 +116,7 @@ interface BaseSource : JsExtensions {
                     putAll(map)
                 }
             } catch (e: Exception) {
-                AppLog.put("getHeaderMap 出错\n$e", e)
+                AppLog.put("执行请求头规则出错\n$e", e)
             }
         }
         if (!has(AppConst.UA_NAME, true)) {

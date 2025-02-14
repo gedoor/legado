@@ -191,9 +191,9 @@ abstract class PageDelegate(protected val readView: ReadView) {
     }
 
     fun postInvalidate() {
-        if (isRunning && this is HorizontalPageDelegate) {
+        if (isStarted && isRunning && this is HorizontalPageDelegate) {
             readView.post {
-                if (isRunning) {
+                if (isStarted && isRunning) {
                     setBitmap()
                     readView.invalidate()
                 }
