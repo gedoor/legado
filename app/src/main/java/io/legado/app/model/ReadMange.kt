@@ -5,13 +5,16 @@ import io.legado.app.constant.AppPattern
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.data.entities.BookProgress
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.ReadRecord
+import io.legado.app.help.AppWebDav
 import io.legado.app.help.book.BookHelp
 import io.legado.app.help.book.ContentProcessor
 import io.legado.app.help.book.isLocal
 import io.legado.app.help.book.readSimulating
 import io.legado.app.help.book.simulatedTotalChapterNum
+import io.legado.app.help.book.update
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.globalExecutor
@@ -30,6 +33,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.toList
@@ -342,8 +346,8 @@ object ReadMange : CoroutineScope by MainScope() {
         if (durChapterPagePos < simulatedChapterSize - 1) {
             durChapterPos = 0
             durChapterPagePos = index
-            loadContent(durChapterPagePos)
             saveRead()
+            loadContent(durChapterPagePos)
             AppLog.putDebug("moveToNextChapter-curPageChanged()")
             curPageChanged()
         } else {
@@ -540,11 +544,95 @@ object ReadMange : CoroutineScope by MainScope() {
         }
     }
 
+    fun uploadProgress(successAction: (() -> Unit)? = null) {
+        book?.let {
+            launch(IO) {
+                AppWebDav.uploadBookProgress(it)
+                ensureActive()
+                it.update()
+                successAction?.invoke()
+            }
+        }
+    }
+
+
+    /**
+     * 同步阅读进度
+     * 如果当前进度快于服务器进度或者没有进度进行上传，如果慢与服务器进度则执行传入动作
+     */
+    fun syncProgress(
+        newProgressAction: ((progress: BookProgress) -> Unit)? = null,
+        uploadSuccessAction: (() -> Unit)? = null,
+        syncSuccessAction: (() -> Unit)? = null
+    ) {
+        if (!AppConfig.syncBookProgress) return
+        book?.let {
+            Coroutine.async {
+                AppWebDav.getBookProgress(it)
+            }.onError {
+                AppLog.put("拉取阅读进度失败", it)
+            }.onSuccess { progress ->
+                if (progress == null || progress.durChapterIndex < it.durChapterIndex ||
+                    (progress.durChapterIndex == it.durChapterIndex
+                            && progress.durChapterPos < it.durChapterPos)
+                ) {
+                    // 服务器没有进度或者进度比服务器快，上传现有进度
+                    Coroutine.async {
+                        AppWebDav.uploadBookProgress(BookProgress(it), uploadSuccessAction)
+                        it.update()
+                    }
+                } else if (progress.durChapterIndex > it.durChapterIndex ||
+                    progress.durChapterPos > it.durChapterPos
+                ) {
+                    // 进度比服务器慢，执行传入动作
+                    newProgressAction?.invoke(progress)
+                } else {
+                    syncSuccessAction?.invoke()
+                }
+            }
+        }
+    }
+
+    fun setProgress(progress: BookProgress) {
+        if (progress.durChapterIndex < durChapterPageCount &&
+            (durChapterPagePos != progress.durChapterIndex
+                    || durChapterPos != progress.durChapterPos)
+        ) {
+            chapterChanged = true
+            if (progress.durChapterIndex == durChapterPagePos) {
+                durChapterPos = progress.durChapterPos
+                mCallback?.adjustmentProgress()
+            } else {
+                durChapterPagePos = progress.durChapterIndex
+                durChapterPos = progress.durChapterPos
+                if (addLoading(durChapterPagePos)) {
+                    loadContent(durChapterPagePos)
+                } else {
+                    Coroutine.async {
+                        val book = ReadMange.book!!
+                        appDb.bookChapterDao.getChapter(book.bookUrl, durChapterPagePos)
+                            ?.let { chapter ->
+                                getContent(
+                                    downloadScope,
+                                    chapter,
+                                )
+                            }
+                    }.onError {
+                        AppLog.put("加载正文出错\n${it.localizedMessage}")
+                    }
+                }
+            }
+            saveRead()
+        }
+    }
+
     interface Callback {
         fun loadContentFinish(list: MutableList<Any>)
         fun loadComplete()
-        fun loadFail(msg:String)
+        fun loadFail(msg: String)
         fun noData()
+        fun adjustmentProgress()
+        fun sureNewProgress(progress: BookProgress)
         val chapterList: MutableList<Any>
     }
 }
