@@ -340,7 +340,11 @@
         <activity
             android:name=".ui.association.VerificationCodeActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
-            android:exported="true"
+            android:theme="@style/AppTheme.Transparent" />
+        <!-- 跳转确认 -->
+        <activity
+            android:name=".ui.association.OpenUrlConfirmActivity"
+            android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:theme="@style/AppTheme.Transparent" />
         <!-- 打开文件 -->
         <activity
@@ -432,13 +436,6 @@
                 <data android:pathPattern=".*\\.7Z" />
             </intent-filter>
         </activity>
-
-        <activity
-            android:name=".ui.javascript.ConfirmationDialogActivity"
-            android:theme="@style/Theme.Translucent.NoTitleBar"
-            android:excludeFromRecents="true"
-            android:taskAffinity=""
-            android:launchMode="singleInstance"/>
 
         <service
             android:name=".service.CheckSourceService"
