@@ -24,6 +24,7 @@
     <application
         android:name=".App"
         android:allowBackup="true"
+        android:largeHeap="true"
         android:icon="@mipmap/ic_launcher"
         android:label="${app_name}"
         android:networkSecurityConfig="@xml/network_security_config"
@@ -123,6 +124,21 @@
         <!-- 阅读界面 -->
         <activity
             android:name=".ui.book.read.ReadBookActivity"
+            android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
+            android:exported="true"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="com.samsung.android.support.REMOTE_ACTION" />
+            </intent-filter>
+
+            <meta-data
+                android:name="com.samsung.android.support.REMOTE_ACTION"
+                android:resource="@xml/spen_remote_actions" />
+        </activity>
+
+        <!-- 阅读漫画界面 -->
+        <activity
+            android:name=".ui.book.manga.ReadMangaActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:exported="true"
             android:launchMode="singleTask">

@@ -228,7 +228,7 @@ class RemoteBookActivity : BaseImportBookActivity<RemoteBookViewModel>(),
         val downloadFileName = remoteBook.filename
         if (!ArchiveUtils.isArchive(downloadFileName)) {
             appDb.bookDao.getBookByFileName(downloadFileName)?.let {
-                startReadBook(it.bookUrl)
+                startReadBook(it)
             }
         } else {
             AppConfig.defaultBookTreeUri ?: return

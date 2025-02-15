@@ -604,5 +604,13 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             appCtx.toastOnUi("当前没有配置菜单区域,自动恢复中间区域为菜单.")
         }
     }
+
+    //跳转到漫画界面不使用富文本模式
+    val showMangaUi: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.showMangaUi, true)
+
+    //禁用漫画缩放
+    val disableMangaScaling: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.disableMangaScaling, true)
 }
 

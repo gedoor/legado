@@ -304,7 +304,7 @@ class ImportBookActivity : BaseImportBookActivity<ImportBookViewModel>(),
     override fun startRead(fileDoc: FileDoc) {
         if (!ArchiveUtils.isArchive(fileDoc.name)) {
             appDb.bookDao.getBookByFileName(fileDoc.name)?.let {
-                startReadBook(it.bookUrl)
+                startReadBook(it)
             }
         } else {
             onArchiveFileClick(fileDoc)

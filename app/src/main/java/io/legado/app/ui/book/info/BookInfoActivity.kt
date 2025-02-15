@@ -27,6 +27,7 @@ import io.legado.app.help.AppWebDav
 import io.legado.app.help.book.addType
 import io.legado.app.help.book.getRemoteUrl
 import io.legado.app.help.book.isAudio
+import io.legado.app.help.book.isImage
 import io.legado.app.help.book.isLocal
 import io.legado.app.help.book.isLocalTxt
 import io.legado.app.help.book.isWebFile
@@ -47,6 +48,7 @@ import io.legado.app.ui.book.changecover.ChangeCoverDialog
 import io.legado.app.ui.book.changesource.ChangeBookSourceDialog
 import io.legado.app.ui.book.group.GroupSelectDialog
 import io.legado.app.ui.book.info.edit.BookInfoEditActivity
+import io.legado.app.ui.book.manga.ReadMangaActivity
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.read.ReadBookActivity.Companion.RESULT_DELETED
 import io.legado.app.ui.book.search.SearchActivity
@@ -310,7 +312,7 @@ class BookInfoActivity :
 
     private fun upLoadBook(
         book: Book,
-        bookWebDav: RemoteBookWebDav? = AppWebDav.defaultBookWebDav
+        bookWebDav: RemoteBookWebDav? = AppWebDav.defaultBookWebDav,
     ) {
         lifecycleScope.launch {
             waitDialog.setText("上传中.....")
@@ -604,7 +606,7 @@ class BookInfoActivity :
     }
 
     private fun showWebFileDownloadAlert(
-        onClick: ((Book) -> Unit)? = null
+        onClick: ((Book) -> Unit)? = null,
     ) {
         val webFiles = viewModel.webFiles
         if (webFiles.isEmpty()) {
@@ -653,7 +655,7 @@ class BookInfoActivity :
     private fun showDecompressFileImportAlert(
         archiveFileUri: Uri,
         fileNames: List<String>,
-        success: ((Book) -> Unit)? = null
+        success: ((Book) -> Unit)? = null,
     ) {
         if (fileNames.isEmpty()) {
             toastOnUi(R.string.unsupport_archivefile_entry)
@@ -693,7 +695,10 @@ class BookInfoActivity :
             )
 
             else -> readBookResult.launch(
-                Intent(this, ReadBookActivity::class.java)
+                Intent(
+                    this,
+                    if (book.isImage&&AppConfig.showMangaUi) ReadMangaActivity::class.java else ReadBookActivity::class.java
+                )
                     .putExtra("bookUrl", book.bookUrl)
                     .putExtra("inBookshelf", viewModel.inBookshelf)
                     .putExtra("tocChanged", tocChanged)

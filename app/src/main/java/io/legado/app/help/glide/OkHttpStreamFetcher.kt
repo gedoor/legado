@@ -14,6 +14,7 @@ import io.legado.app.help.http.CookieManager.cookieJarHeader
 import io.legado.app.help.http.addHeaders
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.source.SourceHelp
+import io.legado.app.model.ReadMange
 import io.legado.app.utils.ImageUtils
 import io.legado.app.utils.isWifiConnect
 import okhttp3.Call
@@ -26,7 +27,10 @@ import java.io.IOException
 import java.io.InputStream
 
 
-class OkHttpStreamFetcher(private val url: GlideUrl, private val options: Options) :
+class OkHttpStreamFetcher(
+    private val url: GlideUrl,
+    private val options: Options,
+) :
     DataFetcher<InputStream>, okhttp3.Callback {
     private var stream: InputStream? = null
     private var responseBody: ResponseBody? = null
@@ -95,15 +99,31 @@ class OkHttpStreamFetcher(private val url: GlideUrl, private val options: Option
 
     override fun onResponse(call: Call, response: Response) {
         responseBody = response.body
-        if (response.isSuccessful) {
-            val decodeResult = ImageUtils.decode(
+        val manga = options.get(OkHttpModelLoader.mangaOption) == true
+        val decodeResult = if (manga) {
+            ImageUtils.decode(
+                url.toStringUrl(),
+                responseBody!!.byteStream().readBytes(),
+                isCover = false,
+                source,
+                ReadMange.book
+            ).let {
+                ByteArrayInputStream(it)
+            }
+        } else {
+            ImageUtils.decode(
                 url.toStringUrl(), responseBody!!.byteStream(),
                 isCover = true, source
             )
+        }
+        if (response.isSuccessful) {
+
             if (decodeResult == null) {
                 callback?.onLoadFailed(NoStackTraceException("封面二次解密失败"))
             } else {
-                val contentLength: Long = if (decodeResult is ByteArrayInputStream) decodeResult.available().toLong() else Preconditions.checkNotNull(responseBody).contentLength()
+                val contentLength: Long =
+                    if (decodeResult is ByteArrayInputStream) decodeResult.available()
+                        .toLong() else Preconditions.checkNotNull(responseBody).contentLength()
                 stream = ContentLengthInputStream.obtain(decodeResult, contentLength)
                 callback?.onDataReady(stream)
             }

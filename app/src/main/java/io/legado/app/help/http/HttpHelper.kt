@@ -3,6 +3,9 @@ package io.legado.app.help.http
 import io.legado.app.constant.AppConst
 import io.legado.app.help.CacheManager
 import io.legado.app.help.config.AppConfig
+import io.legado.app.help.glide.progress.ProgressManager
+import io.legado.app.help.glide.progress.ProgressManager.LISTENER
+import io.legado.app.help.glide.progress.ProgressResponseBody
 import io.legado.app.help.http.CookieManager.cookieJarHeader
 import io.legado.app.utils.NetworkUtils
 import okhttp3.ConnectionSpec
@@ -93,7 +96,15 @@ val okHttpClient: OkHttpClient by lazy {
             if (enableCookieJar) {
                 CookieManager.saveResponse(networkResponse)
             }
-            networkResponse
+            networkResponse.newBuilder()
+                .body(
+                    ProgressResponseBody(
+                        request.url.toString(),
+                        LISTENER,
+                        networkResponse.body!!
+                    )
+                )
+                .build()
         }
     if (AppConfig.isCronet) {
         if (Cronet.loader?.install() == true) {

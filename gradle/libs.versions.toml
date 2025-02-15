@@ -115,6 +115,8 @@ room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 room-testing = { module = "androidx.room:room-testing", version.ref = "room" }
 
 glide-glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
+glide-okhttp= { module = "com.github.bumptech.glide:okhttp3-integration", version.ref ="glide" }
+glide-recyclerview={module="com.github.bumptech.glide:recyclerview-integration",version.ref="glide"}
 glide-compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "glide" }
 glide-compose = { module = "com.github.bumptech.glide:compose", version = "1.0.0-beta01" }
 glide-ksp = { module = "com.github.bumptech.glide:ksp", version.ref = "glide" }
@@ -159,6 +161,7 @@ mozilla-rhino = { module = "org.mozilla:rhino", version.ref = "rhino" }
 
 renderscript-intrinsics-replacement-toolkit = { module = "com.github.android:renderscript-intrinsics-replacement-toolkit", version = "b6363490c3" }
 zxing-lite = { module = "com.github.jenly1314:zxing-lite", version.ref = "zxingLite" }
+zoom-imageview="io.github.panpf.zoomimage:zoomimage-view-glide:1.1.1"
 
 [bundles]
 coroutines = ["kotlinx-coroutines-core", "kotlinx-coroutines-android"]

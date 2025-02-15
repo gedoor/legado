@@ -14,6 +14,9 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import io.legado.app.R
+import io.legado.app.data.entities.Book
+import io.legado.app.help.book.isImage
+import io.legado.app.help.config.AppConfig
 import io.legado.app.ui.widget.dialog.TextDialog
 
 inline fun <reified T : DialogFragment> Fragment.showDialogFragment(
@@ -79,6 +82,19 @@ inline fun <reified T : Activity> Fragment.startActivity(
     configIntent: Intent.() -> Unit = {}
 ) {
     startActivity(Intent(requireContext(), T::class.java).apply(configIntent))
+}
+
+inline fun <reified A : Activity, reified M : Activity> Fragment.startReadOrMangaActivity(
+    book: Book,
+    configIntent: Intent.() -> Unit = {},
+) {
+    val intent = Intent(
+        requireActivity(),
+        if (book.isImage && AppConfig.showMangaUi) M::class.java else A::class.java
+    )
+    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    intent.apply(configIntent)
+    startActivity(intent)
 }
 
 fun Fragment.showHelp(fileName: String) {

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<io.legado.app.ui.book.manga.rv.WebtoonFrame xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <io.legado.app.ui.book.manga.rv.WebtoonRecyclerView
+        android:id="@+id/mRecyclerMange"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <io.legado.app.ui.widget.ReaderInfoBarView
+        android:id="@+id/infobar"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="10dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+    <io.legado.app.ui.book.read.MangaMenu
+        android:id="@+id/mangaMenu"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+
+    <FrameLayout
+        android:id="@+id/fl_loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+        <LinearLayout
+            android:id="@+id/ll_loading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ProgressBar
+                style="@style/Widget.Material3.CircularProgressIndicator.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                app:indicatorColor="@color/white"
+                app:indicatorSize="36dp"
+                app:trackCornerRadius="99dp"
+                app:trackThickness="3dp" />
+
+            <TextView
+                android:id="@+id/tv_loading_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="正在加载中..."
+                android:textColor="@color/black" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_retry"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_msg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black" />
+
+            <Button
+                android:id="@+id/retry"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="重新加载"
+                android:textSize="18sp"
+                app:cornerRadius="10dp"
+                tools:visibility="visible" />
+        </LinearLayout>
+
+    </FrameLayout>
+
+</io.legado.app.ui.book.manga.rv.WebtoonFrame>

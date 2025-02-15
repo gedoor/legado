@@ -31,6 +31,7 @@ import io.legado.app.model.BookCover
 import io.legado.app.service.AudioPlayService
 import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.book.changesource.ChangeBookSourceDialog
+import io.legado.app.ui.book.manga.ReadMangaActivity
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.book.toc.TocActivityResult
@@ -45,6 +46,7 @@ import io.legado.app.utils.observeEventSticky
 import io.legado.app.utils.sendToClip
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.startActivity
+import io.legado.app.utils.startReadOrMangaActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
 import kotlinx.coroutines.Dispatchers.IO
@@ -218,7 +220,7 @@ class AudioPlayActivity :
                     AudioPlay.book?.delete()
                     appDb.bookDao.insert(book)
                 }
-                startActivity<ReadBookActivity> {
+                startReadOrMangaActivity<ReadBookActivity,ReadMangaActivity>(book) {
                     putExtra("bookUrl", book.bookUrl)
                 }
                 finish()

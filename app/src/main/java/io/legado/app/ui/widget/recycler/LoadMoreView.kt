@@ -70,13 +70,17 @@ class LoadMoreView(context: Context, attrs: AttributeSet? = null) : FrameLayout(
         binding.tvText.visible()
     }
 
-    fun error(msg: String) {
+    fun error(msg: String?, text: String = "") {
         stopLoad()
         hasMore = false
-        errorMsg = msg
-        binding.tvText.text = context.getString(R.string.error_load_msg, "点击查看详情")
+        errorMsg = msg ?: ""
+        binding.tvText.text =
+            text.ifEmpty { context.getString(R.string.error_load_msg, "点击查看详情") }
         binding.tvText.visible()
     }
+
+    fun getLoading() = binding.rotateLoading
+    fun getLoadingText() = binding.tvText
 
     private fun showErrorDialog(): Boolean {
         if (errorMsg.isBlank()) {
