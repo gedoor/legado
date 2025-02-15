@@ -17,7 +17,6 @@ import android.view.View.IMPORTANT_FOR_AUTOFILL_NO_EXCLUDE_DESCENDANTS
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.view.ViewPropertyAnimator
 import android.view.inputmethod.InputMethodManager
 import android.widget.EdgeEffect
 import android.widget.EditText
@@ -34,8 +33,6 @@ import androidx.core.graphics.withTranslation
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.get
-import androidx.core.view.isInvisible
-import androidx.core.view.isVisible
 import androidx.core.view.marginBottom
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
@@ -43,12 +40,10 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.theme.TintHelper
 import io.legado.app.utils.canvasrecorder.CanvasRecorder
 import io.legado.app.utils.canvasrecorder.record
-import kotlinx.coroutines.suspendCancellableCoroutine
 import splitties.systemservices.inputMethodManager
 import splitties.views.bottomPadding
 import splitties.views.topPadding
 import java.lang.reflect.Field
-import kotlin.coroutines.resume
 
 
 private tailrec fun getCompatActivity(context: Context?): AppCompatActivity? {

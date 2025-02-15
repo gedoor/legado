@@ -153,7 +153,7 @@ object PreferKey {
     const val streamReadAloudAudio = "streamReadAloudAudio"
     const val pauseReadAloudWhilePhoneCalls = "pauseReadAloudWhilePhoneCalls"
     const val readAloudByMediaButton = "readAloudByMediaButton"
-    const val toMangaUi="toMangaUi"
+    const val showMangaUi="showMangaUi"
     const val disableMangaScaling="disableMangaScaling"
 
     const val cPrimary = "colorPrimary"
