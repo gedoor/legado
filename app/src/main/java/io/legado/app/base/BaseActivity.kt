@@ -27,7 +27,6 @@ import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.TitleBar
 import io.legado.app.utils.ColorUtils
-import io.legado.app.utils.DebugLog
 import io.legado.app.utils.applyBackgroundTint
 import io.legado.app.utils.applyOpenTint
 import io.legado.app.utils.applyTint
@@ -82,7 +81,6 @@ abstract class BaseActivity<VB : ViewBinding>(
         window.decorView.disableAutoFill()
         initTheme()
         super.onCreate(savedInstanceState)
-        DebugLog.e("name", this::class.simpleName.toString())
         setupSystemBar()
         setContentView(binding.root)
         upBackgroundImage()
