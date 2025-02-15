@@ -8,10 +8,10 @@ import okhttp3.Call
 import java.io.InputStream
 
 
-class OkHttpModeLoaderFactory(private val client: Call.Factory) : ModelLoaderFactory<GlideUrl?, InputStream?> {
+object OkHttpModeLoaderFactory: ModelLoaderFactory<GlideUrl?, InputStream?> {
 
     override fun build(multiFactory: MultiModelLoaderFactory): ModelLoader<GlideUrl?, InputStream?> {
-        return OkHttpModelLoader(client)
+        return OkHttpModelLoader
     }
 
     override fun teardown() {

@@ -1,11 +1,7 @@
 package io.legado.app.help.glide.progress
 
 import android.text.TextUtils
-import io.legado.app.help.config.AppConfig
-import io.legado.app.help.http.CookieManager
-import io.legado.app.help.http.CookieManager.cookieJarHeader
 import io.legado.app.help.http.cloudflare.AndroidCookieJar
-import io.legado.app.help.http.cloudflare.CloudflareInterceptor
 import io.legado.app.help.http.getOkHttpClient
 import io.legado.app.model.ReadMange
 import io.legado.app.model.analyzeRule.AnalyzeUrl
@@ -15,7 +11,6 @@ import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody.Companion.toResponseBody
-import splitties.init.appCtx
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -29,7 +24,6 @@ object ProgressManager {
     /**glide 下载进度的主要逻辑 需要在GlideModule注入*/
     fun glideProgressInterceptor(): OkHttpClient {
         return getOkHttpClient {
-            addInterceptor(CloudflareInterceptor(appCtx, cookieJar, AppConfig::userAgent))
             addInterceptor(Interceptor { chain ->
                 val request = chain.request()
                 val builder = request.newBuilder()
@@ -62,32 +56,6 @@ object ProgressManager {
                     }
                 }
             })
-
-            addNetworkInterceptor { chain ->
-                var request = chain.request()
-                val enableCookieJar = request.header(cookieJarHeader) != null
-
-                if (enableCookieJar) {
-                    val requestBuilder = request.newBuilder()
-                    requestBuilder.removeHeader(cookieJarHeader)
-                    request = CookieManager.loadRequest(requestBuilder.build())
-                }
-
-                val networkResponse = chain.proceed(request)
-
-                if (enableCookieJar) {
-                    CookieManager.saveResponse(networkResponse)
-                }
-                networkResponse.newBuilder()
-                    .body(
-                        ProgressResponseBody(
-                            request.url.toString(),
-                            LISTENER,
-                            networkResponse.body!!
-                        )
-                    )
-                    .build()
-            }
         }
     }
 

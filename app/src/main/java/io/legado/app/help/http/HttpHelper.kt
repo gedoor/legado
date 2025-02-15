@@ -3,7 +3,11 @@ package io.legado.app.help.http
 import io.legado.app.constant.AppConst
 import io.legado.app.help.CacheManager
 import io.legado.app.help.config.AppConfig
+import io.legado.app.help.glide.progress.ProgressManager
+import io.legado.app.help.glide.progress.ProgressManager.LISTENER
+import io.legado.app.help.glide.progress.ProgressResponseBody
 import io.legado.app.help.http.CookieManager.cookieJarHeader
+import io.legado.app.help.http.cloudflare.CloudflareInterceptor
 import io.legado.app.utils.NetworkUtils
 import okhttp3.ConnectionSpec
 import okhttp3.Cookie
@@ -12,6 +16,7 @@ import okhttp3.Credentials
 import okhttp3.HttpUrl
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import splitties.init.appCtx
 import java.net.InetSocketAddress
 import java.net.Proxy
 import java.util.concurrent.ConcurrentHashMap
@@ -69,6 +74,7 @@ fun getOkHttpClient(builderEx:OkHttpClient.Builder.()->Unit={}):OkHttpClient{
         .followRedirects(true)
         .followSslRedirects(true)
         .addInterceptor(OkHttpExceptionInterceptor)
+        .addInterceptor(CloudflareInterceptor(appCtx, ProgressManager.cookieJar, AppConfig::userAgent))
         .addInterceptor(Interceptor { chain ->
             val request = chain.request()
             val builder = request.newBuilder()
@@ -97,7 +103,15 @@ fun getOkHttpClient(builderEx:OkHttpClient.Builder.()->Unit={}):OkHttpClient{
             if (enableCookieJar) {
                 CookieManager.saveResponse(networkResponse)
             }
-            networkResponse
+            networkResponse.newBuilder()
+                .body(
+                    ProgressResponseBody(
+                        request.url.toString(),
+                        LISTENER,
+                        networkResponse.body!!
+                    )
+                )
+                .build()
         }
     builderEx.invoke(builder)
     if (AppConfig.isCronet) {

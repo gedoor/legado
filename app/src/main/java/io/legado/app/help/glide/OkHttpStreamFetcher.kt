@@ -10,6 +10,7 @@ import com.bumptech.glide.util.ContentLengthInputStream
 import com.bumptech.glide.util.Preconditions
 import io.legado.app.data.entities.BaseSource
 import io.legado.app.exception.NoStackTraceException
+import io.legado.app.help.glide.progress.ProgressManager
 import io.legado.app.help.http.CookieManager.cookieJarHeader
 import io.legado.app.help.http.addHeaders
 import io.legado.app.help.source.SourceHelp
@@ -26,7 +27,6 @@ import java.io.InputStream
 
 
 class OkHttpStreamFetcher(
-    private val client: Call.Factory,
     private val url: GlideUrl,
     private val options: Options,
 ) :
@@ -68,7 +68,7 @@ class OkHttpStreamFetcher(
         requestBuilder.addHeaders(headerMap)
         val request: Request = requestBuilder.build()
         this.callback = callback
-        call = client.newCall(request)
+        call = ProgressManager.glideProgressInterceptor().newCall(request)
         call?.enqueue(this)
     }
 

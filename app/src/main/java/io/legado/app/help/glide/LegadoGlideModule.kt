@@ -12,7 +12,6 @@ import com.bumptech.glide.load.engine.cache.LruResourceCache
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.module.AppGlideModule
 import com.bumptech.glide.request.RequestOptions
-import io.legado.app.help.glide.progress.ProgressManager.glideProgressInterceptor
 import java.io.InputStream
 
 
@@ -20,12 +19,11 @@ import java.io.InputStream
 @GlideModule
 class LegadoGlideModule : AppGlideModule() {
 
-
     override fun registerComponents(context: Context, glide: Glide, registry: Registry) {
         registry.replace(
             GlideUrl::class.java,
             InputStream::class.java,
-            OkHttpModeLoaderFactory(glideProgressInterceptor())
+            OkHttpModeLoaderFactory
         )
     }
 

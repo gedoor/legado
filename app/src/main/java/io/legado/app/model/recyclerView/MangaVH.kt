@@ -15,17 +15,16 @@ import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
-import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-import com.bumptech.glide.request.target.Target.SIZE_ORIGINAL
 import com.github.panpf.zoomimage.GlideZoomImageView
 import io.legado.app.R
 import io.legado.app.help.glide.progress.OnProgressListener
 import io.legado.app.help.glide.progress.ProgressManager
+import io.legado.app.model.BookCover
+import io.legado.app.model.ReadMange
 import io.legado.app.utils.getCompatDrawable
 import io.legado.app.utils.printOnDebug
 
@@ -72,43 +71,43 @@ open class MangaVH<VB : ViewBinding>(val binding: VB, private val context: Conte
         })
         try {
             mImage.tag = imageUrl
-            Glide.with(context)
-                .load(imageUrl)
-                .override(context.resources.displayMetrics.widthPixels, SIZE_ORIGINAL)
-                .placeholder(context.getCompatDrawable(R.color.book_ant_10))
-                .error(context.getCompatDrawable(R.color.book_ant_10))
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .addListener(object : RequestListener<Drawable> {
-                    override fun onLoadFailed(
-                        e: GlideException?,
-                        model: Any?,
-                        target: Target<Drawable>,
-                        isFirstResource: Boolean,
-                    ): Boolean {
-                        mFlProgress.isVisible = true
-                        mLoading.isGone = true
-                        mRetry?.isVisible = true
-                        mProgress.isGone = true
-                        itemView.updateLayoutParams<ViewGroup.LayoutParams> {
-                            height = MATCH_PARENT
-                        }
-                        return false
+            BookCover.loadManga(
+                context,
+                imageUrl,
+                sourceOrigin = ReadMange.book?.origin,
+                manga = true,
+                useDefaultCover = context.getCompatDrawable(R.color.book_ant_10)
+            ).addListener(object : RequestListener<Drawable> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Drawable>,
+                    isFirstResource: Boolean,
+                ): Boolean {
+                    mFlProgress.isVisible = true
+                    mLoading.isGone = true
+                    mRetry?.isVisible = true
+                    mProgress.isGone = true
+                    itemView.updateLayoutParams<ViewGroup.LayoutParams> {
+                        height = MATCH_PARENT
                     }
+                    return false
+                }
 
-                    override fun onResourceReady(
-                        resource: Drawable,
-                        model: Any,
-                        target: Target<Drawable>?,
-                        dataSource: DataSource,
-                        isFirstResource: Boolean,
-                    ): Boolean {
-                        mFlProgress.isGone = true
-                        itemView.updateLayoutParams<ViewGroup.LayoutParams> {
-                            height = WRAP_CONTENT
-                        }
-                        return false
+                override fun onResourceReady(
+                    resource: Drawable,
+                    model: Any,
+                    target: Target<Drawable>?,
+                    dataSource: DataSource,
+                    isFirstResource: Boolean,
+                ): Boolean {
+                    mFlProgress.isGone = true
+                    itemView.updateLayoutParams<ViewGroup.LayoutParams> {
+                        height = WRAP_CONTENT
                     }
-                }).into(mImage)
+                    return false
+                }
+            }).into(mImage)
         } catch (e: Exception) {
             e.printOnDebug()
         }

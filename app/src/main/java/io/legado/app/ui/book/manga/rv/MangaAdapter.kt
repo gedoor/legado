@@ -14,8 +14,6 @@ import androidx.viewbinding.ViewBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.ListPreloader.PreloadModelProvider
 import com.bumptech.glide.RequestBuilder
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.target.Target.SIZE_ORIGINAL
 import com.github.panpf.zoomimage.zoom.GestureType
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
@@ -23,6 +21,7 @@ import io.legado.app.base.adapter.RecyclerAdapter.Companion.TYPE_FOOTER_VIEW
 import io.legado.app.databinding.BookComicLoadingRvBinding
 import io.legado.app.databinding.BookComicRvBinding
 import io.legado.app.help.glide.progress.ProgressManager
+import io.legado.app.model.BookCover
 import io.legado.app.model.ReadMange
 import io.legado.app.model.recyclerView.MangaVH
 import io.legado.app.model.recyclerView.MangeContent
@@ -218,12 +217,13 @@ class MangaAdapter(private val context: Context) :
 
     override fun getPreloadRequestBuilder(item: Any): RequestBuilder<*>? {
         if (item is MangeContent) {
-            return Glide.with(context)
-                .load(item.mImageUrl)
-                .override(context.resources.displayMetrics.widthPixels, SIZE_ORIGINAL)
-                .placeholder(context.getCompatDrawable(R.color.book_ant_10))
-                .error(context.getCompatDrawable(R.color.book_ant_10))
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
+            return BookCover.loadManga(
+                context,
+                item.mImageUrl,
+                sourceOrigin = ReadMange.book?.origin,
+                manga = true,
+                useDefaultCover = context.getCompatDrawable(R.color.book_ant_10)
+            )
         }
         return null
     }
