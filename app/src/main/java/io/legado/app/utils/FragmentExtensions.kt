@@ -90,7 +90,7 @@ inline fun <reified A : Activity, reified M : Activity> Fragment.startReadOrMang
 ) {
     val intent = Intent(
         requireActivity(),
-        if (book.isImage && AppConfig.showMangeUi) M::class.java else A::class.java
+        if (book.isImage && AppConfig.showMangaUi) M::class.java else A::class.java
     )
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     intent.apply(configIntent)

@@ -61,7 +61,7 @@ inline fun <reified A : Activity, reified M : Activity> Context.startReadOrManga
     configIntent: Intent.() -> Unit = {},
 ) {
     val intent =
-        Intent(this, if (book.isImage && AppConfig.showMangeUi) M::class.java else A::class.java)
+        Intent(this, if (book.isImage && AppConfig.showMangaUi) M::class.java else A::class.java)
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     intent.apply(configIntent)
     startActivity(intent)

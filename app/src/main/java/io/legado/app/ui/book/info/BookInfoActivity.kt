@@ -697,7 +697,7 @@ class BookInfoActivity :
             else -> readBookResult.launch(
                 Intent(
                     this,
-                    if (book.isImage&&AppConfig.showMangeUi) ReadMangaActivity::class.java else ReadBookActivity::class.java
+                    if (book.isImage&&AppConfig.showMangaUi) ReadMangaActivity::class.java else ReadBookActivity::class.java
                 )
                     .putExtra("bookUrl", book.bookUrl)
                     .putExtra("inBookshelf", viewModel.inBookshelf)

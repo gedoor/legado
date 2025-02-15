@@ -606,8 +606,8 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
     }
 
     //跳转到漫画界面不使用富文本模式
-    val showMangeUi: Boolean
-        get() = appCtx.getPrefBoolean(PreferKey.toMangeUi, true)
+    val showMangaUi: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.toMangaUi, true)
 
     //禁用漫画缩放
     val disableMangaScaling: Boolean

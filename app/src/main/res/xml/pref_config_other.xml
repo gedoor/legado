@@ -44,7 +44,7 @@
 
         <io.legado.app.lib.prefs.SwitchPreference
             android:defaultValue="true"
-            android:key="toMangeUi"
+            android:key="toMangaUi"
             android:title="@string/show_mange_ui"
             app:iconSpaceReserved="false" />
 
