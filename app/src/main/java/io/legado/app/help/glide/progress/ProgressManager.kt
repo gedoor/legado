@@ -2,14 +2,7 @@ package io.legado.app.help.glide.progress
 
 import android.text.TextUtils
 import io.legado.app.help.http.cloudflare.AndroidCookieJar
-import io.legado.app.help.http.getOkHttpClient
-import io.legado.app.model.ReadMange
-import io.legado.app.model.analyzeRule.AnalyzeUrl
-import io.legado.app.utils.ImageUtils
 import io.legado.app.utils.runOnUI
-import kotlinx.coroutines.runBlocking
-import okhttp3.Interceptor
-import okhttp3.ResponseBody.Companion.toResponseBody
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -19,44 +12,6 @@ import java.util.concurrent.ConcurrentHashMap
 object ProgressManager {
     private val listenersMap = ConcurrentHashMap<String, OnProgressListener>()
     val cookieJar = AndroidCookieJar()
-
-    /**glide 下载进度的主要逻辑 需要在GlideModule注入*/
-    val glideProgressInterceptor by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
-        getOkHttpClient {
-            addInterceptor(Interceptor { chain ->
-                val request = chain.request()
-                val builder = request.newBuilder()
-                runBlocking {
-                    if (ReadMange.isMangaMode) {
-                        val analyzeUrl = AnalyzeUrl(
-                            request.url.toString(),
-                            source = ReadMange.bookSource
-                        )
-                        val bytes = analyzeUrl.getByteArrayAwait()
-                        val modifiedBytes = ImageUtils.decode(
-                            request.url.toString(),
-                            bytes,
-                            isCover = false,
-                            ReadMange.bookSource,
-                            ReadMange.book
-                        )
-                        val res = chain.proceed(request)
-                        res.newBuilder()
-                            .body(
-                                ProgressResponseBody(
-                                    request.url.toString(),
-                                    LISTENER,
-                                    modifiedBytes?.toResponseBody(res.body?.contentType())!!
-                                )
-                            )
-                            .build()
-                    } else {
-                        chain.proceed(builder.build())
-                    }
-                }
-            })
-        }
-    }
 
     val LISTENER = object : ProgressResponseBody.InternalProgressListener {
         override fun onProgress(url: String, bytesRead: Long, totalBytes: Long) {

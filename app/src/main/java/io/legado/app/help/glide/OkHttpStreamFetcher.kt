@@ -10,10 +10,11 @@ import com.bumptech.glide.util.ContentLengthInputStream
 import com.bumptech.glide.util.Preconditions
 import io.legado.app.data.entities.BaseSource
 import io.legado.app.exception.NoStackTraceException
-import io.legado.app.help.glide.progress.ProgressManager
 import io.legado.app.help.http.CookieManager.cookieJarHeader
 import io.legado.app.help.http.addHeaders
+import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.source.SourceHelp
+import io.legado.app.model.ReadMange
 import io.legado.app.utils.ImageUtils
 import io.legado.app.utils.isWifiConnect
 import okhttp3.Call
@@ -68,7 +69,7 @@ class OkHttpStreamFetcher(
         requestBuilder.addHeaders(headerMap)
         val request: Request = requestBuilder.build()
         this.callback = callback
-        call = ProgressManager.glideProgressInterceptor.newCall(request)
+        call = okHttpClient.newCall(request)
         call?.enqueue(this)
     }
 
@@ -98,11 +99,25 @@ class OkHttpStreamFetcher(
 
     override fun onResponse(call: Call, response: Response) {
         responseBody = response.body
-        if (response.isSuccessful) {
-            val decodeResult = ImageUtils.decode(
+        val manga = options.get(OkHttpModelLoader.mangaOption) == true
+        val decodeResult = if (manga) {
+            ImageUtils.decode(
+                url.toStringUrl(),
+                responseBody!!.byteStream().readBytes(),
+                isCover = false,
+                source,
+                ReadMange.book
+            ).let {
+                ByteArrayInputStream(it)
+            }
+        } else {
+            ImageUtils.decode(
                 url.toStringUrl(), responseBody!!.byteStream(),
                 isCover = true, source
             )
+        }
+        if (response.isSuccessful) {
+
             if (decodeResult == null) {
                 callback?.onLoadFailed(NoStackTraceException("封面二次解密失败"))
             } else {
