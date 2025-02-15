@@ -7,7 +7,6 @@ import io.legado.app.help.glide.progress.ProgressManager
 import io.legado.app.help.glide.progress.ProgressManager.LISTENER
 import io.legado.app.help.glide.progress.ProgressResponseBody
 import io.legado.app.help.http.CookieManager.cookieJarHeader
-import io.legado.app.help.http.cloudflare.CloudflareInterceptor
 import io.legado.app.utils.NetworkUtils
 import okhttp3.ConnectionSpec
 import okhttp3.Cookie
@@ -16,7 +15,6 @@ import okhttp3.Credentials
 import okhttp3.HttpUrl
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import splitties.init.appCtx
 import java.net.InetSocketAddress
 import java.net.Proxy
 import java.util.concurrent.ConcurrentHashMap
@@ -50,11 +48,7 @@ val cookieJar by lazy {
     }
 }
 
-val okHttpClient: OkHttpClient by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
-    getOkHttpClient()
-}
-
-fun getOkHttpClient(builderEx:OkHttpClient.Builder.()->Unit={}):OkHttpClient{
+val okHttpClient: OkHttpClient by lazy {
     val specs = arrayListOf(
         ConnectionSpec.MODERN_TLS,
         ConnectionSpec.COMPATIBLE_TLS,
@@ -74,7 +68,6 @@ fun getOkHttpClient(builderEx:OkHttpClient.Builder.()->Unit={}):OkHttpClient{
         .followRedirects(true)
         .followSslRedirects(true)
         .addInterceptor(OkHttpExceptionInterceptor)
-        .addInterceptor(CloudflareInterceptor(appCtx, ProgressManager.cookieJar, AppConfig::userAgent))
         .addInterceptor(Interceptor { chain ->
             val request = chain.request()
             val builder = request.newBuilder()
@@ -113,7 +106,6 @@ fun getOkHttpClient(builderEx:OkHttpClient.Builder.()->Unit={}):OkHttpClient{
                 )
                 .build()
         }
-    builderEx.invoke(builder)
     if (AppConfig.isCronet) {
         if (Cronet.loader?.install() == true) {
             Cronet.interceptor?.let {
@@ -122,7 +114,7 @@ fun getOkHttpClient(builderEx:OkHttpClient.Builder.()->Unit={}):OkHttpClient{
         }
     }
     builder.addInterceptor(DecompressInterceptor)
-    return builder.build().apply {
+    builder.build().apply {
         val okHttpName =
             OkHttpClient::class.java.name.removePrefix("okhttp3.").removeSuffix("Client")
         val executor = dispatcher.executorService as ThreadPoolExecutor

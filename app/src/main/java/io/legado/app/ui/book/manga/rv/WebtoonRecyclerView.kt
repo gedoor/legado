@@ -13,7 +13,6 @@ import androidx.core.animation.doOnEnd
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.help.config.AppConfig
-import io.legado.app.ui.book.manga.helper.GestureDetectorWithLongTap
 import io.legado.app.utils.findCenterViewPosition
 import kotlin.math.abs
 

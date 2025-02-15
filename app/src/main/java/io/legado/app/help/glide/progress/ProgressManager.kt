@@ -1,7 +1,6 @@
 package io.legado.app.help.glide.progress
 
 import android.text.TextUtils
-import io.legado.app.help.http.cloudflare.AndroidCookieJar
 import io.legado.app.utils.runOnUI
 import java.util.concurrent.ConcurrentHashMap
 
@@ -11,7 +10,6 @@ import java.util.concurrent.ConcurrentHashMap
  */
 object ProgressManager {
     private val listenersMap = ConcurrentHashMap<String, OnProgressListener>()
-    val cookieJar = AndroidCookieJar()
 
     val LISTENER = object : ProgressResponseBody.InternalProgressListener {
         override fun onProgress(url: String, bytesRead: Long, totalBytes: Long) {

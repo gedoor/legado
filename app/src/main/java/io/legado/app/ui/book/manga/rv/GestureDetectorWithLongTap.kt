@@ -1,4 +1,4 @@
-package io.legado.app.ui.book.manga.helper
+package io.legado.app.ui.book.manga.rv
 
 import android.content.Context
 import android.os.Handler
