@@ -67,7 +67,7 @@ interface BaseSource : JsExtensions {
     fun loginUi(): List<RowUi>? {
         return GSON.fromJsonArray<RowUi>(loginUi).onFailure {
             it.printOnDebug()
-        }.getOrNull()?.filterNotNull() // filter null, see https://github.com/gedoor/legado/discussions/4650
+        }.getOrNull()
     }
 
     fun getLoginJs(): String? {
