@@ -68,7 +68,7 @@ class OkHttpStreamFetcher(
         requestBuilder.addHeaders(headerMap)
         val request: Request = requestBuilder.build()
         this.callback = callback
-        call = ProgressManager.glideProgressInterceptor().newCall(request)
+        call = ProgressManager.glideProgressInterceptor.newCall(request)
         call?.enqueue(this)
     }
 

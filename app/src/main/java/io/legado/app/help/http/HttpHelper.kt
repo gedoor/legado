@@ -50,7 +50,7 @@ val cookieJar by lazy {
     }
 }
 
-val okHttpClient: OkHttpClient by lazy {
+val okHttpClient: OkHttpClient by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
     getOkHttpClient()
 }
 

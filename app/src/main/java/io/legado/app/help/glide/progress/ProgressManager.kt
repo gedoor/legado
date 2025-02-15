@@ -9,7 +9,6 @@ import io.legado.app.utils.ImageUtils
 import io.legado.app.utils.runOnUI
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
-import okhttp3.OkHttpClient
 import okhttp3.ResponseBody.Companion.toResponseBody
 import java.util.concurrent.ConcurrentHashMap
 
@@ -22,13 +21,13 @@ object ProgressManager {
     val cookieJar = AndroidCookieJar()
 
     /**glide 下载进度的主要逻辑 需要在GlideModule注入*/
-    fun glideProgressInterceptor(): OkHttpClient {
-        return getOkHttpClient {
+    val glideProgressInterceptor by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+        getOkHttpClient {
             addInterceptor(Interceptor { chain ->
                 val request = chain.request()
                 val builder = request.newBuilder()
                 runBlocking {
-                    if (ReadMange.isMangaLookModel) {
+                    if (ReadMange.isMangaMode) {
                         val analyzeUrl = AnalyzeUrl(
                             request.url.toString(),
                             source = ReadMange.bookSource
