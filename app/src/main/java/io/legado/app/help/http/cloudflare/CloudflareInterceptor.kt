@@ -8,6 +8,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.core.content.ContextCompat
 import io.legado.app.utils.isOutdated
+import io.legado.app.utils.printOnDebug
 import io.legado.app.utils.toastOnUi
 import okhttp3.Cookie
 import okhttp3.HttpUrl.Companion.toHttpUrl
@@ -43,10 +44,11 @@ class CloudflareInterceptor(
             resolveWithWebView(request, oldCookie)
             return chain.proceed(request)
         } catch (e: CloudflareBypassException) {
-            throw IOException("无法绕过 Cloudflare", e)
+            e.printOnDebug()
         } catch (e: Exception) {
-            throw IOException(e)
+            e.printOnDebug()
         }
+        return chain.proceed(request)
     }
 
     @SuppressLint("SetJavaScriptEnabled")
