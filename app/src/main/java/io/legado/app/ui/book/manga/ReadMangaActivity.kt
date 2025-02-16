@@ -1,17 +1,15 @@
 package io.legado.app.ui.book.manga
 
-import android.annotation.SuppressLint
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.os.Looper
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.view.WindowInsets
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -31,10 +29,8 @@ import io.legado.app.databinding.ActivityMangeBinding
 import io.legado.app.databinding.ViewLoadMoreBinding
 import io.legado.app.help.book.isImage
 import io.legado.app.help.config.AppConfig
-import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.help.storage.Backup
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.model.ReadMange
 import io.legado.app.model.ReadMange.mFirstLoading
 import io.legado.app.model.recyclerView.MangeContent
@@ -47,24 +43,20 @@ import io.legado.app.ui.book.read.MangaMenu
 import io.legado.app.ui.book.read.ReadBookActivity.Companion.RESULT_DELETED
 import io.legado.app.ui.book.toc.TocActivityResult
 import io.legado.app.ui.widget.recycler.LoadMoreView
-import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.StartActivityContract
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.gone
 import io.legado.app.utils.immersionFullScreen
 import io.legado.app.utils.printOnDebug
-import io.legado.app.utils.setLightStatusBar
-import io.legado.app.utils.setNavigationBarColorAuto
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
+import splitties.dimensions.dp
 
 class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>(),
     ReadMange.Callback, ChangeBookSourceDialog.CallBack, MangaMenu.CallBack {
-
-    private val menuLayoutIsVisible get() = binding.mangaMenu.isVisible
 
     private val mLayoutManager by lazy {
         LinearLayoutManager(this@ReadMangaActivity)
@@ -98,6 +90,10 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
         }
     }
 
+    private val windowInsetsControllerCompat by lazy {
+        WindowInsetsControllerCompat(window, binding.root)
+    }
+
     //打开目录返回选择章节返回结果
     private val tocActivity =
         registerForActivityResult(TocActivityResult()) {
@@ -117,7 +113,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
     override val viewModel by viewModels<MangaViewModel>()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        immersionFullScreen(WindowInsetsControllerCompat(window, binding.root))
+        immersionFullScreen(windowInsetsControllerCompat)
         ReadMange.register(this)
         binding.mRecyclerMange.run {
             adapter = mAdapter
@@ -182,6 +178,11 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
             }
         }
         loadMoreView.gone()
+        binding.mangaMenu.setTitleBarPadding(
+            ViewCompat.getRootWindowInsets(findViewById(android.R.id.content))?.getInsets(
+                WindowInsetsCompat.Type.statusBars()
+            )?.top ?: dp(25)
+        )
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -257,7 +258,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
         networkChangedListener.register()
         networkChangedListener.onNetworkChanged = {
             // 当网络是可用状态且无需初始化时同步进度（初始化中已有同步进度逻辑）
-            if (AppConfig.syncBookProgressPlus && NetworkUtils.isAvailable()&&!justInitData) {
+            if (AppConfig.syncBookProgressPlus && NetworkUtils.isAvailable() && !justInitData) {
                 ReadMange.syncProgress({ progress -> sureNewProgress(progress) })
             }
         }
@@ -369,19 +370,6 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
         return super.onCompatOptionsItemSelected(item)
     }
 
-    override fun upNavigationBarColor() {
-        when {
-            binding.mangaMenu.isVisible -> super.upNavigationBarColor()
-            !AppConfig.immNavigationBar -> super.upNavigationBarColor()
-            else -> setNavigationBarColorAuto(ReadBookConfig.bgMeanColor)
-        }
-    }
-
-    @SuppressLint("RtlHardcoded")
-    private fun upNavigationBar(value: Boolean) {
-        binding.mangaMenu.isVisible = value
-    }
-
     override fun openBookInfoActivity() {
         ReadMange.book?.let {
             bookInfoActivity.launch {
@@ -392,74 +380,8 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
     }
 
     override fun upSystemUiVisibility(value: Boolean) {
-        upSystemUiVisibility(isInMultiWindow, !menuLayoutIsVisible, false)
-        upNavigationBarColor()
-        upNavigationBar(value)
-        if (!value) {
-            immersionFullScreen(WindowInsetsControllerCompat(window, binding.root))
-        }
-    }
-
-    /**
-     * 更新状态栏,导航栏
-     */
-    fun upSystemUiVisibility(
-        isInMultiWindow: Boolean,
-        toolBarHide: Boolean = true,
-        useBgMeanColor: Boolean = false,
-    ) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            window.insetsController?.run {
-                if (toolBarHide && ReadBookConfig.hideNavigationBar) {
-                    hide(WindowInsets.Type.navigationBars())
-                } else {
-                    show(WindowInsets.Type.navigationBars())
-                }
-                if (toolBarHide && ReadBookConfig.hideStatusBar) {
-                    hide(WindowInsets.Type.statusBars())
-                } else {
-                    show(WindowInsets.Type.statusBars())
-                }
-            }
-        }
-        upSystemUiVisibilityO(isInMultiWindow, toolBarHide)
-        if (toolBarHide) {
-            setLightStatusBar(ReadBookConfig.durConfig.curStatusIconDark())
-        } else {
-            val statusBarColor =
-                if (AppConfig.readBarStyleFollowPage
-                    && ReadBookConfig.durConfig.curBgType() == 0
-                    || useBgMeanColor
-                ) {
-                    ReadBookConfig.bgMeanColor
-                } else {
-                    ThemeStore.statusBarColor(this, AppConfig.isTransparentStatusBar)
-                }
-            setLightStatusBar(ColorUtils.isColorLight(statusBarColor))
-        }
-    }
-
-    @Suppress("DEPRECATION")
-    private fun upSystemUiVisibilityO(
-        isInMultiWindow: Boolean,
-        toolBarHide: Boolean = true,
-    ) {
-        var flag = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                or View.SYSTEM_UI_FLAG_IMMERSIVE
-                or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
-        if (!isInMultiWindow) {
-            flag = flag or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-        }
-        if (ReadBookConfig.hideNavigationBar) {
-            flag = flag or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-            if (toolBarHide) {
-                flag = flag or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-            }
-        }
-        if (ReadBookConfig.hideStatusBar && toolBarHide) {
-            flag = flag or View.SYSTEM_UI_FLAG_FULLSCREEN
-        }
-        window.decorView.systemUiVisibility = flag
+        binding.mangaMenu.isVisible = value
+        immersionFullScreen(WindowInsetsControllerCompat(window, binding.root))
     }
 
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
