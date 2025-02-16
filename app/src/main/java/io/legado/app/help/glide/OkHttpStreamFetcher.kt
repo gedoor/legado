@@ -99,25 +99,24 @@ class OkHttpStreamFetcher(
 
     override fun onResponse(call: Call, response: Response) {
         responseBody = response.body
-        val manga = options.get(OkHttpModelLoader.mangaOption) == true
-        val decodeResult = if (manga) {
-            ImageUtils.decode(
-                url.toStringUrl(),
-                responseBody!!.byteStream().readBytes(),
-                isCover = false,
-                source,
-                ReadMange.book
-            ).let {
-                ByteArrayInputStream(it)
-            }
-        } else {
-            ImageUtils.decode(
-                url.toStringUrl(), responseBody!!.byteStream(),
-                isCover = true, source
-            )
-        }
         if (response.isSuccessful) {
-
+            val manga = options.get(OkHttpModelLoader.mangaOption) == true
+            val decodeResult = if (manga) {
+                ImageUtils.decode(
+                    url.toStringUrl(),
+                    responseBody!!.byteStream().readBytes(),
+                    isCover = false,
+                    source,
+                    ReadMange.book
+                )?.let {
+                    ByteArrayInputStream(it)
+                }
+            } else {
+                ImageUtils.decode(
+                    url.toStringUrl(), responseBody!!.byteStream(),
+                    isCover = true, source
+                )
+            }
             if (decodeResult == null) {
                 callback?.onLoadFailed(NoStackTraceException("封面二次解密失败"))
             } else {
