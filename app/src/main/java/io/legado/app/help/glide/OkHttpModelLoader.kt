@@ -27,7 +27,7 @@ object OkHttpModelLoader : ModelLoader<GlideUrl?, InputStream?> {
         }
         return ModelLoader.LoadData(
             modelWithHeader,
-            OkHttpStreamFetcher(modelWithHeader, options)
+            OkHttpStreamFetcher(model,modelWithHeader, options)
         )
     }
 

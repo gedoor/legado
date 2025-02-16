@@ -1,5 +1,6 @@
 package io.legado.app.help.glide
 
+import android.net.Uri
 import com.bumptech.glide.Priority
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.HttpException
@@ -28,6 +29,7 @@ import java.io.InputStream
 
 
 class OkHttpStreamFetcher(
+    private val oldUrl: GlideUrl,
     private val url: GlideUrl,
     private val options: Options,
 ) :
@@ -103,7 +105,7 @@ class OkHttpStreamFetcher(
             val manga = options.get(OkHttpModelLoader.mangaOption) == true
             val decodeResult = if (manga) {
                 ImageUtils.decode(
-                    url.toStringUrl(),
+                    Uri.decode(oldUrl.toStringUrl()),
                     responseBody!!.byteStream().readBytes(),
                     isCover = false,
                     source,
