@@ -15,59 +15,68 @@
         tools:layout_editor_absoluteX="0dp"
         tools:layout_editor_absoluteY="0dp" />
 
-    <io.legado.app.ui.widget.TitleBar
-        android:id="@+id/title_bar"
+    <FrameLayout
+        android:id="@+id/fl_title_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="?attr/actionBarStyle"
         app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/title_bar_addition"
+        <io.legado.app.ui.widget.TitleBar
+            android:id="@+id/title_bar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:theme="?attr/actionBarStyle">
 
-            <TextView
-                android:id="@+id/tv_chapter_name"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:singleLine="true"
-                android:visibility="gone"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toLeftOf="@+id/tv_source_action"
-                app:layout_constraintTop_toTopOf="parent" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/title_bar_addition"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/tv_chapter_url"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:singleLine="true"
-                android:visibility="gone"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toLeftOf="@+id/tv_source_action"
-                app:layout_constraintTop_toBottomOf="@+id/tv_chapter_name" />
+                <TextView
+                    android:id="@+id/tv_chapter_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:singleLine="true"
+                    android:visibility="gone"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toLeftOf="@+id/tv_source_action"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:visibility="visible" />
 
-            <io.legado.app.ui.widget.text.AccentBgTextView
-                android:id="@+id/tv_source_action"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_margin="1dp"
-                android:gravity="center"
-                android:maxWidth="120dp"
-                android:paddingLeft="6dp"
-                android:paddingRight="6dp"
-                android:text="@string/book_source"
-                app:layout_constraintBottom_toBottomOf="@+id/tv_chapter_url"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:radius="2dp" />
+                <TextView
+                    android:id="@+id/tv_chapter_url"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:singleLine="true"
+                    android:visibility="gone"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toLeftOf="@+id/tv_source_action"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_chapter_name"
+                    tools:visibility="visible" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <io.legado.app.ui.widget.text.AccentBgTextView
+                    android:id="@+id/tv_source_action"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_margin="1dp"
+                    android:gravity="center"
+                    android:maxWidth="120dp"
+                    android:paddingLeft="6dp"
+                    android:paddingRight="6dp"
+                    android:text="@string/book_source"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_chapter_url"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:radius="2dp"
+                    tools:visibility="visible" />
 
-    </io.legado.app.ui.widget.TitleBar>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </io.legado.app.ui.widget.TitleBar>
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
