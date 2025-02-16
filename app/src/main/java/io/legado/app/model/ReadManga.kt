@@ -9,6 +9,7 @@ import io.legado.app.data.entities.BookProgress
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.ReadRecord
 import io.legado.app.help.AppWebDav
+import io.legado.app.help.ConcurrentRateLimiter
 import io.legado.app.help.book.BookHelp
 import io.legado.app.help.book.ContentProcessor
 import io.legado.app.help.book.isLocal
@@ -41,7 +42,7 @@ import kotlinx.coroutines.launch
 import kotlin.math.min
 
 @Suppress("MemberVisibilityCanBePrivate")
-object ReadMange : CoroutineScope by MainScope() {
+object ReadManga : CoroutineScope by MainScope() {
     var inBookshelf = false
     var tocChanged = false
     var chapterChanged = false
@@ -67,10 +68,11 @@ object ReadMange : CoroutineScope by MainScope() {
     private val downloadLoadingChapters = arrayListOf<Int>()
     var isMangaMode = false
     val downloadScope = CoroutineScope(SupervisorJob() + IO)
+    var rateLimiter = ConcurrentRateLimiter(null)
 
     fun saveRead(pageChanged: Boolean = false) {
         executor.execute {
-            val book = ReadMange.book ?: return@execute
+            val book = ReadManga.book ?: return@execute
             book.lastCheckCount = 0
             book.durChapterTime = System.currentTimeMillis()
             val chapterChanged = book.durChapterIndex != durChapterPagePos
@@ -89,7 +91,7 @@ object ReadMange : CoroutineScope by MainScope() {
     }
 
     fun upData(book: Book) {
-        ReadMange.book = book
+        ReadManga.book = book
         isMangaMode = true
         durChapterPageCount = appDb.bookChapterDao.getChapterCount(book.bookUrl)
         simulatedChapterSize = if (book.readSimulating()) {
@@ -103,14 +105,13 @@ object ReadMange : CoroutineScope by MainScope() {
             durChapterPos = book.durChapterPos
         }
         upWebBook(book)
-
         synchronized(this) {
             loadingChapters.clear()
         }
     }
 
     fun resetData(book: Book) {
-        ReadMange.book = book
+        ReadManga.book = book
         isMangaMode = true
         readRecord.bookName = book.name
         readRecord.readTime = appDb.readRecordDao.getReadTime(book.name) ?: 0
@@ -131,6 +132,7 @@ object ReadMange : CoroutineScope by MainScope() {
     fun upWebBook(book: Book) {
         appDb.bookSourceDao.getBookSource(book.origin)?.let {
             bookSource = it
+            rateLimiter = ConcurrentRateLimiter(it)
         } ?: let {
             bookSource = null
         }
@@ -193,8 +195,8 @@ object ReadMange : CoroutineScope by MainScope() {
         scope: CoroutineScope,
         chapter: BookChapter,
     ) {
-        val book = ReadMange.book ?: return removeLoading(chapter.index)
-        val bookSource = ReadMange.bookSource
+        val book = ReadManga.book ?: return removeLoading(chapter.index)
+        val bookSource = ReadManga.bookSource
         if (bookSource != null) {
             getContent(bookSource, scope, chapter, book)
         }
@@ -210,7 +212,7 @@ object ReadMange : CoroutineScope by MainScope() {
     ) {
         if (addLoading(index)) {
             Coroutine.async {
-                val book = ReadMange.book!!
+                val book = ReadManga.book!!
                 appDb.bookChapterDao.getChapter(book.bookUrl, index)?.let { chapter ->
                     getContent(
                         downloadScope,
@@ -368,7 +370,7 @@ object ReadMange : CoroutineScope by MainScope() {
         if (System.currentTimeMillis() - book.lastCheckTime < 600000) return
         book.lastCheckTime = System.currentTimeMillis()
         WebBook.getChapterList(this, bookSource, book).onSuccess(IO) { cList ->
-            if (book.bookUrl == ReadMange.book?.bookUrl
+            if (book.bookUrl == ReadManga.book?.bookUrl
                 && cList.size > durChapterPageCount
             ) {
                 appDb.bookChapterDao.delByBook(book.bookUrl)
@@ -532,7 +534,7 @@ object ReadMange : CoroutineScope by MainScope() {
         if (System.currentTimeMillis() - book.lastCheckTime < 600000) return
         book.lastCheckTime = System.currentTimeMillis()
         WebBook.getChapterList(this, bookSource, book).onSuccess(IO) { cList ->
-            if (book.bookUrl == ReadMange.book?.bookUrl
+            if (book.bookUrl == ReadManga.book?.bookUrl
                 && cList.size > durChapterPageCount
             ) {
                 appDb.bookChapterDao.delByBook(book.bookUrl)
@@ -609,7 +611,7 @@ object ReadMange : CoroutineScope by MainScope() {
                     loadContent(durChapterPagePos)
                 } else {
                     Coroutine.async {
-                        val book = ReadMange.book!!
+                        val book = ReadManga.book!!
                         appDb.bookChapterDao.getChapter(book.bookUrl, durChapterPagePos)
                             ?.let { chapter ->
                                 getContent(

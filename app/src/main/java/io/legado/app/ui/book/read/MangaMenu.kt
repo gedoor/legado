@@ -6,8 +6,6 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.View.OnClickListener
-import android.view.View.OnLongClickListener
 import android.view.animation.Animation
 import android.widget.FrameLayout
 import androidx.core.view.isGone
@@ -22,7 +20,7 @@ import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.lib.theme.primaryTextColor
-import io.legado.app.model.ReadMange
+import io.legado.app.model.ReadManga
 import io.legado.app.ui.browser.WebViewActivity
 import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.ConstraintModify
@@ -95,7 +93,7 @@ class MangaMenu @JvmOverloads constructor(
     private val menuInListener = object : Animation.AnimationListener {
         override fun onAnimationStart(animation: Animation) {
             binding.tvSourceAction.text =
-                ReadMange.bookSource?.bookSourceName ?: context.getString(R.string.book_source)
+                ReadManga.bookSource?.bookSourceName ?: context.getString(R.string.book_source)
             callBack.upSystemUiVisibility(true)
             binding.tvSourceAction.isGone = false
         }
@@ -211,7 +209,7 @@ class MangaMenu @JvmOverloads constructor(
                     val url = tvChapterUrl.text.toString()
                     putExtra("title", tvChapterName.text)
                     putExtra("url", url)
-                    IntentData.put(url, ReadMange.bookSource?.getHeaderMap(true))
+                    IntentData.put(url, ReadManga.bookSource?.getHeaderMap(true))
                 }
             }
         }

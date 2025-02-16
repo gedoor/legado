@@ -22,7 +22,7 @@ import io.legado.app.databinding.BookComicLoadingRvBinding
 import io.legado.app.databinding.BookComicRvBinding
 import io.legado.app.help.glide.progress.ProgressManager
 import io.legado.app.model.BookCover
-import io.legado.app.model.ReadMange
+import io.legado.app.model.ReadManga
 import io.legado.app.model.recyclerView.MangaVH
 import io.legado.app.model.recyclerView.MangeContent
 import io.legado.app.model.recyclerView.ReaderLoading
@@ -66,7 +66,7 @@ class MangaAdapter(private val context: Context) :
     fun submitList(contents: MutableList<Any>, runnable: Runnable) {
         val currentList = mDiffer.currentList.toMutableList()
         currentList.addAll(contents)
-        if (ReadMange.chapterChanged) {
+        if (ReadManga.chapterChanged) {
             mDiffer.submitList(contents) {
                 runnable.run()
             }
@@ -220,7 +220,7 @@ class MangaAdapter(private val context: Context) :
             return BookCover.loadManga(
                 context,
                 item.mImageUrl,
-                sourceOrigin = ReadMange.book?.origin,
+                sourceOrigin = ReadManga.book?.origin,
                 manga = true,
                 useDefaultCover = context.getCompatDrawable(R.color.book_ant_10)
             )

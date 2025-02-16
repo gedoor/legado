@@ -1,6 +1,6 @@
 package io.legado.app.help.glide.progress
 
-import android.text.TextUtils
+import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.runOnUI
 import java.util.concurrent.ConcurrentHashMap
 
@@ -31,21 +31,35 @@ object ProgressManager {
     }
 
     fun addListener(url: String, listener: OnProgressListener) {
-        if (!TextUtils.isEmpty(url) && listener != null) {
+        if (url.isNotEmpty() && listener != null) {
+            val url = getUrlNoOption(url)
             listenersMap[url] = listener
             listener.invoke(false, 1, 0, 0)
         }
     }
 
     fun removeListener(url: String) {
-        if (!TextUtils.isEmpty(url)) {
+        if (url.isNotEmpty()) {
+            val url = getUrlNoOption(url)
             listenersMap.remove(url)
         }
     }
 
-    fun getProgressListener(url: String?): OnProgressListener {
-        return if (TextUtils.isEmpty(url) || listenersMap.size == 0) {
+    fun getProgressListener(url: String): OnProgressListener {
+        return if (url.isEmpty() || listenersMap.isEmpty()) {
             null
-        } else listenersMap[url]
+        } else {
+            listenersMap[url]
+        }
     }
+
+    private fun getUrlNoOption(url: String): String {
+        val urlMatcher = AnalyzeUrl.paramPattern.matcher(url)
+        return if (urlMatcher.find()) {
+            url.substring(0, urlMatcher.start())
+        } else {
+            url
+        }
+    }
+
 }
