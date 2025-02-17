@@ -210,6 +210,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
 
     override fun loadContentFinish(list: MutableList<Any>) {
         if (!this.isDestroyed) {
+            setTitle(ReadManga.book?.name)
             mAdapter.submitList(list) {
                 if (!mFirstLoading) {
                     if (list.size > 1) {

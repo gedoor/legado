@@ -252,9 +252,9 @@ fun immersionFullScreen(windowInsetsControllerCompat: WindowInsetsControllerComp
     windowInsetsControllerCompat.hide(WindowInsetsCompat.Type.systemBars())
 }
 
-inline fun immersionPadding(root: View, crossinline update: (v: View, insets: androidx.core.graphics.Insets, gestureInsets: androidx.core.graphics.Insets) -> Unit) {
+inline fun immersionPadding(root: View, crossinline viewInsets: (v: View, insets: androidx.core.graphics.Insets, gestureInsets: androidx.core.graphics.Insets) -> Unit) {
     ViewCompat.setOnApplyWindowInsetsListener(root) { view: View, windowInsetsCompat: WindowInsetsCompat ->
-        update(view, windowInsetsCompat.getInsets(WindowInsetsCompat.Type.systemBars()), windowInsetsCompat.getInsets(WindowInsetsCompat.Type.systemGestures()))
+        viewInsets(view, windowInsetsCompat.getInsets(WindowInsetsCompat.Type.systemBars()), windowInsetsCompat.getInsets(WindowInsetsCompat.Type.systemGestures()))
         WindowInsetsCompat.CONSUMED
     }
 }
