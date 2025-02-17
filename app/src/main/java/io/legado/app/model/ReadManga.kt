@@ -308,6 +308,7 @@ object ReadManga : CoroutineScope by MainScope() {
                 this.forEach {
                     it.mDurChapterCount = this.size
                 }
+                durChapterCount = this.size
             }
             val contentList = mutableListOf<Any>()
             contentList.add(
@@ -318,7 +319,6 @@ object ReadManga : CoroutineScope by MainScope() {
                 )
             )
             contentList.addAll(list)
-            durChapterCount = contentList.size
             contentList.add(
                 ReaderLoading(
                     durChapterPagePos,
