@@ -6,6 +6,8 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.View.OnClickListener
+import android.view.View.OnLongClickListener
 import android.view.animation.Animation
 import android.widget.FrameLayout
 import androidx.core.view.isGone
@@ -232,6 +234,9 @@ class MangaMenu @JvmOverloads constructor(
     }
 
     fun setTitleBarPadding(top: Int) {
+        if (top <= 0) {
+            return
+        }
         binding.flTitleBar.run {
             setPadding(leftPadding, this.paddingTop.plus(top), rightPadding, bottomPadding)
         }

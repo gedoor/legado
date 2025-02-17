@@ -9,8 +9,6 @@ import android.view.MenuItem
 import android.view.ViewGroup
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -56,7 +54,6 @@ import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
-import splitties.dimensions.dp
 
 class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>(),
     ReadManga.Callback, ChangeBookSourceDialog.CallBack, MangaMenu.CallBack {
@@ -188,11 +185,6 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
             }
         }
         loadMoreView.gone()
-        /*binding.mangaMenu.setTitleBarPadding(
-            ViewCompat.getRootWindowInsets(findViewById(android.R.id.content))?.getInsets(
-                WindowInsetsCompat.Type.statusBars()
-            )?.top ?: dp(25)
-        )*/
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -223,9 +215,9 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
                     if (list.size > 1) {
                         binding.infobar.isVisible = true
                         upText(
-                            ReadManga.durChapterPagePos,
+                            ReadManga.durChapterPagePos.plus(1),
                             ReadManga.durChapterPageCount,
-                            ReadManga.durChapterPos,
+                            ReadManga.durChapterPos.plus(1),
                             ReadManga.durChapterCount
                         )
                     }
@@ -257,7 +249,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
         binding.infobar.update(
             chapterPagePos,
             chapterPageCount,
-            chapterPagePos.minus(1f).div(chapterPageCount.minus(1f)),
+            chapterPagePos.times(1f).div(chapterPageCount.times(1f)),
             chapterPos,
             chapterCount
         )
