@@ -14,7 +14,6 @@ import androidx.viewbinding.ViewBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.ListPreloader.PreloadModelProvider
 import com.bumptech.glide.RequestBuilder
-import com.github.panpf.zoomimage.zoom.GestureType
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter.Companion.TYPE_FOOTER_VIEW
@@ -89,10 +88,6 @@ class MangaAdapter(private val context: Context) :
                 binding.retry,
                 binding.flProgress
             )
-            binding.image.zoomable.disabledGestureTypesState.value =
-                GestureType.DOUBLE_TAP_SCALE or GestureType.ONE_FINGER_SCALE or
-                        GestureType.TWO_FINGER_SCALE or GestureType.KEYBOARD_DRAG or
-                        GestureType.ONE_FINGER_DRAG or GestureType.KEYBOARD_SCALE or GestureType.MOUSE_WHEEL_SCALE
             binding.retry.setOnClickListener {
                 val item = mDiffer.currentList[layoutPosition]
                 if (item is MangeContent) {

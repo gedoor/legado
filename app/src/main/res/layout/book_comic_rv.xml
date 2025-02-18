@@ -8,12 +8,12 @@
     android:background="@color/book_ant_10"
     android:contentDescription="@null">
 
-    <com.github.panpf.zoomimage.GlideZoomImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:adjustViewBounds="true"
-        app:contentScale="fillWidth" />
+        android:scaleType="fitCenter" />
 
     <FrameLayout
         android:id="@+id/fl_progress"

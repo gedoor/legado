@@ -161,7 +161,6 @@ mozilla-rhino = { module = "org.mozilla:rhino", version.ref = "rhino" }
 
 renderscript-intrinsics-replacement-toolkit = { module = "com.github.android:renderscript-intrinsics-replacement-toolkit", version = "b6363490c3" }
 zxing-lite = { module = "com.github.jenly1314:zxing-lite", version.ref = "zxingLite" }
-zoom-imageview="io.github.panpf.zoomimage:zoomimage-view-glide:1.1.1"
 
 [bundles]
 coroutines = ["kotlinx-coroutines-core", "kotlinx-coroutines-android"]

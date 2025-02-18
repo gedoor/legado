@@ -280,7 +280,7 @@ dependencies {
     implementation platform(libs.firebase.bom)
     implementation libs.firebase.analytics
     implementation libs.firebase.perf
-    implementation libs.zoom.imageview
+
     implementation libs.glide.recyclerview
 
     //LeakCanary, 内存泄露检测

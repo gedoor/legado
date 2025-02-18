@@ -325,7 +325,7 @@ class WebtoonRecyclerView @JvmOverloads constructor(
 
                 MotionEvent.ACTION_MOVE -> {
                     if (disableMangaScaling) {
-                        return false
+                        return super.onTouchEvent(ev)
                     }
                     if (isDoubleTapping && isQuickScaling) {
                         return true

@@ -58,7 +58,6 @@ import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
 
-
 class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>(),
     ReadManga.Callback, ChangeBookSourceDialog.CallBack, MangaMenu.CallBack {
 

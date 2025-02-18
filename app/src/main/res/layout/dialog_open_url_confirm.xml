@@ -10,6 +10,7 @@
         android:id="@+id/tool_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:elevation="5dp"
         android:theme="?attr/actionBarStyle"
         app:popupTheme="@style/AppTheme.PopupOverlay"
         app:title="跳转确认"
