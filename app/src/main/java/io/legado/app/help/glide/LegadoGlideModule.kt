@@ -37,9 +37,5 @@ class LegadoGlideModule : AppGlideModule() {
                     1024 * 1024 * 1000
                 )
             )
-            .setDefaultRequestOptions {
-                RequestOptions().format(DecodeFormat.PREFER_RGB_565)
-                    .encodeQuality(90)
-            }
     }
 }
