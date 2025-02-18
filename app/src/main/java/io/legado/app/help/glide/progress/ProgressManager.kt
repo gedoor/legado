@@ -1,7 +1,6 @@
 package io.legado.app.help.glide.progress
 
 import io.legado.app.model.analyzeRule.AnalyzeUrl
-import io.legado.app.utils.runOnUI
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -20,9 +19,7 @@ object ProgressManager {
                     percentage = 0
                     isComplete = true
                 }
-                runOnUI {
-                    it.invoke(isComplete, percentage, bytesRead, totalBytes)
-                }
+                it.invoke(isComplete, percentage, bytesRead, totalBytes)
                 if (isComplete) {
                     removeListener(url)
                 }

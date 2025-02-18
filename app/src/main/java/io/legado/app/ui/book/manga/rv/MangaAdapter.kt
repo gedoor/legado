@@ -63,18 +63,16 @@ class MangaAdapter(private val context: Context) :
 
     //全部替换数据
     fun submitList(contents: MutableList<Any>, runnable: Runnable) {
-        val currentList = mDiffer.currentList.toMutableList()
-        currentList.addAll(contents)
-        if (ReadManga.chapterChanged) {
-            mDiffer.submitList(contents) {
-                runnable.run()
-            }
+        val list = if (ReadManga.chapterChanged) {
+            contents
         } else {
-            mDiffer.submitList(currentList) {
-                runnable.run()
-            }
+            val currentList = mDiffer.currentList.toMutableList()
+            currentList.addAll(contents)
+            currentList
         }
-
+        mDiffer.submitList(list) {
+            runnable.run()
+        }
     }
 
     inner class PageViewHolder(binding: BookComicRvBinding) :

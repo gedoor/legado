@@ -31,11 +31,10 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
@@ -261,7 +260,6 @@ object ReadManga : CoroutineScope by MainScope() {
         downloadedChapters.clear()
         downloadFailChapters.clear()
         downloadLoadingChapters.clear()
-        executor.asCoroutineDispatcher().cancelChildren()
         downloadScope.coroutineContext.cancelChildren()
         coroutineContext.cancelChildren()
     }
@@ -274,10 +272,8 @@ object ReadManga : CoroutineScope by MainScope() {
         content: String,
         book: Book,
     ) {
-        if (mTopChapter != null && mTopChapter!!.title != chapterTitle && BookHelp.hasContent(
-                book,
-                mTopChapter!!
-            )
+        if (mTopChapter != null && mTopChapter!!.title != chapterTitle
+            && BookHelp.hasContent(book, mTopChapter!!)
         ) {
             BookHelp.delContent(book, chapter)
         }
@@ -294,9 +290,7 @@ object ReadManga : CoroutineScope by MainScope() {
                     val mSrc = NetworkUtils.getAbsoluteURL(chapter.url, src)
                     emit(mSrc)
                 }
-            }.distinctUntilChangedBy {
-                it
-            }.mapIndexed { index, src ->
+            }.distinctUntilChanged().mapIndexed { index, src ->
                 MangeContent(
                     mChapterPageCount = durChapterPageCount,
                     mChapterPagePos = durChapterPagePos.plus(1),
@@ -395,9 +389,7 @@ object ReadManga : CoroutineScope by MainScope() {
                 }
             }
         }.onError {
-            runOnUI {
-                mCallback?.noData()
-            }
+            mCallback?.noData()
         }
     }
 

@@ -34,6 +34,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.get
 import androidx.core.view.marginBottom
+import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import io.legado.app.help.config.AppConfig
@@ -283,9 +284,9 @@ fun View.applyNavigationBarPadding(withInitialPadding: Boolean = false) {
 fun View.applyNavigationBarMargin(withInitialMargin: Boolean = false) {
     val initialMargin = if (withInitialMargin) marginBottom else 0
     ViewCompat.setOnApplyWindowInsetsListener(this) { _, windowInsets ->
-        val lp = layoutParams as ViewGroup.MarginLayoutParams
-        lp.bottomMargin = initialMargin + windowInsets.navigationBarHeight
-        layoutParams = lp
+        updateLayoutParams<ViewGroup.MarginLayoutParams> {
+            bottomMargin = initialMargin + windowInsets.navigationBarHeight
+        }
         windowInsets
     }
 }

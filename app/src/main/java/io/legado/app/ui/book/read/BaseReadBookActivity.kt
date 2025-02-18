@@ -13,6 +13,7 @@ import androidx.activity.viewModels
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst.charsets
@@ -84,8 +85,8 @@ abstract class BaseReadBookActivity :
         super.onCreate(savedInstanceState)
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
-            binding.navigationBar.run {
-                layoutParams = layoutParams.apply { height = insets.bottom }
+            binding.navigationBar.updateLayoutParams {
+                height = insets.bottom
             }
             windowInsets
         }

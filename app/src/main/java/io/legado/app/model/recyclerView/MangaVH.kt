@@ -66,7 +66,7 @@ open class MangaVH<VB : ViewBinding>(val binding: VB, private val context: Conte
                 bytesRead: Long,
                 totalBytes: Long,
             ) {
-                mProgress.text = "${percentage}%"
+                mProgress.text = "$percentage%"
             }
         })
         try {

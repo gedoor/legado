@@ -150,8 +150,8 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
                 }
             }
             setNestedPreScrollListener { _, _, _, position ->
-                if (mAdapter.getCurrentList()
-                        .isNotEmpty() && position <= mAdapter.getCurrentList().lastIndex
+                if (mAdapter.getCurrentList().isNotEmpty()
+                    && position <= mAdapter.getCurrentList().lastIndex
                 ) {
                     try {
                         val content = mAdapter.getCurrentList()[position]
