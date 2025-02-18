@@ -1,5 +1,6 @@
 package io.legado.app.ui.book.manga
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.os.Looper
@@ -14,6 +15,7 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.PagerSnapHelper
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader
 import com.bumptech.glide.request.target.Target.SIZE_ORIGINAL
@@ -42,6 +44,7 @@ import io.legado.app.ui.book.manga.rv.MangaAdapter
 import io.legado.app.ui.book.read.MangaMenu
 import io.legado.app.ui.book.read.ReadBookActivity.Companion.RESULT_DELETED
 import io.legado.app.ui.book.toc.TocActivityResult
+import io.legado.app.ui.widget.number.NumberPickerDialog
 import io.legado.app.ui.widget.recycler.LoadMoreView
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.StartActivityContract
@@ -64,16 +67,28 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
     private val mAdapter: MangaAdapter by lazy {
         MangaAdapter(this@ReadMangaActivity)
     }
+    private val mPreDownloadNum by lazy {
+        AppConfig.preMangaDownloadNum
+    }
+    private val mSinglePageScroller by lazy {
+        AppConfig.singlePageScrolling
+    }
+
+    private val mDisableMangaScaling by lazy {
+        AppConfig.disableMangaScaling
+    }
+
     private val mSizeProvider by lazy {
         FixedPreloadSizeProvider<Any>(
-            this@ReadMangaActivity.resources.displayMetrics.widthPixels,
-            SIZE_ORIGINAL
+            this@ReadMangaActivity.resources.displayMetrics.widthPixels, SIZE_ORIGINAL
         )
     }
 
-    private val mRecyclerViewPreloader by lazy {
-        RecyclerViewPreloader(Glide.with(this), mAdapter, mSizeProvider, 10)
+    private val mPagerSnapHelper: PagerSnapHelper by lazy {
+        PagerSnapHelper()
     }
+
+    private var mRecyclerViewPreloader: RecyclerViewPreloader<Any>? = null
 
     private val networkChangedListener by lazy {
         NetworkChangedListener(this)
@@ -95,13 +110,12 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
     }
 
     //打开目录返回选择章节返回结果
-    private val tocActivity =
-        registerForActivityResult(TocActivityResult()) {
-            it?.let {
-                binding.flLoading.isVisible = true
-                viewModel.openChapter(it.first, it.second)
-            }
+    private val tocActivity = registerForActivityResult(TocActivityResult()) {
+        it?.let {
+            binding.flLoading.isVisible = true
+            viewModel.openChapter(it.first, it.second)
         }
+    }
     private val bookInfoActivity =
         registerForActivityResult(StartActivityContract(BookInfoActivity::class.java)) {
             if (it.resultCode == RESULT_OK) {
@@ -122,6 +136,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
             }
         }
         ReadManga.register(this)
+        disableMangaScaling(mDisableMangaScaling)
         binding.mRecyclerMange.run {
             adapter = mAdapter
             itemAnimator = null
@@ -130,6 +145,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
             mLayoutManager.initialPrefetchItemCount = 4
             mLayoutManager.isItemPrefetchEnabled = true
             setItemViewCacheSize(AppConfig.preDownloadNum)
+            singlePagerScroller(mSinglePageScroller)
             setPreScrollListener { _, _, dy, position ->
                 if (dy > 0 && position + 2 > mAdapter.getCurrentList().size - 3) {
                     if (mAdapter.getCurrentList().last() is ReaderLoading) {
@@ -162,7 +178,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
 
                 }
             }
-            addOnScrollListener(mRecyclerViewPreloader)
+            addRecyclerViewPreloader(mPreDownloadNum)
             onToucheMiddle {
                 if (!binding.mangaMenu.isVisible) {
                     binding.mangaMenu.runMenuIn()
@@ -347,14 +363,17 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
     }
 
 
+    @SuppressLint("StringFormatMatches")
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.book_manga, menu)
+        upMenu(menu)
         return super.onCompatCreateOptionsMenu(menu)
     }
 
     /**
      * 菜单
      */
+    @SuppressLint("StringFormatMatches")
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_change_source -> {
@@ -368,6 +387,27 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
                 ReadManga.book?.let {
                     tocActivity.launch(it.bookUrl)
                 }
+            }
+
+            R.id.menu_pre_manga_number -> {
+                NumberPickerDialog(this).setTitle(getString(R.string.pre_download))
+                    .setMaxValue(9999).setMinValue(0).setValue(AppConfig.preMangaDownloadNum).show {
+                        AppConfig.preMangaDownloadNum = it
+                        item.setTitle(getString(R.string.pre_download_m, it))
+                        addRecyclerViewPreloader(it)
+                    }
+            }
+
+            R.id.menu_scroller_page -> {
+                item.isChecked = !item.isChecked
+                AppConfig.singlePageScrolling = item.isChecked
+                singlePagerScroller(item.isChecked)
+            }
+
+            R.id.menu_disable_manga_scaling -> {
+                item.isChecked = !item.isChecked
+                AppConfig.disableMangaScaling = item.isChecked
+                disableMangaScaling(item.isChecked)
             }
         }
         return super.onCompatOptionsItemSelected(item)
@@ -403,6 +443,37 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
             }
         }
         return super.dispatchKeyEvent(event)
+    }
+
+    private fun addRecyclerViewPreloader(maxPreload: Int) {
+        if (mRecyclerViewPreloader != null) {
+            binding.mRecyclerMange.removeOnScrollListener(mRecyclerViewPreloader!!)
+        }
+        mRecyclerViewPreloader = RecyclerViewPreloader(
+            Glide.with(this), mAdapter, mSizeProvider, maxPreload
+        )
+        binding.mRecyclerMange.addOnScrollListener(mRecyclerViewPreloader!!)
+    }
+
+    private fun singlePagerScroller(value: Boolean) {
+        if (value) {
+            mPagerSnapHelper.attachToRecyclerView(binding.mRecyclerMange)
+        } else {
+            mPagerSnapHelper.attachToRecyclerView(null)
+        }
+    }
+
+    @SuppressLint("StringFormatMatches")
+    private fun upMenu(menu: Menu) {
+        menu.findItem(R.id.menu_pre_manga_number)
+            .setTitle(getString(R.string.pre_download_m, mPreDownloadNum))
+        menu.findItem(R.id.menu_scroller_page).isChecked = mSinglePageScroller
+        menu.findItem(R.id.menu_disable_manga_scaling).isChecked = mDisableMangaScaling
+    }
+
+    private fun disableMangaScaling(disable: Boolean) {
+        binding.webtoonFrame.disableMangaScaling = disable
+        binding.mRecyclerMange.disableMangaScaling = disable
     }
 
 }

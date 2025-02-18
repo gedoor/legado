@@ -174,12 +174,6 @@
             android:title="@string/show_mange_ui"
             app:iconSpaceReserved="false" />
 
-        <io.legado.app.lib.prefs.SwitchPreference
-            android:defaultValue="true"
-            android:key="disableMangaScaling"
-            android:title="@string/disable_manga_scaling"
-            app:iconSpaceReserved="false" />
-
         <io.legado.app.lib.prefs.Preference
             android:key="webPort"
             android:title="@string/web_port_title"
