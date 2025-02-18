@@ -18,4 +18,23 @@
             app:showAsAction="always" />
 
     </group>
+
+    <item
+        android:id="@+id/menu_pre_manga_number"
+        android:title="@string/pre_download"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_scroller_page"
+        android:checkable="true"
+        android:checked="false"
+        android:title="@string/single_page_scroller"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_disable_manga_scaling"
+        android:checkable="true"
+        android:checked="false"
+        android:title="@string/disable_manga_scaling"
+        app:showAsAction="never" />
 </menu>

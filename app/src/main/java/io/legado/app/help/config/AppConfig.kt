@@ -610,7 +610,24 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
         get() = appCtx.getPrefBoolean(PreferKey.showMangaUi, true)
 
     //禁用漫画缩放
-    val disableMangaScaling: Boolean
+    var disableMangaScaling: Boolean
         get() = appCtx.getPrefBoolean(PreferKey.disableMangaScaling, true)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.disableMangaScaling, value)
+        }
+
+    //漫画预加载数量
+    var preMangaDownloadNum
+        get() = appCtx.getPrefInt(PreferKey.preMangaDownloadNum, 10)
+        set(value) {
+            appCtx.putPrefInt(PreferKey.preMangaDownloadNum, value)
+        }
+
+    //单页滚动
+    var singlePageScrolling
+        get() = appCtx.getPrefBoolean(PreferKey.singlePageScrolling, false)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.singlePageScrolling, value)
+        }
 }
 

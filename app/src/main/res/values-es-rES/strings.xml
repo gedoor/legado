@@ -820,6 +820,8 @@
     <string name="export_bookshelf">Exportar lista de libros</string>
     <string name="import_bookshelf">Importar lista de libros</string>
     <string name="pre_download">Descarga anterior</string>
+    <string name="pre_download_m">预下载%s页</string>
+    <string name="single_page_scroller">单页滚动</string>
     <string name="pre_download_s">Descargue %s capítulos antes</string>
     <string name="is_enabled">Está habilitado</string>
     <string name="background_image">Imagen de fondo</string>

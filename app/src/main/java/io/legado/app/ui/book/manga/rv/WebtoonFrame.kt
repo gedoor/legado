@@ -7,7 +7,6 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.widget.FrameLayout
-import io.legado.app.help.config.AppConfig
 
 class WebtoonFrame : FrameLayout {
 
@@ -29,11 +28,13 @@ class WebtoonFrame : FrameLayout {
             scaleDetector.isQuickScaleEnabled = value
         }
 
+    var disableMangaScaling = false
+
     private val recycler: WebtoonRecyclerView?
         get() = getChildAt(0) as? WebtoonRecyclerView
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-        if (!AppConfig.disableMangaScaling) {
+        if (!disableMangaScaling) {
             scaleDetector.onTouchEvent(ev)
             flingDetector.onTouchEvent(ev)
             val recyclerRect = Rect()
