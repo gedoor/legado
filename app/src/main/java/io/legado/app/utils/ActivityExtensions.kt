@@ -16,10 +16,8 @@ import android.view.WindowMetrics
 import android.widget.FrameLayout
 import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.WindowInsetsControllerCompat.BEHAVIOR_DEFAULT
 import androidx.core.view.WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 import androidx.fragment.app.DialogFragment
@@ -191,6 +189,18 @@ fun Activity.toggleNavigationBar(show: Boolean) {
     }
 }
 
+fun Activity.toggleStatusBar(show: Boolean) {
+    WindowCompat.getInsetsController(window, window.decorView).run {
+        if (show) {
+            show(WindowInsetsCompat.Type.statusBars())
+            systemBarsBehavior = BEHAVIOR_DEFAULT
+        } else {
+            hide(WindowInsetsCompat.Type.statusBars())
+            systemBarsBehavior = BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        }
+    }
+}
+
 /////以下方法需要在View完全被绘制出来之后调用，否则判断不了,在比如 onWindowFocusChanged（）方法中可以得到正确的结果/////
 
 /**
@@ -245,16 +255,4 @@ val Activity.navigationBarGravity: Int
 fun AppCompatActivity.showHelp(fileName: String) {
     val mdText = String(assets.open("web/help/md/${fileName}.md").readBytes())
     showDialogFragment(TextDialog(getString(R.string.help), mdText, TextDialog.Mode.MD))
-}
-
-fun immersionFullScreen(windowInsetsControllerCompat: WindowInsetsControllerCompat) {
-    windowInsetsControllerCompat.systemBarsBehavior = BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-    windowInsetsControllerCompat.hide(WindowInsetsCompat.Type.systemBars())
-}
-
-inline fun immersionPadding(root: View, crossinline viewInsets: (v: View, insets: androidx.core.graphics.Insets, gestureInsets: androidx.core.graphics.Insets) -> Unit) {
-    ViewCompat.setOnApplyWindowInsetsListener(root) { view: View, windowInsetsCompat: WindowInsetsCompat ->
-        viewInsets(view, windowInsetsCompat.getInsets(WindowInsetsCompat.Type.systemBars()), windowInsetsCompat.getInsets(WindowInsetsCompat.Type.systemGestures()))
-        WindowInsetsCompat.CONSUMED
-    }
 }

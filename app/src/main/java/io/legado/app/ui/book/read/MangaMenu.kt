@@ -6,8 +6,6 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.View.OnClickListener
-import android.view.View.OnLongClickListener
 import android.view.animation.Animation
 import android.widget.FrameLayout
 import androidx.core.view.isGone
@@ -36,9 +34,6 @@ import io.legado.app.utils.modifyBegin
 import io.legado.app.utils.openUrl
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.visible
-import splitties.views.bottomPadding
-import splitties.views.leftPadding
-import splitties.views.rightPadding
 
 class MangaMenu @JvmOverloads constructor(
     context: Context,
@@ -84,7 +79,8 @@ class MangaMenu @JvmOverloads constructor(
         }
 
         override fun onAnimationEnd(animation: Animation) {
-            binding.flTitleBar.invisible()
+            this@MangaMenu.invisible()
+            binding.titleBar.invisible()
             isMenuOutAnimating = false
             canShowMenu = false
             callBack.upSystemUiVisibility(false)
@@ -120,7 +116,6 @@ class MangaMenu @JvmOverloads constructor(
         if (immersiveMenu) {
             val lightTextColor = ColorUtils.withAlpha(ColorUtils.lightenColor(textColor), 0.75f)
             titleBar.setTextColor(textColor)
-            flTitleBar.setBackgroundColor(bgColor)
             titleBar.setBackgroundColor(bgColor)
             titleBar.setColorFilter(textColor)
             tvChapterName.setTextColor(lightTextColor)
@@ -129,7 +124,6 @@ class MangaMenu @JvmOverloads constructor(
             val bgColor = context.primaryColor
             val textColor = context.primaryTextColor
             titleBar.setTextColor(textColor)
-            flTitleBar.setBackgroundColor(bgColor)
             titleBar.setBackgroundColor(bgColor)
             titleBar.setColorFilter(textColor)
             tvChapterName.setTextColor(textColor)
@@ -178,7 +172,7 @@ class MangaMenu @JvmOverloads constructor(
         }
         if (this.isVisible) {
             if (anim) {
-                binding.flTitleBar.startAnimation(menuTopOut)
+                binding.titleBar.startAnimation(menuTopOut)
             } else {
                 menuOutListener.onAnimationStart(menuBottomOut)
                 menuOutListener.onAnimationEnd(menuBottomOut)
@@ -188,9 +182,9 @@ class MangaMenu @JvmOverloads constructor(
 
     fun runMenuIn(anim: Boolean = !AppConfig.isEInkMode) {
         this.visible()
-        binding.flTitleBar.visible()
+        binding.titleBar.visible()
         if (anim) {
-            binding.flTitleBar.startAnimation(menuTopIn)
+            binding.titleBar.startAnimation(menuTopIn)
         } else {
             menuInListener.onAnimationStart(menuBottomIn)
             menuInListener.onAnimationEnd(menuBottomIn)
@@ -233,18 +227,9 @@ class MangaMenu @JvmOverloads constructor(
         tvChapterUrl.setOnLongClickListener(chapterViewLongClickListener)
     }
 
-    fun setTitleBarPadding(top: Int) {
-        if (top <= 0) {
-            return
-        }
-        binding.flTitleBar.run {
-            setPadding(leftPadding, this.paddingTop.plus(top), rightPadding, bottomPadding)
-        }
-    }
-
     interface CallBack {
         fun openBookInfoActivity()
-        fun upSystemUiVisibility(value: Boolean)
+        fun upSystemUiVisibility(menuIsVisible: Boolean)
     }
 
 }

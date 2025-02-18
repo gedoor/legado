@@ -617,10 +617,10 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
         }
 
     //漫画预加载数量
-    var preMangaDownloadNum
-        get() = appCtx.getPrefInt(PreferKey.preMangaDownloadNum, 10)
+    var mangaPreDownloadNum
+        get() = appCtx.getPrefInt(PreferKey.mangaPreDownloadNum, 10)
         set(value) {
-            appCtx.putPrefInt(PreferKey.preMangaDownloadNum, value)
+            appCtx.putPrefInt(PreferKey.mangaPreDownloadNum, value)
         }
 
     //单页滚动

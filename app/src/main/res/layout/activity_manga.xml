@@ -34,7 +34,7 @@
         android:id="@+id/fl_loading"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white">
+        android:background="@color/background">
 
         <LinearLayout
             android:id="@+id/ll_loading"
@@ -60,32 +60,30 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:text="正在加载中..."
-                android:textColor="@color/black" />
+                android:textColor="@color/primaryText" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/ll_retry"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/tv_msg"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black" />
+                android:textColor="@color/primaryText" />
 
-            <Button
-                android:id="@+id/retry"
-                style="@style/Widget.Material3.Button.TonalButton"
+            <io.legado.app.ui.widget.text.AccentTextView
+                android:id="@+id/tv_retry"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_margin="16dp"
                 android:text="重新加载"
                 android:textSize="18sp"
-                app:cornerRadius="10dp"
                 tools:visibility="visible" />
         </LinearLayout>
 

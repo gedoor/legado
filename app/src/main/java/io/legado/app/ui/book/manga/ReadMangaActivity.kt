@@ -7,13 +7,10 @@ import android.os.Looper
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
-import android.view.ViewGroup
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
-import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import com.bumptech.glide.Glide
@@ -27,7 +24,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookProgress
 import io.legado.app.data.entities.BookSource
-import io.legado.app.databinding.ActivityMangeBinding
+import io.legado.app.databinding.ActivityMangaBinding
 import io.legado.app.databinding.ViewLoadMoreBinding
 import io.legado.app.help.book.isImage
 import io.legado.app.help.config.AppConfig
@@ -50,15 +47,14 @@ import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.StartActivityContract
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.gone
-import io.legado.app.utils.immersionFullScreen
-import io.legado.app.utils.immersionPadding
 import io.legado.app.utils.printOnDebug
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.toastOnUi
+import io.legado.app.utils.toggleStatusBar
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
 
-class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>(),
+class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>(),
     ReadManga.Callback, ChangeBookSourceDialog.CallBack, MangaMenu.CallBack {
 
     private val mLayoutManager by lazy {
@@ -68,7 +64,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
         MangaAdapter(this@ReadMangaActivity)
     }
     private val mPreDownloadNum by lazy {
-        AppConfig.preMangaDownloadNum
+        AppConfig.mangaPreDownloadNum
     }
     private val mSinglePageScroller by lazy {
         AppConfig.singlePageScrolling
@@ -105,10 +101,6 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
         }
     }
 
-    private val windowInsetsControllerCompat by lazy {
-        WindowInsetsControllerCompat(window, binding.root)
-    }
-
     //打开目录返回选择章节返回结果
     private val tocActivity = registerForActivityResult(TocActivityResult()) {
         it?.let {
@@ -123,20 +115,13 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
                 super.finish()
             }
         }
-    override val binding by viewBinding(ActivityMangeBinding::inflate)
+    override val binding by viewBinding(ActivityMangaBinding::inflate)
     override val viewModel by viewModels<MangaViewModel>()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        immersionFullScreen(windowInsetsControllerCompat)
-        immersionPadding(binding.root) { view, insets, _ ->
-            binding.mangaMenu.setTitleBarPadding(insets.top)
-            view.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                leftMargin = insets.left
-                rightMargin = insets.right
-            }
-        }
         ReadManga.register(this)
         disableMangaScaling(mDisableMangaScaling)
+        upSystemUiVisibility(false)
         binding.mRecyclerMange.run {
             adapter = mAdapter
             itemAnimator = null
@@ -185,7 +170,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
                 }
             }
         }
-        binding.retry.setOnClickListener {
+        binding.tvRetry.setOnClickListener {
             binding.llLoading.isVisible = true
             binding.llRetry.isGone = true
             mFirstLoading = false
@@ -390,10 +375,14 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
             }
 
             R.id.menu_pre_manga_number -> {
-                NumberPickerDialog(this).setTitle(getString(R.string.pre_download))
-                    .setMaxValue(9999).setMinValue(0).setValue(AppConfig.preMangaDownloadNum).show {
-                        AppConfig.preMangaDownloadNum = it
-                        item.setTitle(getString(R.string.pre_download_m, it))
+                NumberPickerDialog(this)
+                    .setTitle(getString(R.string.pre_download))
+                    .setMaxValue(9999)
+                    .setMinValue(0)
+                    .setValue(AppConfig.mangaPreDownloadNum)
+                    .show {
+                        AppConfig.mangaPreDownloadNum = it
+                        item.title = getString(R.string.pre_download_m, it)
                         addRecyclerViewPreloader(it)
                     }
             }
@@ -422,9 +411,8 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangeBinding, MangaViewModel>()
         }
     }
 
-    override fun upSystemUiVisibility(value: Boolean) {
-        binding.mangaMenu.isVisible = value
-        immersionFullScreen(WindowInsetsControllerCompat(window, binding.root))
+    override fun upSystemUiVisibility(menuIsVisible: Boolean) {
+        toggleStatusBar(menuIsVisible)
     }
 
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
