@@ -102,7 +102,7 @@ class WebtoonRecyclerView @JvmOverloads constructor(
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        mcRect.set(width * 0.33f, height * 0.33f, width * 0.66f, height * 0.66f)
+        mcRect.set(width * 0.33f, height * 0.33f, width * 0.66f, height * 0.46f)
     }
 
     private fun getPositionX(positionX: Float): Float {

@@ -272,7 +272,7 @@ object ReadManga : CoroutineScope by MainScope() {
     suspend fun contentLoadFinish(
         chapter: BookChapter,
         content: String,
-        book: Book
+        book: Book,
     ) {
         if (mTopChapter != null && mTopChapter!!.title != chapterTitle && BookHelp.hasContent(
                 book,
@@ -299,7 +299,7 @@ object ReadManga : CoroutineScope by MainScope() {
             }.mapIndexed { index, src ->
                 MangeContent(
                     mChapterPageCount = durChapterPageCount,
-                    mChapterPagePos = durChapterPagePos,
+                    mChapterPagePos = durChapterPagePos.plus(1),
                     mChapterNextPagePos = durChapterPagePos.plus(1),
                     mImageUrl = src,
                     mDurChapterPos = index.plus(1)
@@ -308,6 +308,7 @@ object ReadManga : CoroutineScope by MainScope() {
                 this.forEach {
                     it.mDurChapterCount = this.size
                 }
+                durChapterCount = this.size
             }
             val contentList = mutableListOf<Any>()
             contentList.add(
@@ -318,7 +319,6 @@ object ReadManga : CoroutineScope by MainScope() {
                 )
             )
             contentList.addAll(list)
-            durChapterCount = contentList.size
             contentList.add(
                 ReaderLoading(
                     durChapterPagePos,
@@ -367,7 +367,12 @@ object ReadManga : CoroutineScope by MainScope() {
         val bookSource = bookSource ?: return
         val book = book ?: return
         if (!book.canUpdate) return
-        if (System.currentTimeMillis() - book.lastCheckTime < 600000) return
+        if (System.currentTimeMillis() - book.lastCheckTime < 600000) {
+            runOnUI {
+                mCallback?.noData()
+            }
+            return
+        }
         book.lastCheckTime = System.currentTimeMillis()
         WebBook.getChapterList(this, bookSource, book).onSuccess(IO) { cList ->
             if (book.bookUrl == ReadManga.book?.bookUrl
@@ -388,6 +393,10 @@ object ReadManga : CoroutineScope by MainScope() {
                 runOnUI {
                     mCallback?.noData()
                 }
+            }
+        }.onError {
+            runOnUI {
+                mCallback?.noData()
             }
         }
     }
@@ -565,7 +574,7 @@ object ReadManga : CoroutineScope by MainScope() {
     fun syncProgress(
         newProgressAction: ((progress: BookProgress) -> Unit)? = null,
         uploadSuccessAction: (() -> Unit)? = null,
-        syncSuccessAction: (() -> Unit)? = null
+        syncSuccessAction: (() -> Unit)? = null,
     ) {
         if (!AppConfig.syncBookProgress) return
         book?.let {

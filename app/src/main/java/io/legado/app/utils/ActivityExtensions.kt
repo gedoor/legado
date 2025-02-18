@@ -16,6 +16,7 @@ import android.view.WindowMetrics
 import android.widget.FrameLayout
 import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -249,4 +250,11 @@ fun AppCompatActivity.showHelp(fileName: String) {
 fun immersionFullScreen(windowInsetsControllerCompat: WindowInsetsControllerCompat) {
     windowInsetsControllerCompat.systemBarsBehavior = BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
     windowInsetsControllerCompat.hide(WindowInsetsCompat.Type.systemBars())
+}
+
+inline fun immersionPadding(root: View, crossinline viewInsets: (v: View, insets: androidx.core.graphics.Insets, gestureInsets: androidx.core.graphics.Insets) -> Unit) {
+    ViewCompat.setOnApplyWindowInsetsListener(root) { view: View, windowInsetsCompat: WindowInsetsCompat ->
+        viewInsets(view, windowInsetsCompat.getInsets(WindowInsetsCompat.Type.systemBars()), windowInsetsCompat.getInsets(WindowInsetsCompat.Type.systemGestures()))
+        WindowInsetsCompat.CONSUMED
+    }
 }
