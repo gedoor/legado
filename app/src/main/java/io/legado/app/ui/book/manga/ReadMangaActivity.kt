@@ -2,11 +2,13 @@ package io.legado.app.ui.book.manga
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.Looper
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
+import android.view.WindowManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
@@ -117,6 +119,11 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
         }
     override val binding by viewBinding(ActivityMangaBinding::inflate)
     override val viewModel by viewModels<MangaViewModel>()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        upLayoutInDisplayCutoutMode()
+        super.onCreate(savedInstanceState)
+    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         ReadManga.register(this)
@@ -453,8 +460,8 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
 
     @SuppressLint("StringFormatMatches")
     private fun upMenu(menu: Menu) {
-        menu.findItem(R.id.menu_pre_manga_number)
-            .setTitle(getString(R.string.pre_download_m, mPreDownloadNum))
+        menu.findItem(R.id.menu_pre_manga_number).title =
+            getString(R.string.pre_download_m, mPreDownloadNum)
         menu.findItem(R.id.menu_scroller_page).isChecked = mSinglePageScroller
         menu.findItem(R.id.menu_disable_manga_scaling).isChecked = mDisableMangaScaling
     }
@@ -467,4 +474,12 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
         }
     }
 
+    private fun upLayoutInDisplayCutoutMode() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            window.attributes = window.attributes.apply {
+                layoutInDisplayCutoutMode =
+                    WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+            }
+        }
+    }
 }
