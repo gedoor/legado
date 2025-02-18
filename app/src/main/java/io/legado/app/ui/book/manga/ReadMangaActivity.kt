@@ -462,6 +462,9 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
     private fun disableMangaScaling(disable: Boolean) {
         binding.webtoonFrame.disableMangaScaling = disable
         binding.mRecyclerMange.disableMangaScaling = disable
+        if (disable) {
+            binding.mRecyclerMange.resetZoom()
+        }
     }
 
 }

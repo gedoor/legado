@@ -191,6 +191,10 @@ class WebtoonRecyclerView @JvmOverloads constructor(
         return true
     }
 
+    fun resetZoom() {
+        zoom(currentScale, DEFAULT_RATE, x, 0f, y, 0f)
+    }
+
     private fun zoomScrollBy(dx: Int, dy: Int) {
         if (dx != 0) {
             x = getPositionX(x + dx)
