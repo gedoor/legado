@@ -10,6 +10,7 @@ import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
@@ -19,7 +20,6 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-import com.github.panpf.zoomimage.GlideZoomImageView
 import io.legado.app.R
 import io.legado.app.help.glide.progress.OnProgressListener
 import io.legado.app.help.glide.progress.ProgressManager
@@ -32,14 +32,14 @@ open class MangaVH<VB : ViewBinding>(val binding: VB, private val context: Conte
     RecyclerView.ViewHolder(binding.root) {
 
     protected lateinit var mLoading: ProgressBar
-    protected lateinit var mImage: GlideZoomImageView
+    protected lateinit var mImage: AppCompatImageView
     protected lateinit var mProgress: TextView
     protected lateinit var mFlProgress: FrameLayout
     protected var mRetry: Button? = null
 
     fun initComponent(
         loading: ProgressBar,
-        image: GlideZoomImageView,
+        image: AppCompatImageView,
         progress: TextView,
         button: Button? = null,
         flProgress: FrameLayout,
