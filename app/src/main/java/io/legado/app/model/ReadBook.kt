@@ -196,6 +196,9 @@ object ReadBook : CoroutineScope by MainScope() {
         ReadBookConfig.isComic = book.isImage
         if (oldIndex != ReadBookConfig.styleSelect) {
             postEvent(EventBus.UP_CONFIG, arrayListOf(1, 2, 5))
+            if (AppConfig.readBarStyleFollowPage) {
+                postEvent(EventBus.UPDATE_READ_ACTION_BAR, true)
+            }
         }
     }
 
