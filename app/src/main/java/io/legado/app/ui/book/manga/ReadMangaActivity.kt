@@ -433,6 +433,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
 
             R.id.menu_pre_manga_number -> {
                 showNumberPickerDialog(
+                    0,
                     getString(R.string.pre_download),
                     AppConfig.mangaPreDownloadNum
                 ) {
@@ -474,7 +475,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
             }
 
             R.id.menu_manga_auto_page_speed -> {
-                showNumberPickerDialog(getString(R.string.setting_manga_auto_page_speed), 3) {
+                showNumberPickerDialog(1,getString(R.string.setting_manga_auto_page_speed), 3) {
                     AppConfig.mangaAutoPageSpeed = it
                     mMangaAutoPageSpeed = it
                     item.title = getString(R.string.manga_auto_page_speed, it)
@@ -610,11 +611,11 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
         autoScrollHandler.removeCallbacks(autoScrollRunnable)
     }
 
-    private fun showNumberPickerDialog(title: String, initValue: Int, callback: (Int) -> Unit) {
+    private fun showNumberPickerDialog(min:Int,title: String, initValue: Int, callback: (Int) -> Unit) {
         NumberPickerDialog(this)
             .setTitle(title)
             .setMaxValue(9999)
-            .setMinValue(0)
+            .setMinValue(min)
             .setValue(initValue)
             .show {
                 callback.invoke(it)
