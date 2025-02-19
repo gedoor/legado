@@ -629,5 +629,12 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
         set(value) {
             appCtx.putPrefBoolean(PreferKey.singlePageScrolling, value)
         }
+
+    //点击翻页
+    var disableClickScroller
+        get() = appCtx.getPrefBoolean(PreferKey.disableClickScroller, false)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.disableClickScroller, value)
+        }
 }
 
