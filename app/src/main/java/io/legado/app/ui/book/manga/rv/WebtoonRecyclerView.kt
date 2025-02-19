@@ -49,6 +49,7 @@ class WebtoonRecyclerView @JvmOverloads constructor(
     var tapListener: ((MotionEvent) -> Unit)? = null
     var longTapListener: ((MotionEvent) -> Boolean)? = null
     var disableMangaScaling = false
+    var disabledClickScroller = false
 
     private var mToucheMiddle: (() -> Unit)? = null
     fun onToucheMiddle(init: () -> Unit) = apply { this.mToucheMiddle = init }
@@ -256,11 +257,11 @@ class WebtoonRecyclerView @JvmOverloads constructor(
                     mToucheMiddle?.invoke()
                 }
 
-                blRect.contains(startX, startY) -> {
+                blRect.contains(startX, startY) && !disabledClickScroller -> {
                     mPrevPage?.invoke()
                 }
 
-                brRect.contains(startX, startY) -> {
+                brRect.contains(startX, startY) && !disabledClickScroller-> {
                     mNextPage?.invoke()
                 }
 

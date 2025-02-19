@@ -1187,6 +1187,7 @@
     <string name="theme_config">主题配置</string>
     <string name="show_mange_ui">漫画浏览</string>
     <string name="disable_manga_scaling">禁用漫画缩放</string>
+    <string name="disable_manga_click_scroller">禁用点击翻页</string>
     <string name="book_reader_info_bar">页数. %1$d/%2$d  章节. %3$d/%4$d -> %5$s%%</string>
     <string name="menu_download_after">下载之后章节</string>
     <string name="menu_download_all">下载全部章节</string>
