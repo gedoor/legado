@@ -473,6 +473,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
             R.id.menu_manga_auto_page_speed -> {
                 showNumberPickerDialog(3) {
                     AppConfig.mangaAutoPageSpeed = it
+                    mMangaAutoPageSpeed = it
                     item.title = getString(R.string.manga_auto_page_speed, it)
                     stopAutoPage()
                     startAutoPage()
