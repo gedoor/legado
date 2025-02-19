@@ -8,6 +8,7 @@ import android.os.Looper
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.view.WindowManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
@@ -97,7 +98,16 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
     }
 
     private val mPagerSnapHelper: PagerSnapHelper by lazy {
-        PagerSnapHelper()
+        object : PagerSnapHelper() {
+            override fun calculateDistanceToFinalSnap(
+                layoutManager: RecyclerView.LayoutManager,
+                targetView: View
+            ): IntArray {
+                val out = IntArray(2)
+                out[1] = targetView.top - binding.mRecyclerMange.paddingTop
+                return out
+            }
+        }
     }
 
     private var mRecyclerViewPreloader: RecyclerViewPreloader<Any>? = null
