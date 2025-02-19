@@ -1184,6 +1184,9 @@ Còn </string>
     <string name="show_mange_ui">漫画浏览</string>
     <string name="disable_manga_scaling">禁用漫画缩放</string>
     <string name="disable_manga_click_scroller">禁用点击翻页</string>
+    <string name="enable_auto_page_scroller">开启自动翻页</string>
+    <string name="manga_auto_page_speed">翻页速度 %s 秒</string>
+    <string name="setting_manga_auto_page_speed">设置自动翻页速度</string>
     <string name="book_reader_info_bar">页数. %1$d/%2$d  章节. %3$d/%4$d -> %5$s%%</string>
     <string name="menu_download_after">Tải xuống chương tiếp theo</string>
     <string name="menu_download_all">Tải xuống tất cả các chương</string>
