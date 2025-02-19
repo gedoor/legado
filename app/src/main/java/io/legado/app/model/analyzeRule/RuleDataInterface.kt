@@ -5,19 +5,24 @@ interface RuleDataInterface {
     val variableMap: HashMap<String, String>
 
     fun putVariable(key: String, value: String?): Boolean {
+        val keyExist = variableMap.contains(key)
         return when {
             value == null -> {
                 variableMap.remove(key)
                 putBigVariable(key, null)
-                true
+                keyExist
             }
+
             value.length < 10000 -> {
+                putBigVariable(key, null)
                 variableMap[key] = value
                 true
             }
+
             else -> {
+                variableMap.remove(key)
                 putBigVariable(key, value)
-                false
+                keyExist
             }
         }
     }
