@@ -457,7 +457,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
                 disabledClickScroller(item.isChecked)
             }
 
-            R.id.menu_disable_auto_page -> {
+            R.id.menu_enable_auto_page -> {
                 item.isChecked = !item.isChecked
                 val menuMangaAutoPageSpeed = mMenu?.findItem(R.id.menu_manga_auto_page_speed)
                 mDisableAutoScrollPage = item.isChecked

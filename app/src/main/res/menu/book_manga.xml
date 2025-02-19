@@ -46,10 +46,10 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/menu_disable_auto_page"
+        android:id="@+id/menu_enable_auto_page"
         android:checkable="true"
         android:checked="false"
-        android:title="@string/disable_auto_page_scroller"
+        android:title="@string/enable_auto_page_scroller"
         app:showAsAction="never" />
 
     <item
