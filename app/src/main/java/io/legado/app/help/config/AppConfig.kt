@@ -643,5 +643,13 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
         set(value) {
             appCtx.putPrefInt(PreferKey.mangaAutoPageSpeed, value)
         }
+
+    //漫画页脚配置
+    var mangaFooterConfig
+        get() = appCtx.getPrefString(PreferKey.mangaFooterConfig, "")
+        set(value) {
+            appCtx.putPrefString(PreferKey.mangaFooterConfig, value)
+        }
+
 }
 
