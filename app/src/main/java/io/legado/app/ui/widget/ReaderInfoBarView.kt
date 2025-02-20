@@ -24,6 +24,7 @@ import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlin.math.min
 import com.google.android.material.R as materialR
 
 class ReaderInfoBarView @JvmOverloads constructor(
@@ -31,6 +32,11 @@ class ReaderInfoBarView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     @AttrRes defStyleAttr: Int = 0,
 ) : View(context, attrs, defStyleAttr) {
+
+    companion object {
+        const val ALIGN_LEFT = 0
+        const val ALIGN_CENTER = 1
+    }
 
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val textBounds = Rect()
@@ -54,12 +60,16 @@ class ReaderInfoBarView @JvmOverloads constructor(
         200,
     )
 
+    var textInfoAlignment: Int = ALIGN_CENTER
+        set(value) {
+            field = value
+            updateTextSize()
+            invalidate()
+        }
     private var timeText = timeFormat.format(Date())
     private var text: String = ""
-
     private val innerHeight
         get() = height - paddingTop - paddingBottom - insetTop
-
     private val innerWidth
         get() = width - paddingLeft - paddingRight - insetLeft - insetRight
 
@@ -76,12 +86,29 @@ class ReaderInfoBarView @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         val ty = innerHeight / 2f + textBounds.height() / 2f - textBounds.bottom
-        paint.textAlign = Paint.Align.LEFT
+
+        val textX = when (textInfoAlignment) {
+            ALIGN_CENTER -> {
+                val textWidth = paint.measureText(text)
+                (width / 2f).coerceIn(
+                    paddingLeft + insetLeft + cutoutInsetLeft + textWidth / 2,
+                    width - paddingRight - insetRight - cutoutInsetRight - textWidth / 2
+                )
+            }
+
+            else -> (paddingLeft + insetLeft + cutoutInsetLeft).toFloat()
+        }
+        paint.textAlign = when (textInfoAlignment) {
+            ALIGN_CENTER -> Paint.Align.CENTER
+            else -> Paint.Align.LEFT
+        }
+
         canvas.drawTextOutline(
             text,
-            (paddingLeft + insetLeft + cutoutInsetLeft).toFloat(),
+            textX,
             paddingTop + insetTop + ty,
         )
+
         paint.textAlign = Paint.Align.RIGHT
         canvas.drawTextOutline(
             timeText,
@@ -117,21 +144,8 @@ class ReaderInfoBarView @JvmOverloads constructor(
         context.unregisterReceiver(timeReceiver)
     }
 
-    fun update(
-        currentPage: Int,
-        totalPage: Int,
-        percent: Float,
-        chapterIndex: Int,
-        chapterCount: Int
-    ) {
-        text = context.getString(
-            R.string.book_reader_info_bar,
-            chapterIndex,
-            chapterCount,
-            currentPage,
-            totalPage,
-            if (percent in 0f..1f) (percent * 100).format() else ""
-        )
+    fun update(label: String) {
+        text = label
         updateTextSize()
         invalidate()
     }
@@ -164,12 +178,30 @@ class ReaderInfoBarView @JvmOverloads constructor(
 
 
     private fun updateTextSize() {
-        val str = text + timeText
         val testTextSize = 48f
         paint.textSize = testTextSize
-        paint.getTextBounds(str, 0, str.length, textBounds)
-        paint.textSize = testTextSize * innerHeight / textBounds.height()
-        paint.getTextBounds(str, 0, str.length, textBounds)
+        paint.getTextBounds(text, 0, text.length, textBounds)
+
+        val maxTextHeight = innerHeight * 0.8f
+        val scaleFactor = min(
+            maxTextHeight / textBounds.height(),
+            calculateMaxWidthScale()
+        )
+        paint.textSize = testTextSize * scaleFactor
+
+        paint.getTextBounds(text, 0, text.length, textBounds)
+    }
+
+    private fun calculateMaxWidthScale(): Float {
+        return when (textInfoAlignment) {
+            ALIGN_CENTER -> {
+                val availableWidth = innerWidth - cutoutInsetLeft - cutoutInsetRight
+                val requiredWidth = paint.measureText(text)
+                if (requiredWidth > availableWidth) availableWidth / requiredWidth else 1f
+            }
+
+            else -> 1f
+        }
     }
 
     private fun Canvas.drawTextOutline(text: String, x: Float, y: Float) {

@@ -97,6 +97,7 @@ object PreferKey {
     const val preDownloadNum = "preDownloadNum"
     const val mangaPreDownloadNum = "mangaPreDownloadNum"
     const val mangaAutoPageSpeed = "mangaAutoPageSpeed"
+    const val mangaFooterConfig = "mangaFooterConfig"
     const val singlePageScrolling = "singlePageScrolling"
     const val disableClickScroller = "disableClickScroller"
     const val autoRefresh = "auto_refresh"

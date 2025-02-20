@@ -1187,8 +1187,23 @@
     <string name="disable_manga_click_scroller">禁用点击翻页</string>
     <string name="enable_auto_page_scroller">开启自动翻页</string>
     <string name="manga_auto_page_speed">翻页速度 %s 秒</string>
+    <string name="manga_footer_config">页脚配置</string>
     <string name="setting_manga_auto_page_speed">设置自动翻页速度</string>
     <string name="book_reader_info_bar">页数. %1$d/%2$d  章节. %3$d/%4$d -> %5$s%%</string>
     <string name="menu_download_after">Descargar el siguiente capítulo</string>
     <string name="menu_download_all">Descargar todos los capítulos</string>
+    <string name="manga_header_chapter">《章节和文案》隐藏</string>
+    <string name="manga_check_chapter_label">《章节.》文案</string>
+    <string name="manga_check_chapter">章节</string>
+    <string name="manga_header_page">《页数和文案》隐藏</string>
+    <string name="manga_check_page_label">《页数.》文案</string>
+    <string name="manga_check_page_number">页数</string>
+    <string name="manga_header_progress">《总进度和文案》隐藏</string>
+    <string name="manga_check_progress_label">《总进度.》文案</string>
+    <string name="manga_check_progress">总进度</string>
+    <string name="manga_header_footer">页脚</string>
+    <string name="manga_radio_left">靠左</string>
+    <string name="manga_radio_center">居中</string>
+    <string name="manga_radio_disable">禁用</string>
+    <string name="manga_radio_enable">启用</string>
 </resources>
