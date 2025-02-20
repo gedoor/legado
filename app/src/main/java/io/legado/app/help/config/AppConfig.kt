@@ -650,5 +650,6 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
         set(value) {
             appCtx.putPrefString(PreferKey.mangaFooterConfig, value)
         }
+
 }
 
