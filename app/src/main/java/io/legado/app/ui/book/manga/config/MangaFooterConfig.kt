@@ -1,15 +1,16 @@
 package io.legado.app.ui.book.manga.config
 
 import androidx.annotation.Keep
+import io.legado.app.ui.widget.ReaderInfoBarView
 
 @Keep
 data class MangaFooterConfig(
-    var chapterLabelDisable: Boolean = false,
-    var chapterDisable: Boolean = false,
-    var pageNumberLabelDisable: Boolean = false,
-    var pageNumberDisable: Boolean = false,
-    var progressRatioLabelDisable: Boolean = false,
-    var progressRatioDisable: Boolean = false,
-    var footerOrientation: Boolean = false,//默认靠左
-    var footerDisable: Boolean = false
+    var disableChapterLabel: Boolean = false,
+    var disableChapter: Boolean = false,
+    var disablePageNumberLabel: Boolean = false,
+    var disablePageNumber: Boolean = false,
+    var disableProgressRatioLabel: Boolean = false,
+    var disableProgressRatio: Boolean = false,
+    var footerOrientation: Int = ReaderInfoBarView.ALIGN_LEFT,//默认靠左
+    var disableFooter: Boolean = false
 )

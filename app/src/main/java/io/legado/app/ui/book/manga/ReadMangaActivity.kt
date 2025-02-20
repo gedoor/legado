@@ -314,25 +314,24 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
     ) {
         mMangaFooterConfig?.run {
             mLabelBuilder.clear()
-            binding.infobar.isGone = this.footerDisable
-            binding.infobar.textInfoAlignment =
-                if (this.footerOrientation) ReaderInfoBarView.ALIGN_CENTER else ReaderInfoBarView.ALIGN_LEFT
-            if (!this.pageNumberDisable) {
-                if (!this.pageNumberLabelDisable) {
+            binding.infobar.isGone = this.disableFooter
+            binding.infobar.textInfoAlignment =this.footerOrientation
+            if (!this.disablePageNumber) {
+                if (!this.disablePageNumberLabel) {
                     mLabelBuilder.append(getString(R.string.manga_check_page_number))
                 }
                 mLabelBuilder.append("${chapterPos}/${chapterCount}").append(" ")
             }
 
-            if (!this.chapterDisable) {
-                if (!this.chapterLabelDisable) {
+            if (!this.disableChapter) {
+                if (!this.disableChapterLabel) {
                     mLabelBuilder.append(getString(R.string.manga_check_chapter))
                 }
                 mLabelBuilder.append("${chapterPagePos}/${chapterPageCount}").append(" ")
             }
 
-            if (!this.progressRatioDisable) {
-                if (!this.progressRatioLabelDisable) {
+            if (!this.disableProgressRatio) {
+                if (!this.disableProgressRatioLabel) {
                     mLabelBuilder.append(getString(R.string.manga_check_progress))
                 }
                 mLabelBuilder.append(
