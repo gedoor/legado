@@ -159,6 +159,4 @@
             android:text="@string/manga_radio_center" />
     </RadioGroup>
 
-
-
 </LinearLayout>
