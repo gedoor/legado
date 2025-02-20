@@ -113,9 +113,7 @@ class OkHttpStreamFetcher(
                     isCover = false,
                     source,
                     ReadManga.book
-                )?.let {
-                    ByteArrayInputStream(it)
-                }
+                )?.inputStream()
             } else {
                 ImageUtils.decode(
                     url.toStringUrl(), responseBody!!.byteStream(),

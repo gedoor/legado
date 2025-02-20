@@ -21,6 +21,11 @@ class LegadoGlideModule : AppGlideModule() {
             InputStream::class.java,
             OkHttpModeLoaderFactory
         )
+        registry.prepend(
+            String::class.java,
+            InputStream::class.java,
+            LegadoDataUrlLoader.Factory()
+        )
     }
 
     override fun applyOptions(context: Context, builder: GlideBuilder) {
