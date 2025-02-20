@@ -35,7 +35,8 @@ data class TextPage(
     var chapterSize: Int = 0,
     var chapterIndex: Int = 0,
     var height: Float = 0f,
-    var leftLineSize: Int = 0
+    var leftLineSize: Int = 0,
+    var renderHeight: Int = 0
 ) {
 
     companion object {
@@ -332,8 +333,7 @@ data class TextPage(
 
     fun render(view: ContentTextView): Boolean {
         if (!isCompleted) return false
-        val height = lines.lastOrNull()?.lineBottom?.toInt() ?: 0
-        return canvasRecorder.recordIfNeeded(view.width, height) {
+        return canvasRecorder.recordIfNeeded(view.width, renderHeight) {
             drawPage(view, this)
         }
     }
