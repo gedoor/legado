@@ -19,7 +19,7 @@ import io.legado.app.help.book.update
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.globalExecutor
-import io.legado.app.model.recyclerView.MangeContent
+import io.legado.app.model.recyclerView.MangaContent
 import io.legado.app.model.recyclerView.ReaderLoading
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.NetworkUtils
@@ -71,7 +71,7 @@ object ReadManga : CoroutineScope by MainScope() {
 
     fun saveRead(pageChanged: Boolean = false) {
         executor.execute {
-            val book = ReadManga.book ?: return@execute
+            val book = book ?: return@execute
             book.lastCheckCount = 0
             book.durChapterTime = System.currentTimeMillis()
             val chapterChanged = book.durChapterIndex != durChapterPagePos
@@ -194,8 +194,8 @@ object ReadManga : CoroutineScope by MainScope() {
         scope: CoroutineScope,
         chapter: BookChapter,
     ) {
-        val book = ReadManga.book ?: return removeLoading(chapter.index)
-        val bookSource = ReadManga.bookSource
+        val book = book ?: return removeLoading(chapter.index)
+        val bookSource = bookSource
         if (bookSource != null) {
             getContent(bookSource, scope, chapter, book)
         }
@@ -211,7 +211,7 @@ object ReadManga : CoroutineScope by MainScope() {
     ) {
         if (addLoading(index)) {
             Coroutine.async {
-                val book = ReadManga.book!!
+                val book = book!!
                 appDb.bookChapterDao.getChapter(book.bookUrl, index)?.let { chapter ->
                     getContent(
                         downloadScope,
@@ -291,7 +291,7 @@ object ReadManga : CoroutineScope by MainScope() {
                     emit(mSrc)
                 }
             }.distinctUntilChanged().mapIndexed { index, src ->
-                MangeContent(
+                MangaContent(
                     mChapterPageCount = durChapterPageCount,
                     mChapterPagePos = durChapterPagePos.plus(1),
                     mChapterNextPagePos = durChapterPagePos.plus(1),
@@ -521,7 +521,7 @@ object ReadManga : CoroutineScope by MainScope() {
                             })
                     }
                 } ?: removeDownloadLoading(index)
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 removeLoading(index)
             }
         }
@@ -612,7 +612,7 @@ object ReadManga : CoroutineScope by MainScope() {
                     loadContent(durChapterPagePos)
                 } else {
                     Coroutine.async {
-                        val book = ReadManga.book!!
+                        val book = book!!
                         appDb.bookChapterDao.getChapter(book.bookUrl, durChapterPagePos)
                             ?.let { chapter ->
                                 getContent(

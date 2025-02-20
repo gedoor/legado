@@ -23,7 +23,7 @@ import io.legado.app.help.glide.progress.ProgressManager
 import io.legado.app.model.BookCover
 import io.legado.app.model.ReadManga
 import io.legado.app.model.recyclerView.MangaVH
-import io.legado.app.model.recyclerView.MangeContent
+import io.legado.app.model.recyclerView.MangaContent
 import io.legado.app.model.recyclerView.ReaderLoading
 import io.legado.app.utils.getCompatDrawable
 import java.util.Collections
@@ -41,7 +41,7 @@ class MangaAdapter(private val context: Context) :
         override fun areItemsTheSame(oldItem: Any, newItem: Any): Boolean {
             return if (oldItem is ReaderLoading && newItem is ReaderLoading) {
                 newItem.mMessage == oldItem.mMessage
-            } else if (oldItem is MangeContent && newItem is MangeContent) {
+            } else if (oldItem is MangaContent && newItem is MangaContent) {
                 oldItem.mImageUrl == newItem.mImageUrl
             } else false
         }
@@ -49,7 +49,7 @@ class MangaAdapter(private val context: Context) :
         override fun areContentsTheSame(oldItem: Any, newItem: Any): Boolean {
             return if (oldItem is ReaderLoading && newItem is ReaderLoading) {
                 oldItem == newItem
-            } else if (oldItem is MangeContent && newItem is MangeContent) {
+            } else if (oldItem is MangaContent && newItem is MangaContent) {
                 oldItem == newItem
             } else false
         }
@@ -88,13 +88,13 @@ class MangaAdapter(private val context: Context) :
             )
             binding.retry.setOnClickListener {
                 val item = mDiffer.currentList[layoutPosition]
-                if (item is MangeContent) {
+                if (item is MangaContent) {
                     loadImageWithRetry(item.mImageUrl)
                 }
             }
         }
 
-        fun onBind(item: MangeContent) {
+        fun onBind(item: MangaContent) {
             loadImageWithRetry(item.mImageUrl)
         }
     }
@@ -142,7 +142,7 @@ class MangaAdapter(private val context: Context) :
     override fun getItemViewType(position: Int): Int {
         return when {
             isFooter(position) -> TYPE_FOOTER_VIEW + position - getActualItemCount()
-            getItem(position) is MangeContent -> CONTENT_VIEW
+            getItem(position) is MangaContent -> CONTENT_VIEW
             getItem(position) is ReaderLoading -> LOADING_VIEW
             else -> error("Unknown view type!")
         }
@@ -169,7 +169,7 @@ class MangaAdapter(private val context: Context) :
 
     override fun onBindViewHolder(vh: RecyclerView.ViewHolder, position: Int) {
         when (vh) {
-            is PageViewHolder -> vh.onBind(getItem(position) as MangeContent)
+            is PageViewHolder -> vh.onBind(getItem(position) as MangaContent)
             is PageMoreViewHolder -> vh.onBind(getItem(position) as ReaderLoading)
         }
     }
@@ -209,7 +209,7 @@ class MangaAdapter(private val context: Context) :
     }
 
     override fun getPreloadRequestBuilder(item: Any): RequestBuilder<*>? {
-        if (item is MangeContent) {
+        if (item is MangaContent) {
             return BookCover.loadManga(
                 context,
                 item.mImageUrl,

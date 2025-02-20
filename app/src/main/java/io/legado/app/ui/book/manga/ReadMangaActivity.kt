@@ -39,7 +39,7 @@ import io.legado.app.help.storage.Backup
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.model.ReadManga
 import io.legado.app.model.ReadManga.mFirstLoading
-import io.legado.app.model.recyclerView.MangeContent
+import io.legado.app.model.recyclerView.MangaContent
 import io.legado.app.model.recyclerView.ReaderLoading
 import io.legado.app.receiver.NetworkChangedListener
 import io.legado.app.ui.book.changesource.ChangeBookSourceDialog
@@ -50,7 +50,6 @@ import io.legado.app.ui.book.manga.rv.MangaAdapter
 import io.legado.app.ui.book.read.MangaMenu
 import io.legado.app.ui.book.read.ReadBookActivity.Companion.RESULT_DELETED
 import io.legado.app.ui.book.toc.TocActivityResult
-import io.legado.app.ui.widget.ReaderInfoBarView
 import io.legado.app.ui.widget.number.NumberPickerDialog
 import io.legado.app.ui.widget.recycler.LoadMoreView
 import io.legado.app.utils.GSON
@@ -108,7 +107,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
     }
 
     private var mMangaAutoPageSpeed = mInitMangaAutoPageSpeed
-    private var mMangaFooterConfig: MangaFooterConfig? = null
+    private lateinit var mMangaFooterConfig: MangaFooterConfig
     private val mLabelBuilder by lazy { StringBuilder() }
 
     private val autoScrollHandler = Handler(Looper.getMainLooper())
@@ -179,11 +178,11 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
             }
         }
         loadMoreView.gone()
-        mMangaFooterConfig = GSON.fromJsonObject<MangaFooterConfig>(AppConfig.mangaFooterConfig).getOrNull()
-            ?: MangaFooterConfig()
-        observeEvent<MangaFooterConfig>(EventBus.UP_CONFIG) {
+        mMangaFooterConfig =
+            GSON.fromJsonObject<MangaFooterConfig>(AppConfig.mangaFooterConfig).getOrNull()
+                ?: MangaFooterConfig()
+        observeEvent<MangaFooterConfig>(EventBus.UP_MANGA_CONFIG) {
             mMangaFooterConfig = it
-            AppConfig.mangaFooterConfig = GSON.toJson(it)
             upInfoBar(
                 ReadManga.durChapterPagePos.plus(1),
                 ReadManga.durChapterPageCount,
@@ -222,7 +221,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
                 ) {
                     try {
                         val content = mAdapter.getCurrentList()[position]
-                        if (content is MangeContent) {
+                        if (content is MangaContent) {
                             ReadManga.durChapterPos = content.mDurChapterPos.minus(1)
                             upInfoBar(
                                 content.mChapterPagePos,
@@ -312,33 +311,29 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
     private fun upInfoBar(
         chapterPagePos: Int, chapterPageCount: Int, chapterPos: Int, chapterCount: Int,
     ) {
-        mMangaFooterConfig?.run {
+        mMangaFooterConfig.run {
             mLabelBuilder.clear()
-            binding.infobar.isGone = this.hideFooter
-            binding.infobar.textInfoAlignment =this.footerOrientation
-            if (!this.hidePageNumber) {
-                if (!this.hidePageNumberLabel) {
+            binding.infobar.isGone = hideFooter
+            binding.infobar.textInfoAlignment = footerOrientation
+            if (!hidePageNumber) {
+                if (!hidePageNumberLabel) {
                     mLabelBuilder.append(getString(R.string.manga_check_page_number))
                 }
                 mLabelBuilder.append("${chapterPos}/${chapterCount}").append(" ")
             }
 
-            if (!this.hideChapter) {
-                if (!this.hideChapterLabel) {
+            if (!hideChapter) {
+                if (!hideChapterLabel) {
                     mLabelBuilder.append(getString(R.string.manga_check_chapter))
                 }
                 mLabelBuilder.append("${chapterPagePos}/${chapterPageCount}").append(" ")
             }
 
-            if (!this.hideProgressRatio) {
-                if (!this.hideProgressRatioLabel) {
+            if (!hideProgressRatio) {
+                if (!hideProgressRatioLabel) {
                     mLabelBuilder.append(getString(R.string.manga_check_progress))
                 }
-                mLabelBuilder.append(
-                    "${
-                        chapterPagePos.div(chapterPageCount).times(100)
-                    }%"
-                )
+                mLabelBuilder.append("${chapterPagePos.div(chapterPageCount).times(100)}%")
             }
         }
         binding.infobar.update(

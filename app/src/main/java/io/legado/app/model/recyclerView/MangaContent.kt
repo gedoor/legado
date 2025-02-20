@@ -1,7 +1,7 @@
 package io.legado.app.model.recyclerView
 
 
-data class MangeContent(
+data class MangaContent(
     var mChapterPagePos: Int = 0,//总章节位置
     var mChapterPageCount: Int,//总章节数量
     var mChapterNextPagePos: Int = 0,//下一章
