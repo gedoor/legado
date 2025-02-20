@@ -142,7 +142,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
         android:orientation="horizontal">
 
         <io.legado.app.lib.theme.view.ThemeRadioButton
