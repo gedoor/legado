@@ -112,6 +112,30 @@
         android:textSize="14sp" />
 
     <RadioGroup
+        android:id="@+id/rg_footer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal">
+
+        <io.legado.app.lib.theme.view.ThemeRadioButton
+            android:id="@+id/rb_show"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/show" />
+
+        <io.legado.app.lib.theme.view.ThemeRadioButton
+            android:id="@+id/rb_hide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:gravity="center"
+            android:text="@string/hide" />
+    </RadioGroup>
+
+    <RadioGroup
         android:id="@+id/rg_footer_orientation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -135,30 +159,6 @@
             android:text="@string/manga_radio_center" />
     </RadioGroup>
 
-
-    <RadioGroup
-        android:id="@+id/rg_footer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:orientation="horizontal">
-
-        <io.legado.app.lib.theme.view.ThemeRadioButton
-            android:id="@+id/rb_disable"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/manga_radio_disable" />
-
-        <io.legado.app.lib.theme.view.ThemeRadioButton
-            android:id="@+id/rb_enable"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:gravity="center"
-            android:text="@string/manga_radio_enable" />
-    </RadioGroup>
 
 
 </LinearLayout>

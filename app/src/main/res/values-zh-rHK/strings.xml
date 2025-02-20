@@ -1204,6 +1204,4 @@
     <string name="manga_header_footer">页脚</string>
     <string name="manga_radio_left">靠左</string>
     <string name="manga_radio_center">居中</string>
-    <string name="manga_radio_disable">禁用</string>
-    <string name="manga_radio_enable">启用</string>
 </resources>
