@@ -242,7 +242,7 @@ class TextChapterLayout(
                     contentPaint,
                     contentPaintTextHeight,
                     contentPaintFontMetrics,
-                    book.getImageStyle(),
+                    imageStyle,
                     srcList = srcList
                 )
             } else {
@@ -250,30 +250,32 @@ class TextChapterLayout(
                     isSetTypedImage = false
                     prepareNextPageIfNeed()
                 }
-                val matcher = AppPattern.imgPattern.matcher(content)
                 var start = 0
-                while (matcher.find()) {
-                    coroutineContext.ensureActive()
-                    val text = content.substring(start, matcher.start())
-                    if (text.isNotBlank()) {
-                        setTypeText(
+                if (content.contains("<img")) {
+                    val matcher = AppPattern.imgPattern.matcher(content)
+                    while (matcher.find()) {
+                        coroutineContext.ensureActive()
+                        val text = content.substring(start, matcher.start())
+                        if (text.isNotBlank()) {
+                            setTypeText(
+                                book,
+                                text,
+                                contentPaint,
+                                contentPaintTextHeight,
+                                contentPaintFontMetrics,
+                                imageStyle,
+                                isFirstLine = start == 0
+                            )
+                        }
+                        setTypeImage(
                             book,
-                            text,
-                            contentPaint,
+                            matcher.group(1)!!,
                             contentPaintTextHeight,
-                            contentPaintFontMetrics,
-                            book.getImageStyle(),
-                            isFirstLine = start == 0
+                            imageStyle
                         )
+                        isSetTypedImage = true
+                        start = matcher.end()
                     }
-                    setTypeImage(
-                        book,
-                        matcher.group(1)!!,
-                        contentPaintTextHeight,
-                        book.getImageStyle()
-                    )
-                    isSetTypedImage = true
-                    start = matcher.end()
                 }
                 if (start < content.length) {
                     if (isSingleImageStyle && isSetTypedImage) {
@@ -288,7 +290,7 @@ class TextChapterLayout(
                             contentPaint,
                             contentPaintTextHeight,
                             contentPaintFontMetrics,
-                            book.getImageStyle(),
+                            imageStyle,
                             isFirstLine = start == 0
                         )
                     }
