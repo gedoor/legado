@@ -131,7 +131,7 @@ class TextChapterLayout(
 
     private fun onPageCompleted() {
         val textPage = pendingTextPage
-        textPage.index = textPages.lastIndex
+        textPage.index = textPages.size
         textPage.chapterIndex = bookChapter.index
         textPage.chapterSize = chaptersSize
         textPage.title = displayTitle
@@ -140,7 +140,7 @@ class TextChapterLayout(
         textPage.isCompleted = true
         textPage.textChapter = textChapter
         textPage.upLinesPosition()
-        textPage.renderHeight = textPage.lines.maxOf { it.lineBottom.toInt() }
+        textPage.upRenderHeight()
         textPages.add(textPage)
         channel.trySend(textPage)
         try {

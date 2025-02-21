@@ -20,6 +20,8 @@ import io.legado.app.utils.canvasrecorder.recordIfNeeded
 import io.legado.app.utils.dpToPx
 import splitties.init.appCtx
 import java.text.DecimalFormat
+import kotlin.math.ceil
+import kotlin.math.max
 import kotlin.math.min
 
 /**
@@ -178,6 +180,7 @@ data class TextPage(
                 addLine(textLine)
             }
             height = ChapterProvider.visibleHeight.toFloat()
+            upRenderHeight()
             invalidate()
             isCompleted = true
         }
@@ -358,5 +361,13 @@ data class TextPage(
 
     fun hasImageOrEmpty(): Boolean {
         return textLines.any { it.isImage } || textLines.isEmpty()
+    }
+
+    fun upRenderHeight() {
+        renderHeight = ceil(lines.last().lineBottom).toInt()
+        if (leftLineSize > 0 && leftLineSize != lines.size) {
+            val leftHeight = ceil(lines[leftLineSize - 1].lineBottom).toInt()
+            renderHeight = max(renderHeight, leftHeight)
+        }
     }
 }
