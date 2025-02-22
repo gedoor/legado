@@ -198,7 +198,7 @@ class CoverImageView @JvmOverloads constructor(
                 options = options.set(OkHttpModelLoader.sourceOriginOption, sourceOrigin)
             }
             val builder = if (lifecycle != null) {
-                ImageLoader.load(lifecycle, path)
+                ImageLoader.load(context, lifecycle, path)
             } else {
                 ImageLoader.load(context, path)//Glide自动识别http://,content://和file://
             }

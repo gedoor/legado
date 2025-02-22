@@ -8,6 +8,7 @@ import android.database.Cursor
 import android.net.Uri
 import android.os.ParcelFileDescriptor
 import android.provider.DocumentsContract
+import androidx.core.net.toUri
 import androidx.documentfile.provider.DocumentFile
 import io.legado.app.exception.NoStackTraceException
 import splitties.init.appCtx
@@ -66,6 +67,10 @@ data class FileDoc(
     }
 
     companion object {
+
+        fun fromDir(path: String): FileDoc {
+            return fromUri(path.toUri(), true)
+        }
 
         fun fromUri(uri: Uri, isDir: Boolean): FileDoc {
             if (uri.isContentScheme()) {
@@ -281,6 +286,14 @@ fun FileDoc.writeText(text: String) {
         uri.writeText(appCtx, text)
     } else {
         File(uri.path!!).writeText(text)
+    }
+}
+
+fun FileDoc.writeFile(file: File) {
+    openOutputStream().getOrThrow().use { out ->
+        file.inputStream().use {
+            it.copyTo(out)
+        }
     }
 }
 

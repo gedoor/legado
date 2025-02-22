@@ -12,7 +12,6 @@ import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.isContentScheme
 import io.legado.app.utils.isDataUrl
 import io.legado.app.utils.lifecycle
-import splitties.init.appCtx
 import java.io.File
 
 //https://bumptech.github.io/glide/doc/generatedapi.html
@@ -37,8 +36,8 @@ object ImageLoader {
         }
     }
 
-    fun load(lifecycle: Lifecycle, path: String?): RequestBuilder<Drawable> {
-        val requestManager = Glide.with(appCtx).lifecycle(lifecycle)
+    fun load(context: Context, lifecycle: Lifecycle, path: String?): RequestBuilder<Drawable> {
+        val requestManager = Glide.with(context).lifecycle(lifecycle)
         return when {
             path.isNullOrEmpty() -> requestManager.load(path)
             path.isDataUrl() -> requestManager.load(path)

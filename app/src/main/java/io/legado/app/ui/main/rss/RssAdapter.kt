@@ -32,7 +32,7 @@ class RssAdapter(context: Context, val callBack: CallBack, val lifecycle: Lifecy
             tvName.text = item.sourceName
             val options = RequestOptions()
                 .set(OkHttpModelLoader.sourceOriginOption, item.sourceUrl)
-            ImageLoader.load(lifecycle, item.sourceIcon)
+            ImageLoader.load(context, lifecycle, item.sourceIcon)
                 .apply(options)
                 .centerCrop()
                 .placeholder(R.drawable.image_rss)

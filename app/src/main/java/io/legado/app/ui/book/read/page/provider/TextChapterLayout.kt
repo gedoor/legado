@@ -89,7 +89,7 @@ class TextChapterLayout(
 
     var exception: Throwable? = null
 
-    var channel = Channel<TextPage>(Int.MAX_VALUE)
+    var channel = Channel<TextPage>(Channel.UNLIMITED)
 
 
     init {
