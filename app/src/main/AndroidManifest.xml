@@ -534,7 +534,9 @@
         </intent>
         <intent>
             <action android:name="android.intent.action.VIEW" />
-            <data android:mimeType="*/*" />
+            <data
+                android:mimeType="*/*"
+                android:scheme="*" />
         </intent>
         <intent>
             <action android:name="android.intent.action.TTS_SERVICE" />
