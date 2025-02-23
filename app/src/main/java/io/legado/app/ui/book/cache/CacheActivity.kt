@@ -48,7 +48,6 @@ import io.legado.app.utils.flowWithLifecycleAndDatabaseChange
 import io.legado.app.utils.iconItemOnLongClick
 import io.legado.app.utils.isContentScheme
 import io.legado.app.utils.observeEvent
-import io.legado.app.utils.parseToUri
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.startService
 import io.legado.app.utils.toastOnUi
@@ -184,6 +183,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
                     CacheBook.stop(this@CacheActivity)
                 }
             }
+
             R.id.menu_download_all -> {
                 if (!CacheBook.isRun) {
                     adapter.getItems().forEach { book ->
@@ -321,9 +321,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
 
     override fun export(position: Int) {
         val path = ACache.get().getAsString(exportBookPathKey)
-        if (path.isNullOrEmpty()) {
-            selectExportFolder(position)
-        } else if (FileDoc.fromUri(path.parseToUri(), true).checkWrite() != true) {
+        if (path.isNullOrEmpty() || !FileDoc.fromDir(path).checkWrite()) {
             selectExportFolder(position)
         } else if (enableCustomExport()) {// 启用自定义导出 and 导出类型为Epub
             configExportSection(path, position)

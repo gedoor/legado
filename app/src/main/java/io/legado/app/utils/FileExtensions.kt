@@ -70,14 +70,16 @@ fun File.createFolderReplace(): File {
 }
 
 fun File.checkWrite(): Boolean {
+    var file: File? = null
     return try {
         val filename = System.currentTimeMillis().toString()
-        val file = FileUtils.createFileIfNotExist(this, filename)
-        file.outputStream().use { }
-        file.delete()
-        true
+        file = FileUtils.createFileIfNotExist(this, filename)
+        file.outputStream().bufferedWriter().use { it.write(filename) }
+        file.inputStream().bufferedReader().use { it.readText() == filename }
     } catch (e: Exception) {
         false
+    } finally {
+        file?.delete()
     }
 }
 

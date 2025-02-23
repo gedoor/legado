@@ -304,14 +304,14 @@ fun FileDoc.delete() {
     asDocumentFile()?.delete()
 }
 
-fun FileDoc.checkWrite(): Boolean? {
+fun FileDoc.checkWrite(): Boolean {
     if (!isDir) {
         throw NoStackTraceException("只能检查目录")
     }
     asFile()?.let {
         return it.checkWrite()
     }
-    return asDocumentFile()?.checkWrite()
+    return asDocumentFile()!!.checkWrite()
 }
 
 /**
@@ -358,17 +358,22 @@ fun DocumentFile.readBytes(context: Context): ByteArray {
 }
 
 fun DocumentFile.checkWrite(): Boolean {
+    var file: DocumentFile? = null
     return try {
         val filename = System.currentTimeMillis().toString()
-        createFile(FileUtils.getMimeType(filename), filename)?.let {
-            it.openOutputStream()?.let { out ->
-                out.use { }
-                it.delete()
-                return true
+        file = createFile(FileUtils.getMimeType(filename), filename)
+        file?.openOutputStream()?.let { out ->
+            out.bufferedWriter().use { it.write(filename) }
+            file.openInputStream()?.let { input ->
+                input.bufferedReader().use {
+                    return it.readText() == filename
+                }
             }
         }
         false
     } catch (e: Exception) {
         false
+    } finally {
+        file?.delete()
     }
 }
