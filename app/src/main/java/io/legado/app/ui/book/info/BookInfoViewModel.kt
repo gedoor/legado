@@ -256,6 +256,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                             ReadBook.book = book
                             ReadBook.chapterSize = book.totalChapterNum
                             ReadBook.simulatedChapterSize = book.simulatedTotalChapterNum()
+                            ReadBook.clearTextChapter()
                         }
                     }
                     bookData.postValue(book)
