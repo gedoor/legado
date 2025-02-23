@@ -42,9 +42,6 @@ class WebtoonRecyclerView @JvmOverloads constructor(
     private val blRect = RectF()
     private val brRect = RectF()
 
-    //起始点
-    private var startX: Float = 0f
-    private var startY: Float = 0f
     var doubleTapZoom = true
     var tapListener: ((MotionEvent) -> Unit)? = null
     var longTapListener: ((MotionEvent) -> Boolean)? = null
@@ -253,15 +250,15 @@ class WebtoonRecyclerView @JvmOverloads constructor(
 
         override fun onSingleTapConfirmed(ev: MotionEvent): Boolean {
             when {
-                mcRect.contains(startX, startY) -> {
+                mcRect.contains(ev.rawX, ev.rawY) -> {
                     mToucheMiddle?.invoke()
                 }
 
-                blRect.contains(startX, startY) && !disabledClickScroller -> {
+                blRect.contains(ev.rawX, ev.rawY) && !disabledClickScroller -> {
                     mPrevPage?.invoke()
                 }
 
-                brRect.contains(startX, startY) && !disabledClickScroller-> {
+                brRect.contains(ev.rawX, ev.rawY) && !disabledClickScroller-> {
                     mNextPage?.invoke()
                 }
 
@@ -314,12 +311,8 @@ class WebtoonRecyclerView @JvmOverloads constructor(
             when (action) {
                 MotionEvent.ACTION_DOWN -> {
                     scrollPointerId = ev.getPointerId(0)
-                    val eveX = (ev.x + 0.5f)
-                    val eveY = (ev.y + 0.5f)
-                    downX = eveX.toInt()
-                    downY = eveY.toInt()
-                    startX = eveX
-                    startY = eveY
+                    downX = (ev.x + 0.5f).toInt()
+                    downY =(ev.y + 0.5f).toInt()
                 }
 
                 MotionEvent.ACTION_POINTER_DOWN -> {
