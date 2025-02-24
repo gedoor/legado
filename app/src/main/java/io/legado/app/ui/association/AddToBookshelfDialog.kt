@@ -128,8 +128,9 @@ class AddToBookshelfDialog() : BaseDialogFragment(R.layout.dialog_add_to_bookshe
                 }
                 appDb.bookSourceDao.hasBookUrlPattern.forEach { source ->
                     try {
-                        if (bookUrl.matches(source.bookUrlPattern!!.toRegex())) {
-                            getBookInfo(bookUrl, source)?.let { book ->
+                        val bs = source.getBookSource()!!
+                        if (bookUrl.matches(bs.bookUrlPattern!!.toRegex())) {
+                            getBookInfo(bookUrl, bs)?.let { book ->
                                 return@execute book
                             }
                         }
