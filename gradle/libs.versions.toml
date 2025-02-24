@@ -10,7 +10,7 @@ constraintlayout = "2.2.0"
 core = "1.15.0"
 firebaseBom = "33.2.0"
 flexbox = "3.0.0"
-fragment = "1.8.5"
+fragment = "1.8.6"
 
 #不要更新版本
 hutool = "5.8.22"
@@ -40,7 +40,7 @@ splitties = "3.0.0"
 rhino = "1.8.0"
 desugar = "2.1.4"
 
-activity = "1.9.3"
+activity = "1.10.0"
 #kotlinxSerialization = "1.8.0"
 swiperefreshlayout = "1.1.0"
 #noinspection GradleDependency

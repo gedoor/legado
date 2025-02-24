@@ -1,11 +1,19 @@
 package io.legado.app.data.entities
 
 import android.text.TextUtils
+import androidx.room.DatabaseView
 import io.legado.app.constant.AppPattern
 import io.legado.app.data.appDb
 import io.legado.app.utils.splitNotBlank
 
 
+@DatabaseView(
+    """select bookSourceUrl, bookSourceName, bookSourceGroup, customOrder, enabled, enabledExplore, 
+    (loginUrl is not null and trim(loginUrl) <> '') hasLoginUrl, lastUpdateTime, respondTime, weight, 
+    (exploreUrl is not null and trim(exploreUrl) <> '') hasExploreUrl 
+    from book_sources""",
+    viewName = "book_sources_part"
+)
 data class BookSourcePart(
     // 地址，包括 http/https
     var bookSourceUrl: String = "",

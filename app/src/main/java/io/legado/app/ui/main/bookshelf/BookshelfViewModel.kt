@@ -8,7 +8,7 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppLog
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
-import io.legado.app.data.entities.BookSource
+import io.legado.app.data.entities.BookSourcePart
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.http.newCallResponseBody
@@ -35,7 +35,7 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
     fun addBookByUrl(bookUrls: String) {
         var successCount = 0
         addBookJob = execute {
-            val hasBookUrlPattern: List<BookSource> by lazy {
+            val hasBookUrlPattern: List<BookSourcePart> by lazy {
                 appDb.bookSourceDao.hasBookUrlPattern
             }
             val urls = bookUrls.split("\n")
@@ -51,8 +51,9 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
                 if (source == null) {
                     for (bookSource in hasBookUrlPattern) {
                         try {
-                            if (bookUrl.matches(bookSource.bookUrlPattern!!.toRegex())) {
-                                source = bookSource
+                            val bs = bookSource.getBookSource()!!
+                            if (bookUrl.matches(bs.bookUrlPattern!!.toRegex())) {
+                                source = bs
                                 break
                             }
                         } catch (_: Exception) {
