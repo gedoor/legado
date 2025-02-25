@@ -3,6 +3,7 @@ package io.legado.app.ui.main.bookshelf.style1.books
 import android.content.Context
 import android.os.Bundle
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.data.entities.Book
@@ -15,6 +16,7 @@ import splitties.views.onLongClick
 
 class BooksAdapterList(
     context: Context,
+    private val fragment: Fragment,
     private val callBack: CallBack,
     private val lifecycle: Lifecycle
 ) : BaseBooksAdapter<ItemBookshelfListBinding>(context) {
@@ -52,6 +54,7 @@ class BooksAdapterList(
                             item.author,
                             false,
                             item.origin,
+                            fragment,
                             lifecycle
                         )
 

@@ -59,7 +59,9 @@ class RssFragment() : VMBaseFragment<RssViewModel>(R.layout.fragment_rss),
 
     private val binding by viewBinding(FragmentRssBinding::bind)
     override val viewModel by viewModels<RssViewModel>()
-    private val adapter by lazy { RssAdapter(requireContext(), this, viewLifecycleOwner.lifecycle) }
+    private val adapter by lazy {
+        RssAdapter(requireContext(), this, this, viewLifecycleOwner.lifecycle)
+    }
     private val searchView: SearchView by lazy {
         binding.titleBar.findViewById(R.id.search_view)
     }

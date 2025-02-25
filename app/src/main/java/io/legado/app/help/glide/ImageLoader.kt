@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import androidx.annotation.DrawableRes
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
@@ -36,8 +37,8 @@ object ImageLoader {
         }
     }
 
-    fun load(context: Context, lifecycle: Lifecycle, path: String?): RequestBuilder<Drawable> {
-        val requestManager = Glide.with(context).lifecycle(lifecycle)
+    fun load(fragment: Fragment, lifecycle: Lifecycle, path: String?): RequestBuilder<Drawable> {
+        val requestManager = Glide.with(fragment).lifecycle(lifecycle)
         return when {
             path.isNullOrEmpty() -> requestManager.load(path)
             path.isDataUrl() -> requestManager.load(path)
