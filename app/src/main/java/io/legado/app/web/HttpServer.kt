@@ -30,7 +30,9 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
         var uri = session.uri
 
         val startAt = System.currentTimeMillis()
-        LogUtils.d(TAG, "${session.method.name} - $uri - ${session.queryParameterString} - Start($startAt)")
+        LogUtils.d(TAG) {
+            "${session.method.name} - $uri - ${session.queryParameterString} - Start($startAt)"
+        }
 
         try {
             when (session.method) {
@@ -130,10 +132,14 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
             }
             response.addHeader("Access-Control-Allow-Methods", "GET, POST")
             response.addHeader("Access-Control-Allow-Origin", session.headers["origin"])
-            LogUtils.d(TAG, "${session.method.name} - $uri - ${session.queryParameterString} - End($startAt)")
+            LogUtils.d(TAG) {
+                "${session.method.name} - $uri - ${session.queryParameterString} - End($startAt)"
+            }
             return response
         } catch (e: Exception) {
-            LogUtils.d(TAG, "${session.method.name} - $uri - ${session.queryParameterString} - Error End($startAt)\n$e\n${e.stackTraceStr}")
+            LogUtils.d(TAG) {
+                "${session.method.name} - $uri - ${session.queryParameterString} - Error End($startAt)\n$e\n${e.stackTraceStr}"
+            }
             return newFixedLengthResponse(e.message)
         }
 
