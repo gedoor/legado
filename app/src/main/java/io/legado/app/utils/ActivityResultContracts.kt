@@ -1,5 +1,6 @@
 package io.legado.app.utils
 
+import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -8,6 +9,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
+import splitties.init.appCtx
 
 fun <T> ActivityResultLauncher<T?>.launch() {
     launch(null)
@@ -16,16 +18,31 @@ fun <T> ActivityResultLauncher<T?>.launch() {
 class SelectImageContract : ActivityResultContract<Int?, SelectImageContract.Result>() {
 
     private val delegate = ActivityResultContracts.PickVisualMedia()
-    var requestCode: Int? = null
+    private var requestCode: Int? = null
+    private var useFallback = false
 
     override fun createIntent(context: Context, input: Int?): Intent {
         requestCode = input
-        val request = PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-        return delegate.createIntent(context, request)
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+            .addCategory(Intent.CATEGORY_OPENABLE)
+            .setType("image/*")
+        if (intent.resolveActivity(appCtx.packageManager) == null) {
+            useFallback = true
+            val request = PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+            return delegate.createIntent(context, request)
+        }
+        return intent
     }
 
     override fun parseResult(resultCode: Int, intent: Intent?): Result {
-        return Result(requestCode, delegate.parseResult(resultCode, intent))
+        val uri = if (useFallback) {
+            delegate.parseResult(resultCode, intent)
+        } else if (resultCode == RESULT_OK) {
+            intent?.data
+        } else {
+            null
+        }
+        return Result(requestCode, uri)
     }
 
     data class Result(
