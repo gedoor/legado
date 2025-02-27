@@ -88,6 +88,10 @@ class ContentProcessor private constructor(
         return contentReplaceRules
     }
 
+    fun getAllReplaceRules(): List<ReplaceRule> {
+        return titleReplaceRules + contentReplaceRules
+    }
+
     fun getContent(
         book: Book,
         chapter: BookChapter,
