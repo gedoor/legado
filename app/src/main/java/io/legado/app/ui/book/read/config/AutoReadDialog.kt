@@ -84,7 +84,7 @@ class AutoReadDialog : BaseDialogFragment(R.layout.dialog_auto_read) {
         binding.seekAutoRead.setOnSeekBarChangeListener(object : SeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 val speed = if (progress < 1) 1 else progress
-                binding.tvReadSpeed.text = String.format(Locale.ROOT,"%ds", speed)
+                binding.tvReadSpeed.text = String.format(Locale.ROOT, "%ds", speed)
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
