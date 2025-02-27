@@ -226,6 +226,12 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                     appDb.bookDao.update(book)
                     appDb.bookChapterDao.delByBook(book.bookUrl)
                     appDb.bookChapterDao.insert(*it.toTypedArray())
+                    if (book.isSameNameAuthor(ReadBook.book)) {
+                        ReadBook.book = book
+                        ReadBook.chapterSize = book.totalChapterNum
+                        ReadBook.simulatedChapterSize = book.simulatedTotalChapterNum()
+                        ReadBook.clearTextChapter()
+                    }
                     chapterListData.postValue(it)
                 }
             }.onError {
