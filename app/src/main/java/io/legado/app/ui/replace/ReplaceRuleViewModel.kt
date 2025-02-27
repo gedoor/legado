@@ -26,7 +26,7 @@ class ReplaceRuleViewModel(application: Application) : BaseViewModel(application
             if (showApplied) {
                 val book = ReadBook.book ?: return@execute
                 val textChapter = ReadBook.curTextChapter ?: return@execute
-                enabledForBookRules = ContentProcessor.get(book).getAllReplaceRules().toSet()
+                enabledForBookRules = ContentProcessor.get(book).getContentReplaceRules().toSet()
                 textChapter.effectiveReplaceRules?.let {
                     appliedForBookRules = it.toSet()
                 }
