@@ -17,6 +17,7 @@ import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
 import java.nio.charset.Charset
+import java.util.concurrent.atomic.AtomicInteger
 
 
 data class FileDoc(
@@ -166,7 +167,8 @@ fun FileDoc.list(filter: FileDocFilter? = null): ArrayList<FileDoc>? {
                         do {
                             val item = FileDoc(
                                 name = cursor.getString(nci),
-                                isDir = cursor.getString(mci) == DocumentsContract.Document.MIME_TYPE_DIR,
+                                isDir = cursor.getString(mci) ==
+                                        DocumentsContract.Document.MIME_TYPE_DIR,
                                 size = cursor.getLong(sci),
                                 lastModified = cursor.getLong(dci),
                                 uri = DocumentsContract.buildDocumentUriUsingTree(
@@ -207,6 +209,39 @@ fun FileDoc.find(name: String, depth: Int = 0): FileDoc? {
         list?.forEach {
             if (it.isDir) {
                 val fileDoc = it.find(name, depth - 1)
+                if (fileDoc != null) {
+                    return fileDoc
+                }
+            }
+        }
+    }
+    return null
+}
+
+/**
+ * 查找文档, 如果存在则返回文档,如果不存在返回空
+ * @param name 文件名
+ * @param depth 查找文件夹深度
+ * @param maxFinds 最大查找文件夹数量
+ */
+fun FileDoc.find(name: String, depth: Int = 0, maxFinds: Int = Int.MAX_VALUE): FileDoc? {
+    return find(name, depth, AtomicInteger(maxFinds))
+}
+
+private fun FileDoc.find(name: String, depth: Int, maxFinds: AtomicInteger): FileDoc? {
+    if (maxFinds.getAndDecrement() <= 0) {
+        return null
+    }
+    val list = list()
+    list?.forEach {
+        if (it.name == name) {
+            return it
+        }
+    }
+    if (depth > 0) {
+        list?.forEach {
+            if (it.isDir) {
+                val fileDoc = it.find(name, depth - 1, maxFinds)
                 if (fileDoc != null) {
                     return fileDoc
                 }

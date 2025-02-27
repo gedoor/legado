@@ -131,7 +131,7 @@ fun Book.getLocalUri(): Uri {
         if (!treeFileDoc.exists()) {
             appCtx.toastOnUi("书籍保存目录失效，请重新设置！")
         } else {
-            val fileDoc = treeFileDoc.find(originName, 5)
+            val fileDoc = treeFileDoc.find(originName, 5, 100)
             if (fileDoc != null) {
                 localUriCache[bookUrl] = fileDoc.uri
                 //更新bookUrl 重启不用再找一遍
@@ -150,7 +150,7 @@ fun Book.getLocalUri(): Uri {
             Uri.fromFile(File(importBookDir))
         }
         val treeFileDoc = FileDoc.fromUri(treeUri, true)
-        val fileDoc = treeFileDoc.find(originName, 5)
+        val fileDoc = treeFileDoc.find(originName, 5, 100)
         if (fileDoc != null) {
             localUriCache[bookUrl] = fileDoc.uri
             bookUrl = fileDoc.toString()
