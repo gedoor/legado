@@ -296,7 +296,8 @@ object ReadManga : CoroutineScope by MainScope() {
                     mChapterPagePos = durChapterPagePos.plus(1),
                     mChapterNextPagePos = durChapterPagePos.plus(1),
                     mImageUrl = src,
-                    mDurChapterPos = index.plus(1)
+                    mDurChapterPos = index.plus(1),
+                    mChapterName = chapterTitle
                 )
             }.toList().apply {
                 this.forEach {

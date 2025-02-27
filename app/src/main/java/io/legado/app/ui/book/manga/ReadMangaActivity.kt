@@ -1,6 +1,7 @@
 package io.legado.app.ui.book.manga
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -26,6 +27,7 @@ import com.bumptech.glide.util.FixedPreloadSizeProvider
 import io.legado.app.BuildConfig
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.constant.BookType
 import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
@@ -34,6 +36,7 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.databinding.ActivityMangaBinding
 import io.legado.app.databinding.ViewLoadMoreBinding
 import io.legado.app.help.book.isImage
+import io.legado.app.help.book.removeType
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.storage.Backup
 import io.legado.app.lib.dialogs.alert
@@ -187,7 +190,8 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
                 ReadManga.durChapterPagePos.plus(1),
                 ReadManga.durChapterPageCount,
                 ReadManga.durChapterPos.plus(1),
-                ReadManga.durChapterCount
+                ReadManga.durChapterCount,
+                ReadManga.chapterTitle
             )
         }
     }
@@ -227,7 +231,8 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
                                 content.mChapterPagePos,
                                 content.mChapterPageCount,
                                 content.mDurChapterPos,
-                                content.mDurChapterCount
+                                content.mDurChapterCount,
+                                content.mChapterName
                             )
                         }
                     } catch (e: Exception) {
@@ -283,7 +288,8 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
                             ReadManga.durChapterPagePos.plus(1),
                             ReadManga.durChapterPageCount,
                             ReadManga.durChapterPos.plus(1),
-                            ReadManga.durChapterCount
+                            ReadManga.durChapterCount,
+                            ReadManga.chapterTitle
                         )
                     }
 
@@ -309,7 +315,11 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
     }
 
     private fun upInfoBar(
-        chapterPagePos: Int, chapterPageCount: Int, chapterPos: Int, chapterCount: Int,
+        chapterPagePos: Int,
+        chapterPageCount: Int,
+        chapterPos: Int,
+        chapterCount: Int,
+        chapterName: String
     ) {
         mMangaFooterConfig.run {
             mLabelBuilder.clear()
@@ -334,6 +344,11 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
                     mLabelBuilder.append(getString(R.string.manga_check_progress))
                 }
                 mLabelBuilder.append("${chapterPagePos.div(chapterPageCount).times(100)}%")
+                    .append(" ")
+            }
+
+            if (!hideChapterName) {
+                mLabelBuilder.append(chapterName)
             }
         }
         binding.infobar.update(
@@ -657,5 +672,28 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
             .show {
                 callback.invoke(it)
             }
+    }
+
+    override fun finish() {
+        val book = ReadManga.book ?: return super.finish()
+
+        if (ReadManga.inBookshelf) {
+            return super.finish()
+        }
+
+        if (!AppConfig.showAddToShelfAlert) {
+            viewModel.removeFromBookshelf { super.finish() }
+        } else {
+            alert(title = getString(R.string.add_to_bookshelf)) {
+                setMessage(getString(R.string.check_add_bookshelf, book.name))
+                okButton {
+                    ReadManga.book?.removeType(BookType.notShelf)
+                    ReadManga.book?.save()
+                    ReadManga.inBookshelf = true
+                    setResult(Activity.RESULT_OK)
+                }
+                noButton { viewModel.removeFromBookshelf { super.finish() } }
+            }
+        }
     }
 }

@@ -69,6 +69,13 @@ class MangaFooterSettingDialog : BaseDialogFragment(R.layout.dialog_manga_footer
                 postEvent(EventBus.UP_MANGA_CONFIG, config)
             }
         }
+        binding.cbChapterName.run {
+            isChecked = config.hideChapterName
+            setOnCheckedChangeListener { _, isChecked ->
+                config.hideChapterName = isChecked
+                postEvent(EventBus.UP_MANGA_CONFIG, config)
+            }
+        }
         binding.rgFooterOrientation.check(if (config.footerOrientation == ReaderInfoBarView.ALIGN_CENTER) R.id.rb_center else R.id.rb_left)
         binding.rgFooterOrientation.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
