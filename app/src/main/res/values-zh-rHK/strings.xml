@@ -1195,6 +1195,7 @@
     <string name="manga_header_chapter">《章节和文案》隐藏</string>
     <string name="manga_check_chapter_label">《章节.》文案</string>
     <string name="manga_check_chapter">章节</string>
+    <string name="manga_check_chapter_name">章节名称</string>
     <string name="manga_header_page">《页数和文案》隐藏</string>
     <string name="manga_check_page_label">《页数.》文案</string>
     <string name="manga_check_page_number">页数</string>

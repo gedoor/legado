@@ -233,6 +233,15 @@ class MangaViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    fun removeFromBookshelf(success: (() -> Unit)?) {
+        val book = ReadManga.book
+        Coroutine.async {
+            book?.delete()
+        }.onSuccess {
+            success?.invoke()
+        }
+    }
+
     override fun onCleared() {
         super.onCleared()
         changeSourceCoroutine?.cancel()

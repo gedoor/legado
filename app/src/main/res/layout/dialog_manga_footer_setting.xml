@@ -39,6 +39,14 @@
             android:layout_marginStart="10dp"
             android:gravity="center"
             android:text="@string/manga_check_chapter" />
+
+        <io.legado.app.lib.theme.view.ThemeCheckBox
+            android:id="@+id/cb_chapter_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:gravity="center"
+            android:text="@string/manga_check_chapter_name" />
     </LinearLayout>
 
     <TextView
