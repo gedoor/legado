@@ -1165,7 +1165,11 @@ class ReadBookActivity : BaseReadBookActivity(),
      * 替换
      */
     override fun openReplaceRule() {
-        replaceActivity.launch(Intent(this, ReplaceRuleActivity::class.java))
+        val intent = Intent(this, ReplaceRuleActivity::class.java).apply {
+            val showApplied = ReadBook.book?.getUseReplaceRule() == true
+            putExtra("showApplied", showApplied)
+        }
+        replaceActivity.launch(intent)
     }
 
     /**

@@ -1,17 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center"
     android:orientation="horizontal"
-    android:padding="8dp">
+    android:padding="8dp"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp">
 
     <io.legado.app.lib.theme.view.ThemeCheckBox
         android:id="@+id/cb_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:scrollbars="none"
+        android:singleLine="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/swt_enabled"
+        app:layout_constraintTop_toTopOf="parent"
         tools:ignore="RtlSymmetry" />
 
     <io.legado.app.lib.theme.view.ThemeSwitch
@@ -21,6 +29,9 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="6dp"
         android:layout_marginRight="6dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/iv_edit"
+        app:layout_constraintTop_toTopOf="parent"
         tools:ignore="RtlSymmetry" />
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -32,16 +43,35 @@
         android:contentDescription="@string/edit"
         android:padding="6dp"
         android:src="@drawable/ic_edit"
-        android:tint="@color/primaryText" />
+        android:tint="@color/primaryText"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/iv_menu_more"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_menu_more"
         android:layout_width="36dp"
         android:layout_height="36dp"
-        android:padding="6dp"
         android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/more_menu"
+        android:padding="6dp"
         android:src="@drawable/ic_more_vert"
         android:tint="@color/primaryText"
-        android:contentDescription="@string/more_menu"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:ignore="RtlHardcoded" />
-</LinearLayout>
+
+    <io.legado.app.ui.widget.image.CircleImageView
+        android:id="@+id/iv_applied"
+        android:layout_width="8dp"
+        android:layout_height="8dp"
+        android:scaleType="centerCrop"
+        android:scrollbars="none"
+        android:src="@color/md_green_600"
+        android:visibility="invisible"
+        app:layout_constraintRight_toRightOf="@id/iv_menu_more"
+        app:layout_constraintTop_toTopOf="@id/iv_menu_more"
+        tools:visibility="visible" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

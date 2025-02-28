@@ -150,7 +150,7 @@ object BookChapterList {
                 }
             }
         }
-        val replaceRules = ContentProcessor.get(book.name, book.origin).getTitleReplaceRules()
+        val replaceRules = ContentProcessor.get(book).getTitleReplaceRules()
         book.durChapterTitle = list.getOrElse(book.durChapterIndex) { list.last() }
             .getDisplayTitle(replaceRules, book.getUseReplaceRule())
         if (book.totalChapterNum < list.size) {

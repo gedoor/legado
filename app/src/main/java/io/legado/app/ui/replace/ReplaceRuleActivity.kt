@@ -1,7 +1,6 @@
 package io.legado.app.ui.replace
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -122,8 +121,10 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
         initRecyclerView()
         initSearchView()
         initSelectActionView()
-        observeReplaceRuleData()
         observeGroupData()
+        viewModel.initData(intent) {
+            observeReplaceRuleData()
+        }
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
@@ -215,6 +216,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
                     val key = searchKey.substringAfter("group:")
                     appDb.replaceRuleDao.flowGroupSearch("%$key%")
                 }
+
                 else -> {
                     appDb.replaceRuleDao.flowSearch("%$searchKey%")
                 }
@@ -222,7 +224,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
                 AppLog.put("替换规则管理界面更新数据出错", it)
             }.flowOn(IO).conflate().collect {
                 if (dataInit) {
-                    setResult(Activity.RESULT_OK)
+                    setResult(RESULT_OK)
                 }
                 adapter.setItems(it, adapter.diffItemCallBack)
                 dataInit = true
@@ -245,6 +247,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
         when (item.itemId) {
             R.id.menu_add_replace_rule ->
                 editActivity.launch(ReplaceEditActivity.startIntent(this))
+
             R.id.menu_group_manage -> showDialogFragment<GroupManageDialog>()
             R.id.menu_del_selection -> viewModel.delSelection(adapter.selection)
             R.id.menu_import_onLine -> showImportDialog()
@@ -252,11 +255,13 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
                 mode = HandleFileContract.FILE
                 allowExtensions = arrayOf("txt", "json")
             }
+
             R.id.menu_import_qr -> qrCodeResult.launch()
             R.id.menu_help -> showHelp("replaceRuleHelp")
             R.id.menu_group_null -> {
                 searchView.setQuery(getString(R.string.no_group), true)
             }
+
             else -> if (item.groupId == R.id.replace_group) {
                 searchView.setQuery("group:${item.title}", true)
             }
@@ -341,6 +346,14 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
             adapter.selection.size,
             adapter.itemCount
         )
+    }
+
+    override fun isEnabledForBook(rule: ReplaceRule): Boolean {
+        return viewModel.isEnabledForBook(rule)
+    }
+
+    override fun isAppliedForBook(rule: ReplaceRule): Boolean {
+        return viewModel.isAppliedForBook(rule)
     }
 
     override fun update(vararg rule: ReplaceRule) {
