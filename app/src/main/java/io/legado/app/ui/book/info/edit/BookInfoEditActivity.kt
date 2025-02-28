@@ -136,7 +136,7 @@ class BookInfoEditActivity :
         book.customIntro = if (customIntro == book.intro) null else customIntro
         BookHelp.updateCacheFolder(oldBook, book)
         viewModel.saveBook(book) {
-            setResult(Activity.RESULT_OK)
+            setResult(RESULT_OK)
             finish()
         }
     }

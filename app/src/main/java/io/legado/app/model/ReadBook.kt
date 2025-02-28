@@ -15,6 +15,7 @@ import io.legado.app.help.book.ContentProcessor
 import io.legado.app.help.book.isImage
 import io.legado.app.help.book.isLocal
 import io.legado.app.help.book.isPdf
+import io.legado.app.help.book.isSameNameAuthor
 import io.legado.app.help.book.readSimulating
 import io.legado.app.help.book.simulatedTotalChapterNum
 import io.legado.app.help.book.update
@@ -918,6 +919,18 @@ object ReadBook : CoroutineScope by MainScope() {
         if (contentLoadFinish) {
             preDownloadTask?.cancel()
             downloadScope.coroutineContext.cancelChildren()
+        }
+    }
+
+    fun onChapterListUpdated(newBook: Book) {
+        if (newBook.isSameNameAuthor(book)) {
+            book = newBook
+            chapterSize = newBook.totalChapterNum
+            simulatedChapterSize = newBook.simulatedTotalChapterNum()
+            if (simulatedChapterSize > 0 && durChapterIndex > simulatedChapterSize - 1) {
+                durChapterIndex = simulatedChapterSize - 1
+            }
+            clearTextChapter()
         }
     }
 

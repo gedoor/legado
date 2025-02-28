@@ -122,7 +122,6 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             return
         }
         ReadBook.upMsg(null)
-        ensureChapterExist()
         if (!isSameBook) {
             ReadBook.loadContent(resetPageOffset = true)
         } else {
@@ -157,12 +156,6 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    private fun ensureChapterExist() {
-        if (ReadBook.simulatedChapterSize > 0 && ReadBook.durChapterIndex > ReadBook.simulatedChapterSize - 1) {
-            ReadBook.durChapterIndex = ReadBook.simulatedChapterSize - 1
-        }
-    }
-
     /**
      * 加载详情页
      */
@@ -183,7 +176,6 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     fun loadChapterList(book: Book) {
         execute {
             if (loadChapterListAwait(book)) {
-                ensureChapterExist()
                 ReadBook.upMsg(null)
                 ReadBook.loadContent(resetPageOffset = true)
             }
@@ -194,13 +186,10 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         if (book.isLocal) {
             kotlin.runCatching {
                 LocalBook.getChapterList(book).let {
-                    book.latestChapterTime = System.currentTimeMillis()
                     appDb.bookChapterDao.delByBook(book.bookUrl)
                     appDb.bookChapterDao.insert(*it.toTypedArray())
                     appDb.bookDao.update(book)
-                    ReadBook.chapterSize = it.size
-                    ReadBook.simulatedChapterSize = book.simulatedTotalChapterNum()
-                    ReadBook.clearTextChapter()
+                    ReadBook.onChapterListUpdated(book)
                 }
                 return true
             }.onFailure {
@@ -229,8 +218,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                         }
                         appDb.bookChapterDao.delByBook(oldBook.bookUrl)
                         appDb.bookChapterDao.insert(*cList.toTypedArray())
-                        ReadBook.chapterSize = cList.size
-                        ReadBook.simulatedChapterSize = book.simulatedTotalChapterNum()
+                        ReadBook.onChapterListUpdated(book)
                         return true
                     }.onFailure {
                         ReadBook.upMsg(context.getString(R.string.error_load_toc))

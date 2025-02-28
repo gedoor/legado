@@ -26,7 +26,6 @@ import io.legado.app.help.book.isNotShelf
 import io.legado.app.help.book.isSameNameAuthor
 import io.legado.app.help.book.isWebFile
 import io.legado.app.help.book.removeType
-import io.legado.app.help.book.simulatedTotalChapterNum
 import io.legado.app.help.book.updateTo
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.webdav.ObjectNotFoundException
@@ -226,12 +225,8 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                     appDb.bookDao.update(book)
                     appDb.bookChapterDao.delByBook(book.bookUrl)
                     appDb.bookChapterDao.insert(*it.toTypedArray())
-                    if (book.isSameNameAuthor(ReadBook.book)) {
-                        ReadBook.book = book
-                        ReadBook.chapterSize = book.totalChapterNum
-                        ReadBook.simulatedChapterSize = book.simulatedTotalChapterNum()
-                        ReadBook.clearTextChapter()
-                    }
+                    ReadBook.onChapterListUpdated(book)
+                    bookData.postValue(book)
                     chapterListData.postValue(it)
                 }
             }.onError {
@@ -258,12 +253,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                         }
                         appDb.bookChapterDao.delByBook(oldBook.bookUrl)
                         appDb.bookChapterDao.insert(*it.toTypedArray())
-                        if (book.isSameNameAuthor(ReadBook.book)) {
-                            ReadBook.book = book
-                            ReadBook.chapterSize = book.totalChapterNum
-                            ReadBook.simulatedChapterSize = book.simulatedTotalChapterNum()
-                            ReadBook.clearTextChapter()
-                        }
+                        ReadBook.onChapterListUpdated(book)
                     }
                     bookData.postValue(book)
                     chapterListData.postValue(it)
