@@ -1,11 +1,9 @@
 package io.legado.app.ui.replace
 
 import android.content.Context
-import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.PopupMenu
 import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.DiffUtil
@@ -19,8 +17,6 @@ import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.utils.ColorUtils
-import io.legado.app.utils.invisible
-import io.legado.app.utils.visible
 
 
 class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
@@ -124,7 +120,6 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
                     }
                 }
             }
-            upShowApplied(ivApplied, item)
         }
     }
 
@@ -175,23 +170,6 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
             true
         }
         popupMenu.show()
-    }
-
-
-    private fun upShowApplied(iv: ImageView, rule: ReplaceRule) {
-        val isEnabledForBook = callBack.isEnabledForBook(rule)
-        val isAppliedForBook = callBack.isAppliedForBook(rule)
-        if (!isEnabledForBook && !isAppliedForBook) {
-            iv.invisible()
-        } else {
-            iv.visible()
-        }
-        if (isEnabledForBook) {
-            iv.setColorFilter(Color.RED)
-        }
-        if (isAppliedForBook) {
-            iv.setColorFilter(Color.GREEN)
-        }
     }
 
     override fun swap(srcPosition: Int, targetPosition: Int): Boolean {
@@ -254,7 +232,5 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
         fun toBottom(rule: ReplaceRule)
         fun upOrder()
         fun upCountView()
-        fun isEnabledForBook(rule: ReplaceRule): Boolean
-        fun isAppliedForBook(rule: ReplaceRule): Boolean
     }
 }
