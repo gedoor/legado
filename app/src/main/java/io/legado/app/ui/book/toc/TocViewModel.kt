@@ -10,6 +10,7 @@ import io.legado.app.constant.AppLog
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.exception.NoStackTraceException
+import io.legado.app.model.ReadBook
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.FileDoc
 import io.legado.app.utils.GSON
@@ -38,10 +39,10 @@ class TocViewModel(application: Application) : BaseViewModel(application) {
         execute {
             appDb.bookDao.update(book)
             LocalBook.getChapterList(book).let {
-                book.latestChapterTime = System.currentTimeMillis()
                 appDb.bookChapterDao.delByBook(book.bookUrl)
                 appDb.bookChapterDao.insert(*it.toTypedArray())
                 appDb.bookDao.update(book)
+                ReadBook.onChapterListUpdated(book)
                 bookData.postValue(book)
             }
         }.onFinally {

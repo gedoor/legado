@@ -62,16 +62,4 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="RtlHardcoded" />
 
-    <io.legado.app.ui.widget.image.CircleImageView
-        android:id="@+id/iv_applied"
-        android:layout_width="8dp"
-        android:layout_height="8dp"
-        android:scaleType="centerCrop"
-        android:scrollbars="none"
-        android:src="@color/md_green_600"
-        android:visibility="invisible"
-        app:layout_constraintRight_toRightOf="@id/iv_menu_more"
-        app:layout_constraintTop_toTopOf="@id/iv_menu_more"
-        tools:visibility="visible" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

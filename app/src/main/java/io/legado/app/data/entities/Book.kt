@@ -14,6 +14,7 @@ import io.legado.app.constant.PageAnim
 import io.legado.app.data.appDb
 import io.legado.app.help.book.BookHelp
 import io.legado.app.help.book.ContentProcessor
+import io.legado.app.help.book.getFolderNameNoCache
 import io.legado.app.help.book.isEpub
 import io.legado.app.help.book.isImage
 import io.legado.app.help.book.simulatedTotalChapterNum
@@ -21,14 +22,12 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.model.ReadBook
 import io.legado.app.utils.GSON
-import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.fromJsonObject
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import java.nio.charset.Charset
 import java.time.LocalDate
 import kotlin.math.max
-import kotlin.math.min
 
 @Parcelize
 @TypeConverters(Book.Converters::class)
@@ -314,12 +313,6 @@ data class Book(
         //防止书名过长,只取9位
         folderName = getFolderNameNoCache()
         return folderName!!
-    }
-
-    fun getFolderNameNoCache(): String {
-        return name.replace(AppPattern.fileNameRegex, "").let {
-            it.substring(0, min(9, it.length)) + MD5Utils.md5Encode16(bookUrl)
-        }
     }
 
     fun toSearchBook() = SearchBook(

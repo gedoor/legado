@@ -6,6 +6,7 @@ import android.net.Uri
 import com.script.buildScriptBindings
 import com.script.rhino.RhinoScriptEngine
 import io.legado.app.constant.AppLog
+import io.legado.app.constant.AppPattern
 import io.legado.app.constant.BookSourceType
 import io.legado.app.constant.BookType
 import io.legado.app.data.appDb
@@ -17,6 +18,7 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.FileDoc
 import io.legado.app.utils.GSON
+import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.exists
 import io.legado.app.utils.find
 import io.legado.app.utils.inputStream
@@ -275,6 +277,12 @@ fun Book.updateTo(newBook: Book): Book {
     newBook.variableMap.putAll(variableMap)
     newBook.variable = GSON.toJson(variableMap)
     return newBook
+}
+
+fun Book.getFolderNameNoCache(): String {
+    return name.replace(AppPattern.fileNameRegex, "").let {
+        it.substring(0, min(9, it.length)) + MD5Utils.md5Encode16(bookUrl)
+    }
 }
 
 fun Book.getBookSource(): BookSource? {

@@ -21,9 +21,9 @@ import io.legado.app.help.AppWebDav
 import io.legado.app.help.book.BookHelp
 import io.legado.app.help.book.ContentProcessor
 import io.legado.app.help.book.getExportFileName
-import io.legado.app.help.book.isLocal
 import io.legado.app.help.book.isLocalModified
 import io.legado.app.help.config.AppConfig
+import io.legado.app.model.ReadBook
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.ui.book.cache.CacheActivity
 import io.legado.app.utils.FileDoc
@@ -212,15 +212,16 @@ class ExportBookService : BaseService() {
     }
 
     private fun refreshChapterList(book: Book) {
-        if (!book.isLocal || !book.isLocalModified()) {
+        if (!book.isLocalModified()) {
             return
         }
         kotlin.runCatching {
             LocalBook.getChapterList(book)
         }.onSuccess {
-            book.latestChapterTime = System.currentTimeMillis()
             appDb.bookChapterDao.delByBook(book.bookUrl)
             appDb.bookChapterDao.insert(*it.toTypedArray())
+            appDb.bookDao.update(book)
+            ReadBook.onChapterListUpdated(book)
         }
     }
 

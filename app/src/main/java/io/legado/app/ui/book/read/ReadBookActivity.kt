@@ -1,7 +1,6 @@
 package io.legado.app.ui.book.read
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
@@ -1165,11 +1164,7 @@ class ReadBookActivity : BaseReadBookActivity(),
      * 替换
      */
     override fun openReplaceRule() {
-        val intent = Intent(this, ReplaceRuleActivity::class.java).apply {
-            val showApplied = ReadBook.book?.getUseReplaceRule() == true
-            putExtra("showApplied", showApplied)
-        }
-        replaceActivity.launch(intent)
+        replaceActivity.launch(Intent(this, ReplaceRuleActivity::class.java))
     }
 
     /**
@@ -1582,7 +1577,7 @@ class ReadBookActivity : BaseReadBookActivity(),
                     ReadBook.book?.removeType(BookType.notShelf)
                     ReadBook.book?.save()
                     ReadBook.inBookshelf = true
-                    setResult(Activity.RESULT_OK)
+                    setResult(RESULT_OK)
                 }
                 noButton { viewModel.removeFromBookshelf { super.finish() } }
             }

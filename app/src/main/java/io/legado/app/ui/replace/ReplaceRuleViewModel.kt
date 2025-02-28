@@ -1,13 +1,10 @@
 package io.legado.app.ui.replace
 
 import android.app.Application
-import android.content.Intent
 import android.text.TextUtils
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.ReplaceRule
-import io.legado.app.help.book.ContentProcessor
-import io.legado.app.model.ReadBook
 import io.legado.app.utils.splitNotBlank
 
 /**
@@ -15,34 +12,6 @@ import io.legado.app.utils.splitNotBlank
  * 修改数据要copy,直接修改会导致界面不刷新
  */
 class ReplaceRuleViewModel(application: Application) : BaseViewModel(application) {
-
-    var showApplied = false
-    var enabledForBookRules = emptySet<ReplaceRule>()
-    var appliedForBookRules = emptySet<ReplaceRule>()
-
-    fun initData(intent: Intent, block: () -> Unit) {
-        execute {
-            showApplied = intent.getBooleanExtra("showApplied", false)
-            if (showApplied) {
-                val book = ReadBook.book ?: return@execute
-                val textChapter = ReadBook.curTextChapter ?: return@execute
-                enabledForBookRules = ContentProcessor.get(book).getContentReplaceRules().toSet()
-                textChapter.effectiveReplaceRules?.let {
-                    appliedForBookRules = it.toSet()
-                }
-            }
-        }.onFinally {
-            block.invoke()
-        }
-    }
-
-    fun isEnabledForBook(rule: ReplaceRule): Boolean {
-        return showApplied && enabledForBookRules.contains(rule)
-    }
-
-    fun isAppliedForBook(rule: ReplaceRule): Boolean {
-        return showApplied && appliedForBookRules.contains(rule)
-    }
 
     fun update(vararg rule: ReplaceRule) {
         execute {
