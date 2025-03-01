@@ -15,7 +15,6 @@ import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.databinding.DialogEditTextBinding
-import io.legado.app.help.book.update
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.permission.Permissions
@@ -308,7 +307,7 @@ class ImportBookActivity : BaseImportBookActivity<ImportBookViewModel>(),
                 val filePath = fileDoc.toString()
                 if (it.bookUrl != filePath) {
                     it.bookUrl = filePath
-                    it.update()
+                    appDb.bookDao.insert(it)
                 }
                 startReadBook(it)
             }
