@@ -168,14 +168,12 @@ class ReadBookActivity : BaseReadBookActivity(),
         }
     private val replaceActivity =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            it ?: return@registerForActivityResult
             if (it.resultCode == RESULT_OK) {
                 viewModel.replaceRuleChanged()
             }
         }
     private val searchContentActivity =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            it ?: return@registerForActivityResult
             it.data?.let { data ->
                 val key = data.getLongExtra("key", System.currentTimeMillis())
                 val index = data.getIntExtra("index", 0)
