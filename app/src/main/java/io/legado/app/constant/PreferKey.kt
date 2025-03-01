@@ -100,6 +100,7 @@ object PreferKey {
     const val mangaFooterConfig = "mangaFooterConfig"
     const val singlePageScrolling = "singlePageScrolling"
     const val disableClickScroller = "disableClickScroller"
+    const val enableMangaHorizontalScroller="enableMangaHorizontalScroller"
     const val autoRefresh = "auto_refresh"
     const val defaultToRead = "defaultToRead"
     const val exportCharset = "exportCharset"
