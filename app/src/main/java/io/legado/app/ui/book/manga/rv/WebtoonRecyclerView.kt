@@ -60,6 +60,8 @@ class WebtoonRecyclerView @JvmOverloads constructor(
         halfHeight = MeasureSpec.getSize(heightSpec) / 2
         if (!heightSet) {
             originalHeight = MeasureSpec.getSize(heightSpec)
+            val width = MeasureSpec.getSize(widthSpec)
+            setClickArea(width, originalHeight)
             heightSet = true
         }
         super.onMeasure(widthSpec, heightSpec)
@@ -103,8 +105,7 @@ class WebtoonRecyclerView @JvmOverloads constructor(
         return super.dispatchNestedPreScroll(dx, dy, consumed, offsetInWindow, type)
     }
 
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        super.onSizeChanged(w, h, oldw, oldh)
+    private fun setClickArea(width: Int, height: Int) {
         mcRect.set(width * 0.33f, height * 0.33f, width * 0.66f, height * 0.66f)
         blRect.set(0f, height * 0.66f, width * 0.33f, height.toFloat())
         brRect.set(width * 0.66f, height * 0.66f, width.toFloat(), height.toFloat())
