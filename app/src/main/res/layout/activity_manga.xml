@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<io.legado.app.ui.book.manga.rv.WebtoonFrame xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/webtoonFrame"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <io.legado.app.ui.book.manga.rv.WebtoonRecyclerView
-        android:id="@+id/mRecyclerMange"
+    <io.legado.app.ui.book.manga.rv.WebtoonFrame
+        android:id="@+id/webtoonFrame"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+
+        <io.legado.app.ui.book.manga.rv.WebtoonRecyclerView
+            android:id="@+id/mRecyclerMange"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </io.legado.app.ui.book.manga.rv.WebtoonFrame>
 
     <io.legado.app.ui.widget.ReaderInfoBarView
         android:id="@+id/infobar"
@@ -28,7 +34,6 @@
         android:layout_height="match_parent"
         android:visibility="gone"
         tools:visibility="visible" />
-
 
     <FrameLayout
         android:id="@+id/fl_loading"
@@ -89,4 +94,4 @@
 
     </FrameLayout>
 
-</io.legado.app.ui.book.manga.rv.WebtoonFrame>
+</FrameLayout>

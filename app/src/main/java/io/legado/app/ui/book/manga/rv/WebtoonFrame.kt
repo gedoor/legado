@@ -28,13 +28,13 @@ class WebtoonFrame : FrameLayout {
             scaleDetector.isQuickScaleEnabled = value
         }
 
-    var disableMangaScaling = false
+    var disableMangaScale = false
 
     private val recycler: WebtoonRecyclerView?
         get() = getChildAt(0) as? WebtoonRecyclerView
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-        if (!disableMangaScaling) {
+        if (!disableMangaScale) {
             scaleDetector.onTouchEvent(ev)
             flingDetector.onTouchEvent(ev)
             val recyclerRect = Rect()

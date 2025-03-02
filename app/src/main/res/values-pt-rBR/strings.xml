@@ -1186,9 +1186,9 @@
     <string name="show_same_source">显示重复书源</string>
     <string name="theme_config">主题配置</string>
     <string name="show_manga_ui">漫画浏览</string>
-    <string name="disable_manga_scaling">禁用漫画缩放</string>
-    <string name="disable_manga_click_scroller">禁用点击翻页</string>
-    <string name="enable_auto_page_scroller">开启自动翻页</string>
+    <string name="disable_manga_scale">禁用漫画缩放</string>
+    <string name="disable_manga_click_scroll">禁用点击翻页</string>
+    <string name="enable_auto_page_scroll">开启自动翻页</string>
     <string name="manga_auto_page_speed">翻页速度 %s 秒</string>
     <string name="manga_footer_config">页脚配置</string>
     <string name="setting_manga_auto_page_speed">设置自动翻页速度</string>
@@ -1208,5 +1208,5 @@
     <string name="manga_header_footer">页脚</string>
     <string name="manga_radio_left">靠左</string>
     <string name="manga_radio_center">居中</string>
-    <string name="enable_manga_horizontal_scroller">水平滚动</string>
+    <string name="enable_manga_horizontal_scroll">水平滚动</string>
 </resources>

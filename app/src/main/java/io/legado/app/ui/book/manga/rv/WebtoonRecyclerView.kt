@@ -65,8 +65,8 @@ class WebtoonRecyclerView @JvmOverloads constructor(
         super.onMeasure(widthSpec, heightSpec)
     }
 
-    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
-        detector.onTouchEvent(ev!!)
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        detector.onTouchEvent(ev)
         return super.dispatchTouchEvent(ev)
     }
 

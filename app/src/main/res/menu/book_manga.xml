@@ -32,24 +32,24 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/menu_disable_manga_scaling"
+        android:id="@+id/menu_disable_manga_scale"
         android:checkable="true"
         android:checked="false"
-        android:title="@string/disable_manga_scaling"
+        android:title="@string/disable_manga_scale"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_disable_click_scroller"
         android:checkable="true"
         android:checked="false"
-        android:title="@string/disable_manga_click_scroller"
+        android:title="@string/disable_manga_click_scroll"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_enable_auto_page"
         android:checkable="true"
         android:checked="false"
-        android:title="@string/enable_auto_page_scroller"
+        android:title="@string/enable_auto_page_scroll"
         app:showAsAction="never" />
 
     <item
@@ -62,7 +62,7 @@
         android:id="@+id/menu_enable_horizontal_scroller"
         android:checkable="true"
         android:checked="false"
-        android:title="@string/enable_manga_horizontal_scroller"
+        android:title="@string/enable_manga_horizontal_scroll"
         app:showAsAction="never" />
 
     <item

@@ -75,7 +75,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
     private val mLayoutManager by lazy {
         LinearLayoutManager(
             this@ReadMangaActivity,
-            if (AppConfig.enableMangaHorizontalScroller) LinearLayoutManager.HORIZONTAL else LinearLayoutManager.VERTICAL,
+            if (AppConfig.enableMangaHorizontalScroll) LinearLayoutManager.HORIZONTAL else LinearLayoutManager.VERTICAL,
             false
         )
     }
@@ -191,7 +191,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
     }
 
     private fun initRecyclerView() {
-        mAdapter.isHorizontal = AppConfig.enableMangaHorizontalScroller
+        mAdapter.isHorizontal = AppConfig.enableMangaHorizontalScroll
         binding.mRecyclerMange.run {
             adapter = mAdapter
             itemAnimator = null
@@ -201,11 +201,11 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
             mLayoutManager.isItemPrefetchEnabled = true
             setItemViewCacheSize(AppConfig.preDownloadNum)
             singlePagerScroller(
-                AppConfig.singlePageScrolling,
-                AppConfig.enableMangaHorizontalScroller
+                AppConfig.singlePageScroll,
+                AppConfig.enableMangaHorizontalScroll
             )
-            disabledClickScroller(AppConfig.disableClickScroller)
-            disableMangaScaling(AppConfig.disableMangaScaling)
+            disabledClickScroller(AppConfig.disableClickScroll)
+            disableMangaScaling(AppConfig.disableMangaScale)
             setPreScrollListener { _, dx, dy, position ->
                 if ((dy > 0 || dx > 0) && position + 2 > mAdapter.getCurrentList().size - 3) {
                     if (mAdapter.getCurrentList().last() is ReaderLoading) {
@@ -487,19 +487,19 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
 
             R.id.menu_scroller_page -> {
                 item.isChecked = !item.isChecked
-                AppConfig.singlePageScrolling = item.isChecked
-                singlePagerScroller(item.isChecked, AppConfig.enableMangaHorizontalScroller)
+                AppConfig.singlePageScroll = item.isChecked
+                singlePagerScroller(item.isChecked, AppConfig.enableMangaHorizontalScroll)
             }
 
-            R.id.menu_disable_manga_scaling -> {
+            R.id.menu_disable_manga_scale -> {
                 item.isChecked = !item.isChecked
-                AppConfig.disableMangaScaling = item.isChecked
+                AppConfig.disableMangaScale = item.isChecked
                 disableMangaScaling(item.isChecked)
             }
 
             R.id.menu_disable_click_scroller -> {
                 item.isChecked = !item.isChecked
-                AppConfig.disableClickScroller = item.isChecked
+                AppConfig.disableClickScroll = item.isChecked
                 disabledClickScroller(item.isChecked)
             }
 
@@ -532,10 +532,10 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
 
             R.id.menu_enable_horizontal_scroller -> {
                 item.isChecked = !item.isChecked
-                AppConfig.enableMangaHorizontalScroller = item.isChecked
+                AppConfig.enableMangaHorizontalScroll = item.isChecked
                 mLayoutManager.orientation =
                     if (item.isChecked) LinearLayoutManager.HORIZONTAL else LinearLayoutManager.VERTICAL
-                singlePagerScroller(AppConfig.singlePageScrolling, item.isChecked)
+                singlePagerScroller(AppConfig.singlePageScroll, item.isChecked)
                 mAdapter.isHorizontal = item.isChecked
                 mAdapter.notifyItemRangeChanged(
                     ReadManga.durChapterPos.minus(2),
@@ -615,17 +615,17 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
         this.mMenu = menu
         menu.findItem(R.id.menu_pre_manga_number).title =
             getString(R.string.pre_download_m, AppConfig.mangaPreDownloadNum)
-        menu.findItem(R.id.menu_scroller_page).isChecked = AppConfig.singlePageScrolling
-        menu.findItem(R.id.menu_disable_manga_scaling).isChecked = AppConfig.disableMangaScaling
-        menu.findItem(R.id.menu_disable_click_scroller).isChecked = AppConfig.disableClickScroller
+        menu.findItem(R.id.menu_scroller_page).isChecked = AppConfig.singlePageScroll
+        menu.findItem(R.id.menu_disable_manga_scale).isChecked = AppConfig.disableMangaScale
+        menu.findItem(R.id.menu_disable_click_scroller).isChecked = AppConfig.disableClickScroll
         menu.findItem(R.id.menu_manga_auto_page_speed).title =
             getString(R.string.manga_auto_page_speed, mMangaAutoPageSpeed)
         menu.findItem(R.id.menu_enable_horizontal_scroller).isChecked =
-            AppConfig.enableMangaHorizontalScroller
+            AppConfig.enableMangaHorizontalScroll
     }
 
     private fun disableMangaScaling(disable: Boolean) {
-        binding.webtoonFrame.disableMangaScaling = disable
+        binding.webtoonFrame.disableMangaScale = disable
         binding.mRecyclerMange.disableMangaScaling = disable
         if (disable) {
             binding.mRecyclerMange.resetZoom()
