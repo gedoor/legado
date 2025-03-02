@@ -3,6 +3,7 @@ package io.legado.app.model.recyclerView
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.view.Gravity
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
@@ -52,7 +53,7 @@ open class MangaVH<VB : ViewBinding>(val binding: VB, private val context: Conte
     }
 
     @SuppressLint("CheckResult")
-    fun loadImageWithRetry(imageUrl: String) {
+    fun loadImageWithRetry(imageUrl: String, isHorizontal: Boolean) {
         mFlProgress.isVisible = true
         mLoading.isVisible = true
         mRetry?.isGone = true
@@ -102,8 +103,14 @@ open class MangaVH<VB : ViewBinding>(val binding: VB, private val context: Conte
                     isFirstResource: Boolean,
                 ): Boolean {
                     mFlProgress.isGone = true
-                    itemView.updateLayoutParams<ViewGroup.LayoutParams> {
-                        height = WRAP_CONTENT
+                    if (!isHorizontal) {
+                        itemView.updateLayoutParams<ViewGroup.LayoutParams> {
+                            height = WRAP_CONTENT
+                        }
+                    } else {
+                        mImage.updateLayoutParams<FrameLayout.LayoutParams> {
+                            gravity = Gravity.CENTER
+                        }
                     }
                     return false
                 }

@@ -54,12 +54,19 @@
 
     <item
         android:id="@+id/menu_manga_auto_page_speed"
-        android:visible="false"
         android:title="@string/manga_auto_page_speed"
+        android:visible="false"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_enable_horizontal_scroller"
+        android:checkable="true"
+        android:checked="false"
+        android:title="@string/enable_manga_horizontal_scroller"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_manga_footer_config"
         android:title="@string/manga_footer_config"
-        app:showAsAction="never"/>
+        app:showAsAction="never" />
 </menu>

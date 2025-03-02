@@ -651,5 +651,11 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             appCtx.putPrefString(PreferKey.mangaFooterConfig, value)
         }
 
+    //漫画水平滚动
+    var enableMangaHorizontalScroller
+        get() = appCtx.getPrefBoolean(PreferKey.enableMangaHorizontalScroller, false)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.enableMangaHorizontalScroller, value)
+        }
 }
 

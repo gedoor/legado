@@ -22,8 +22,8 @@ import io.legado.app.databinding.BookComicRvBinding
 import io.legado.app.help.glide.progress.ProgressManager
 import io.legado.app.model.BookCover
 import io.legado.app.model.ReadManga
-import io.legado.app.model.recyclerView.MangaVH
 import io.legado.app.model.recyclerView.MangaContent
+import io.legado.app.model.recyclerView.MangaVH
 import io.legado.app.model.recyclerView.ReaderLoading
 import io.legado.app.utils.getCompatDrawable
 import java.util.Collections
@@ -36,6 +36,8 @@ class MangaAdapter(private val context: Context) :
         private const val LOADING_VIEW = 0
         private const val CONTENT_VIEW = 1
     }
+
+    var isHorizontal = false
 
     private val mDiffCallback: DiffUtil.ItemCallback<Any> = object : DiffUtil.ItemCallback<Any>() {
         override fun areItemsTheSame(oldItem: Any, newItem: Any): Boolean {
@@ -89,13 +91,13 @@ class MangaAdapter(private val context: Context) :
             binding.retry.setOnClickListener {
                 val item = mDiffer.currentList[layoutPosition]
                 if (item is MangaContent) {
-                    loadImageWithRetry(item.mImageUrl)
+                    loadImageWithRetry(item.mImageUrl, isHorizontal)
                 }
             }
         }
 
         fun onBind(item: MangaContent) {
-            loadImageWithRetry(item.mImageUrl)
+            loadImageWithRetry(item.mImageUrl, isHorizontal)
         }
     }
 
