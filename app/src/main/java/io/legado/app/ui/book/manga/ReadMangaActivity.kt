@@ -323,6 +323,11 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
             mLabelBuilder.clear()
             binding.infobar.isGone = hideFooter
             binding.infobar.textInfoAlignment = footerOrientation
+
+            if (!hideChapterName) {
+                mLabelBuilder.append(chapterName).append(" ")
+            }
+
             if (!hidePageNumber) {
                 if (!hidePageNumberLabel) {
                     mLabelBuilder.append(getString(R.string.manga_check_page_number))
@@ -342,11 +347,6 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
                     mLabelBuilder.append(getString(R.string.manga_check_progress))
                 }
                 mLabelBuilder.append("${chapterPagePos.div(chapterPageCount).times(100)}%")
-                    .append(" ")
-            }
-
-            if (!hideChapterName) {
-                mLabelBuilder.append(chapterName)
             }
         }
         binding.infobar.update(
