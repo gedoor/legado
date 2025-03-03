@@ -202,6 +202,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
      * 缓存书籍
      */
     private fun cacheBook() {
+        if (AppConfig.preDownloadNum == 0) return
         cacheBookJob?.cancel()
         cacheBookJob = viewModelScope.launch(upTocPool) {
             while (isActive) {
