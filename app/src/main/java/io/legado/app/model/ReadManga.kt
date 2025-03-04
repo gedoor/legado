@@ -74,10 +74,10 @@ object ReadManga : CoroutineScope by MainScope() {
             val book = book ?: return@execute
             book.lastCheckCount = 0
             book.durChapterTime = System.currentTimeMillis()
-            val chapterChanged = book.durChapterIndex != durChapterPagePos
+            val changed = book.durChapterIndex != durChapterPagePos
             book.durChapterIndex = durChapterPagePos
             book.durChapterPos = durChapterPos
-            if (!pageChanged || chapterChanged) {
+            if (!pageChanged || changed) {
                 appDb.bookChapterDao.getChapter(book.bookUrl, durChapterPagePos)?.let {
                     book.durChapterTitle = it.getDisplayTitle(
                         ContentProcessor.get(book.name, book.origin).getTitleReplaceRules(),
@@ -209,6 +209,9 @@ object ReadManga : CoroutineScope by MainScope() {
     fun loadContent(
         index: Int,
     ) {
+        if (chapterChanged) {
+            removeLoading(index)
+        }
         if (addLoading(index)) {
             Coroutine.async {
                 val book = book!!
