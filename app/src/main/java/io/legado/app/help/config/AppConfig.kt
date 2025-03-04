@@ -623,13 +623,6 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             appCtx.putPrefInt(PreferKey.mangaPreDownloadNum, value)
         }
 
-    //单页滚动
-    var singlePageScroll
-        get() = appCtx.getPrefBoolean(PreferKey.singlePageScroll, false)
-        set(value) {
-            appCtx.putPrefBoolean(PreferKey.singlePageScroll, value)
-        }
-
     //点击翻页
     var disableClickScroll
         get() = appCtx.getPrefBoolean(PreferKey.disableClickScroll, false)

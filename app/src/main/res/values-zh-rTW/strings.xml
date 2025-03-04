@@ -825,7 +825,6 @@
     <string name="import_bookshelf">匯入書單</string>
     <string name="pre_download">預下載</string>
     <string name="pre_download_m">预下载%s页</string>
-    <string name="single_page_scroller">单页滚动</string>
     <string name="pre_download_s">預先下載%s章正文</string>
     <string name="is_enabled">是否啟用</string>
     <string name="background_image">背景圖片</string>
