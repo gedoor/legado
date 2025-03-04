@@ -51,7 +51,6 @@ object ReadManga : CoroutineScope by MainScope() {
     var durChapterPageCount = 0//总章节
     var durChapterCount = 0
     var durChapterPos = 0
-    var refreshChapter = false
     var bookSource: BookSource? = null
     var chapterTitle: String = ""
     var readStartTime: Long = System.currentTimeMillis()
@@ -259,7 +258,6 @@ object ReadManga : CoroutineScope by MainScope() {
         mFirstLoading = false
         gameOver = false
         mTopChapter = null
-        refreshChapter = false
         preDownloadTask?.cancel()
         preDownloadTask = null
         downloadedChapters.clear()
@@ -405,13 +403,6 @@ object ReadManga : CoroutineScope by MainScope() {
         chapter: BookChapter,
         book: Book,
     ) {
-        if (refreshChapter) {
-            if (BookHelp.hasContent(book, chapter)) {
-                BookHelp.delContent(book, chapter)
-            }
-            refreshChapter = false
-        }
-
         if (BookHelp.hasContent(book, chapter)) {
             BookHelp.getContent(book, chapter)?.apply {
                 contentLoadFinish(chapter, this, book)

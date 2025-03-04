@@ -246,4 +246,14 @@ class MangaViewModel(application: Application) : BaseViewModel(application) {
         super.onCleared()
         changeSourceCoroutine?.cancel()
     }
+
+    fun refreshContentDur(book: Book) {
+        execute {
+            appDb.bookChapterDao.getChapter(book.bookUrl, ReadManga.durChapterPagePos)
+                ?.let { chapter ->
+                    BookHelp.delContent(book, chapter)
+                    openChapter(ReadManga.durChapterPagePos, ReadManga.durChapterPos)
+                }
+        }
+    }
 }
