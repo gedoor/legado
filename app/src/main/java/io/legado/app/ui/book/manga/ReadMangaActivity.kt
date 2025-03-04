@@ -690,9 +690,9 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
             }
 
             else -> {
-                val lastPos = mLayoutManager.findLastCompletelyVisibleItemPosition()
-                if (lastPos != RecyclerView.NO_POSITION) lastPos + 1
-                else mLayoutManager.findFirstVisibleItemPosition() + 1
+                val lastPos = mLayoutManager.findFirstCompletelyVisibleItemPosition()
+                if (lastPos != RecyclerView.NO_POSITION) lastPos -1
+                else mLayoutManager.findFirstVisibleItemPosition() -1
             }
         }
         if (targetPosition < 0) return
