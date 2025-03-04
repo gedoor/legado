@@ -87,6 +87,10 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
             override fun getVerticalSnapPreference(): Int {
                 return SNAP_TO_START
             }
+
+            override fun getHorizontalSnapPreference(): Int {
+                return SNAP_TO_START
+            }
         }
     }
 
@@ -652,29 +656,47 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
     }
 
     private fun scrollToNext() {
-        val lastCompletelyVisiblePosition = mLayoutManager.findLastCompletelyVisibleItemPosition()
-        val nextPosition = if (lastCompletelyVisiblePosition != RecyclerView.NO_POSITION) {
-            lastCompletelyVisiblePosition + 1
-        } else {
-            mLayoutManager.findFirstVisibleItemPosition() + 1
+        val targetPosition = when {
+            AppConfig.singlePageScroll -> {
+                (mPagerSnapHelper?.getSnappedPosition(mLayoutManager)
+                    ?: RecyclerView.NO_POSITION).takeIf {
+                    it != RecyclerView.NO_POSITION
+                }?.plus(1) ?: return
+            }
+
+            else -> {
+                val lastPos = mLayoutManager.findLastCompletelyVisibleItemPosition()
+                if (lastPos != RecyclerView.NO_POSITION) lastPos + 1
+                else mLayoutManager.findFirstVisibleItemPosition() + 1
+            }
         }
-        if (nextPosition > mAdapter.getCurrentList().lastIndex) {
-            return
-        }
-        smoothScrollToPosition(nextPosition)
+        if (targetPosition > mAdapter.getCurrentList().lastIndex) return
+        smoothScrollToPosition(targetPosition)
+    }
+
+    private fun PagerSnapHelper?.getSnappedPosition(layoutManager: RecyclerView.LayoutManager): Int {
+        return this?.findSnapView(layoutManager)?.let {
+            layoutManager.getPosition(it)
+        } ?: RecyclerView.NO_POSITION
     }
 
     private fun scrollToPrev() {
-        val firstCompletelyVisiblePosition = mLayoutManager.findFirstCompletelyVisibleItemPosition()
-        val prevPosition = if (firstCompletelyVisiblePosition != RecyclerView.NO_POSITION) {
-            firstCompletelyVisiblePosition - 1
-        } else {
-            mLayoutManager.findFirstVisibleItemPosition() - 1
+        val targetPosition = when {
+            AppConfig.singlePageScroll -> {
+                (mPagerSnapHelper?.getSnappedPosition(mLayoutManager)
+                    ?: RecyclerView.NO_POSITION).takeIf {
+                    it != RecyclerView.NO_POSITION
+                }?.minus(1) ?: return
+            }
+
+            else -> {
+                val lastPos = mLayoutManager.findLastCompletelyVisibleItemPosition()
+                if (lastPos != RecyclerView.NO_POSITION) lastPos + 1
+                else mLayoutManager.findFirstVisibleItemPosition() + 1
+            }
         }
-        if (prevPosition < 0) {
-            return
-        }
-        smoothScrollToPosition(prevPosition)
+        if (targetPosition < 0) return
+        smoothScrollToPosition(targetPosition)
     }
 
     private fun smoothScrollToPosition(position: Int) {
