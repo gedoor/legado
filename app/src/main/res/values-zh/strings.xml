@@ -827,7 +827,6 @@
     <string name="export_bookshelf">导出书单</string>
     <string name="import_bookshelf">导入书单</string>
     <string name="pre_download">预下载</string>
-    <string name="single_page_scroller">单页滚动</string>
     <string name="pre_download_m">预下载%s页</string>
     <string name="pre_download_s">预先下载 %s 章正文</string>
     <string name="is_enabled">是否启用</string>

@@ -822,7 +822,6 @@
     <string name="import_bookshelf">Importar a lista de livros</string>
     <string name="pre_download">Baixar antecipadamente</string>
     <string name="pre_download_m">预下载%s页</string>
-    <string name="single_page_scroller">单页滚动</string>
     <string name="pre_download_s">Baixar %s capítulos antecipadamente</string>
     <string name="is_enabled">Está ativado</string>
     <string name="background_image">Imagem de fundo</string>

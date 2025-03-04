@@ -31,13 +31,6 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/menu_scroller_page"
-        android:checkable="true"
-        android:checked="false"
-        android:title="@string/single_page_scroller"
-        app:showAsAction="never" />
-
-    <item
         android:id="@+id/menu_disable_manga_scale"
         android:checkable="true"
         android:checked="false"
