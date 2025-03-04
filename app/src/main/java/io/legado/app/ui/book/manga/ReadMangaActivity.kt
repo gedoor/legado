@@ -473,6 +473,12 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
                 }
             }
 
+            R.id.menu_refresh -> {
+                ReadManga.refreshChapter = true
+                binding.flLoading.isVisible = true
+                viewModel.openChapter(ReadManga.durChapterPagePos, ReadManga.durChapterPos)
+            }
+
             R.id.menu_pre_manga_number -> {
                 showNumberPickerDialog(
                     0,
