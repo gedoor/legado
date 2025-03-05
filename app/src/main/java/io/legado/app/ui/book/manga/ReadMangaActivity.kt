@@ -58,7 +58,6 @@ import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.gone
 import io.legado.app.utils.observeEvent
-import io.legado.app.utils.printOnDebug
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.toggleStatusBar
@@ -208,26 +207,19 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
                 }
             }
             setNestedPreScrollListener { _, _, _, position ->
-                if (mAdapter.getCurrentList().isNotEmpty()
-                    && position <= mAdapter.getCurrentList().lastIndex
-                ) {
-                    try {
-                        val content = mAdapter.getCurrentList()[position]
-                        if (content is MangaContent) {
-                            ReadManga.durChapterIndex = content.mChapterIndex
-                            ReadManga.durChapterPos = content.mDurChapterPos
-                            upInfoBar(
-                                content.mChapterIndex + 1,
-                                content.chapterSize,
-                                content.mDurChapterPos + 1,
-                                content.mDurChapterCount,
-                                content.mChapterName
-                            )
-                        }
-                    } catch (e: Exception) {
-                        e.printOnDebug()
+                if (mAdapter.isNotEmpty()) {
+                    val content = mAdapter.getItem(position)
+                    if (content is MangaContent) {
+                        ReadManga.durChapterIndex = content.mChapterIndex
+                        ReadManga.durChapterPos = content.mDurChapterPos
+                        upInfoBar(
+                            content.mChapterIndex + 1,
+                            content.chapterSize,
+                            content.mDurChapterPos + 1,
+                            content.mDurChapterCount,
+                            content.mChapterName
+                        )
                     }
-
                 }
             }
             addRecyclerViewPreloader(AppConfig.mangaPreDownloadNum)
