@@ -50,7 +50,7 @@ class MangaViewModel(application: Application) : BaseViewModel(application) {
                 else -> appDb.bookDao.getBook(bookUrl)
             } ?: ReadManga.book
             when {
-                book != null -> initMange(book)
+                book != null -> initManga(book)
                 else -> context.getString(R.string.no_book)//没有找到书
             }
         }.onSuccess {
@@ -63,7 +63,7 @@ class MangaViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    private suspend fun initMange(book: Book) {
+    private suspend fun initManga(book: Book) {
         val isSameBook = ReadManga.book?.bookUrl == book.bookUrl
         if (isSameBook) {
             ReadManga.upData(book)
@@ -78,10 +78,7 @@ class MangaViewModel(application: Application) : BaseViewModel(application) {
             return
         }
 
-        if ((ReadManga.durChapterPageCount == 0 || book.isLocalModified()) && !loadChapterListAwait(
-                book
-            )
-        ) {
+        if ((ReadManga.chapterSize == 0 || book.isLocalModified()) && !loadChapterListAwait(book)) {
             return
         }
         ensureChapterExist()
@@ -108,7 +105,7 @@ class MangaViewModel(application: Application) : BaseViewModel(application) {
                 }
                 appDb.bookChapterDao.delByBook(oldBook.bookUrl)
                 appDb.bookChapterDao.insert(*cList.toTypedArray())
-                ReadManga.durChapterPageCount = cList.size
+                ReadManga.chapterSize = cList.size
                 ReadManga.simulatedChapterSize = book.simulatedTotalChapterNum()
                 return true
             }.onFailure {
@@ -138,8 +135,8 @@ class MangaViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private fun ensureChapterExist() {
-        if (ReadManga.simulatedChapterSize > 0 && ReadManga.durChapterPagePos > ReadManga.simulatedChapterSize - 1) {
-            ReadManga.durChapterPagePos = ReadManga.simulatedChapterSize - 1
+        if (ReadManga.simulatedChapterSize > 0 && ReadManga.durChapterIndex > ReadManga.simulatedChapterSize - 1) {
+            ReadManga.durChapterIndex = ReadManga.simulatedChapterSize - 1
         }
     }
 
@@ -224,9 +221,9 @@ class MangaViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun openChapter(index: Int, durChapterPos: Int = 0) {
-        if (index < ReadManga.durChapterPageCount) {
+        if (index < ReadManga.chapterSize) {
             ReadManga.chapterChanged = true
-            ReadManga.durChapterPagePos = index
+            ReadManga.durChapterIndex = index
             ReadManga.durChapterPos = durChapterPos
             ReadManga.saveRead()
             ReadManga.loadContent(index)
@@ -249,10 +246,10 @@ class MangaViewModel(application: Application) : BaseViewModel(application) {
 
     fun refreshContentDur(book: Book) {
         execute {
-            appDb.bookChapterDao.getChapter(book.bookUrl, ReadManga.durChapterPagePos)
+            appDb.bookChapterDao.getChapter(book.bookUrl, ReadManga.durChapterIndex)
                 ?.let { chapter ->
                     BookHelp.delContent(book, chapter)
-                    openChapter(ReadManga.durChapterPagePos, ReadManga.durChapterPos)
+                    openChapter(ReadManga.durChapterIndex, ReadManga.durChapterPos)
                 }
         }
     }
