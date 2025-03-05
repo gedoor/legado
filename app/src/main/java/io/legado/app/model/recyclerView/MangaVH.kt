@@ -22,7 +22,6 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import io.legado.app.R
-import io.legado.app.help.glide.progress.OnProgressListener
 import io.legado.app.help.glide.progress.ProgressManager
 import io.legado.app.model.BookCover
 import io.legado.app.model.ReadManga
@@ -59,17 +58,10 @@ open class MangaVH<VB : ViewBinding>(val binding: VB, private val context: Conte
         mRetry?.isGone = true
         mProgress.isVisible = true
         ProgressManager.removeListener(imageUrl)
-        ProgressManager.addListener(imageUrl, object : OnProgressListener {
+        ProgressManager.addListener(imageUrl) { _, percentage, _, _ ->
             @SuppressLint("SetTextI18n")
-            override fun invoke(
-                isComplete: Boolean,
-                percentage: Int,
-                bytesRead: Long,
-                totalBytes: Long,
-            ) {
-                mProgress.text = "$percentage%"
-            }
-        })
+            mProgress.text = "$percentage%"
+        }
         try {
             mImage.tag = imageUrl
             BookCover.loadManga(
