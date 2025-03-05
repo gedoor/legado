@@ -58,7 +58,6 @@ object ReadManga : CoroutineScope by MainScope() {
     private val loadingChapters = arrayListOf<Int>()
     var simulatedChapterSize = 0
     var mCallback: Callback? = null
-    var mFirstLoading = false
     var gameOver = false
     var mTopChapter: BookChapter? = null
     var preDownloadTask: Job? = null
@@ -251,7 +250,6 @@ object ReadManga : CoroutineScope by MainScope() {
         loadingChapters.clear()
         simulatedChapterSize = 0
         mCallback = null
-        mFirstLoading = false
         gameOver = false
         mTopChapter = null
         preDownloadTask?.cancel()
@@ -292,10 +290,10 @@ object ReadManga : CoroutineScope by MainScope() {
             }.distinctUntilChanged().mapIndexed { index, src ->
                 MangaContent(
                     chapterSize = chapterSize,
-                    mChapterIndex = durChapterIndex.plus(1),
+                    mChapterIndex = durChapterIndex,
                     nextChapterIndex = durChapterIndex.plus(1),
                     mImageUrl = src,
-                    mDurChapterPos = index.plus(1),
+                    mDurChapterPos = index,
                     mChapterName = chapterTitle
                 )
             }.toList().apply {
@@ -636,6 +634,5 @@ object ReadManga : CoroutineScope by MainScope() {
         fun noData()
         fun adjustmentProgress()
         fun sureNewProgress(progress: BookProgress)
-        val chapterList: MutableList<Any>
     }
 }

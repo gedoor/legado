@@ -38,7 +38,6 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.help.storage.Backup
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.model.ReadManga
-import io.legado.app.model.ReadManga.mFirstLoading
 import io.legado.app.model.recyclerView.MangaContent
 import io.legado.app.model.recyclerView.ReaderLoading
 import io.legado.app.receiver.NetworkChangedListener
@@ -154,7 +153,6 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
         binding.tvRetry.setOnClickListener {
             binding.llLoading.isVisible = true
             binding.llRetry.isGone = true
-            mFirstLoading = false
             ReadManga.loadContent()
         }
 
@@ -216,11 +214,11 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
                     try {
                         val content = mAdapter.getCurrentList()[position]
                         if (content is MangaContent) {
-                            ReadManga.durChapterPos = content.mDurChapterPos.minus(1)
+                            ReadManga.durChapterPos = content.mDurChapterPos
                             upInfoBar(
-                                content.mChapterIndex,
+                                content.mChapterIndex + 1,
                                 content.chapterSize,
-                                content.mDurChapterPos,
+                                content.mDurChapterPos + 1,
                                 content.mDurChapterCount,
                                 content.mChapterName
                             )
@@ -270,18 +268,17 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
     override fun loadContentFinish(list: MutableList<Any>) {
         if (!this.isDestroyed) {
             setTitle(ReadManga.book?.name)
+            val isEmpty = mAdapter.isEmpty()
             mAdapter.submitList(list) {
-                if (!mFirstLoading) {
-                    if (list.size > 1) {
-                        binding.infobar.isVisible = true
-                        upInfoBar(
-                            ReadManga.durChapterIndex.plus(1),
-                            ReadManga.chapterSize,
-                            ReadManga.durChapterPos.plus(1),
-                            ReadManga.durChapterImageCount,
-                            ReadManga.chapterTitle
-                        )
-                    }
+                if (isEmpty) {
+                    binding.infobar.isVisible = true
+                    upInfoBar(
+                        ReadManga.durChapterIndex.plus(1),
+                        ReadManga.chapterSize,
+                        ReadManga.durChapterPos.plus(1),
+                        ReadManga.durChapterImageCount,
+                        ReadManga.chapterTitle
+                    )
 
                     if (ReadManga.durChapterPos + 2 > mAdapter.getCurrentList().size - 3) {
                         val nextIndex =
@@ -298,7 +295,6 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
 
                 ReadManga.chapterChanged = false
                 loadMoreView.visible()
-                mFirstLoading = true
                 loadMoreView.stopLoad()
             }
         }
@@ -380,7 +376,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
     }
 
     override fun loadFail(msg: String) {
-        if (!mFirstLoading || ReadManga.chapterChanged) {
+        if (mAdapter.isEmpty() || ReadManga.chapterChanged) {
             binding.llLoading.isGone = true
             binding.llRetry.isVisible = true
             binding.tvMsg.text = msg
@@ -399,9 +395,6 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
             binding.flLoading.isGone = true
         }
     }
-
-    override val chapterList: MutableList<Any>
-        get() = mAdapter.getCurrentList()
 
     override fun onDestroy() {
         ReadManga.unregister()

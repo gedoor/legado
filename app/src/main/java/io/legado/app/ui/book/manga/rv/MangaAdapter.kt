@@ -63,6 +63,10 @@ class MangaAdapter(private val context: Context) :
 
     fun getCurrentList() = mDiffer.currentList
 
+    fun isEmpty() = mDiffer.currentList.isEmpty()
+
+    fun isNotEmpty() = !isEmpty()
+
     //全部替换数据
     fun submitList(contents: MutableList<Any>, runnable: Runnable) {
         val list = if (ReadManga.chapterChanged) {
