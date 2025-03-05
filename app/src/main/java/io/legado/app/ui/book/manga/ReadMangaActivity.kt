@@ -214,6 +214,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
                     try {
                         val content = mAdapter.getCurrentList()[position]
                         if (content is MangaContent) {
+                            ReadManga.durChapterIndex = content.mChapterIndex
                             ReadManga.durChapterPos = content.mDurChapterPos
                             upInfoBar(
                                 content.mChapterIndex + 1,
