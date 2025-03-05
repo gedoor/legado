@@ -223,7 +223,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
                 }
             }
             addRecyclerViewPreloader(AppConfig.mangaPreDownloadNum)
-            onToucheMiddle {
+            onTouchMiddle {
                 if (!binding.mangaMenu.isVisible) {
                     binding.mangaMenu.runMenuIn()
                 }
