@@ -1,170 +1,174 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:padding="16dp">
 
-    <io.legado.app.ui.widget.text.AccentTextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/manga_footer_config"
-        android:textSize="18sp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/manga_header_chapter"
-        android:textColor="@color/primaryText"
-        android:textSize="14sp" />
-
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp">
+        android:orientation="vertical">
 
-        <io.legado.app.lib.theme.view.ThemeCheckBox
-            android:id="@+id/cb_chapter_label"
+        <io.legado.app.ui.widget.text.AccentTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/manga_check_chapter_label" />
+            android:text="@string/manga_footer_config"
+            android:textSize="18sp" />
 
-        <io.legado.app.lib.theme.view.ThemeCheckBox
-            android:id="@+id/cb_chapter"
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:gravity="center"
-            android:text="@string/manga_check_chapter" />
+            android:layout_marginTop="16dp"
+            android:text="@string/manga_header_chapter"
+            android:textColor="@color/primaryText"
+            android:textSize="14sp" />
 
-        <io.legado.app.lib.theme.view.ThemeCheckBox
-            android:id="@+id/cb_chapter_name"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:gravity="center"
-            android:text="@string/manga_check_chapter_name" />
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp">
+
+            <io.legado.app.lib.theme.view.ThemeCheckBox
+                android:id="@+id/cb_chapter_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/manga_check_chapter_label" />
+
+            <io.legado.app.lib.theme.view.ThemeCheckBox
+                android:id="@+id/cb_chapter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:gravity="center"
+                android:text="@string/manga_check_chapter" />
+
+            <io.legado.app.lib.theme.view.ThemeCheckBox
+                android:id="@+id/cb_chapter_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:gravity="center"
+                android:text="@string/manga_check_chapter_name" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/manga_header_page"
+            android:textColor="@color/primaryText"
+            android:textSize="14sp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp">
+
+            <io.legado.app.lib.theme.view.ThemeCheckBox
+                android:id="@+id/cb_page_number_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/manga_check_page_label" />
+
+            <io.legado.app.lib.theme.view.ThemeCheckBox
+                android:id="@+id/cb_page_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:gravity="center"
+                android:text="@string/manga_check_page_number" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/manga_header_progress"
+            android:textColor="@color/primaryText"
+            android:textSize="14sp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp">
+
+            <io.legado.app.lib.theme.view.ThemeCheckBox
+                android:id="@+id/cb_progress_ratio_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/manga_check_progress_label" />
+
+            <io.legado.app.lib.theme.view.ThemeCheckBox
+                android:id="@+id/cb_progress_ratio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:gravity="center"
+                android:text="@string/manga_check_progress" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/manga_header_footer"
+            android:textColor="@color/primaryText"
+            android:textSize="14sp" />
+
+        <RadioGroup
+            android:id="@+id/rg_footer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <io.legado.app.lib.theme.view.ThemeRadioButton
+                android:id="@+id/rb_show"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/show" />
+
+            <io.legado.app.lib.theme.view.ThemeRadioButton
+                android:id="@+id/rb_hide"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:gravity="center"
+                android:text="@string/hide" />
+        </RadioGroup>
+
+        <RadioGroup
+            android:id="@+id/rg_footer_orientation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <io.legado.app.lib.theme.view.ThemeRadioButton
+                android:id="@+id/rb_left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/manga_radio_left" />
+
+            <io.legado.app.lib.theme.view.ThemeRadioButton
+                android:id="@+id/rb_center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:gravity="center"
+                android:text="@string/manga_radio_center" />
+        </RadioGroup>
+
     </LinearLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/manga_header_page"
-        android:textColor="@color/primaryText"
-        android:textSize="14sp" />
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp">
-
-        <io.legado.app.lib.theme.view.ThemeCheckBox
-            android:id="@+id/cb_page_number_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/manga_check_page_label" />
-
-        <io.legado.app.lib.theme.view.ThemeCheckBox
-            android:id="@+id/cb_page_number"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:gravity="center"
-            android:text="@string/manga_check_page_number" />
-    </LinearLayout>
-
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/manga_header_progress"
-        android:textColor="@color/primaryText"
-        android:textSize="14sp" />
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp">
-
-        <io.legado.app.lib.theme.view.ThemeCheckBox
-            android:id="@+id/cb_progress_ratio_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/manga_check_progress_label" />
-
-        <io.legado.app.lib.theme.view.ThemeCheckBox
-            android:id="@+id/cb_progress_ratio"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:gravity="center"
-            android:text="@string/manga_check_progress" />
-    </LinearLayout>
-
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/manga_header_footer"
-        android:textColor="@color/primaryText"
-        android:textSize="14sp" />
-
-    <RadioGroup
-        android:id="@+id/rg_footer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:orientation="horizontal">
-
-        <io.legado.app.lib.theme.view.ThemeRadioButton
-            android:id="@+id/rb_show"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/show" />
-
-        <io.legado.app.lib.theme.view.ThemeRadioButton
-            android:id="@+id/rb_hide"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:gravity="center"
-            android:text="@string/hide" />
-    </RadioGroup>
-
-    <RadioGroup
-        android:id="@+id/rg_footer_orientation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:orientation="horizontal">
-
-        <io.legado.app.lib.theme.view.ThemeRadioButton
-            android:id="@+id/rb_left"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/manga_radio_left" />
-
-        <io.legado.app.lib.theme.view.ThemeRadioButton
-            android:id="@+id/rb_center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:gravity="center"
-            android:text="@string/manga_radio_center" />
-    </RadioGroup>
-
-</LinearLayout>
+</androidx.core.widget.NestedScrollView>
