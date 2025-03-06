@@ -24,7 +24,6 @@ import io.legado.app.model.recyclerView.ReaderLoading
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.mapIndexed
-import io.legado.app.utils.runOnUI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers.IO
@@ -318,9 +317,7 @@ object ReadManga : CoroutineScope by MainScope() {
                     mNextChapterIndex = durChapterIndex.plus(1)
                 )
             )
-            runOnUI {
-                mCallback?.loadContentFinish(contentList)
-            }
+            mCallback?.loadContentFinish(contentList)
         }
     }
 
@@ -360,9 +357,7 @@ object ReadManga : CoroutineScope by MainScope() {
         val book = book ?: return
         if (!book.canUpdate) return
         if (System.currentTimeMillis() - book.lastCheckTime < 600000) {
-            runOnUI {
-                mCallback?.noData()
-            }
+            mCallback?.noData()
             return
         }
         book.lastCheckTime = System.currentTimeMillis()
@@ -382,9 +377,7 @@ object ReadManga : CoroutineScope by MainScope() {
                 durChapterIndex = durChapterIndex.minus(1)
                 saveRead()
                 gameOver = true
-                runOnUI {
-                    mCallback?.noData()
-                }
+                mCallback?.noData()
             }
         }.onError {
             mCallback?.noData()
@@ -400,37 +393,25 @@ object ReadManga : CoroutineScope by MainScope() {
         if (BookHelp.hasContent(book, chapter)) {
             BookHelp.getContent(book, chapter)?.apply {
                 contentLoadFinish(chapter, this, book)
-                runOnUI {
-                    mCallback?.loadComplete()
-                }
+                mCallback?.loadComplete()
                 if (durChapterIndex >= chapterSize.minus(1)) {
                     gameOver = true
-                    runOnUI {
-                        mCallback?.noData()
-                    }
+                    mCallback?.noData()
                 }
             } ?: downloadNetworkContent(bookSource, scope, chapter, book, success = {
                 contentLoadFinish(chapter, it, book)
-                runOnUI {
-                    mCallback?.loadComplete()
-                }
+                mCallback?.loadComplete()
             }, error = {
                 removeLoading(chapter.index)
-                runOnUI {
-                    mCallback?.loadFail("加载内容失败")
-                }
+                mCallback?.loadFail("加载内容失败")
             })
         } else {
             downloadNetworkContent(bookSource, scope, chapter, book, success = {
                 contentLoadFinish(chapter, it, book)
-                runOnUI {
-                    mCallback?.loadComplete()
-                }
+                mCallback?.loadComplete()
             }, error = {
                 removeLoading(chapter.index)
-                runOnUI {
-                    mCallback?.loadFail("加载内容失败")
-                }
+                mCallback?.loadFail("加载内容失败")
             })
         }
     }

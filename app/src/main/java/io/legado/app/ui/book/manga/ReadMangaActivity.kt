@@ -14,6 +14,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -63,6 +64,7 @@ import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.toggleStatusBar
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
+import kotlinx.coroutines.launch
 
 class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>(),
     ReadManga.Callback, ChangeBookSourceDialog.CallBack, MangaMenu.CallBack {
@@ -259,7 +261,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
     }
 
     override fun loadContentFinish(list: MutableList<Any>) {
-        if (!this.isDestroyed) {
+        lifecycleScope.launch {
             setTitle(ReadManga.book?.name)
             val isEmpty = mAdapter.isEmpty()
             mAdapter.submitList(list) {
@@ -365,21 +367,27 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
     }
 
     override fun loadComplete() {
-        binding.flLoading.isGone = true
+        lifecycleScope.launch {
+            binding.flLoading.isGone = true
+        }
     }
 
     override fun loadFail(msg: String) {
-        if (mAdapter.isEmpty() || ReadManga.chapterChanged) {
-            binding.llLoading.isGone = true
-            binding.llRetry.isVisible = true
-            binding.tvMsg.text = msg
-        } else {
-            loadMoreView.error(null, "加载失败，点击重试")
+        lifecycleScope.launch {
+            if (mAdapter.isEmpty() || ReadManga.chapterChanged) {
+                binding.llLoading.isGone = true
+                binding.llRetry.isVisible = true
+                binding.tvMsg.text = msg
+            } else {
+                loadMoreView.error(null, "加载失败，点击重试")
+            }
         }
     }
 
     override fun noData() {
-        loadMoreView.noMore("暂无章节了！")
+        lifecycleScope.launch {
+            loadMoreView.noMore("暂无章节了！")
+        }
     }
 
     override fun adjustmentProgress() {
