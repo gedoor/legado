@@ -136,6 +136,8 @@ object ReadBook : CoroutineScope by MainScope() {
         TextFile.clear()
         synchronized(this) {
             loadingChapters.clear()
+            downloadedChapters.clear()
+            downloadFailChapters.clear()
         }
     }
 
@@ -954,8 +956,6 @@ object ReadBook : CoroutineScope by MainScope() {
         preDownloadTask?.cancel()
         downloadScope.coroutineContext.cancelChildren()
         coroutineContext.cancelChildren()
-        downloadedChapters.clear()
-        downloadFailChapters.clear()
         ImageProvider.clear()
         if (!CacheBookService.isRun) {
             CacheBook.close()

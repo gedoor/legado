@@ -33,7 +33,7 @@ import kotlinx.coroutines.flow.onEmpty
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.take
 
-class MangaViewModel(application: Application) : BaseViewModel(application) {
+class ReadMangaViewModel(application: Application) : BaseViewModel(application) {
 
     private var changeSourceCoroutine: Coroutine<*>? = null
 
@@ -84,7 +84,12 @@ class MangaViewModel(application: Application) : BaseViewModel(application) {
         ensureChapterExist()
 
         //开始加载内容
-        ReadManga.loadContent()
+        if (!isSameBook) {
+            ReadManga.loadContent()
+        } else {
+            ReadManga.loadOrUpContent()
+        }
+
 
         //自动换源
         if (!book.isLocal && ReadManga.bookSource == null) {
@@ -224,7 +229,7 @@ class MangaViewModel(application: Application) : BaseViewModel(application) {
             ReadManga.durChapterIndex = index
             ReadManga.durChapterPos = durChapterPos
             ReadManga.saveRead()
-            ReadManga.loadContent(index)
+            ReadManga.loadContent()
         }
     }
 

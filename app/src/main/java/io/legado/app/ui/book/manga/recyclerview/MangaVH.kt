@@ -50,7 +50,7 @@ open class MangaVH<VB : ViewBinding>(val binding: VB, private val context: Conte
     }
 
     @SuppressLint("CheckResult")
-    fun loadImageWithRetry(imageUrl: String, isHorizontal: Boolean) {
+    fun loadImageWithRetry(imageUrl: String, isHorizontal: Boolean, singleImage: Boolean) {
         mFlProgress.isVisible = true
         mLoading.isVisible = true
         mRetry?.isGone = true
@@ -95,7 +95,11 @@ open class MangaVH<VB : ViewBinding>(val binding: VB, private val context: Conte
                     mFlProgress.isGone = true
                     if (!isHorizontal) {
                         itemView.updateLayoutParams<ViewGroup.LayoutParams> {
-                            height = ViewGroup.LayoutParams.WRAP_CONTENT
+                            height = if (singleImage) {
+                                ViewGroup.LayoutParams.MATCH_PARENT
+                            } else {
+                                ViewGroup.LayoutParams.WRAP_CONTENT
+                            }
                         }
                     } else {
                         mImage.updateLayoutParams<FrameLayout.LayoutParams> {

@@ -67,17 +67,8 @@ class MangaAdapter(private val context: Context) :
     fun isNotEmpty() = !isEmpty()
 
     //全部替换数据
-    fun submitList(contents: MutableList<Any>, runnable: Runnable) {
-        val list = if (ReadManga.chapterChanged) {
-            contents
-        } else {
-            val currentList = mDiffer.currentList.toMutableList()
-            currentList.addAll(contents)
-            currentList
-        }
-        mDiffer.submitList(list) {
-            runnable.run()
-        }
+    fun submitList(contents: List<Any>, runnable: Runnable? = null) {
+        mDiffer.submitList(contents, runnable)
     }
 
     inner class PageViewHolder(binding: BookComicRvBinding) :
@@ -94,13 +85,13 @@ class MangaAdapter(private val context: Context) :
             binding.retry.setOnClickListener {
                 val item = mDiffer.currentList[layoutPosition]
                 if (item is MangaContent) {
-                    loadImageWithRetry(item.mImageUrl, isHorizontal)
+                    loadImageWithRetry(item.mImageUrl, isHorizontal, mDiffer.currentList.size == 3)
                 }
             }
         }
 
         fun onBind(item: MangaContent) {
-            loadImageWithRetry(item.mImageUrl, isHorizontal)
+            loadImageWithRetry(item.mImageUrl, isHorizontal, mDiffer.currentList.size == 3)
         }
     }
 
