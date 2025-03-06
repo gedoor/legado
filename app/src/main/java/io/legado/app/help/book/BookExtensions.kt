@@ -232,15 +232,6 @@ fun Book.upType() {
     }
 }
 
-fun BookSource.getBookType(): Int {
-    return when (bookSourceType) {
-        BookSourceType.file -> BookType.text or BookType.webFile
-        BookSourceType.image -> BookType.image
-        BookSourceType.audio -> BookType.audio
-        else -> BookType.text
-    }
-}
-
 fun Book.sync(oldBook: Book) {
     val curBook = appDb.bookDao.getBook(oldBook.bookUrl)!!
     durChapterTime = curBook.durChapterTime
@@ -257,6 +248,10 @@ fun Book.sync(oldBook: Book) {
 
 fun Book.update() {
     appDb.bookDao.update(this)
+}
+
+fun Book.primaryStr(): String {
+    return origin + bookUrl
 }
 
 fun Book.updateTo(newBook: Book): Book {

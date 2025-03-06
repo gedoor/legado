@@ -109,6 +109,14 @@ data class SearchBook(
         tocHtml = null
     }
 
+    fun primaryStr(): String {
+        return origin + bookUrl
+    }
+
+    fun sameBookTypeLocal(bookType: Int): Boolean {
+        return type and BookType.allBookTypeLocal == bookType and BookType.allBookTypeLocal
+    }
+
     fun toBook() = Book(
         name = name,
         author = author,

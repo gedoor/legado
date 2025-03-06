@@ -1,6 +1,5 @@
 package io.legado.app.ui.book.manga.entities
 
-
 data class MangaContent(
     var mChapterIndex: Int = 0,//总章节位置
     var chapterSize: Int,//总章节数量

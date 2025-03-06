@@ -18,6 +18,7 @@ import io.legado.app.data.entities.SearchBook
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.book.BookHelp
 import io.legado.app.help.book.ContentProcessor
+import io.legado.app.help.book.primaryStr
 import io.legado.app.help.book.releaseHtmlData
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.SourceConfig
@@ -278,9 +279,9 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
         }
         if (tocMapChapterCount < 30000) {
             tocMapChapterCount += chapters.size
-            tocMap[book.bookUrl] = chapters
+            tocMap[book.primaryStr()] = chapters
         }
-        bookMap[book.bookUrl] = book
+        bookMap[book.primaryStr()] = book
         book.releaseHtmlData()
         if (AppConfig.changeSourceLoadWordCount) {
             loadBookWordCount(source, book, chapters)
@@ -429,13 +430,13 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
         onSuccess: (toc: List<BookChapter>, source: BookSource) -> Unit
     ): Coroutine<Pair<List<BookChapter>, BookSource>> {
         return execute {
-            val toc = tocMap[book.bookUrl]
+            val toc = tocMap[book.primaryStr()]
             if (toc != null) {
                 val source = appDb.bookSourceDao.getBookSource(book.origin)
                 return@execute Pair(toc, source!!)
             }
             val result = getToc(book).getOrThrow()
-            tocMap[book.bookUrl] = result.first
+            tocMap[book.primaryStr()] = result.first
             return@execute result
         }.onSuccess {
             onSuccess.invoke(it.first, it.second)

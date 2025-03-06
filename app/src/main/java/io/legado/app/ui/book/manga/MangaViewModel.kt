@@ -201,9 +201,7 @@ class MangaViewModel(application: Application) : BaseViewModel(application) {
             appDb.bookDao.insert(book)
             appDb.bookChapterDao.insert(*toc.toTypedArray())
             ReadManga.resetData(book)
-            toc.find { it.title.contains(ReadManga.chapterTitle) }?.run {
-                ReadManga.loadContent(index)
-            } ?: ReadManga.loadContent()
+            ReadManga.loadContent()
         }.onError {
             AppLog.put("换源失败\n$it", it, true)
         }.onFinally {

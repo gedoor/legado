@@ -17,8 +17,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
-import io.legado.app.constant.AppConst
-import io.legado.app.constant.BookType
 import io.legado.app.constant.EventBus
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
@@ -307,9 +305,8 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
     }
 
     override fun changeTo(searchBook: SearchBook) {
-        val oldBookType = callBack?.oldBook?.type?.and(BookType.updateError.inv())
-            ?.and(BookType.notShelf.inv())
-        if (searchBook.type == oldBookType) {
+        val oldBookType = callBack?.oldBook?.type ?: 0
+        if (searchBook.sameBookTypeLocal(oldBookType)) {
             changeSource(searchBook) {
                 dismissAllowingStateLoss()
             }
@@ -369,7 +366,7 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
     private fun changeSource(searchBook: SearchBook, onSuccess: (() -> Unit)? = null) {
         waitDialog.setText(R.string.load_toc)
         waitDialog.show()
-        val book = viewModel.bookMap[searchBook.bookUrl] ?: searchBook.toBook()
+        val book = viewModel.bookMap[searchBook.primaryStr()] ?: searchBook.toBook()
         val coroutine = viewModel.getToc(book, {
             waitDialog.dismiss()
             toastOnUi(it)
