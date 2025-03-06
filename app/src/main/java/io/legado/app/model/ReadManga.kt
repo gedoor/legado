@@ -61,7 +61,6 @@ object ReadManga : CoroutineScope by MainScope() {
     var preDownloadTask: Job? = null
     val downloadedChapters = hashSetOf<Int>()
     val downloadFailChapters = hashMapOf<Int, Int>()
-    private val downloadLoadingChapters = arrayListOf<Int>()
     val downloadScope = CoroutineScope(SupervisorJob() + IO)
     var rateLimiter = ConcurrentRateLimiter(null)
 
@@ -153,21 +152,6 @@ object ReadManga : CoroutineScope by MainScope() {
         }
     }
 
-    private fun addDownloadLoading(index: Int): Boolean {
-        synchronized(this) {
-            if (downloadLoadingChapters.contains(index)) return false
-            downloadLoadingChapters.add(index)
-            return true
-        }
-    }
-
-
-    fun removeDownloadLoading(index: Int) {
-        synchronized(this) {
-            downloadLoadingChapters.remove(index)
-        }
-    }
-
     fun removeLoading(index: Int) {
         synchronized(this) {
             loadingChapters.remove(index)
@@ -180,21 +164,27 @@ object ReadManga : CoroutineScope by MainScope() {
         }
     }
 
-
     /**
      * 获取正文
      */
-    private suspend fun getContent(
+    private fun download(
         scope: CoroutineScope,
         chapter: BookChapter,
     ) {
         val book = book ?: return removeLoading(chapter.index)
         val bookSource = bookSource
         if (bookSource != null) {
-            getContent(bookSource, scope, chapter, book)
+            downloadNetworkContent(bookSource, scope, chapter, book, success = {
+                downloadedChapters.add(chapter.index)
+                downloadFailChapters.remove(chapter.index)
+                contentLoadFinish(chapter, it, book)
+            }, error = {
+                downloadFailChapters[chapter.index] =
+                    (downloadFailChapters[chapter.index] ?: 0) + 1
+                contentLoadFinish(chapter, null, book)
+            })
         }
     }
-
 
     fun loadContent() {
         loadContent(durChapterIndex)
@@ -210,7 +200,9 @@ object ReadManga : CoroutineScope by MainScope() {
             Coroutine.async {
                 val book = book!!
                 appDb.bookChapterDao.getChapter(book.bookUrl, index)?.let { chapter ->
-                    getContent(
+                    BookHelp.getContent(book, chapter)?.let {
+                        contentLoadFinish(chapter, it, book)
+                    } ?: download(
                         downloadScope,
                         chapter,
                     )
@@ -220,7 +212,6 @@ object ReadManga : CoroutineScope by MainScope() {
                 AppLog.put("加载正文出错\n${it.localizedMessage}")
             }
         }
-
     }
 
 
@@ -253,7 +244,6 @@ object ReadManga : CoroutineScope by MainScope() {
         preDownloadTask = null
         downloadedChapters.clear()
         downloadFailChapters.clear()
-        downloadLoadingChapters.clear()
         downloadScope.coroutineContext.cancelChildren()
         coroutineContext.cancelChildren()
     }
@@ -263,11 +253,16 @@ object ReadManga : CoroutineScope by MainScope() {
      */
     suspend fun contentLoadFinish(
         chapter: BookChapter,
-        content: String,
+        content: String?,
         book: Book,
     ) {
         chapterTitle = chapter.title
+        removeLoading(chapter.index)
         if (chapter.index !in durChapterIndex - 1..durChapterIndex + 1) {
+            return
+        }
+        if (content == null) {
+            mCallback?.loadFail("加载内容失败")
             return
         }
         if (content.isNotEmpty()) {
@@ -311,6 +306,7 @@ object ReadManga : CoroutineScope by MainScope() {
             )
             mCallback?.loadContentFinish(contentList)
         }
+        mCallback?.loadComplete()
     }
 
     /**
@@ -376,38 +372,6 @@ object ReadManga : CoroutineScope by MainScope() {
         }
     }
 
-    private suspend fun getContent(
-        bookSource: BookSource,
-        scope: CoroutineScope,
-        chapter: BookChapter,
-        book: Book,
-    ) {
-        if (BookHelp.hasContent(book, chapter)) {
-            BookHelp.getContent(book, chapter)?.apply {
-                contentLoadFinish(chapter, this, book)
-                mCallback?.loadComplete()
-                if (durChapterIndex >= chapterSize.minus(1)) {
-                    gameOver = true
-                    mCallback?.noData()
-                }
-            } ?: downloadNetworkContent(bookSource, scope, chapter, book, success = {
-                contentLoadFinish(chapter, it, book)
-                mCallback?.loadComplete()
-            }, error = {
-                removeLoading(chapter.index)
-                mCallback?.loadFail("加载内容失败")
-            })
-        } else {
-            downloadNetworkContent(bookSource, scope, chapter, book, success = {
-                contentLoadFinish(chapter, it, book)
-                mCallback?.loadComplete()
-            }, error = {
-                removeLoading(chapter.index)
-                mCallback?.loadFail("加载内容失败")
-            })
-        }
-    }
-
     private fun downloadNetworkContent(
         bookSource: BookSource,
         scope: CoroutineScope,
@@ -468,30 +432,17 @@ object ReadManga : CoroutineScope by MainScope() {
             return
         }
         val book = book ?: return
-        if (addDownloadLoading(index)) {
+        if (addLoading(index)) {
             try {
                 appDb.bookChapterDao.getChapter(book.bookUrl, index)?.let { chapter ->
                     if (BookHelp.hasContent(book, chapter)) {
-                        removeDownloadLoading(chapter.index)
+                        removeLoading(chapter.index)
                         downloadedChapters.add(chapter.index)
                     } else {
                         delay(1000)
-                        downloadNetworkContent(
-                            bookSource!!,
-                            downloadScope,
-                            chapter,
-                            book,
-                            success = {
-                                downloadedChapters.add(chapter.index)
-                                downloadFailChapters.remove(chapter.index)
-                            },
-                            error = {
-                                downloadFailChapters[chapter.index] =
-                                    (downloadFailChapters[chapter.index] ?: 0) + 1
-                                removeDownloadLoading(chapter.index)
-                            })
+                        download(downloadScope, chapter)
                     }
-                } ?: removeDownloadLoading(index)
+                } ?: removeLoading(index)
             } catch (_: Exception) {
                 removeLoading(index)
             }
@@ -575,26 +526,11 @@ object ReadManga : CoroutineScope by MainScope() {
             chapterChanged = true
             if (progress.durChapterIndex == durChapterIndex) {
                 durChapterPos = progress.durChapterPos
-                mCallback?.adjustmentProgress()
+                mCallback?.adjustProgress()
             } else {
                 durChapterIndex = progress.durChapterIndex
                 durChapterPos = progress.durChapterPos
-                if (addLoading(durChapterIndex)) {
-                    loadContent(durChapterIndex)
-                } else {
-                    Coroutine.async {
-                        val book = book!!
-                        appDb.bookChapterDao.getChapter(book.bookUrl, durChapterIndex)
-                            ?.let { chapter ->
-                                getContent(
-                                    downloadScope,
-                                    chapter,
-                                )
-                            }
-                    }.onError {
-                        AppLog.put("加载正文出错\n${it.localizedMessage}")
-                    }
-                }
+                loadContent()
             }
             saveRead()
         }
@@ -605,7 +541,7 @@ object ReadManga : CoroutineScope by MainScope() {
         fun loadComplete()
         fun loadFail(msg: String)
         fun noData()
-        fun adjustmentProgress()
+        fun adjustProgress()
         fun sureNewProgress(progress: BookProgress)
     }
 }

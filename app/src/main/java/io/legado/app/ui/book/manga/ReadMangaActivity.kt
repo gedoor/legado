@@ -390,7 +390,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, MangaViewModel>()
         }
     }
 
-    override fun adjustmentProgress() {
+    override fun adjustProgress() {
         if (ReadManga.chapterChanged) {
             binding.mRecyclerManga.scrollToPosition(ReadManga.durChapterPos)
             binding.flLoading.isGone = true
