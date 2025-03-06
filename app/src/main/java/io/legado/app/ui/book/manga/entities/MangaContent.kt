@@ -1,4 +1,4 @@
-package io.legado.app.model.recyclerView
+package io.legado.app.ui.book.manga.entities
 
 
 data class MangaContent(
@@ -8,5 +8,5 @@ data class MangaContent(
     val mImageUrl: String = "",//当前URL
     var mDurChapterPos: Int = 0,//当前章节位置
     var mDurChapterCount: Int = 0,//当前章节内容总数
-    var mChapterName:String="",//章节名称
+    var mChapterName: String = "",//章节名称
 )

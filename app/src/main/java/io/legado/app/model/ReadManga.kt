@@ -19,8 +19,8 @@ import io.legado.app.help.book.update
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.globalExecutor
-import io.legado.app.model.recyclerView.MangaContent
-import io.legado.app.model.recyclerView.ReaderLoading
+import io.legado.app.ui.book.manga.entities.MangaContent
+import io.legado.app.ui.book.manga.entities.ReaderLoading
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.mapIndexed

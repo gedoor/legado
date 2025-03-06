@@ -1,4 +1,4 @@
-package io.legado.app.model.recyclerView
+package io.legado.app.ui.book.manga.entities
 
 data class ReaderLoading(
     val mChapterIndex: Int = 0,

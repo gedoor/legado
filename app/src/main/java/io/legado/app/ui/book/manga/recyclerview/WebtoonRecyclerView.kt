@@ -1,4 +1,4 @@
-package io.legado.app.ui.book.manga.rv
+package io.legado.app.ui.book.manga.recyclerview
 
 import android.animation.AnimatorSet
 import android.animation.ValueAnimator

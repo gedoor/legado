@@ -5,17 +5,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <io.legado.app.ui.book.manga.rv.WebtoonFrame
+    <io.legado.app.ui.book.manga.recyclerview.WebtoonFrame
         android:id="@+id/webtoonFrame"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <io.legado.app.ui.book.manga.rv.WebtoonRecyclerView
+        <io.legado.app.ui.book.manga.recyclerview.WebtoonRecyclerView
             android:id="@+id/mRecyclerManga"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-    </io.legado.app.ui.book.manga.rv.WebtoonFrame>
+    </io.legado.app.ui.book.manga.recyclerview.WebtoonFrame>
 
     <io.legado.app.ui.widget.ReaderInfoBarView
         android:id="@+id/infobar"

@@ -1,4 +1,4 @@
-package io.legado.app.ui.book.manga.rv
+package io.legado.app.ui.book.manga.recyclerview
 
 import android.content.Context
 import android.util.SparseArray
@@ -22,9 +22,8 @@ import io.legado.app.databinding.BookComicRvBinding
 import io.legado.app.help.glide.progress.ProgressManager
 import io.legado.app.model.BookCover
 import io.legado.app.model.ReadManga
-import io.legado.app.model.recyclerView.MangaContent
-import io.legado.app.model.recyclerView.MangaVH
-import io.legado.app.model.recyclerView.ReaderLoading
+import io.legado.app.ui.book.manga.entities.MangaContent
+import io.legado.app.ui.book.manga.entities.ReaderLoading
 import io.legado.app.utils.getCompatDrawable
 import java.util.Collections
 
