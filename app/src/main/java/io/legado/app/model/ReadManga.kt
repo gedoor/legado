@@ -19,9 +19,9 @@ import io.legado.app.help.book.update
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.globalExecutor
+import io.legado.app.model.webBook.WebBook
 import io.legado.app.ui.book.manga.entities.MangaContent
 import io.legado.app.ui.book.manga.entities.ReaderLoading
-import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.mapIndexed
 import kotlinx.coroutines.CoroutineScope
@@ -58,7 +58,6 @@ object ReadManga : CoroutineScope by MainScope() {
     var simulatedChapterSize = 0
     var mCallback: Callback? = null
     var gameOver = false
-    var mTopChapter: BookChapter? = null
     var preDownloadTask: Job? = null
     val downloadedChapters = hashSetOf<Int>()
     val downloadFailChapters = hashMapOf<Int, Int>()
@@ -250,7 +249,6 @@ object ReadManga : CoroutineScope by MainScope() {
         simulatedChapterSize = 0
         mCallback = null
         gameOver = false
-        mTopChapter = null
         preDownloadTask?.cancel()
         preDownloadTask = null
         downloadedChapters.clear()
@@ -268,12 +266,6 @@ object ReadManga : CoroutineScope by MainScope() {
         content: String,
         book: Book,
     ) {
-        if (mTopChapter != null && mTopChapter!!.title != chapterTitle
-            && BookHelp.hasContent(book, mTopChapter!!)
-        ) {
-            BookHelp.delContent(book, chapter)
-        }
-        mTopChapter = chapter
         chapterTitle = chapter.title
         if (chapter.index !in durChapterIndex - 1..durChapterIndex + 1) {
             return
