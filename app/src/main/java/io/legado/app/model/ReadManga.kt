@@ -194,6 +194,7 @@ object ReadManga : CoroutineScope by MainScope() {
     }
 
     fun loadContent() {
+        clearMangaChapter()
         loadContent(durChapterIndex)
         loadContent(durChapterIndex - 1)
         loadContent(durChapterIndex + 1)
@@ -213,7 +214,7 @@ object ReadManga : CoroutineScope by MainScope() {
         }
     }
 
-    fun loadContent(index: Int) {
+    private fun loadContent(index: Int) {
         if (addLoading(index)) {
             Coroutine.async {
                 val book = book!!
