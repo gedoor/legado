@@ -443,6 +443,7 @@ object ReadManga : CoroutineScope by MainScope() {
                 saveRead()
                 chapterSize = cList.size
                 simulatedChapterSize = book.simulatedTotalChapterNum()
+                nextMangaChapter ?: loadContent(durChapterIndex + 1)
             }
         }
     }
