@@ -628,6 +628,7 @@ object ReadBook : CoroutineScope by MainScope() {
                 } ?: removeLoading(index)
             } catch (_: Exception) {
                 removeLoading(index)
+                coroutineContext.ensureActive()
             }
         }
     }
@@ -900,7 +901,7 @@ object ReadBook : CoroutineScope by MainScope() {
                 launch {
                     val maxChapterIndex =
                         min(durChapterIndex + AppConfig.preDownloadNum, chapterSize)
-                    for (i in durChapterIndex.plus(2)..maxChapterIndex) {
+                    for (i in durChapterIndex.plus(1)..maxChapterIndex) {
                         if (downloadedChapters.contains(i)) continue
                         if ((downloadFailChapters[i] ?: 0) >= 3) continue
                         downloadIndex(i)
@@ -908,7 +909,7 @@ object ReadBook : CoroutineScope by MainScope() {
                 }
                 launch {
                     val minChapterIndex = durChapterIndex - min(5, AppConfig.preDownloadNum)
-                    for (i in durChapterIndex.minus(2) downTo minChapterIndex) {
+                    for (i in durChapterIndex.minus(1) downTo minChapterIndex) {
                         if (downloadedChapters.contains(i)) continue
                         if ((downloadFailChapters[i] ?: 0) >= 3) continue
                         downloadIndex(i)

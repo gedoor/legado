@@ -372,6 +372,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
                 Backup.autoBack(this)
             }
         }
+        ReadManga.cancelPreDownloadTask()
         networkChangedListener.unRegister()
         stopAutoPage()
     }
