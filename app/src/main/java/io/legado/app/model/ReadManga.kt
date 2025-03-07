@@ -296,7 +296,7 @@ object ReadManga : CoroutineScope by MainScope() {
         nextMangaChapter?.let {
             list.addAll(it.contents)
         }
-        return MangaContentData(pos, list, curMangaChapter != null)
+        return MangaContentData(pos, list, curMangaChapter != null, nextMangaChapter != null)
     }
 
     /**

@@ -261,9 +261,10 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
             val data = withContext(IO) { ReadManga.mangaContents }
             val pos = data.pos
             val list = data.contents
-            val finish = data.finish
+            val curFinish = data.curFinish
+            val nextFinish = data.nextFinish
             mAdapter.submitList(list) {
-                if (loadingViewVisible && finish) {
+                if (loadingViewVisible && curFinish) {
                     binding.infobar.isVisible = true
                     upInfoBar(
                         ReadManga.durChapterIndex,
@@ -277,10 +278,13 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
                     loadMoreView.visible()
                 }
 
-                if (finish) {
-                    loadMoreView.stopLoad()
+                if (curFinish) {
                     if (!ReadManga.hasNextChapter) {
                         loadMoreView.noMore("暂无章节了！")
+                    } else if (nextFinish) {
+                        loadMoreView.stopLoad()
+                    } else {
+                        loadMoreView.startLoad()
                     }
                 }
             }
