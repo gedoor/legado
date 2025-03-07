@@ -130,7 +130,6 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
     //打开目录返回选择章节返回结果
     private val tocActivity = registerForActivityResult(TocActivityResult()) {
         it?.let {
-            binding.flLoading.isVisible = true
             viewModel.openChapter(it.first, it.second)
         }
     }
@@ -214,14 +213,14 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
                         } else if (ReadManga.durChapterIndex > content.mChapterIndex) {
                             ReadManga.moveToPrevChapter()
                         } else {
-                            ReadManga.durChapterPos = content.mDurChapterPos
+                            ReadManga.durChapterPos = content.index
                             ReadManga.curPageChanged()
                         }
                         upInfoBar(
                             content.mChapterIndex,
                             content.chapterSize,
-                            content.mDurChapterPos,
-                            content.mDurChapterImageCount,
+                            content.index,
+                            content.imageCount,
                             content.mChapterName
                         )
                     }
@@ -281,12 +280,6 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
                         loadMoreView.noMore("暂无章节了！")
                     }
                 }
-
-                if (ReadManga.chapterChanged) {
-                    binding.mRecyclerManga.scrollToPosition(pos)
-                }
-
-                ReadManga.chapterChanged = false
             }
         }
     }
@@ -388,13 +381,6 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
         }
     }
 
-    override fun adjustProgress() {
-        if (ReadManga.chapterChanged) {
-            binding.mRecyclerManga.scrollToPosition(ReadManga.durChapterPos)
-            binding.flLoading.isGone = true
-        }
-    }
-
     override fun onDestroy() {
         ReadManga.unregister(this)
         super.onDestroy()
@@ -410,10 +396,15 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
         syncDialog = alert(R.string.get_book_progress) {
             setMessage(R.string.cloud_progress_exceeds_current)
             okButton {
-                binding.flLoading.isVisible = true
                 ReadManga.setProgress(progress)
             }
             noButton()
+        }
+    }
+
+    override fun showLoading() {
+        lifecycleScope.launch {
+            binding.flLoading.isVisible = true
         }
     }
 
@@ -423,7 +414,6 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
     override fun changeTo(source: BookSource, book: Book, toc: List<BookChapter>) {
         if (book.isImage) {
             binding.flLoading.isVisible = true
-            ReadManga.chapterChanged = true
             viewModel.changeTo(book, toc)
         } else {
             toastOnUi("所选择的源不是漫画源")

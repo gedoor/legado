@@ -44,7 +44,6 @@ import kotlin.math.min
 object ReadManga : CoroutineScope by MainScope() {
     var inBookshelf = false
     var tocChanged = false
-    var chapterChanged = false
     var book: Book? = null
     val executor = globalExecutor
     var durChapterIndex = 0 //章节位置
@@ -213,9 +212,6 @@ object ReadManga : CoroutineScope by MainScope() {
     }
 
     fun loadContent(index: Int) {
-        if (chapterChanged) {
-            removeLoading(index)
-        }
         if (addLoading(index)) {
             Coroutine.async {
                 val book = book!!
@@ -501,10 +497,10 @@ object ReadManga : CoroutineScope by MainScope() {
             (durChapterIndex != progress.durChapterIndex
                     || durChapterPos != progress.durChapterPos)
         ) {
-            chapterChanged = true
+            mCallback?.showLoading()
             if (progress.durChapterIndex == durChapterIndex) {
                 durChapterPos = progress.durChapterPos
-                mCallback?.adjustProgress()
+                mCallback?.upContent(true)
             } else {
                 durChapterIndex = progress.durChapterIndex
                 durChapterPos = progress.durChapterPos
@@ -512,6 +508,10 @@ object ReadManga : CoroutineScope by MainScope() {
             }
             saveRead()
         }
+    }
+
+    fun showLoading() {
+        mCallback?.showLoading()
     }
 
     /**
@@ -544,11 +544,10 @@ object ReadManga : CoroutineScope by MainScope() {
             }
         }.distinctUntilChanged().mapIndexed { index, src ->
             MangaContent(
-                chapterSize = chapterSize,
                 mChapterIndex = chapter.index,
-                nextChapterIndex = chapter.index.plus(1),
+                chapterSize = chapterSize,
                 mImageUrl = src,
-                mDurChapterPos = index,
+                index = index,
                 mChapterName = chapter.title
             )
         }.toList()
@@ -556,25 +555,13 @@ object ReadManga : CoroutineScope by MainScope() {
         val imageCount = list.size
 
         list.forEach {
-            it.mDurChapterImageCount = imageCount
+            it.imageCount = imageCount
         }
 
         val contentList = mutableListOf<Any>()
-        contentList.add(
-            ReaderLoading(
-                chapter.index,
-                "阅读 ${chapter.title}",
-                mNextChapterIndex = chapter.index.plus(1)
-            )
-        )
+        contentList.add(ReaderLoading(chapter.index, "阅读 ${chapter.title}"))
         contentList.addAll(list)
-        contentList.add(
-            ReaderLoading(
-                chapter.index,
-                "已读完 ${chapter.title}",
-                mNextChapterIndex = chapter.index.plus(1)
-            )
-        )
+        contentList.add(ReaderLoading(chapter.index, "已读完 ${chapter.title}"))
 
         return MangaChapter(chapter, contentList, imageCount)
     }
@@ -582,7 +569,7 @@ object ReadManga : CoroutineScope by MainScope() {
     interface Callback {
         fun upContent(finish: Boolean = false)
         fun loadFail(msg: String)
-        fun adjustProgress()
         fun sureNewProgress(progress: BookProgress)
+        fun showLoading()
     }
 }

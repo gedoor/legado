@@ -88,14 +88,14 @@ class MangaAdapter(private val context: Context) :
                 val item = mDiffer.currentList[layoutPosition]
                 if (item is MangaContent) {
                     loadImageWithRetry(
-                        item.mImageUrl, isHorizontal, item.mDurChapterImageCount == 1
+                        item.mImageUrl, isHorizontal, item.imageCount == 1
                     )
                 }
             }
         }
 
         fun onBind(item: MangaContent) {
-            loadImageWithRetry(item.mImageUrl, isHorizontal, item.mDurChapterImageCount == 1)
+            loadImageWithRetry(item.mImageUrl, isHorizontal, item.imageCount == 1)
         }
     }
 

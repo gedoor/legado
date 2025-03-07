@@ -225,7 +225,7 @@ class ReadMangaViewModel(application: Application) : BaseViewModel(application) 
 
     fun openChapter(index: Int, durChapterPos: Int = 0) {
         if (index < ReadManga.chapterSize) {
-            ReadManga.chapterChanged = true
+            ReadManga.showLoading()
             ReadManga.durChapterIndex = index
             ReadManga.durChapterPos = durChapterPos
             ReadManga.saveRead()
