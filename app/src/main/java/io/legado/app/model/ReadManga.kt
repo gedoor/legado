@@ -22,6 +22,7 @@ import io.legado.app.help.globalExecutor
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.ui.book.manga.entities.MangaChapter
 import io.legado.app.ui.book.manga.entities.MangaContent
+import io.legado.app.ui.book.manga.entities.MangaContentData
 import io.legado.app.ui.book.manga.entities.ReaderLoading
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.mapIndexed
@@ -99,6 +100,7 @@ object ReadManga : CoroutineScope by MainScope() {
         if (durChapterIndex != book.durChapterIndex || tocChanged) {
             durChapterIndex = book.durChapterIndex
             durChapterPos = book.durChapterPos
+            clearMangaChapter()
         }
         upWebBook(book)
         synchronized(this) {
@@ -201,7 +203,7 @@ object ReadManga : CoroutineScope by MainScope() {
         if (curMangaChapter == null) {
             loadContent(durChapterIndex)
         } else {
-            mCallback?.upContent(true)
+            mCallback?.upContent()
         }
         if (nextMangaChapter == null) {
             loadContent(durChapterIndex + 1)
@@ -259,7 +261,7 @@ object ReadManga : CoroutineScope by MainScope() {
                 }
                 durChapterImageCount = mangaChapter.imageCount
                 curMangaChapter = mangaChapter
-                mCallback?.upContent(true)
+                mCallback?.upContent()
             }
 
             -1, 1 -> {
@@ -281,7 +283,7 @@ object ReadManga : CoroutineScope by MainScope() {
         }
     }
 
-    private fun buildContentList(): Pair<Int, List<Any>> {
+    private fun buildContentList(): MangaContentData {
         val list = arrayListOf<Any>()
         var pos = durChapterPos + 1
         prevMangaChapter?.let {
@@ -294,7 +296,7 @@ object ReadManga : CoroutineScope by MainScope() {
         nextMangaChapter?.let {
             list.addAll(it.contents)
         }
-        return pos to list
+        return MangaContentData(pos, list, curMangaChapter != null)
     }
 
     /**
@@ -310,7 +312,7 @@ object ReadManga : CoroutineScope by MainScope() {
                 startLoad.invoke()
                 loadContent(durChapterIndex)
             } else {
-                mCallback?.upContent(true)
+                mCallback?.upContent()
             }
             loadContent(durChapterIndex + 1)
             saveRead()
@@ -332,7 +334,7 @@ object ReadManga : CoroutineScope by MainScope() {
             if (curMangaChapter == null) {
                 loadContent(durChapterIndex)
             } else {
-                mCallback?.upContent(true)
+                mCallback?.upContent()
             }
             loadContent(durChapterIndex - 1)
             saveRead()
@@ -500,7 +502,7 @@ object ReadManga : CoroutineScope by MainScope() {
             mCallback?.showLoading()
             if (progress.durChapterIndex == durChapterIndex) {
                 durChapterPos = progress.durChapterPos
-                mCallback?.upContent(true)
+                mCallback?.upContent()
             } else {
                 durChapterIndex = progress.durChapterIndex
                 durChapterPos = progress.durChapterPos
@@ -567,7 +569,7 @@ object ReadManga : CoroutineScope by MainScope() {
     }
 
     interface Callback {
-        fun upContent(finish: Boolean = false)
+        fun upContent()
         fun loadFail(msg: String)
         fun sureNewProgress(progress: BookProgress)
         fun showLoading()

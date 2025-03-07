@@ -255,10 +255,13 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
         justInitData = true
     }
 
-    override fun upContent(finish: Boolean) {
+    override fun upContent() {
         lifecycleScope.launch {
             setTitle(ReadManga.book?.name)
-            val (pos, list) = withContext(IO) { ReadManga.mangaContents }
+            val data = withContext(IO) { ReadManga.mangaContents }
+            val pos = data.pos
+            val list = data.contents
+            val finish = data.finish
             mAdapter.submitList(list) {
                 if (loadingViewVisible && finish) {
                     binding.infobar.isVisible = true
