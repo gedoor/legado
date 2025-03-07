@@ -122,8 +122,8 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
     private val loadMoreView by lazy {
         LoadMoreView(this).apply {
             setBackgroundColor(getCompatColor(R.color.book_ant_10))
-            getLoading().loadingColor = getCompatColor(R.color.white)
-            getLoadingText().setTextColor(getCompatColor(R.color.white))
+            setLoadingColor(R.color.white)
+            setLoadingTextColor(R.color.white)
         }
     }
 
@@ -208,11 +208,8 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
                     val content = mAdapter.getItem(position)
                     if (content is MangaContent) {
                         if (ReadManga.durChapterIndex < content.mChapterIndex) {
-                            ReadManga.moveToNextChapter()
-                            if (ReadManga.hasNextChapter) {
+                            ReadManga.moveToNextChapter {
                                 loadMoreView.startLoad()
-                            } else {
-                                loadMoreView.noMore("暂无章节了！")
                             }
                         } else if (ReadManga.durChapterIndex > content.mChapterIndex) {
                             ReadManga.moveToPrevChapter()
@@ -262,7 +259,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
     override fun upContent(finish: Boolean) {
         lifecycleScope.launch {
             setTitle(ReadManga.book?.name)
-            val list = withContext(IO) { ReadManga.mangaContents }
+            val (pos, list) = withContext(IO) { ReadManga.mangaContents }
             mAdapter.submitList(list) {
                 if (loadingViewVisible && finish) {
                     binding.infobar.isVisible = true
@@ -273,7 +270,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
                         ReadManga.durChapterImageCount,
                         ReadManga.curMangaChapter!!.chapter.title
                     )
-                    binding.mRecyclerManga.scrollToPosition(ReadManga.durChapterAbsPos)
+                    binding.mRecyclerManga.scrollToPosition(pos)
                     binding.flLoading.isGone = true
                     loadMoreView.visible()
                 }
@@ -286,17 +283,11 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
                 }
 
                 if (ReadManga.chapterChanged) {
-                    binding.mRecyclerManga.scrollToPosition(ReadManga.durChapterAbsPos)
+                    binding.mRecyclerManga.scrollToPosition(pos)
                 }
 
                 ReadManga.chapterChanged = false
             }
-        }
-    }
-
-    override fun contentLoadFinish() {
-        lifecycleScope.launch {
-            loadMoreView.stopLoad()
         }
     }
 

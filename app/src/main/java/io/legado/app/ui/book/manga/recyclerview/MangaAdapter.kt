@@ -31,6 +31,8 @@ import java.util.Collections
 class MangaAdapter(private val context: Context) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>(), PreloadModelProvider<Any> {
 
+    private val inflater: LayoutInflater = LayoutInflater.from(context)
+
     companion object {
         private const val LOADING_VIEW = 0
         private const val CONTENT_VIEW = 1
@@ -85,13 +87,15 @@ class MangaAdapter(private val context: Context) :
             binding.retry.setOnClickListener {
                 val item = mDiffer.currentList[layoutPosition]
                 if (item is MangaContent) {
-                    loadImageWithRetry(item.mImageUrl, isHorizontal, mDiffer.currentList.size == 3)
+                    loadImageWithRetry(
+                        item.mImageUrl, isHorizontal, item.mDurChapterImageCount == 1
+                    )
                 }
             }
         }
 
         fun onBind(item: MangaContent) {
-            loadImageWithRetry(item.mImageUrl, isHorizontal, mDiffer.currentList.size == 3)
+            loadImageWithRetry(item.mImageUrl, isHorizontal, item.mDurChapterImageCount == 1)
         }
     }
 
@@ -105,29 +109,18 @@ class MangaAdapter(private val context: Context) :
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-
         return when {
-
             viewType >= TYPE_FOOTER_VIEW -> {
                 ItemViewHolder(footerItems.get(viewType).invoke(parent))
             }
 
-            viewType == LOADING_VIEW -> PageMoreViewHolder(
-                BookComicLoadingRvBinding.inflate(
-                    LayoutInflater.from(
-                        parent.context
-                    ), parent, false
-                )
-            )
+            viewType == LOADING_VIEW -> {
+                PageMoreViewHolder(BookComicLoadingRvBinding.inflate(inflater, parent, false))
+            }
 
-            viewType == CONTENT_VIEW -> PageViewHolder(
-                BookComicRvBinding.inflate(
-                    LayoutInflater.from(parent.context),
-                    parent,
-                    false
-                )
-            )
-
+            viewType == CONTENT_VIEW -> {
+                PageViewHolder(BookComicRvBinding.inflate(inflater, parent, false))
+            }
 
             else -> error("Unknown view type!")
         }

@@ -65,7 +65,6 @@ object ReadManga : CoroutineScope by MainScope() {
     val downloadFailChapters = hashMapOf<Int, Int>()
     val downloadScope = CoroutineScope(SupervisorJob() + IO)
     var rateLimiter = ConcurrentRateLimiter(null)
-    val durChapterAbsPos get() = (prevMangaChapter?.contents?.size ?: 0) + durChapterPos + 1
     val mangaContents get() = buildContentList()
     val hasNextChapter get() = durChapterIndex < simulatedChapterSize - 1
 
@@ -235,35 +234,6 @@ object ReadManga : CoroutineScope by MainScope() {
         }
     }
 
-
-    /**
-     * 注册回调
-     */
-    fun register(cb: Callback) {
-        mCallback = cb
-    }
-
-    /**
-     * 取消注册回调
-     */
-    fun unregister(cb: Callback) {
-        if (mCallback === cb) {
-            mCallback = null
-        }
-        inBookshelf = false
-        tocChanged = false
-        chapterChanged = false
-        durChapterIndex = 0
-        chapterSize = 0
-        durChapterPos = 0
-        durChapterImageCount = 0
-        simulatedChapterSize = 0
-        preDownloadTask?.cancel()
-        preDownloadTask = null
-        downloadScope.coroutineContext.cancelChildren()
-        coroutineContext.cancelChildren()
-    }
-
     /**
      * 内容加载完成
      */
@@ -276,7 +246,7 @@ object ReadManga : CoroutineScope by MainScope() {
         if (chapter.index !in durChapterIndex - 1..durChapterIndex + 1) {
             return
         }
-        when (chapter.index - durChapterIndex) {
+        when (val offset = chapter.index - durChapterIndex) {
             0 -> {
                 if (content == null) {
                     mCallback?.loadFail("加载内容失败")
@@ -294,10 +264,9 @@ object ReadManga : CoroutineScope by MainScope() {
                 durChapterImageCount = mangaChapter.imageCount
                 curMangaChapter = mangaChapter
                 mCallback?.upContent(true)
-                mCallback?.contentLoadFinish()
             }
 
-            -1 -> {
+            -1, 1 -> {
                 if (content == null || content.isEmpty()) {
                     return
                 }
@@ -305,27 +274,22 @@ object ReadManga : CoroutineScope by MainScope() {
                 if (mangaChapter.imageCount == 0) {
                     return
                 }
-                prevMangaChapter = mangaChapter
-                mCallback?.upContent()
-            }
 
-            1 -> {
-                if (content == null || content.isEmpty()) {
-                    return
+                when (offset) {
+                    -1 -> prevMangaChapter = mangaChapter
+                    1 -> nextMangaChapter = mangaChapter
                 }
-                val mangaChapter = getManageChapter(chapter, content)
-                if (mangaChapter.imageCount == 0) {
-                    return
-                }
-                nextMangaChapter = mangaChapter
+
                 mCallback?.upContent()
             }
         }
     }
 
-    private fun buildContentList(): List<Any> {
+    private fun buildContentList(): Pair<Int, List<Any>> {
         val list = arrayListOf<Any>()
+        var pos = durChapterPos + 1
         prevMangaChapter?.let {
+            pos += it.contents.size
             list.addAll(it.contents)
         }
         curMangaChapter?.let {
@@ -334,19 +298,20 @@ object ReadManga : CoroutineScope by MainScope() {
         nextMangaChapter?.let {
             list.addAll(it.contents)
         }
-        return list
+        return pos to list
     }
 
     /**
      * 加载下一章
      */
-    fun moveToNextChapter(): Boolean {
+    fun moveToNextChapter(startLoad: () -> Unit): Boolean {
         if (durChapterIndex < simulatedChapterSize - 1) {
             durChapterIndex++
             prevMangaChapter = curMangaChapter
             curMangaChapter = nextMangaChapter
             nextMangaChapter = null
             if (curMangaChapter == null) {
+                startLoad.invoke()
                 loadContent(durChapterIndex)
             } else {
                 mCallback?.upContent(true)
@@ -548,6 +513,26 @@ object ReadManga : CoroutineScope by MainScope() {
         }
     }
 
+    /**
+     * 注册回调
+     */
+    fun register(cb: Callback) {
+        mCallback = cb
+    }
+
+    /**
+     * 取消注册回调
+     */
+    fun unregister(cb: Callback) {
+        if (mCallback === cb) {
+            mCallback = null
+        }
+        preDownloadTask?.cancel()
+        preDownloadTask = null
+        downloadScope.coroutineContext.cancelChildren()
+        coroutineContext.cancelChildren()
+    }
+
     private suspend fun getManageChapter(chapter: BookChapter, content: String): MangaChapter {
         val list = flow {
             val matcher = AppPattern.imgPattern.matcher(content)
@@ -595,7 +580,6 @@ object ReadManga : CoroutineScope by MainScope() {
 
     interface Callback {
         fun upContent(finish: Boolean = false)
-        fun contentLoadFinish()
         fun loadFail(msg: String)
         fun adjustProgress()
         fun sureNewProgress(progress: BookProgress)
