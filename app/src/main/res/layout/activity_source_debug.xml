@@ -36,7 +36,7 @@
         app:layout_constraintTop_toBottomOf="@+id/title_bar"
         app:loading_width="2dp" />
 
-    <androidx.core.widget.NestedScrollView
+    <io.legado.app.ui.widget.NoChildScrollNestedScrollView
         android:id="@+id/help"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -202,6 +202,6 @@
 
         </LinearLayout>
 
-    </androidx.core.widget.NestedScrollView>
+    </io.legado.app.ui.widget.NoChildScrollNestedScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

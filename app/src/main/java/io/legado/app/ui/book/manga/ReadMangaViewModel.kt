@@ -15,7 +15,6 @@ import io.legado.app.help.book.BookHelp
 import io.legado.app.help.book.isLocal
 import io.legado.app.help.book.isLocalModified
 import io.legado.app.help.book.removeType
-import io.legado.app.help.book.simulatedTotalChapterNum
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.ReadManga
@@ -81,7 +80,6 @@ class ReadMangaViewModel(application: Application) : BaseViewModel(application) 
         if ((ReadManga.chapterSize == 0 || book.isLocalModified()) && !loadChapterListAwait(book)) {
             return
         }
-        ensureChapterExist()
 
         //开始加载内容
         if (!isSameBook) {
@@ -110,8 +108,7 @@ class ReadMangaViewModel(application: Application) : BaseViewModel(application) 
                 }
                 appDb.bookChapterDao.delByBook(oldBook.bookUrl)
                 appDb.bookChapterDao.insert(*cList.toTypedArray())
-                ReadManga.chapterSize = cList.size
-                ReadManga.simulatedChapterSize = book.simulatedTotalChapterNum()
+                ReadManga.onChapterListUpdated(book)
                 return true
             }.onFailure {
                 //加载章节出错
@@ -136,12 +133,6 @@ class ReadMangaViewModel(application: Application) : BaseViewModel(application) 
             //  加载详情页失败
 //            ReadBook.upMsg("详情页出错: ${e.localizedMessage}")
             return false
-        }
-    }
-
-    private fun ensureChapterExist() {
-        if (ReadManga.simulatedChapterSize > 0 && ReadManga.durChapterIndex > ReadManga.simulatedChapterSize - 1) {
-            ReadManga.durChapterIndex = ReadManga.simulatedChapterSize - 1
         }
     }
 

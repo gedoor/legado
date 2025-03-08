@@ -153,6 +153,8 @@ object ReadBook : CoroutineScope by MainScope() {
         upWebBook(book)
         synchronized(this) {
             loadingChapters.clear()
+            downloadedChapters.clear()
+            downloadFailChapters.clear()
         }
     }
 
@@ -615,7 +617,7 @@ object ReadBook : CoroutineScope by MainScope() {
         val book = book ?: return
         val chapter = appDb.bookChapterDao.getChapter(book.bookUrl, index) ?: return
         if (BookHelp.hasContent(book, chapter)) {
-            addDownloadedChapter(chapter.index)
+            downloadedChapters.add(chapter.index)
         } else {
             delay(1000)
             if (addLoading(index)) {
@@ -671,11 +673,6 @@ object ReadBook : CoroutineScope by MainScope() {
     @Synchronized
     fun removeLoading(index: Int) {
         loadingChapters.remove(index)
-    }
-
-    @Synchronized
-    fun addDownloadedChapter(index: Int) {
-        downloadedChapters.add(index)
     }
 
     /**

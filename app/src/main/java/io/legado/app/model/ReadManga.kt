@@ -13,6 +13,7 @@ import io.legado.app.help.ConcurrentRateLimiter
 import io.legado.app.help.book.BookHelp
 import io.legado.app.help.book.ContentProcessor
 import io.legado.app.help.book.isLocal
+import io.legado.app.help.book.isSameNameAuthor
 import io.legado.app.help.book.readSimulating
 import io.legado.app.help.book.simulatedTotalChapterNum
 import io.legado.app.help.book.update
@@ -108,6 +109,8 @@ object ReadManga : CoroutineScope by MainScope() {
         upWebBook(book)
         synchronized(this) {
             loadingChapters.clear()
+            downloadedChapters.clear()
+            downloadFailChapters.clear()
         }
     }
 
@@ -149,11 +152,6 @@ object ReadManga : CoroutineScope by MainScope() {
     @Synchronized
     fun removeLoading(index: Int) {
         loadingChapters.remove(index)
-    }
-
-    @Synchronized
-    fun addDownloadedChapter(index: Int) {
-        downloadedChapters.add(index)
     }
 
     fun loadContent() {
@@ -403,7 +401,7 @@ object ReadManga : CoroutineScope by MainScope() {
         val book = book ?: return
         val chapter = appDb.bookChapterDao.getChapter(book.bookUrl, index) ?: return
         if (BookHelp.hasContent(book, chapter)) {
-            addDownloadedChapter(chapter.index)
+            downloadedChapters.add(chapter.index)
         } else {
             delay(1000)
             if (addLoading(index)) {
@@ -528,6 +526,18 @@ object ReadManga : CoroutineScope by MainScope() {
 
     fun showLoading() {
         mCallback?.showLoading()
+    }
+
+    fun onChapterListUpdated(newBook: Book) {
+        if (newBook.isSameNameAuthor(book)) {
+            book = newBook
+            chapterSize = newBook.totalChapterNum
+            simulatedChapterSize = newBook.simulatedTotalChapterNum()
+            if (simulatedChapterSize > 0 && durChapterIndex > simulatedChapterSize - 1) {
+                durChapterIndex = simulatedChapterSize - 1
+            }
+            clearMangaChapter()
+        }
     }
 
     /**
