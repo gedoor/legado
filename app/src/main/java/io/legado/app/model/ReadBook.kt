@@ -85,7 +85,7 @@ object ReadBook : CoroutineScope by MainScope() {
     var readStartTime: Long = System.currentTimeMillis()
 
     /* 跳转进度前进度记录 */
-    var lastBookPress: BookProgress? = null
+    var lastBookProgress: BookProgress? = null
 
     /* web端阅读进度记录 */
     var webBookProgress: BookProgress? = null
@@ -97,20 +97,6 @@ object ReadBook : CoroutineScope by MainScope() {
     val downloadScope = CoroutineScope(SupervisorJob() + IO)
     val preDownloadSemaphore = Semaphore(2)
     val executor = globalExecutor
-
-    //暂时保存跳转前进度
-    fun saveCurrentBookProcess() {
-        if (lastBookPress != null) return //避免进度条连续跳转不能覆盖最初的进度记录
-        lastBookPress = book?.let { BookProgress(it) }
-    }
-
-    //恢复跳转前进度
-    fun restoreLastBookProcess() {
-        lastBookPress?.let {
-            setProgress(it)
-            lastBookPress = null
-        }
-    }
 
     fun resetData(book: Book) {
         ReadBook.book = book
@@ -131,7 +117,7 @@ object ReadBook : CoroutineScope by MainScope() {
         callBack?.upMenuView()
         callBack?.upPageAnim()
         upWebBook(book)
-        lastBookPress = null
+        lastBookProgress = null
         webBookProgress = null
         TextFile.clear()
         synchronized(this) {
@@ -216,6 +202,20 @@ object ReadBook : CoroutineScope by MainScope() {
             clearTextChapter()
             callBack?.upContent()
             loadContent(resetPageOffset = true)
+        }
+    }
+
+    //暂时保存跳转前进度
+    fun saveCurrentBookProgress() {
+        if (lastBookProgress != null) return //避免进度条连续跳转不能覆盖最初的进度记录
+        lastBookProgress = book?.let { BookProgress(it) }
+    }
+
+    //恢复跳转前进度
+    fun restoreLastBookProgress() {
+        lastBookProgress?.let {
+            setProgress(it)
+            lastBookProgress = null
         }
     }
 
@@ -558,29 +558,27 @@ object ReadBook : CoroutineScope by MainScope() {
         resetPageOffset: Boolean = false,
         success: (() -> Unit)? = null
     ) {
-        if (addLoading(index)) {
-            Coroutine.async {
-                val book = book!!
-                appDb.bookChapterDao.getChapter(book.bookUrl, index)?.let { chapter ->
-                    BookHelp.getContent(book, chapter)?.let {
-                        contentLoadFinish(
-                            book,
-                            chapter,
-                            it,
-                            upContent,
-                            resetPageOffset,
-                            success = success
-                        )
-                    } ?: download(
-                        downloadScope,
+        Coroutine.async {
+            val book = book!!
+            val chapter = appDb.bookChapterDao.getChapter(book.bookUrl, index) ?: return@async
+            if (addLoading(index)) {
+                BookHelp.getContent(book, chapter)?.let {
+                    contentLoadFinish(
+                        book,
                         chapter,
-                        resetPageOffset
+                        it,
+                        upContent,
+                        resetPageOffset,
+                        success = success
                     )
-                } ?: removeLoading(index)
-            }.onError {
-                removeLoading(index)
-                AppLog.put("加载正文出错\n${it.localizedMessage}")
+                } ?: download(
+                    downloadScope,
+                    chapter,
+                    resetPageOffset
+                )
             }
+        }.onError {
+            AppLog.put("加载正文出错\n${it.localizedMessage}")
         }
     }
 
@@ -615,20 +613,13 @@ object ReadBook : CoroutineScope by MainScope() {
             return
         }
         val book = book ?: return
-        if (addLoading(index)) {
-            try {
-                appDb.bookChapterDao.getChapter(book.bookUrl, index)?.let { chapter ->
-                    if (BookHelp.hasContent(book, chapter)) {
-                        removeLoading(chapter.index)
-                        downloadedChapters.add(chapter.index)
-                    } else {
-                        delay(1000)
-                        download(downloadScope, chapter, false, preDownloadSemaphore)
-                    }
-                } ?: removeLoading(index)
-            } catch (_: Exception) {
-                removeLoading(index)
-                coroutineContext.ensureActive()
+        val chapter = appDb.bookChapterDao.getChapter(book.bookUrl, index) ?: return
+        if (BookHelp.hasContent(book, chapter)) {
+            addDownloadedChapter(chapter.index)
+        } else {
+            delay(1000)
+            if (addLoading(index)) {
+                download(downloadScope, chapter, false, preDownloadSemaphore)
             }
         }
     }
@@ -670,18 +661,21 @@ object ReadBook : CoroutineScope by MainScope() {
         }
     }
 
+    @Synchronized
     private fun addLoading(index: Int): Boolean {
-        synchronized(this) {
-            if (loadingChapters.contains(index)) return false
-            loadingChapters.add(index)
-            return true
-        }
+        if (loadingChapters.contains(index)) return false
+        loadingChapters.add(index)
+        return true
     }
 
+    @Synchronized
     fun removeLoading(index: Int) {
-        synchronized(this) {
-            loadingChapters.remove(index)
-        }
+        loadingChapters.remove(index)
+    }
+
+    @Synchronized
+    fun addDownloadedChapter(index: Int) {
+        downloadedChapters.add(index)
     }
 
     /**
@@ -901,7 +895,7 @@ object ReadBook : CoroutineScope by MainScope() {
                 launch {
                     val maxChapterIndex =
                         min(durChapterIndex + AppConfig.preDownloadNum, chapterSize)
-                    for (i in durChapterIndex.plus(1)..maxChapterIndex) {
+                    for (i in durChapterIndex.plus(2)..maxChapterIndex) {
                         if (downloadedChapters.contains(i)) continue
                         if ((downloadFailChapters[i] ?: 0) >= 3) continue
                         downloadIndex(i)
@@ -909,7 +903,7 @@ object ReadBook : CoroutineScope by MainScope() {
                 }
                 launch {
                     val minChapterIndex = durChapterIndex - min(5, AppConfig.preDownloadNum)
-                    for (i in durChapterIndex.minus(1) downTo minChapterIndex) {
+                    for (i in durChapterIndex.minus(2) downTo minChapterIndex) {
                         if (downloadedChapters.contains(i)) continue
                         if ((downloadFailChapters[i] ?: 0) >= 3) continue
                         downloadIndex(i)
