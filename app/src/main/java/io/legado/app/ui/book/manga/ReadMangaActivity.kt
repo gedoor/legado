@@ -227,6 +227,8 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
                 }
             }
             addRecyclerViewPreloader(AppConfig.mangaPreDownloadNum)
+        }
+        binding.webtoonFrame.run {
             onTouchMiddle {
                 if (!binding.mangaMenu.isVisible) {
                     binding.mangaMenu.runMenuIn()
@@ -600,7 +602,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
     }
 
     private fun disabledClickScroller(disable: Boolean) {
-        binding.mRecyclerManga.disabledClickScroller = disable
+        binding.webtoonFrame.disabledClickScroller = disable
     }
 
     private fun upLayoutInDisplayCutoutMode() {

@@ -27,9 +27,11 @@ import io.legado.app.utils.getPrefString
 import io.legado.app.utils.isJson
 import io.legado.app.utils.removePref
 import io.legado.app.utils.toastOnUi
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.runBlocking
 import splitties.init.appCtx
 import java.io.File
+import kotlin.coroutines.coroutineContext
 
 /**
  * webDav初始化会访问网络,不要放到主线程
@@ -217,9 +219,8 @@ object AppWebDav {
                 WebDav(putUrl, it).upload(byteArray, "text/plain")
             }
         } catch (e: Exception) {
-            val msg = "WebDav导出\n${e.localizedMessage}"
-            AppLog.put(msg, e)
-            appCtx.toastOnUi(msg)
+            coroutineContext.ensureActive()
+            AppLog.put("WebDav导出失败\n${e.localizedMessage}", e, true)
         }
     }
 
@@ -232,9 +233,8 @@ object AppWebDav {
                 WebDav(putUrl, it).upload(uri, "text/plain")
             }
         } catch (e: Exception) {
-            val msg = "WebDav导出\n${e.localizedMessage}"
-            AppLog.put(msg, e)
-            appCtx.toastOnUi(msg)
+            coroutineContext.ensureActive()
+            AppLog.put("WebDav导出失败\n${e.localizedMessage}", e, true)
         }
     }
 
@@ -249,6 +249,7 @@ object AppWebDav {
             WebDav(url, authorization).upload(json.toByteArray(), "application/json")
             book.syncTime = System.currentTimeMillis()
         } catch (e: Exception) {
+            coroutineContext.ensureActive()
             AppLog.put("上传进度失败\n${e.localizedMessage}", e)
         }
     }
@@ -263,6 +264,7 @@ object AppWebDav {
             WebDav(url, authorization).upload(json.toByteArray(), "application/json")
             onSuccess?.invoke()
         } catch (e: Exception) {
+            coroutineContext.ensureActive()
             AppLog.put("上传进度失败\n${e.localizedMessage}", e)
         }
     }
@@ -289,6 +291,7 @@ object AppWebDav {
                     }
                 }
             }.onFailure {
+                coroutineContext.ensureActive()
                 AppLog.put("获取书籍进度失败\n${it.localizedMessage}", it)
             }
         }
