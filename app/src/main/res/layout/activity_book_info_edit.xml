@@ -61,7 +61,7 @@
         </LinearLayout>
     </LinearLayout>
 
-    <ScrollView
+    <io.legado.app.ui.widget.NoChildScrollNestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -154,6 +154,6 @@
             </io.legado.app.ui.widget.text.TextInputLayout>
 
         </LinearLayout>
-    </ScrollView>
+    </io.legado.app.ui.widget.NoChildScrollNestedScrollView>
 
 </LinearLayout>

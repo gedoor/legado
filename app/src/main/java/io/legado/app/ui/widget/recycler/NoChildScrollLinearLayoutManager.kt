@@ -8,15 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
 
 class NoChildScrollLinearLayoutManager(context: Context) : LinearLayoutManager(context) {
 
-    override fun onRequestChildFocus(
-        parent: RecyclerView,
-        state: RecyclerView.State,
-        child: View,
-        focused: View?
-    ): Boolean {
-        return true
-    }
-
     override fun requestChildRectangleOnScreen(
         parent: RecyclerView,
         child: View,

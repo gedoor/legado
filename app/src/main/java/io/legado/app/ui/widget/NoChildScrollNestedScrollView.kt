@@ -11,10 +11,6 @@ class NoChildScrollNestedScrollView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
 ) : NestedScrollView(context, attrs) {
 
-    override fun requestChildFocus(child: View?, focused: View?) {
-        // do nothing
-    }
-
     override fun requestChildRectangleOnScreen(
         child: View,
         rectangle: Rect?,
