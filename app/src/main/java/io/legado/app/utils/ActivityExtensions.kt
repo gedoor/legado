@@ -18,7 +18,6 @@ import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat.BEHAVIOR_DEFAULT
 import androidx.core.view.WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 import androidx.fragment.app.DialogFragment
 import io.legado.app.R
@@ -177,25 +176,12 @@ fun Activity.keepScreenOn(on: Boolean) {
     }
 }
 
-fun Activity.toggleNavigationBar(show: Boolean) {
+fun Activity.toggleSystemBar(show: Boolean) {
     WindowCompat.getInsetsController(window, window.decorView).run {
         if (show) {
-            show(WindowInsetsCompat.Type.navigationBars())
-            systemBarsBehavior = BEHAVIOR_DEFAULT
+            show(WindowInsetsCompat.Type.systemBars())
         } else {
-            hide(WindowInsetsCompat.Type.navigationBars())
-            systemBarsBehavior = BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-        }
-    }
-}
-
-fun Activity.toggleStatusBar(show: Boolean) {
-    WindowCompat.getInsetsController(window, window.decorView).run {
-        if (show) {
-            show(WindowInsetsCompat.Type.statusBars())
-            systemBarsBehavior = BEHAVIOR_DEFAULT
-        } else {
-            hide(WindowInsetsCompat.Type.statusBars())
+            hide(WindowInsetsCompat.Type.systemBars())
             systemBarsBehavior = BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         }
     }

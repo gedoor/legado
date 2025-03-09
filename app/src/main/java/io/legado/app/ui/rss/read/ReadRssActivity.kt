@@ -61,7 +61,7 @@ import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.textArray
 import io.legado.app.utils.toastOnUi
-import io.legado.app.utils.toggleNavigationBar
+import io.legado.app.utils.toggleSystemBar
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
 import kotlinx.coroutines.launch
@@ -383,7 +383,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             binding.customWebView.addView(view)
             customWebViewCallback = callback
             keepScreenOn(true)
-            toggleNavigationBar(false)
+            toggleSystemBar(false)
         }
 
         override fun onHideCustomView() {
@@ -391,7 +391,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             binding.llView.visible()
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
             keepScreenOn(false)
-            toggleNavigationBar(true)
+            toggleSystemBar(true)
         }
     }
 
