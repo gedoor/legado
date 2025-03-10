@@ -1,7 +1,7 @@
 [versions]
 
-kotlin = "2.1.0"
-ksp = "2.1.0-1.0.29"
+kotlin = "2.1.10"
+ksp = "2.1.10-1.0.31"
 agp = "8.8.0"
 appcompat = "1.7.0"
 colorpicker = "1.1.0"
