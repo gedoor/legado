@@ -42,6 +42,8 @@ import io.legado.app.model.ReadManga
 import io.legado.app.receiver.NetworkChangedListener
 import io.legado.app.ui.book.changesource.ChangeBookSourceDialog
 import io.legado.app.ui.book.info.BookInfoActivity
+import io.legado.app.ui.book.manga.config.MangaColorFilterConfig
+import io.legado.app.ui.book.manga.config.MangaColorFilterDialog
 import io.legado.app.ui.book.manga.config.MangaFooterConfig
 import io.legado.app.ui.book.manga.config.MangaFooterSettingDialog
 import io.legado.app.ui.book.manga.entities.MangaContent
@@ -100,6 +102,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
     private var mMangaAutoPageSpeed = mInitMangaAutoPageSpeed
     private lateinit var mMangaFooterConfig: MangaFooterConfig
     private val mLabelBuilder by lazy { StringBuilder() }
+    private var mColorFilter: MangaColorFilterConfig? = null
 
     private val autoScrollHandler = Handler(Looper.getMainLooper())
     private val autoScrollRunnable = object : Runnable {
@@ -527,6 +530,20 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
                     mAdapter.getCurrentList().size
                 )
             }
+
+            R.id.menu_manga_color_filter -> {
+                if (mColorFilter == null) {
+                    mColorFilter = MangaColorFilterConfig()
+                }
+                MangaColorFilterDialog.newInstance(mColorFilter!!).run {
+                    onColorFilter {
+                        mColorFilter = it
+                        mAdapter.setMangaImageColorFilter(it.r, it.g, it.b, it.a)
+                        updateWindowBrightness(it.l)
+                    }
+                    show(supportFragmentManager, "MangaColorFilterDialog")
+                }
+            }
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -716,5 +733,14 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
         val adapter = adapter ?: return false
         return (mLayoutManager.findLastCompletelyVisibleItemPosition() == adapter.itemCount - 1) &&
                 !canScrollVertically(1)
+    }
+
+    fun updateWindowBrightness(brightness: Int) {
+        val layoutParams = window.attributes
+        val normalizedBrightness = brightness.toFloat() / 255.0f
+        layoutParams.screenBrightness = normalizedBrightness.coerceIn(0f, 1f)
+        window.attributes = layoutParams
+        // 强制刷新屏幕
+        window.decorView.postInvalidate()
     }
 }

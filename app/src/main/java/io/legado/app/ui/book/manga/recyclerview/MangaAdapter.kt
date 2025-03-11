@@ -1,6 +1,8 @@
 package io.legado.app.ui.book.manga.recyclerview
 
 import android.content.Context
+import android.graphics.ColorMatrix
+import android.graphics.ColorMatrixColorFilter
 import android.util.SparseArray
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -32,6 +34,7 @@ class MangaAdapter(private val context: Context) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>(), PreloadModelProvider<Any> {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
+    private lateinit var mBookComicRvBinding: BookComicRvBinding
 
     companion object {
         private const val LOADING_VIEW = 0
@@ -92,6 +95,7 @@ class MangaAdapter(private val context: Context) :
                     )
                 }
             }
+            mBookComicRvBinding = binding
         }
 
         fun onBind(item: MangaContent) {
@@ -208,5 +212,20 @@ class MangaAdapter(private val context: Context) :
             )
         }
         return null
+    }
+
+    fun setMangaImageColorFilter(r: Int, g: Int, b: Int, a: Int) {
+        mBookComicRvBinding.image.run {
+            require(r in 0..255 && g in 0..255 && b in 0..255 && a in 0..255) {
+                "ARGB values must be between 0-255"
+            }
+            val matrix = floatArrayOf(
+                r / 255f, 0f, 0f, 0f, 0f,
+                0f, g / 255f, 0f, 0f, 0f,
+                0f, 0f, b / 255f, 0f, 0f,
+                0f, 0f, 0f, a / 255f, 0f
+            )
+            colorFilter = ColorMatrixColorFilter(ColorMatrix(matrix))
+        }
     }
 }
