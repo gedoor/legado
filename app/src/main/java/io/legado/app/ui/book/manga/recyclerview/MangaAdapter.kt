@@ -1,6 +1,8 @@
 package io.legado.app.ui.book.manga.recyclerview
 
 import android.content.Context
+import android.graphics.ColorMatrix
+import android.graphics.ColorMatrixColorFilter
 import android.util.SparseArray
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -22,6 +24,7 @@ import io.legado.app.databinding.BookComicRvBinding
 import io.legado.app.help.glide.progress.ProgressManager
 import io.legado.app.model.BookCover
 import io.legado.app.model.ReadManga
+import io.legado.app.ui.book.manga.config.MangaColorFilterConfig
 import io.legado.app.ui.book.manga.entities.MangaContent
 import io.legado.app.ui.book.manga.entities.ReaderLoading
 import io.legado.app.utils.getCompatDrawable
@@ -32,6 +35,7 @@ class MangaAdapter(private val context: Context) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>(), PreloadModelProvider<Any> {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
+    private lateinit var mConfig: MangaColorFilterConfig
 
     companion object {
         private const val LOADING_VIEW = 0
@@ -95,7 +99,23 @@ class MangaAdapter(private val context: Context) :
         }
 
         fun onBind(item: MangaContent) {
+            setImageColorFilter()
             loadImageWithRetry(item.mImageUrl, isHorizontal, item.imageCount == 1)
+        }
+
+        fun setImageColorFilter() {
+            binding.image.run {
+                require(mConfig.r in 0..255 && mConfig.g in 0..255 && mConfig.b in 0..255 && mConfig.a in 0..255) {
+                    "ARGB values must be between 0-255"
+                }
+                val matrix = floatArrayOf(
+                    (255 - mConfig.r) / 255f, 0f, 0f, 0f, 0f,
+                    0f, (255 - mConfig.g) / 255f, 0f, 0f, 0f,
+                    0f, 0f, (255 - mConfig.b) / 255f, 0f, 0f,
+                    0f, 0f, 0f, (255 - mConfig.a) / 255f, 0f
+                )
+                colorFilter = ColorMatrixColorFilter(ColorMatrix(matrix))
+            }
         }
     }
 
@@ -208,5 +228,9 @@ class MangaAdapter(private val context: Context) :
             )
         }
         return null
+    }
+
+    fun setMangaImageColorFilter(config: MangaColorFilterConfig) {
+        mConfig = config
     }
 }

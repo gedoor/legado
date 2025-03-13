@@ -1207,4 +1207,5 @@
     <string name="manga_radio_left">靠左</string>
     <string name="manga_radio_center">居中</string>
     <string name="enable_manga_horizontal_scroll">水平滚动</string>
+    <string name="manga_color_filter">滤镜</string>
 </resources>

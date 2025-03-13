@@ -42,6 +42,8 @@ import io.legado.app.model.ReadManga
 import io.legado.app.receiver.NetworkChangedListener
 import io.legado.app.ui.book.changesource.ChangeBookSourceDialog
 import io.legado.app.ui.book.info.BookInfoActivity
+import io.legado.app.ui.book.manga.config.MangaColorFilterConfig
+import io.legado.app.ui.book.manga.config.MangaColorFilterDialog
 import io.legado.app.ui.book.manga.config.MangaFooterConfig
 import io.legado.app.ui.book.manga.config.MangaFooterSettingDialog
 import io.legado.app.ui.book.manga.entities.MangaContent
@@ -95,6 +97,11 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
     private var mDisableAutoScrollPage = false
     private val mInitMangaAutoPageSpeed by lazy {
         AppConfig.mangaAutoPageSpeed
+    }
+
+    private val mMangaColorFilter: MangaColorFilterConfig by lazy {
+        GSON.fromJsonObject<MangaColorFilterConfig>(AppConfig.mangaColorFilter).getOrNull()
+            ?: MangaColorFilterConfig()
     }
 
     private var mMangaAutoPageSpeed = mInitMangaAutoPageSpeed
@@ -190,7 +197,10 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
     }
 
     private fun initRecyclerView() {
-        mAdapter.isHorizontal = AppConfig.enableMangaHorizontalScroll
+        mAdapter.run {
+            isHorizontal = AppConfig.enableMangaHorizontalScroll
+            setMangaImageColorFilter(mMangaColorFilter)
+        }
         binding.mRecyclerManga.run {
             adapter = mAdapter
             itemAnimator = null
@@ -418,6 +428,12 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
         }
     }
 
+    override fun colorFilter(config: MangaColorFilterConfig) {
+        mAdapter.setMangaImageColorFilter(config)
+        mAdapter.notifyItemChanged(ReadManga.durChapterPos)
+        updateWindowBrightness(config.l)
+    }
+
     override val oldBook: Book?
         get() = ReadManga.book
 
@@ -526,6 +542,10 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
                     ReadManga.durChapterPos.minus(2),
                     mAdapter.getCurrentList().size
                 )
+            }
+
+            R.id.menu_manga_color_filter -> {
+                MangaColorFilterDialog().show(supportFragmentManager, "MangaColorFilterDialog")
             }
         }
         return super.onCompatOptionsItemSelected(item)
@@ -716,5 +736,14 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
         val adapter = adapter ?: return false
         return (mLayoutManager.findLastCompletelyVisibleItemPosition() == adapter.itemCount - 1) &&
                 !canScrollVertically(1)
+    }
+
+    fun updateWindowBrightness(brightness: Int) {
+        val layoutParams = window.attributes
+        val normalizedBrightness = brightness.toFloat() / 255.0f
+        layoutParams.screenBrightness = normalizedBrightness.coerceIn(0f, 1f)
+        window.attributes = layoutParams
+        // 强制刷新屏幕
+        window.decorView.postInvalidate()
     }
 }

@@ -68,4 +68,10 @@
         android:id="@+id/menu_manga_footer_config"
         android:title="@string/manga_footer_config"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_manga_color_filter"
+        android:title="@string/manga_color_filter"
+        app:showAsAction="never" />
+
 </menu>
