@@ -24,6 +24,7 @@ import io.legado.app.databinding.BookComicRvBinding
 import io.legado.app.help.glide.progress.ProgressManager
 import io.legado.app.model.BookCover
 import io.legado.app.model.ReadManga
+import io.legado.app.ui.book.manga.config.MangaColorFilterConfig
 import io.legado.app.ui.book.manga.entities.MangaContent
 import io.legado.app.ui.book.manga.entities.ReaderLoading
 import io.legado.app.utils.getCompatDrawable
@@ -35,6 +36,7 @@ class MangaAdapter(private val context: Context) :
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private lateinit var mBookComicRvBinding: BookComicRvBinding
+    private lateinit var mConfig: MangaColorFilterConfig
 
     companion object {
         private const val LOADING_VIEW = 0
@@ -99,6 +101,7 @@ class MangaAdapter(private val context: Context) :
         }
 
         fun onBind(item: MangaContent) {
+            setImageColorFilter()
             loadImageWithRetry(item.mImageUrl, isHorizontal, item.imageCount == 1)
         }
     }
@@ -214,16 +217,20 @@ class MangaAdapter(private val context: Context) :
         return null
     }
 
-    fun setMangaImageColorFilter(r: Int, g: Int, b: Int, a: Int) {
+    fun setMangaImageColorFilter(config: MangaColorFilterConfig) {
+        mConfig = config
+    }
+
+    fun setImageColorFilter() {
         mBookComicRvBinding.image.run {
-            require(r in 0..255 && g in 0..255 && b in 0..255 && a in 0..255) {
+            require(mConfig.r in 0..255 && mConfig.g in 0..255 && mConfig.b in 0..255 && mConfig.a in 0..255) {
                 "ARGB values must be between 0-255"
             }
             val matrix = floatArrayOf(
-                r / 255f, 0f, 0f, 0f, 0f,
-                0f, g / 255f, 0f, 0f, 0f,
-                0f, 0f, b / 255f, 0f, 0f,
-                0f, 0f, 0f, a / 255f, 0f
+                (255 - mConfig.r) / 255f, 0f, 0f, 0f, 0f,
+                0f, (255 - mConfig.g) / 255f, 0f, 0f, 0f,
+                0f, 0f, (255 - mConfig.b) / 255f, 0f, 0f,
+                0f, 0f, 0f, (255 - mConfig.a) / 255f, 0f
             )
             colorFilter = ColorMatrixColorFilter(ColorMatrix(matrix))
         }

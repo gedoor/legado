@@ -99,10 +99,14 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
         AppConfig.mangaAutoPageSpeed
     }
 
+    private val mMangaColorFilter: MangaColorFilterConfig by lazy {
+        GSON.fromJsonObject<MangaColorFilterConfig>(AppConfig.mangaColorFilter).getOrNull()
+            ?: MangaColorFilterConfig()
+    }
+
     private var mMangaAutoPageSpeed = mInitMangaAutoPageSpeed
     private lateinit var mMangaFooterConfig: MangaFooterConfig
     private val mLabelBuilder by lazy { StringBuilder() }
-    private var mColorFilter: MangaColorFilterConfig? = null
 
     private val autoScrollHandler = Handler(Looper.getMainLooper())
     private val autoScrollRunnable = object : Runnable {
@@ -193,7 +197,10 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
     }
 
     private fun initRecyclerView() {
-        mAdapter.isHorizontal = AppConfig.enableMangaHorizontalScroll
+        mAdapter.run {
+            isHorizontal = AppConfig.enableMangaHorizontalScroll
+            setMangaImageColorFilter(mMangaColorFilter)
+        }
         binding.mRecyclerManga.run {
             adapter = mAdapter
             itemAnimator = null
@@ -532,14 +539,11 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
             }
 
             R.id.menu_manga_color_filter -> {
-                if (mColorFilter == null) {
-                    mColorFilter = MangaColorFilterConfig()
-                }
-                MangaColorFilterDialog.newInstance(mColorFilter!!).run {
-                    onColorFilter {
-                        mColorFilter = it
-                        mAdapter.setMangaImageColorFilter(it.r, it.g, it.b, it.a)
-                        updateWindowBrightness(it.l)
+                MangaColorFilterDialog().run {
+                    onColorFilter { filter ->
+                        mAdapter.setMangaImageColorFilter(filter)
+                        mAdapter.setImageColorFilter()
+                        updateWindowBrightness(filter.l)
                     }
                     show(supportFragmentManager, "MangaColorFilterDialog")
                 }

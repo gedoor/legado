@@ -1,5 +1,6 @@
 package io.legado.app.ui.book.manga.config
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
@@ -7,12 +8,17 @@ import android.widget.SeekBar
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.databinding.DialogMangaColorFilterBinding
+import io.legado.app.help.config.AppConfig
+import io.legado.app.utils.GSON
+import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 class MangaColorFilterDialog : BaseDialogFragment(R.layout.dialog_manga_color_filter) {
     private val binding by viewBinding(DialogMangaColorFilterBinding::bind)
-    private lateinit var mConfig: MangaColorFilterConfig
+    private val mConfig =
+        GSON.fromJsonObject<MangaColorFilterConfig>(AppConfig.mangaColorFilter).getOrNull()
+            ?: MangaColorFilterConfig()
 
     private var mColorFilter: ((MangaColorFilterConfig) -> Unit)? = null
 
@@ -25,7 +31,6 @@ class MangaColorFilterDialog : BaseDialogFragment(R.layout.dialog_manga_color_fi
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        mConfig = requireArguments().getParcelable("config") ?: MangaColorFilterConfig()
         binding.seekA.progress = mConfig.a
         binding.seekBrightness.progress = mConfig.l
         binding.seekB.progress = mConfig.b
@@ -54,7 +59,7 @@ class MangaColorFilterDialog : BaseDialogFragment(R.layout.dialog_manga_color_fi
                 progress: Int,
                 fromUser: Boolean
             ) {
-                mConfig.r = 255 - progress
+                mConfig.r = progress
                 mColorFilter?.invoke(mConfig)
             }
 
@@ -71,7 +76,7 @@ class MangaColorFilterDialog : BaseDialogFragment(R.layout.dialog_manga_color_fi
                 progress: Int,
                 fromUser: Boolean
             ) {
-                mConfig.g = 255 - progress
+                mConfig.g = progress
                 mColorFilter?.invoke(mConfig)
             }
 
@@ -88,7 +93,7 @@ class MangaColorFilterDialog : BaseDialogFragment(R.layout.dialog_manga_color_fi
                 progress: Int,
                 fromUser: Boolean
             ) {
-                mConfig.b = 255 - progress
+                mConfig.b = progress
                 mColorFilter?.invoke(mConfig)
             }
 
@@ -105,7 +110,7 @@ class MangaColorFilterDialog : BaseDialogFragment(R.layout.dialog_manga_color_fi
                 progress: Int,
                 fromUser: Boolean
             ) {
-                mConfig.a = 255 - progress
+                mConfig.a = progress
                 mColorFilter?.invoke(mConfig)
             }
 
@@ -118,13 +123,8 @@ class MangaColorFilterDialog : BaseDialogFragment(R.layout.dialog_manga_color_fi
         })
     }
 
-    companion object {
-        fun newInstance(config: MangaColorFilterConfig): MangaColorFilterDialog {
-            val args = Bundle()
-            args.putParcelable("config", config)
-            val fragment = MangaColorFilterDialog()
-            fragment.arguments = args
-            return fragment
-        }
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        AppConfig.mangaColorFilter = GSON.toJson(mConfig)
     }
 }
