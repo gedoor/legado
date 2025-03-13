@@ -428,6 +428,12 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
         }
     }
 
+    override fun colorFilter(config: MangaColorFilterConfig) {
+        mAdapter.setMangaImageColorFilter(config)
+        mAdapter.notifyItemChanged(ReadManga.durChapterPos)
+        updateWindowBrightness(config.l)
+    }
+
     override val oldBook: Book?
         get() = ReadManga.book
 
@@ -539,14 +545,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
             }
 
             R.id.menu_manga_color_filter -> {
-                MangaColorFilterDialog().run {
-                    onColorFilter { filter ->
-                        mAdapter.setMangaImageColorFilter(filter)
-                        mAdapter.setImageColorFilter()
-                        updateWindowBrightness(filter.l)
-                    }
-                    show(supportFragmentManager, "MangaColorFilterDialog")
-                }
+                MangaColorFilterDialog().show(supportFragmentManager, "MangaColorFilterDialog")
             }
         }
         return super.onCompatOptionsItemSelected(item)

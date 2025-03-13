@@ -9,6 +9,7 @@ import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.databinding.DialogMangaColorFilterBinding
 import io.legado.app.help.config.AppConfig
+import io.legado.app.model.ReadManga
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.setLayout
@@ -19,11 +20,6 @@ class MangaColorFilterDialog : BaseDialogFragment(R.layout.dialog_manga_color_fi
     private val mConfig =
         GSON.fromJsonObject<MangaColorFilterConfig>(AppConfig.mangaColorFilter).getOrNull()
             ?: MangaColorFilterConfig()
-
-    private var mColorFilter: ((MangaColorFilterConfig) -> Unit)? = null
-
-    fun onColorFilter(init: (MangaColorFilterConfig) -> Unit) =
-        apply { this.mColorFilter = init }
 
     override fun onStart() {
         super.onStart()
@@ -43,7 +39,7 @@ class MangaColorFilterDialog : BaseDialogFragment(R.layout.dialog_manga_color_fi
                 fromUser: Boolean
             ) {
                 mConfig.l = progress
-                mColorFilter?.invoke(mConfig)
+                ReadManga.mCallback?.colorFilter(mConfig)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
@@ -60,7 +56,7 @@ class MangaColorFilterDialog : BaseDialogFragment(R.layout.dialog_manga_color_fi
                 fromUser: Boolean
             ) {
                 mConfig.r = progress
-                mColorFilter?.invoke(mConfig)
+                ReadManga.mCallback?.colorFilter(mConfig)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
@@ -77,7 +73,7 @@ class MangaColorFilterDialog : BaseDialogFragment(R.layout.dialog_manga_color_fi
                 fromUser: Boolean
             ) {
                 mConfig.g = progress
-                mColorFilter?.invoke(mConfig)
+                ReadManga.mCallback?.colorFilter(mConfig)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
@@ -94,7 +90,7 @@ class MangaColorFilterDialog : BaseDialogFragment(R.layout.dialog_manga_color_fi
                 fromUser: Boolean
             ) {
                 mConfig.b = progress
-                mColorFilter?.invoke(mConfig)
+                ReadManga.mCallback?.colorFilter(mConfig)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
@@ -111,7 +107,7 @@ class MangaColorFilterDialog : BaseDialogFragment(R.layout.dialog_manga_color_fi
                 fromUser: Boolean
             ) {
                 mConfig.a = progress
-                mColorFilter?.invoke(mConfig)
+                ReadManga.mCallback?.colorFilter(mConfig)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
@@ -127,4 +123,5 @@ class MangaColorFilterDialog : BaseDialogFragment(R.layout.dialog_manga_color_fi
         super.onDismiss(dialog)
         AppConfig.mangaColorFilter = GSON.toJson(mConfig)
     }
+
 }

@@ -35,7 +35,6 @@ class MangaAdapter(private val context: Context) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>(), PreloadModelProvider<Any> {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
-    private lateinit var mBookComicRvBinding: BookComicRvBinding
     private lateinit var mConfig: MangaColorFilterConfig
 
     companion object {
@@ -97,12 +96,26 @@ class MangaAdapter(private val context: Context) :
                     )
                 }
             }
-            mBookComicRvBinding = binding
         }
 
         fun onBind(item: MangaContent) {
             setImageColorFilter()
             loadImageWithRetry(item.mImageUrl, isHorizontal, item.imageCount == 1)
+        }
+
+        fun setImageColorFilter() {
+            binding.image.run {
+                require(mConfig.r in 0..255 && mConfig.g in 0..255 && mConfig.b in 0..255 && mConfig.a in 0..255) {
+                    "ARGB values must be between 0-255"
+                }
+                val matrix = floatArrayOf(
+                    (255 - mConfig.r) / 255f, 0f, 0f, 0f, 0f,
+                    0f, (255 - mConfig.g) / 255f, 0f, 0f, 0f,
+                    0f, 0f, (255 - mConfig.b) / 255f, 0f, 0f,
+                    0f, 0f, 0f, (255 - mConfig.a) / 255f, 0f
+                )
+                colorFilter = ColorMatrixColorFilter(ColorMatrix(matrix))
+            }
         }
     }
 
@@ -219,20 +232,5 @@ class MangaAdapter(private val context: Context) :
 
     fun setMangaImageColorFilter(config: MangaColorFilterConfig) {
         mConfig = config
-    }
-
-    fun setImageColorFilter() {
-        mBookComicRvBinding.image.run {
-            require(mConfig.r in 0..255 && mConfig.g in 0..255 && mConfig.b in 0..255 && mConfig.a in 0..255) {
-                "ARGB values must be between 0-255"
-            }
-            val matrix = floatArrayOf(
-                (255 - mConfig.r) / 255f, 0f, 0f, 0f, 0f,
-                0f, (255 - mConfig.g) / 255f, 0f, 0f, 0f,
-                0f, 0f, (255 - mConfig.b) / 255f, 0f, 0f,
-                0f, 0f, 0f, (255 - mConfig.a) / 255f, 0f
-            )
-            colorFilter = ColorMatrixColorFilter(ColorMatrix(matrix))
-        }
     }
 }
