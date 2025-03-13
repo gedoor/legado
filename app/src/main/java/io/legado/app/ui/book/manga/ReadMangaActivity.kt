@@ -430,7 +430,6 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
 
     override fun colorFilter(config: MangaColorFilterConfig) {
         mAdapter.setMangaImageColorFilter(config)
-        mAdapter.notifyItemChanged(ReadManga.durChapterPos)
         updateWindowBrightness(config.l)
     }
 
@@ -545,6 +544,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
             }
 
             R.id.menu_manga_color_filter -> {
+                binding.mangaMenu.runMenuOut()
                 MangaColorFilterDialog().show(supportFragmentManager, "MangaColorFilterDialog")
             }
         }

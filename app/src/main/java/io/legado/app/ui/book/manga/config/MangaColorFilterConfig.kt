@@ -10,5 +10,4 @@ data class MangaColorFilterConfig(
     var b: Int = 0,
     var a: Int = 0,
     var l: Int = 0
-) :
-    Parcelable
+) : Parcelable

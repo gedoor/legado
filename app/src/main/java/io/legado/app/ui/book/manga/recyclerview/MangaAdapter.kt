@@ -1,5 +1,6 @@
 package io.legado.app.ui.book.manga.recyclerview
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
@@ -230,7 +231,9 @@ class MangaAdapter(private val context: Context) :
         return null
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun setMangaImageColorFilter(config: MangaColorFilterConfig) {
         mConfig = config
+        notifyDataSetChanged()
     }
 }

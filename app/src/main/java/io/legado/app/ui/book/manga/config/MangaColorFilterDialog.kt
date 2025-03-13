@@ -4,7 +4,7 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
-import android.widget.SeekBar
+import android.view.WindowManager
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.databinding.DialogMangaColorFilterBinding
@@ -23,100 +23,48 @@ class MangaColorFilterDialog : BaseDialogFragment(R.layout.dialog_manga_color_fi
 
     override fun onStart() {
         super.onStart()
+        dialog?.window?.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
         setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        binding.seekA.progress = mConfig.a
-        binding.seekBrightness.progress = mConfig.l
-        binding.seekB.progress = mConfig.b
-        binding.seekG.progress = mConfig.g
-        binding.seekR.progress = mConfig.r
-        binding.seekBrightness.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(
-                seekBar: SeekBar?,
-                progress: Int,
-                fromUser: Boolean
-            ) {
-                mConfig.l = progress
+        initData()
+        initView()
+    }
+
+    private fun initData() {
+        binding.run {
+            dsbBrightness.progress = mConfig.l
+            dsbR.progress = mConfig.r
+            dsbG.progress = mConfig.g
+            dsbB.progress = mConfig.b
+            dsbA.progress = mConfig.a
+        }
+    }
+
+    private fun initView() {
+        binding.run {
+            dsbBrightness.onChanged = {
+                mConfig.l = it
                 ReadManga.mCallback?.colorFilter(mConfig)
             }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-            }
-
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-            }
-
-        })
-        binding.seekR.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(
-                seekBar: SeekBar?,
-                progress: Int,
-                fromUser: Boolean
-            ) {
-                mConfig.r = progress
+            dsbR.onChanged = {
+                mConfig.r = it
                 ReadManga.mCallback?.colorFilter(mConfig)
             }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-            }
-
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-            }
-
-        })
-        binding.seekG.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(
-                seekBar: SeekBar?,
-                progress: Int,
-                fromUser: Boolean
-            ) {
-                mConfig.g = progress
+            dsbG.onChanged = {
+                mConfig.g = it
                 ReadManga.mCallback?.colorFilter(mConfig)
             }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-            }
-
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-            }
-
-        })
-        binding.seekB.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(
-                seekBar: SeekBar?,
-                progress: Int,
-                fromUser: Boolean
-            ) {
-                mConfig.b = progress
+            dsbB.onChanged = {
+                mConfig.b = it
                 ReadManga.mCallback?.colorFilter(mConfig)
             }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-            }
-
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-            }
-
-        })
-        binding.seekA.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(
-                seekBar: SeekBar?,
-                progress: Int,
-                fromUser: Boolean
-            ) {
-                mConfig.a = progress
+            dsbA.onChanged = {
+                mConfig.a = it
                 ReadManga.mCallback?.colorFilter(mConfig)
             }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-            }
-
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-            }
-
-        })
+        }
     }
 
     override fun onDismiss(dialog: DialogInterface) {
