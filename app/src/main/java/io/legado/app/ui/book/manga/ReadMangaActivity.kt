@@ -430,7 +430,6 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
 
     override fun colorFilter(config: MangaColorFilterConfig) {
         mAdapter.setMangaImageColorFilter(config)
-        refreshVisibleColorFilters()
         updateWindowBrightness(config.l)
     }
 
@@ -545,6 +544,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
             }
 
             R.id.menu_manga_color_filter -> {
+                binding.mangaMenu.runMenuOut()
                 MangaColorFilterDialog().show(supportFragmentManager, "MangaColorFilterDialog")
             }
         }
@@ -745,18 +745,5 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
         window.attributes = layoutParams
         // 强制刷新屏幕
         window.decorView.postInvalidate()
-    }
-
-    fun refreshVisibleColorFilters() {
-        mLayoutManager.let { lm ->
-            val startPos = lm.findFirstVisibleItemPosition()
-            val endPos = lm.findLastVisibleItemPosition()
-            for (i in startPos..endPos) {
-                val viewHolder = binding.mRecyclerManga.findViewHolderForAdapterPosition(i)
-                if (viewHolder is MangaAdapter.PageViewHolder) {
-                    viewHolder.setImageColorFilter()
-                }
-            }
-        }
     }
 }

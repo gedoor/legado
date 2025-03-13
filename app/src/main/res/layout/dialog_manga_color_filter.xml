@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp">
@@ -12,104 +13,44 @@
         <io.legado.app.ui.widget.text.AccentTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
             android:text="滤镜"
             android:textSize="18sp" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/brightness"
-            android:textColor="@color/primaryText"
-            android:textSize="14sp" />
-
-        <io.legado.app.lib.theme.view.ThemeSeekBar
-            android:id="@+id/seek_brightness"
+        <io.legado.app.ui.widget.DetailSeekBar
+            android:id="@+id/dsb_brightness"
             android:layout_width="match_parent"
-            android:layout_height="25dp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="16dp"
-            android:layout_weight="1"
-            android:max="255" />
-
-        <TextView
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="R"
-            android:textColor="@color/primaryText"
-            android:textSize="14sp" />
+            app:max="255"
+            app:title="@string/brightness" />
 
-        <io.legado.app.lib.theme.view.ThemeSeekBar
-            android:id="@+id/seek_R"
+        <io.legado.app.ui.widget.DetailSeekBar
+            android:id="@+id/dsb_r"
             android:layout_width="match_parent"
-            android:layout_height="25dp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="16dp"
-            android:layout_weight="1"
-            android:max="255" />
-
-        <TextView
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="G"
-            android:textColor="@color/primaryText"
-            android:textSize="14sp" />
+            app:max="255"
+            app:title="R" />
 
-        <io.legado.app.lib.theme.view.ThemeSeekBar
-            android:id="@+id/seek_g"
+        <io.legado.app.ui.widget.DetailSeekBar
+            android:id="@+id/dsb_g"
             android:layout_width="match_parent"
-            android:layout_height="25dp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="16dp"
-            android:layout_weight="1"
-            android:max="255" />
-
-        <TextView
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="B"
-            android:textColor="@color/primaryText"
-            android:textSize="14sp" />
+            app:max="255"
+            app:title="G" />
 
-        <io.legado.app.lib.theme.view.ThemeSeekBar
-            android:id="@+id/seek_b"
+        <io.legado.app.ui.widget.DetailSeekBar
+            android:id="@+id/dsb_b"
             android:layout_width="match_parent"
-            android:layout_height="25dp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="16dp"
-            android:layout_weight="1"
-            android:max="255" />
-
-        <TextView
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="A"
-            android:textColor="@color/primaryText"
-            android:textSize="14sp" />
+            app:max="255"
+            app:title="B" />
 
-        <io.legado.app.lib.theme.view.ThemeSeekBar
-            android:id="@+id/seek_a"
+        <io.legado.app.ui.widget.DetailSeekBar
+            android:id="@+id/dsb_a"
             android:layout_width="match_parent"
-            android:layout_height="25dp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="16dp"
-            android:layout_weight="1"
-            android:max="255" />
-
+            android:layout_height="wrap_content"
+            app:max="255"
+            app:title="A" />
 
     </LinearLayout>
 
