@@ -106,7 +106,12 @@ class MangaAdapter(private val context: Context) :
 
         fun setImageColorFilter() {
             binding.image.run {
-                require(mConfig.r in 0..255 && mConfig.g in 0..255 && mConfig.b in 0..255 && mConfig.a in 0..255) {
+                require(
+                    mConfig.r in 0..255 &&
+                            mConfig.g in 0..255 &&
+                            mConfig.b in 0..255 &&
+                            mConfig.a in 0..255
+                ) {
                     "ARGB values must be between 0-255"
                 }
                 val matrix = floatArrayOf(
@@ -234,6 +239,6 @@ class MangaAdapter(private val context: Context) :
     @SuppressLint("NotifyDataSetChanged")
     fun setMangaImageColorFilter(config: MangaColorFilterConfig) {
         mConfig = config
-        notifyDataSetChanged()
+        notifyItemRangeChanged(0, itemCount)
     }
 }
