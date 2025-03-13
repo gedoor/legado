@@ -71,7 +71,7 @@
 
     <item
         android:id="@+id/menu_manga_color_filter"
-        android:title="@string/manga_colorFilter"
+        android:title="@string/manga_color_filter"
         app:showAsAction="never" />
 
 </menu>
