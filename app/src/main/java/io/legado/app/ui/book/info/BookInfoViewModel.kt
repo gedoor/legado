@@ -184,9 +184,8 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                     if (!inBookshelf && dbBook != null && !dbBook.isNotShelf && dbBook.origin == book.origin) {
                         /**
                          * book 来自搜索时(inBookshelf == false)，搜索的书名不存在于书架，但是加载详情后，书名更新，存在同名书籍
-                         * 此时 book 的数据会与数据库中的不同，需要更新 #3652
+                         * 此时 book 的数据会与数据库中的不同，需要更新 #3652 #4619
                          * book 加载详情后虽然书名作者相同，但是又可能不是数据库中(书源不同)的那本书 #3149
-                         * 书籍自定义变量问题 #4619 #4819
                          */
                         dbBook.updateTo(it)
                         inBookshelf = true
