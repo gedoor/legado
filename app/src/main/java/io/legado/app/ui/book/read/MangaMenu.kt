@@ -81,6 +81,7 @@ class MangaMenu @JvmOverloads constructor(
         override fun onAnimationEnd(animation: Animation) {
             this@MangaMenu.invisible()
             binding.titleBar.invisible()
+            binding.bottomMenu.invisible()
             isMenuOutAnimating = false
             canShowMenu = false
             callBack.upSystemUiVisibility(false)
@@ -134,6 +135,9 @@ class MangaMenu @JvmOverloads constructor(
         brightnessBackground.setColor(ColorUtils.adjustAlpha(bgColor, 0.5f))
         if (AppConfig.isEInkMode) {
             titleBar.setBackgroundResource(R.drawable.bg_eink_border_bottom)
+            bottomMenu.setBackgroundResource(R.drawable.bg_eink_border_top)
+        } else {
+            bottomMenu.setBackgroundColor(bgColor)
         }
         if (AppConfig.showReadTitleBarAddition) {
             titleBarAddition.visible()
@@ -173,6 +177,7 @@ class MangaMenu @JvmOverloads constructor(
         if (this.isVisible) {
             if (anim) {
                 binding.titleBar.startAnimation(menuTopOut)
+                binding.bottomMenu.startAnimation(menuBottomOut)
             } else {
                 menuOutListener.onAnimationStart(menuBottomOut)
                 menuOutListener.onAnimationEnd(menuBottomOut)
@@ -183,8 +188,10 @@ class MangaMenu @JvmOverloads constructor(
     fun runMenuIn(anim: Boolean = !AppConfig.isEInkMode) {
         this.visible()
         binding.titleBar.visible()
+        binding.bottomMenu.visible()
         if (anim) {
             binding.titleBar.startAnimation(menuTopIn)
+            binding.bottomMenu.startAnimation(menuBottomIn)
         } else {
             menuInListener.onAnimationStart(menuBottomIn)
             menuInListener.onAnimationEnd(menuBottomIn)
@@ -225,11 +232,26 @@ class MangaMenu @JvmOverloads constructor(
         tvChapterName.setOnLongClickListener(chapterViewLongClickListener)
         tvChapterUrl.setOnClickListener(chapterViewClickListener)
         tvChapterUrl.setOnLongClickListener(chapterViewLongClickListener)
+
+        tvNext.setOnClickListener {
+            callBack.moveToTargetIndex(true)
+        }
+        tvPre.setOnClickListener {
+            callBack.moveToTargetIndex(false)
+        }
+    }
+
+    fun upSeekBar() {
+        binding.seekReadPage.apply {
+            max = ReadManga.durChapterImageCount
+            progress = ReadManga.durChapterPos
+        }
     }
 
     interface CallBack {
         fun openBookInfoActivity()
         fun upSystemUiVisibility(menuIsVisible: Boolean)
+        fun moveToTargetIndex(isNext: Boolean)
     }
 
 }

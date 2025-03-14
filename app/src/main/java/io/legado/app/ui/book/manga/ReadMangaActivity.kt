@@ -564,6 +564,12 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
         toggleSystemBar(menuIsVisible)
     }
 
+    override fun moveToTargetIndex(isNext: Boolean) {
+        var targetIndex =
+            if (isNext) ReadManga.durChapterIndex + 1 else ReadManga.durChapterIndex - 1
+        viewModel.openChapter(if (isNext) targetIndex else targetIndex, 0)
+    }
+
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
         val keyCode = event.keyCode
         val action = event.action
