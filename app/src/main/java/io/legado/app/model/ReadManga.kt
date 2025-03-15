@@ -21,8 +21,8 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.globalExecutor
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.ui.book.manga.entities.MangaChapter
-import io.legado.app.ui.book.manga.entities.MangaContent
 import io.legado.app.ui.book.manga.entities.MangaContentData
+import io.legado.app.ui.book.manga.entities.MangaPage
 import io.legado.app.ui.book.manga.entities.ReaderLoading
 import io.legado.app.utils.mapIndexed
 import kotlinx.coroutines.CoroutineScope
@@ -67,7 +67,6 @@ object ReadManga : CoroutineScope by MainScope() {
     var rateLimiter = ConcurrentRateLimiter(null)
     val mangaContents get() = buildContentList()
     val hasNextChapter get() = durChapterIndex < simulatedChapterSize - 1
-    val mSeekParPos = mutableMapOf<Int, MutableMap<Int, Int>>()
 
     fun resetData(book: Book) {
         ReadManga.book = book
@@ -260,14 +259,18 @@ object ReadManga : CoroutineScope by MainScope() {
     /**
      * 加载下一章
      */
-    fun moveToNextChapter(startLoad: () -> Unit): Boolean {
+    fun moveToNextChapter(toFirst: Boolean = false): Boolean {
         if (durChapterIndex < simulatedChapterSize - 1) {
+            if (toFirst) {
+                mCallback?.showLoading()
+                durChapterPos = 0
+            }
             durChapterIndex++
             prevMangaChapter = curMangaChapter
             curMangaChapter = nextMangaChapter
             nextMangaChapter = null
             if (curMangaChapter == null) {
-                startLoad.invoke()
+                mCallback?.startLoad()
                 loadContent(durChapterIndex)
             } else {
                 mCallback?.upContent()
@@ -283,8 +286,12 @@ object ReadManga : CoroutineScope by MainScope() {
         }
     }
 
-    fun moveToPrevChapter(): Boolean {
+    fun moveToPrevChapter(toFirst: Boolean = false): Boolean {
         if (durChapterIndex > 0) {
+            if (toFirst) {
+                mCallback?.showLoading()
+                durChapterPos = 0
+            }
             durChapterIndex--
             nextMangaChapter = curMangaChapter
             curMangaChapter = prevMangaChapter
@@ -561,8 +568,8 @@ object ReadManga : CoroutineScope by MainScope() {
     private suspend fun getManageChapter(chapter: BookChapter, content: String): MangaChapter {
         val list = BookHelp.flowImages(chapter, content)
             .distinctUntilChanged().mapIndexed { index, src ->
-                MangaContent(
-                    mChapterIndex = chapter.index,
+                MangaPage(
+                    chapterIndex = chapter.index,
                     chapterSize = chapterSize,
                     mImageUrl = src,
                     index = index,
@@ -577,43 +584,18 @@ object ReadManga : CoroutineScope by MainScope() {
         }
 
         val contentList = mutableListOf<Any>()
-        contentList.add(ReaderLoading(chapter.index, "阅读 ${chapter.title}"))
+        contentList.add(ReaderLoading(chapter.index, -1, "阅读 ${chapter.title}"))
         contentList.addAll(list)
-        contentList.add(ReaderLoading(chapter.index, "已读完 ${chapter.title}"))
+        contentList.add(ReaderLoading(chapter.index, imageCount, "已读完 ${chapter.title}"))
 
         return MangaChapter(chapter, contentList, imageCount)
     }
-
-    fun recordMangaPosition(dataList: MutableList<Any>) {
-        Coroutine.async {
-            var globalPosition = 0
-            val mangaList = mutableListOf<MangaContent>()
-            dataList.forEach {
-                if (it is MangaContent) {
-                    mangaList.add(it)
-                }
-            }
-            dataList.groupBy { if (it is MangaContent) it.mChapterIndex else (it as ReaderLoading).mChapterIndex }
-                .forEach { (chapterIndex, items) ->
-                    val itemMap = mutableMapOf<Int, Int>()
-                    for (i in items.indices) {
-                        val item = items[i]
-                        if (item is MangaContent) {
-                            itemMap[item.index] = globalPosition++
-                        } else {
-                            globalPosition++
-                        }
-                    }
-                    mSeekParPos[chapterIndex] = itemMap
-                }
-        }
-    }
-
 
     interface Callback {
         fun upContent()
         fun loadFail(msg: String)
         fun sureNewProgress(progress: BookProgress)
         fun showLoading()
+        fun startLoad()
     }
 }
