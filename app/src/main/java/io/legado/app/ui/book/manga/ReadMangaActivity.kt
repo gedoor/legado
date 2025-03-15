@@ -757,7 +757,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
     }
 
     override fun seekValue(pos: Int) {
-        val mangaIndex = ReadManga.mSeekParPos[ReadManga.durChapterIndex]
+        val mangaIndex = ReadManga.mSeekBarPos[ReadManga.durChapterIndex]
         if (mangaIndex != null && mangaIndex[pos] != null) {
             binding.mRecyclerManga.scrollToPosition(mangaIndex[pos]!!)
         }
