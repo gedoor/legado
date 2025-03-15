@@ -8,6 +8,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.animation.Animation
 import android.widget.FrameLayout
+import android.widget.SeekBar
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import io.legado.app.R
@@ -22,6 +23,7 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.model.ReadManga
 import io.legado.app.ui.browser.WebViewActivity
+import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.ConstraintModify
 import io.legado.app.utils.activity
@@ -81,6 +83,7 @@ class MangaMenu @JvmOverloads constructor(
         override fun onAnimationEnd(animation: Animation) {
             this@MangaMenu.invisible()
             binding.titleBar.invisible()
+            binding.bottomMenu.invisible()
             isMenuOutAnimating = false
             canShowMenu = false
             callBack.upSystemUiVisibility(false)
@@ -134,6 +137,9 @@ class MangaMenu @JvmOverloads constructor(
         brightnessBackground.setColor(ColorUtils.adjustAlpha(bgColor, 0.5f))
         if (AppConfig.isEInkMode) {
             titleBar.setBackgroundResource(R.drawable.bg_eink_border_bottom)
+            bottomMenu.setBackgroundResource(R.drawable.bg_eink_border_top)
+        } else {
+            bottomMenu.setBackgroundColor(bgColor)
         }
         if (AppConfig.showReadTitleBarAddition) {
             titleBarAddition.visible()
@@ -173,6 +179,7 @@ class MangaMenu @JvmOverloads constructor(
         if (this.isVisible) {
             if (anim) {
                 binding.titleBar.startAnimation(menuTopOut)
+                binding.bottomMenu.startAnimation(menuBottomOut)
             } else {
                 menuOutListener.onAnimationStart(menuBottomOut)
                 menuOutListener.onAnimationEnd(menuBottomOut)
@@ -183,8 +190,10 @@ class MangaMenu @JvmOverloads constructor(
     fun runMenuIn(anim: Boolean = !AppConfig.isEInkMode) {
         this.visible()
         binding.titleBar.visible()
+        binding.bottomMenu.visible()
         if (anim) {
             binding.titleBar.startAnimation(menuTopIn)
+            binding.bottomMenu.startAnimation(menuBottomIn)
         } else {
             menuInListener.onAnimationStart(menuBottomIn)
             menuInListener.onAnimationEnd(menuBottomIn)
@@ -225,11 +234,33 @@ class MangaMenu @JvmOverloads constructor(
         tvChapterName.setOnLongClickListener(chapterViewLongClickListener)
         tvChapterUrl.setOnClickListener(chapterViewClickListener)
         tvChapterUrl.setOnLongClickListener(chapterViewLongClickListener)
+
+        tvNext.setOnClickListener {
+            callBack.moveToTargetIndex(true)
+        }
+        tvPre.setOnClickListener {
+            callBack.moveToTargetIndex(false)
+        }
+
+        seekReadPage.setOnSeekBarChangeListener(object : SeekBarChangeListener {
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                callBack.seekValue(seekBar.progress)
+            }
+        })
+    }
+
+    fun upSeekBar(value: Int, count: Int) {
+        binding.seekReadPage.apply {
+            max = count.minus(1)
+            progress = value
+        }
     }
 
     interface CallBack {
         fun openBookInfoActivity()
         fun upSystemUiVisibility(menuIsVisible: Boolean)
+        fun moveToTargetIndex(isNext: Boolean)
+        fun seekValue(pos: Int)
     }
 
 }

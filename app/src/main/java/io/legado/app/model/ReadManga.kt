@@ -67,6 +67,7 @@ object ReadManga : CoroutineScope by MainScope() {
     var rateLimiter = ConcurrentRateLimiter(null)
     val mangaContents get() = buildContentList()
     val hasNextChapter get() = durChapterIndex < simulatedChapterSize - 1
+    val mSeekParPos = mutableMapOf<Int, MutableMap<Int, Int>>()
 
     fun resetData(book: Book) {
         ReadManga.book = book
@@ -582,6 +583,32 @@ object ReadManga : CoroutineScope by MainScope() {
 
         return MangaChapter(chapter, contentList, imageCount)
     }
+
+    fun recordMangaPosition(dataList: MutableList<Any>) {
+        Coroutine.async {
+            var globalPosition = 0
+            val mangaList = mutableListOf<MangaContent>()
+            dataList.forEach {
+                if (it is MangaContent) {
+                    mangaList.add(it)
+                }
+            }
+            dataList.groupBy { if (it is MangaContent) it.mChapterIndex else (it as ReaderLoading).mChapterIndex }
+                .forEach { (chapterIndex, items) ->
+                    val itemMap = mutableMapOf<Int, Int>()
+                    for (i in items.indices) {
+                        val item = items[i]
+                        if (item is MangaContent) {
+                            itemMap[item.index] = globalPosition++
+                        } else {
+                            globalPosition++
+                        }
+                    }
+                    mSeekParPos[chapterIndex] = itemMap
+                }
+        }
+    }
+
 
     interface Callback {
         fun upContent()
