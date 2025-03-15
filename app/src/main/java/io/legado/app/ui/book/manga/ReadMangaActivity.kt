@@ -71,7 +71,8 @@ import kotlinx.coroutines.withContext
 import java.text.DecimalFormat
 
 class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewModel>(),
-    ReadManga.Callback, ChangeBookSourceDialog.CallBack, MangaMenu.CallBack {
+    ReadManga.Callback, ChangeBookSourceDialog.CallBack, MangaMenu.CallBack,
+    MangaColorFilterDialog.Callback {
 
     private val mLayoutManager by lazy {
         LinearLayoutManager(
@@ -428,11 +429,6 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
         }
     }
 
-    override fun colorFilter(config: MangaColorFilterConfig) {
-        mAdapter.setMangaImageColorFilter(config)
-        updateWindowBrightness(config.l)
-    }
-
     override val oldBook: Book?
         get() = ReadManga.book
 
@@ -445,6 +441,10 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
         }
     }
 
+    override fun updateColorFilter(config: MangaColorFilterConfig) {
+        mAdapter.setMangaImageColorFilter(config)
+        updateWindowBrightness(config.l)
+    }
 
     @SuppressLint("StringFormatMatches")
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {

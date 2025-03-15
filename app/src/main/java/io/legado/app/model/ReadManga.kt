@@ -20,7 +20,6 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.globalExecutor
 import io.legado.app.model.webBook.WebBook
-import io.legado.app.ui.book.manga.config.MangaColorFilterConfig
 import io.legado.app.ui.book.manga.entities.MangaChapter
 import io.legado.app.ui.book.manga.entities.MangaContent
 import io.legado.app.ui.book.manga.entities.MangaContentData
@@ -589,6 +588,5 @@ object ReadManga : CoroutineScope by MainScope() {
         fun loadFail(msg: String)
         fun sureNewProgress(progress: BookProgress)
         fun showLoading()
-        fun colorFilter(config: MangaColorFilterConfig)
     }
 }

@@ -9,7 +9,6 @@ import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.databinding.DialogMangaColorFilterBinding
 import io.legado.app.help.config.AppConfig
-import io.legado.app.model.ReadManga
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.setLayout
@@ -20,6 +19,7 @@ class MangaColorFilterDialog : BaseDialogFragment(R.layout.dialog_manga_color_fi
     private val mConfig =
         GSON.fromJsonObject<MangaColorFilterConfig>(AppConfig.mangaColorFilter).getOrNull()
             ?: MangaColorFilterConfig()
+    private val callback get() = activity as? Callback
 
     override fun onStart() {
         super.onStart()
@@ -46,30 +46,34 @@ class MangaColorFilterDialog : BaseDialogFragment(R.layout.dialog_manga_color_fi
         binding.run {
             dsbBrightness.onChanged = {
                 mConfig.l = it
-                ReadManga.mCallback?.colorFilter(mConfig)
+                callback?.updateColorFilter(mConfig)
             }
             dsbR.onChanged = {
                 mConfig.r = it
-                ReadManga.mCallback?.colorFilter(mConfig)
+                callback?.updateColorFilter(mConfig)
             }
             dsbG.onChanged = {
                 mConfig.g = it
-                ReadManga.mCallback?.colorFilter(mConfig)
+                callback?.updateColorFilter(mConfig)
             }
             dsbB.onChanged = {
                 mConfig.b = it
-                ReadManga.mCallback?.colorFilter(mConfig)
+                callback?.updateColorFilter(mConfig)
             }
             dsbA.onChanged = {
                 mConfig.a = it
-                ReadManga.mCallback?.colorFilter(mConfig)
+                callback?.updateColorFilter(mConfig)
             }
         }
     }
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-        AppConfig.mangaColorFilter = GSON.toJson(mConfig)
+        AppConfig.mangaColorFilter = mConfig.toJson()
+    }
+
+    interface Callback {
+        fun updateColorFilter(config: MangaColorFilterConfig)
     }
 
 }
