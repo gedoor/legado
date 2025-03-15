@@ -67,7 +67,7 @@ object ReadManga : CoroutineScope by MainScope() {
     var rateLimiter = ConcurrentRateLimiter(null)
     val mangaContents get() = buildContentList()
     val hasNextChapter get() = durChapterIndex < simulatedChapterSize - 1
-    val mSeekParPos = mutableMapOf<Int, MutableMap<Int, Int>>()
+    val mSeekBarPos = mutableMapOf<Int, MutableMap<Int, Int>>()
 
     fun resetData(book: Book) {
         ReadManga.book = book
@@ -196,7 +196,7 @@ object ReadManga : CoroutineScope by MainScope() {
         chapter: BookChapter,
         content: String?,
         errorMsg: String = "加载内容失败",
-        canceled: Boolean = false
+        canceled: Boolean = false,
     ) {
         removeLoading(chapter.index)
         if (canceled || chapter.index !in durChapterIndex - 1..durChapterIndex + 1) {
@@ -587,12 +587,6 @@ object ReadManga : CoroutineScope by MainScope() {
     fun recordMangaPosition(dataList: MutableList<Any>) {
         Coroutine.async {
             var globalPosition = 0
-            val mangaList = mutableListOf<MangaContent>()
-            dataList.forEach {
-                if (it is MangaContent) {
-                    mangaList.add(it)
-                }
-            }
             dataList.groupBy { if (it is MangaContent) it.mChapterIndex else (it as ReaderLoading).mChapterIndex }
                 .forEach { (chapterIndex, items) ->
                     val itemMap = mutableMapOf<Int, Int>()
@@ -604,7 +598,7 @@ object ReadManga : CoroutineScope by MainScope() {
                             globalPosition++
                         }
                     }
-                    mSeekParPos[chapterIndex] = itemMap
+                    mSeekBarPos[chapterIndex] = itemMap
                 }
         }
     }
