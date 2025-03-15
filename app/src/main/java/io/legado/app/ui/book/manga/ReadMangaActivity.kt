@@ -227,6 +227,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
                             ReadManga.durChapterPos = content.index
                             ReadManga.curPageChanged()
                         }
+                        binding.mangaMenu.upSeekBar(content.index, content.imageCount)
                         upInfoBar(
                             content.mChapterIndex,
                             content.chapterSize,
@@ -277,6 +278,8 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
             val curFinish = data.curFinish
             val nextFinish = data.nextFinish
             mAdapter.submitList(list) {
+                binding.mangaMenu.upSeekBar(ReadManga.durChapterPos, ReadManga.durChapterImageCount)
+                ReadManga.recordMangaPosition(mAdapter.getCurrentList())
                 if (loadingViewVisible && curFinish) {
                     binding.infobar.isVisible = true
                     upInfoBar(
@@ -751,5 +754,12 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
         window.attributes = layoutParams
         // 强制刷新屏幕
         window.decorView.postInvalidate()
+    }
+
+    override fun seekValue(pos: Int) {
+        val mangaIndex = ReadManga.mSeekParPos[ReadManga.durChapterIndex]
+        if (mangaIndex != null && mangaIndex[pos] != null) {
+            binding.mRecyclerManga.scrollToPosition(mangaIndex[pos]!!)
+        }
     }
 }

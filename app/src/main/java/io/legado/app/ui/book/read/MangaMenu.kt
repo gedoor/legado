@@ -8,6 +8,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.animation.Animation
 import android.widget.FrameLayout
+import android.widget.SeekBar
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import io.legado.app.R
@@ -22,6 +23,7 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.model.ReadManga
 import io.legado.app.ui.browser.WebViewActivity
+import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.ConstraintModify
 import io.legado.app.utils.activity
@@ -239,12 +241,18 @@ class MangaMenu @JvmOverloads constructor(
         tvPre.setOnClickListener {
             callBack.moveToTargetIndex(false)
         }
+
+        seekReadPage.setOnSeekBarChangeListener(object : SeekBarChangeListener {
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                callBack.seekValue(seekBar.progress)
+            }
+        })
     }
 
-    fun upSeekBar() {
+    fun upSeekBar(value: Int, count: Int) {
         binding.seekReadPage.apply {
-            max = ReadManga.durChapterImageCount
-            progress = ReadManga.durChapterPos
+            max = count.minus(1)
+            progress = value
         }
     }
 
@@ -252,6 +260,7 @@ class MangaMenu @JvmOverloads constructor(
         fun openBookInfoActivity()
         fun upSystemUiVisibility(menuIsVisible: Boolean)
         fun moveToTargetIndex(isNext: Boolean)
+        fun seekValue(pos: Int)
     }
 
 }
