@@ -31,6 +31,7 @@ import io.legado.app.utils.postEvent
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.sync.Mutex
@@ -149,7 +150,7 @@ object BookHelp {
             book.getFolderName(),
             cacheImageFolderName
         ).listFiles()?.forEach { imgFile ->
-            if (!imgNames.contains(imgFile.name)){
+            if (!imgNames.contains(imgFile.name)) {
                 imgFile.delete()
             }
         }
@@ -191,6 +192,17 @@ object BookHelp {
         }
     }
 
+    fun flowImages(bookChapter: BookChapter, content: String): Flow<String> {
+        return flow {
+            val matcher = AppPattern.imgPattern.matcher(content)
+            while (matcher.find()) {
+                val src = matcher.group(1) ?: continue
+                val mSrc = NetworkUtils.getAbsoluteURL(bookChapter.url, src)
+                emit(mSrc)
+            }
+        }
+    }
+
     suspend fun saveImages(
         bookSource: BookSource,
         book: Book,
@@ -198,14 +210,7 @@ object BookHelp {
         content: String,
         concurrency: Int = AppConfig.threadCount
     ) = coroutineScope {
-        flow {
-            val matcher = AppPattern.imgPattern.matcher(content)
-            while (matcher.find()) {
-                val src = matcher.group(1) ?: continue
-                val mSrc = NetworkUtils.getAbsoluteURL(bookChapter.url, src)
-                emit(mSrc)
-            }
-        }.onEachParallel(concurrency) { mSrc ->
+        flowImages(bookChapter, content).onEachParallel(concurrency) { mSrc ->
             saveImage(bookSource, book, mSrc, bookChapter)
         }.collect()
     }
@@ -329,8 +334,8 @@ object BookHelp {
      * 检测该章节是否下载
      */
     fun hasContent(book: Book, bookChapter: BookChapter): Boolean {
-        return if (book.isLocalTxt
-            || (bookChapter.isVolume && bookChapter.url.startsWith(bookChapter.title))
+        return if (book.isLocalTxt ||
+            (bookChapter.isVolume && bookChapter.url.startsWith(bookChapter.title))
         ) {
             true
         } else {

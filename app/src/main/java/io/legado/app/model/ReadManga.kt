@@ -1,7 +1,6 @@
 package io.legado.app.model
 
 import io.legado.app.constant.AppLog
-import io.legado.app.constant.AppPattern
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
@@ -26,7 +25,6 @@ import io.legado.app.ui.book.manga.entities.MangaChapter
 import io.legado.app.ui.book.manga.entities.MangaContent
 import io.legado.app.ui.book.manga.entities.MangaContentData
 import io.legado.app.ui.book.manga.entities.ReaderLoading
-import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.mapIndexed
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -38,7 +36,6 @@ import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Semaphore
@@ -431,7 +428,7 @@ object ReadManga : CoroutineScope by MainScope() {
                     (downloadFailChapters[chapter.index] ?: 0) + 1
                 contentLoadFinish(chapter, null)
             }, cancel = {
-                contentLoadFinish(chapter, null, canceled =  true)
+                contentLoadFinish(chapter, null, canceled = true)
             })
         } else {
             contentLoadFinish(chapter, null, "加载内容失败 没有书源")
@@ -562,22 +559,16 @@ object ReadManga : CoroutineScope by MainScope() {
     }
 
     private suspend fun getManageChapter(chapter: BookChapter, content: String): MangaChapter {
-        val list = flow {
-            val matcher = AppPattern.imgPattern.matcher(content)
-            while (matcher.find()) {
-                val src = matcher.group(1) ?: continue
-                val mSrc = NetworkUtils.getAbsoluteURL(chapter.url, src)
-                emit(mSrc)
-            }
-        }.distinctUntilChanged().mapIndexed { index, src ->
-            MangaContent(
-                mChapterIndex = chapter.index,
-                chapterSize = chapterSize,
-                mImageUrl = src,
-                index = index,
-                mChapterName = chapter.title
-            )
-        }.toList()
+        val list = BookHelp.flowImages(chapter, content)
+            .distinctUntilChanged().mapIndexed { index, src ->
+                MangaContent(
+                    mChapterIndex = chapter.index,
+                    chapterSize = chapterSize,
+                    mImageUrl = src,
+                    index = index,
+                    mChapterName = chapter.title
+                )
+            }.toList()
 
         val imageCount = list.size
 
