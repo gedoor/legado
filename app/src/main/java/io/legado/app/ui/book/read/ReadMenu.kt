@@ -412,7 +412,12 @@ class ReadMenu @JvmOverloads constructor(
         //阅读进度
         seekReadPage.setOnSeekBarChangeListener(object : SeekBarChangeListener {
 
+            override fun onStartTrackingTouch(seekBar: SeekBar) {
+                binding.vwMenuBg.setOnClickListener(null)
+            }
+
             override fun onStopTrackingTouch(seekBar: SeekBar) {
+                binding.vwMenuBg.setOnClickListener { runMenuOut() }
                 when (AppConfig.progressBarBehavior) {
                     "page" -> ReadBook.skipToPage(seekBar.progress)
                     "chapter" -> {

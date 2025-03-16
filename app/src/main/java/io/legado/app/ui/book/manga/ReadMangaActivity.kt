@@ -267,10 +267,8 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
             mAdapter.submitList(list) {
                 if (loadingViewVisible && curFinish) {
                     binding.infobar.isVisible = true
-                    if (pos > -1) {
-                        upInfoBar(list[pos])
-                        mLayoutManager.scrollToPositionWithOffset(pos, 0)
-                    }
+                    upInfoBar(list[pos])
+                    mLayoutManager.scrollToPositionWithOffset(pos, 0)
                     binding.flLoading.isGone = true
                     loadMoreView.visible()
                     binding.mangaMenu.upSeekBar(
@@ -522,7 +520,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
             }
 
             R.id.menu_manga_footer_config -> {
-                MangaFooterSettingDialog().show(supportFragmentManager, "mangaFooterSettingDialog")
+                showDialogFragment(MangaFooterSettingDialog())
             }
 
             R.id.menu_enable_horizontal_scroller -> {
@@ -537,7 +535,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
 
             R.id.menu_manga_color_filter -> {
                 binding.mangaMenu.runMenuOut()
-                MangaColorFilterDialog().show(supportFragmentManager, "MangaColorFilterDialog")
+                showDialogFragment(MangaColorFilterDialog())
             }
         }
         return super.onCompatOptionsItemSelected(item)

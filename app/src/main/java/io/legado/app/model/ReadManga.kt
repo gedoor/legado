@@ -255,11 +255,7 @@ object ReadManga : CoroutineScope by MainScope() {
             nextFinish = true
             list.addAll(it.contents)
         }
-        pos = if (list.isNotEmpty()) {
-            pos.coerceIn(0, list.lastIndex)
-        } else {
-            -1
-        }
+        pos = pos.coerceIn(0, list.lastIndex)
         return MangaContent(pos, list, curFinish, nextFinish)
     }
 
