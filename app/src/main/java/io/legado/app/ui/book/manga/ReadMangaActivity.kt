@@ -268,13 +268,15 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
             val curFinish = data.curFinish
             val nextFinish = data.nextFinish
             mAdapter.submitList(list) {
-                binding.mangaMenu.upSeekBar(ReadManga.durChapterPos, ReadManga.durChapterImageCount)
                 if (loadingViewVisible && curFinish) {
                     binding.infobar.isVisible = true
                     upInfoBar(list[pos])
-                    binding.mRecyclerManga.scrollToPosition(pos)
+                    mLayoutManager.scrollToPositionWithOffset(pos, 0)
                     binding.flLoading.isGone = true
                     loadMoreView.visible()
+                    binding.mangaMenu.upSeekBar(
+                        ReadManga.durChapterPos, ReadManga.curMangaChapter!!.imageCount
+                    )
                 }
 
                 if (curFinish) {
@@ -757,7 +759,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
             }
         }
         if (pos > -1) {
-            binding.mRecyclerManga.scrollToPosition(pos)
+            mLayoutManager.scrollToPositionWithOffset(pos, 0)
             upInfoBar(mAdapter.getItem(pos))
         }
     }

@@ -243,8 +243,10 @@ class MangaMenu @JvmOverloads constructor(
         }
 
         seekReadPage.setOnSeekBarChangeListener(object : SeekBarChangeListener {
-            override fun onStopTrackingTouch(seekBar: SeekBar) {
-                callBack.skipToPage(seekBar.progress)
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                if (fromUser) {
+                    callBack.skipToPage(seekBar.progress)
+                }
             }
         })
     }

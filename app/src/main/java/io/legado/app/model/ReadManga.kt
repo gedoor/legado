@@ -21,7 +21,7 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.globalExecutor
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.ui.book.manga.entities.MangaChapter
-import io.legado.app.ui.book.manga.entities.MangaContentData
+import io.legado.app.ui.book.manga.entities.MangaContent
 import io.legado.app.ui.book.manga.entities.MangaPage
 import io.legado.app.ui.book.manga.entities.ReaderLoading
 import io.legado.app.utils.mapIndexed
@@ -48,7 +48,6 @@ object ReadManga : CoroutineScope by MainScope() {
     val executor = globalExecutor
     var durChapterIndex = 0 //章节位置
     var chapterSize = 0//总章节
-    var durChapterImageCount = 0
     var durChapterPos = 0
     var prevMangaChapter: MangaChapter? = null
     var curMangaChapter: MangaChapter? = null
@@ -65,7 +64,7 @@ object ReadManga : CoroutineScope by MainScope() {
     val downloadScope = CoroutineScope(SupervisorJob() + IO)
     val preDownloadSemaphore = Semaphore(2)
     var rateLimiter = ConcurrentRateLimiter(null)
-    val mangaContents get() = buildContentList()
+    val mangaContents get() = buildMangaContent()
     val hasNextChapter get() = durChapterIndex < simulatedChapterSize - 1
 
     fun resetData(book: Book) {
@@ -216,7 +215,6 @@ object ReadManga : CoroutineScope by MainScope() {
                     mCallback?.loadFail("正文没有图片")
                     return
                 }
-                durChapterImageCount = mangaChapter.imageCount
                 curMangaChapter = mangaChapter
                 mCallback?.upContent()
             }
@@ -240,20 +238,24 @@ object ReadManga : CoroutineScope by MainScope() {
         }
     }
 
-    private fun buildContentList(): MangaContentData {
+    private fun buildMangaContent(): MangaContent {
         val list = arrayListOf<Any>()
         var pos = durChapterPos + 1
+        var curFinish = false
+        var nextFinish = false
         prevMangaChapter?.let {
             pos += it.contents.size
             list.addAll(it.contents)
         }
         curMangaChapter?.let {
+            curFinish = true
             list.addAll(it.contents)
         }
         nextMangaChapter?.let {
+            nextFinish = true
             list.addAll(it.contents)
         }
-        return MangaContentData(pos, list, curMangaChapter != null, nextMangaChapter != null)
+        return MangaContent(pos, list, curFinish, nextFinish)
     }
 
     /**
