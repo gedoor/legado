@@ -296,7 +296,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
         if (page !is MangaPage) {
             return
         }
-        val chapterIndex = page.index
+        val chapterIndex = page.chapterIndex
         val chapterSize = page.chapterSize
         val chapterPos = page.index
         val imageCount = page.imageCount
