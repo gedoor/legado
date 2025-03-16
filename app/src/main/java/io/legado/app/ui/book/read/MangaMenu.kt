@@ -236,16 +236,15 @@ class MangaMenu @JvmOverloads constructor(
         tvChapterUrl.setOnLongClickListener(chapterViewLongClickListener)
 
         tvNext.setOnClickListener {
-            callBack.moveToTargetIndex(true)
+            ReadManga.moveToNextChapter(true)
         }
         tvPre.setOnClickListener {
-            callBack.moveToTargetIndex(false)
+            ReadManga.moveToPrevChapter(true)
         }
 
         seekReadPage.setOnSeekBarChangeListener(object : SeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                super.onProgressChanged(seekBar, progress, fromUser)
-                callBack.seekValue(progress)
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                callBack.skipToPage(seekBar.progress)
             }
         })
     }
@@ -260,8 +259,7 @@ class MangaMenu @JvmOverloads constructor(
     interface CallBack {
         fun openBookInfoActivity()
         fun upSystemUiVisibility(menuIsVisible: Boolean)
-        fun moveToTargetIndex(isNext: Boolean)
-        fun seekValue(pos: Int)
+        fun skipToPage(pos: Int)
     }
 
 }
