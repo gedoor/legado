@@ -803,10 +803,19 @@ class TextChapterLayout(
         var i = 0
         while (i < length) {
             val clusterBaseIndex = i++
-            widths.add(widthsArray[start + clusterBaseIndex])
-            while (i < length && widthsArray[start + i] == 0f && !isZeroWidthChar(text[i])) {
+            var extra = 0f
+            while (i < length) {
+                val c = text[i]
+                val w = widthsArray[start + i]
+                if (w > 0 || isZeroWidthChar(c)) {
+                    if (!c.isLowSurrogate()) {
+                        break
+                    }
+                    extra = w
+                }
                 i++
             }
+            widths.add(widthsArray[start + clusterBaseIndex] + extra)
             stringList.add(text.substring(clusterBaseIndex, i))
         }
         return stringList to widths
@@ -814,7 +823,7 @@ class TextChapterLayout(
 
     private fun isZeroWidthChar(char: Char): Boolean {
         val code = char.code
-        return code == 8203 || code == 8204 || code == 8288
+        return code == 8203 || code == 8204 || code == 8205 || code == 8288
     }
 
 }

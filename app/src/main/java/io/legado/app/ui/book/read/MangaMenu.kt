@@ -150,7 +150,7 @@ class MangaMenu @JvmOverloads constructor(
         /**
          * 确保视图不被导航栏遮挡
          */
-        applyNavigationBarPadding()
+        bottomMenu.applyNavigationBarPadding()
     }
 
     private fun upBrightnessVwPos() {
@@ -243,8 +243,18 @@ class MangaMenu @JvmOverloads constructor(
         }
 
         seekReadPage.setOnSeekBarChangeListener(object : SeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                if (fromUser) {
+                    callBack.skipToPage(seekBar.progress)
+                }
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar) {
+                binding.vwMenuBg.setOnClickListener(null)
+            }
+
             override fun onStopTrackingTouch(seekBar: SeekBar) {
-                callBack.skipToPage(seekBar.progress)
+                binding.vwMenuBg.setOnClickListener { runMenuOut() }
             }
         })
     }
