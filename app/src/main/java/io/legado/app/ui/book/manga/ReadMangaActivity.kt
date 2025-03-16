@@ -452,7 +452,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
     /**
      * 菜单
      */
-    @SuppressLint("StringFormatMatches")
+    @SuppressLint("StringFormatMatches", "NotifyDataSetChanged")
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_change_source -> {
@@ -533,7 +533,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
                     if (item.isChecked) LinearLayoutManager.HORIZONTAL else LinearLayoutManager.VERTICAL
                 singlePagerScroller(item.isChecked)
                 mAdapter.isHorizontal = item.isChecked
-                mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount)
+                mAdapter.notifyDataSetChanged()
             }
 
             R.id.menu_manga_color_filter -> {
