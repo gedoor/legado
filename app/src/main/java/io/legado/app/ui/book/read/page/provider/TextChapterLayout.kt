@@ -803,19 +803,10 @@ class TextChapterLayout(
         var i = 0
         while (i < length) {
             val clusterBaseIndex = i++
-            var extra = 0f
-            while (i < length) {
-                val c = text[i]
-                val w = widthsArray[start + i]
-                if (w > 0 || isZeroWidthChar(c)) {
-                    if (!c.isLowSurrogate()) {
-                        break
-                    }
-                    extra = w
-                }
+            widths.add(widthsArray[start + clusterBaseIndex])
+            while (i < length && widthsArray[start + i] == 0f && !isZeroWidthChar(text[i])) {
                 i++
             }
-            widths.add(widthsArray[start + clusterBaseIndex] + extra)
             stringList.add(text.substring(clusterBaseIndex, i))
         }
         return stringList to widths
