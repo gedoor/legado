@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.os.Looper
 import android.view.KeyEvent
 import android.view.Menu
@@ -57,6 +56,7 @@ import io.legado.app.ui.widget.recycler.LoadMoreView
 import io.legado.app.utils.GSON
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.StartActivityContract
+import io.legado.app.utils.buildMainHandler
 import io.legado.app.utils.fastBinarySearch
 import io.legado.app.utils.findCenterViewPosition
 import io.legado.app.utils.fromJsonObject
@@ -98,21 +98,18 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
         PagerSnapHelper()
     }
 
-    private var mDisableAutoScrollPage = false
-    private val mInitMangaAutoPageSpeed by lazy {
-        AppConfig.mangaAutoPageSpeed
-    }
+    private var isAutoScrollPage = false
 
     private val mMangaColorFilter: MangaColorFilterConfig by lazy {
         GSON.fromJsonObject<MangaColorFilterConfig>(AppConfig.mangaColorFilter).getOrNull()
             ?: MangaColorFilterConfig()
     }
 
-    private var mMangaAutoPageSpeed = mInitMangaAutoPageSpeed
+    private var mMangaAutoPageSpeed = AppConfig.mangaAutoPageSpeed
     private lateinit var mMangaFooterConfig: MangaFooterConfig
     private val mLabelBuilder by lazy { StringBuilder() }
 
-    private val autoScrollHandler = Handler(Looper.getMainLooper())
+    private val autoScrollHandler = buildMainHandler()
     private val autoScrollRunnable = object : Runnable {
         override fun run() {
             scrollToNext()
@@ -270,8 +267,10 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
             mAdapter.submitList(list) {
                 if (loadingViewVisible && curFinish) {
                     binding.infobar.isVisible = true
-                    upInfoBar(list[pos])
-                    mLayoutManager.scrollToPositionWithOffset(pos, 0)
+                    if (pos > -1) {
+                        upInfoBar(list[pos])
+                        mLayoutManager.scrollToPositionWithOffset(pos, 0)
+                    }
                     binding.flLoading.isGone = true
                     loadMoreView.visible()
                     binding.mangaMenu.upSeekBar(
@@ -502,7 +501,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
             R.id.menu_enable_auto_page -> {
                 item.isChecked = !item.isChecked
                 val menuMangaAutoPageSpeed = mMenu?.findItem(R.id.menu_manga_auto_page_speed)
-                mDisableAutoScrollPage = item.isChecked
+                isAutoScrollPage = item.isChecked
                 if (item.isChecked) {
                     startAutoPage()
                     menuMangaAutoPageSpeed?.isVisible = true
@@ -672,7 +671,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
     }
 
     private fun startAutoPage() {
-        if (mDisableAutoScrollPage) {
+        if (isAutoScrollPage) {
             autoScrollHandler.postDelayed(autoScrollRunnable, mMangaAutoPageSpeed.times(1000L))
         }
     }
