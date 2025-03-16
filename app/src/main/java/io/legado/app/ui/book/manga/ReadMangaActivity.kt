@@ -261,7 +261,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
             setTitle(ReadManga.book?.name)
             val data = withContext(IO) { ReadManga.mangaContents }
             val pos = data.pos
-            val list = data.contents
+            val list = data.items
             val curFinish = data.curFinish
             val nextFinish = data.nextFinish
             mAdapter.submitList(list) {
@@ -737,9 +737,9 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
         window.decorView.postInvalidate()
     }
 
-    override fun skipToPage(pos: Int) {
+    override fun skipToPage(index: Int) {
         val durChapterIndex = ReadManga.durChapterIndex
-        val pos = mAdapter.getItems().fastBinarySearch {
+        val itemPos = mAdapter.getItems().fastBinarySearch {
             val chapterIndex: Int
             val pageIndex: Int
             if (it is BaseMangaPage) {
@@ -752,12 +752,13 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
             if (delta != 0) {
                 delta
             } else {
-                pageIndex - pos
+                pageIndex - index
             }
         }
-        if (pos > -1) {
-            mLayoutManager.scrollToPositionWithOffset(pos, 0)
-            upInfoBar(mAdapter.getItem(pos))
+        if (itemPos > -1) {
+            mLayoutManager.scrollToPositionWithOffset(itemPos, 0)
+            upInfoBar(mAdapter.getItem(itemPos))
+            ReadManga.durChapterPos = index
         }
     }
 }

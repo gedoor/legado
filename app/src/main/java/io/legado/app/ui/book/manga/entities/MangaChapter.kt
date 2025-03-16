@@ -4,6 +4,6 @@ import io.legado.app.data.entities.BookChapter
 
 data class MangaChapter(
     val chapter: BookChapter,
-    val contents: List<Any>,
+    val pages: List<BaseMangaPage>,
     val imageCount: Int
 )

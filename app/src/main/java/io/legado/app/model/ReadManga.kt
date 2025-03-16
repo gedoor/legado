@@ -20,6 +20,7 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.globalExecutor
 import io.legado.app.model.webBook.WebBook
+import io.legado.app.ui.book.manga.entities.BaseMangaPage
 import io.legado.app.ui.book.manga.entities.MangaChapter
 import io.legado.app.ui.book.manga.entities.MangaContent
 import io.legado.app.ui.book.manga.entities.MangaPage
@@ -239,24 +240,25 @@ object ReadManga : CoroutineScope by MainScope() {
     }
 
     private fun buildMangaContent(): MangaContent {
-        val list = arrayListOf<Any>()
-        var pos = durChapterPos + 1
+        val items = arrayListOf<BaseMangaPage>()
+        var pos = 0
         var curFinish = false
         var nextFinish = false
         prevMangaChapter?.let {
-            pos += it.contents.size
-            list.addAll(it.contents)
+            pos += it.pages.size
+            items.addAll(it.pages)
         }
         curMangaChapter?.let {
             curFinish = true
-            list.addAll(it.contents)
+            items.addAll(it.pages)
+            durChapterPos = durChapterPos.coerceIn(0, it.imageCount - 1)
+            pos += durChapterPos + 1
         }
         nextMangaChapter?.let {
             nextFinish = true
-            list.addAll(it.contents)
+            items.addAll(it.pages)
         }
-        pos = pos.coerceIn(0, list.lastIndex)
-        return MangaContent(pos, list, curFinish, nextFinish)
+        return MangaContent(pos, items, curFinish, nextFinish)
     }
 
     /**
@@ -586,7 +588,7 @@ object ReadManga : CoroutineScope by MainScope() {
             it.imageCount = imageCount
         }
 
-        val contentList = mutableListOf<Any>()
+        val contentList = mutableListOf<BaseMangaPage>()
         contentList.add(ReaderLoading(chapter.index, -1, "阅读 ${chapter.title}"))
         contentList.addAll(list)
         contentList.add(ReaderLoading(chapter.index, imageCount, "已读完 ${chapter.title}"))
