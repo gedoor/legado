@@ -11,7 +11,17 @@ fun TextPaint.getTextWidthsCompat(text: String, widths: FloatArray) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
         val letterSpacing = letterSpacing * textSize
         val letterSpacingHalf = letterSpacing * 0.5f
-        widths[0] += letterSpacingHalf
-        widths[text.lastIndex] += letterSpacingHalf
+        for (i in widths.indices) {
+            if (widths[i] > 0) {
+                widths[i] += letterSpacingHalf
+                break
+            }
+        }
+        for (i in text.lastIndex downTo 0) {
+            if (widths[i] > 0) {
+                widths[i] += letterSpacingHalf
+                break
+            }
+        }
     }
 }
