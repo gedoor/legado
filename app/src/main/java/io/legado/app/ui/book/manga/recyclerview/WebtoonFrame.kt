@@ -45,7 +45,7 @@ class WebtoonFrame : FrameLayout {
     private var mPrevPage: (() -> Unit)? = null
     fun onPrevPage(init: () -> Unit) = apply { this.mPrevPage = init }
 
-    var disabledClickScroller = false
+    var disabledClickScroll = false
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
@@ -55,11 +55,11 @@ class WebtoonFrame : FrameLayout {
                     mTouchMiddle?.invoke()
                 }
 
-                blRect.contains(ev.rawX, ev.rawY) && !disabledClickScroller -> {
+                blRect.contains(ev.rawX, ev.rawY) && !disabledClickScroll -> {
                     mPrevPage?.invoke()
                 }
 
-                brRect.contains(ev.rawX, ev.rawY) && !disabledClickScroller -> {
+                brRect.contains(ev.rawX, ev.rawY) && !disabledClickScroll -> {
                     mNextPage?.invoke()
                 }
             }

@@ -29,7 +29,6 @@ import io.legado.app.ui.book.manga.config.MangaColorFilterConfig
 import io.legado.app.ui.book.manga.entities.MangaPage
 import io.legado.app.ui.book.manga.entities.ReaderLoading
 import io.legado.app.utils.getCompatDrawable
-import java.util.Collections
 
 
 class MangaAdapter(private val context: Context) :
@@ -215,9 +214,9 @@ class MangaAdapter(private val context: Context) :
         }
     }
 
-    override fun getPreloadItems(position: Int): MutableList<Any> {
-        if (getItems().isEmpty()) return Collections.emptyList()
-        if (position >= getItems().size) return Collections.emptyList()
+    override fun getPreloadItems(position: Int): List<Any> {
+        if (isEmpty()) return emptyList()
+        if (position >= getItems().size) return emptyList()
         return getItems().subList(position, position + 1)
     }
 
