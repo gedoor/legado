@@ -79,19 +79,18 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
 
     private val mLayoutManager by lazy {
         LinearLayoutManager(
-            this@ReadMangaActivity,
-            if (AppConfig.enableMangaHorizontalScroll) LinearLayoutManager.HORIZONTAL else LinearLayoutManager.VERTICAL,
+            this,
+            if (AppConfig.enableMangaHorizontalScroll) LinearLayoutManager.HORIZONTAL
+            else LinearLayoutManager.VERTICAL,
             false
         )
     }
     private val mAdapter: MangaAdapter by lazy {
-        MangaAdapter(this@ReadMangaActivity)
+        MangaAdapter(this)
     }
 
     private val mSizeProvider by lazy {
-        FixedPreloadSizeProvider<Any>(
-            this@ReadMangaActivity.resources.displayMetrics.widthPixels, SIZE_ORIGINAL
-        )
+        FixedPreloadSizeProvider<Any>(resources.displayMetrics.widthPixels, SIZE_ORIGINAL)
     }
 
     private val mPagerSnapHelper: PagerSnapHelper by lazy {
