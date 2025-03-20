@@ -197,8 +197,8 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
             mLayoutManager.initialPrefetchItemCount = 4
             mLayoutManager.isItemPrefetchEnabled = true
             setItemViewCacheSize(AppConfig.preDownloadNum)
-            disabledClickScroll(AppConfig.disableClickScroll)
-            disableMangaScaling(AppConfig.disableMangaScale)
+            setDisableClickScroll(AppConfig.disableClickScroll)
+            setDisableMangaScale(AppConfig.disableMangaScale)
             setRecyclerViewPreloader(AppConfig.mangaPreDownloadNum)
             setPreScrollListener { _, _, _, position ->
                 if (mAdapter.isNotEmpty()) {
@@ -478,13 +478,13 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
             R.id.menu_disable_manga_scale -> {
                 item.isChecked = !item.isChecked
                 AppConfig.disableMangaScale = item.isChecked
-                disableMangaScaling(item.isChecked)
+                setDisableMangaScale(item.isChecked)
             }
 
             R.id.menu_disable_click_scroll -> {
                 item.isChecked = !item.isChecked
                 AppConfig.disableClickScroll = item.isChecked
-                disabledClickScroll(item.isChecked)
+                setDisableClickScroll(item.isChecked)
             }
 
             R.id.menu_enable_auto_page -> {
@@ -594,15 +594,15 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
             AppConfig.enableMangaHorizontalScroll
     }
 
-    private fun disableMangaScaling(disable: Boolean) {
+    private fun setDisableMangaScale(disable: Boolean) {
         binding.webtoonFrame.disableMangaScale = disable
-        binding.mRecyclerManga.disableMangaScaling = disable
+        binding.mRecyclerManga.disableMangaScale = disable
         if (disable) {
             binding.mRecyclerManga.resetZoom()
         }
     }
 
-    private fun disabledClickScroll(disable: Boolean) {
+    private fun setDisableClickScroll(disable: Boolean) {
         binding.webtoonFrame.disabledClickScroll = disable
     }
 

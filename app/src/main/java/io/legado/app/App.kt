@@ -54,6 +54,7 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         CrashHandler(this)
+        LogUtils.init(this)
         LogUtils.d("App", "onCreate")
         LogUtils.logDeviceInfo()
         if (isDebuggable) {
