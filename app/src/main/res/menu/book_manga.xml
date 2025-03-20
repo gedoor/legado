@@ -52,6 +52,13 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_enable_auto_scroll"
+        android:checkable="true"
+        android:checked="false"
+        android:title="@string/enable_auto_scroll"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_manga_auto_page_speed"
         android:title="@string/manga_auto_page_speed"
         android:visible="false"
