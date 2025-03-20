@@ -215,8 +215,9 @@ class MangaAdapter(private val context: Context) :
     }
 
     override fun getPreloadItems(position: Int): List<Any> {
-        if (isEmpty()) return emptyList()
-        if (position >= getItems().size) return emptyList()
+        if (isEmpty() || position >= getItems().size) {
+            return emptyList()
+        }
         return getItems().subList(position, position + 1)
     }
 

@@ -3,6 +3,7 @@
 package io.legado.app.utils
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Build
 import android.webkit.WebSettings
 import io.legado.app.BuildConfig
@@ -12,6 +13,7 @@ import io.legado.app.help.config.AppConfig
 import splitties.init.appCtx
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.logging.FileHandler
 import java.util.logging.Level
 import java.util.logging.LogRecord
 import java.util.logging.Logger
@@ -22,6 +24,10 @@ import kotlin.time.Duration.Companion.days
 object LogUtils {
     const val TIME_PATTERN = "yy-MM-dd HH:mm:ss.SSS"
     val logTimeFormat by lazy { SimpleDateFormat(TIME_PATTERN) }
+
+    fun init(context: Context) {
+        fileHandler = createFileHandler(context)
+    }
 
     @JvmStatic
     fun d(tag: String, msg: String) {
@@ -47,9 +53,11 @@ object LogUtils {
         }
     }
 
-    private val fileHandler by lazy {
+    private var fileHandler: FileHandler? = null
+
+    private fun createFileHandler(context: Context): FileHandler? {
         try {
-            val root = appCtx.externalCacheDir ?: return@lazy null
+            val root = context.externalCacheDir ?: return null
             val logFolder = FileUtils.createFolderIfNotExist(root, "logs")
             val expiredTime = System.currentTimeMillis() - 7.days.inWholeMilliseconds
             logFolder.listFiles()?.forEach {
@@ -59,11 +67,11 @@ object LogUtils {
             }
             val date = getCurrentDateStr(TIME_PATTERN)
             val logPath = FileUtils.getPath(root = logFolder, "appLog-$date.txt")
-            AsyncFileHandler(logPath).apply {
+            return AsyncFileHandler(logPath).apply {
                 formatter = object : java.util.logging.Formatter() {
                     override fun format(record: LogRecord): String {
                         // 设置文件输出格式
-                        return (getCurrentDateStr(TIME_PATTERN) + ": " + record.message + "\n")
+                        return getCurrentDateStr(TIME_PATTERN) + ": " + record.message + "\n"
                     }
                 }
                 level = if (AppConfig.recordLog) {
@@ -75,7 +83,7 @@ object LogUtils {
         } catch (e: Exception) {
             e.printStackTrace()
             AppLog.putNotSave("创建fileHandler出错\n$e", e)
-            return@lazy null
+            return null
         }
     }
 

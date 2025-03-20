@@ -3,7 +3,6 @@ package io.legado.app.ui.book.manga.recyclerview
 import android.animation.AnimatorSet
 import android.animation.ValueAnimator
 import android.content.Context
-import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
@@ -42,7 +41,7 @@ class WebtoonRecyclerView @JvmOverloads constructor(
     var doubleTapZoom = true
     var tapListener: ((MotionEvent) -> Unit)? = null
     var longTapListener: ((MotionEvent) -> Boolean)? = null
-    var disableMangaScaling = false
+    var disableMangaScale = false
 
     override fun onMeasure(widthSpec: Int, heightSpec: Int) {
         halfWidth = MeasureSpec.getSize(widthSpec) / 2
@@ -277,7 +276,7 @@ class WebtoonRecyclerView @JvmOverloads constructor(
                 MotionEvent.ACTION_DOWN -> {
                     scrollPointerId = ev.getPointerId(0)
                     downX = (ev.x + 0.5f).toInt()
-                    downY =(ev.y + 0.5f).toInt()
+                    downY = (ev.y + 0.5f).toInt()
                 }
 
                 MotionEvent.ACTION_POINTER_DOWN -> {
@@ -287,7 +286,7 @@ class WebtoonRecyclerView @JvmOverloads constructor(
                 }
 
                 MotionEvent.ACTION_MOVE -> {
-                    if (disableMangaScaling) {
+                    if (disableMangaScale) {
                         return super.onTouchEvent(ev)
                     }
                     if (isDoubleTapping && isQuickScaling) {
@@ -335,7 +334,7 @@ class WebtoonRecyclerView @JvmOverloads constructor(
                 }
 
                 MotionEvent.ACTION_UP -> {
-                    if (isDoubleTapping && !isQuickScaling && !disableMangaScaling) {
+                    if (isDoubleTapping && !isQuickScaling && !disableMangaScale) {
                         listener.onDoubleTapConfirmed(ev)
                     }
                     isZoomDragging = false

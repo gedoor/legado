@@ -11,6 +11,7 @@ import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
+import io.legado.app.data.entities.BookSourcePart
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.book.ContentProcessor
 import io.legado.app.help.config.AppConfig
@@ -36,7 +37,7 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
     val successLiveData = MutableLiveData<Int>()
 
     val allSources = arrayListOf<BookSource>()
-    val checkSources = arrayListOf<BookSource?>()
+    val checkSources = arrayListOf<BookSourcePart?>()
     val selectStatus = arrayListOf<Boolean>()
     val newSourceStatus = arrayListOf<Boolean>()
     val updateSourceStatus = arrayListOf<Boolean>()
@@ -207,7 +208,7 @@ class ImportBookSourceViewModel(app: Application) : BaseViewModel(app) {
     private fun comparisonSource() {
         execute {
             allSources.forEach {
-                val source = appDb.bookSourceDao.getBookSource(it.bookSourceUrl)
+                val source = appDb.bookSourceDao.getBookSourcePart(it.bookSourceUrl)
                 checkSources.add(source)
                 selectStatus.add(source == null || source.lastUpdateTime < it.lastUpdateTime)
                 newSourceStatus.add(source == null)
