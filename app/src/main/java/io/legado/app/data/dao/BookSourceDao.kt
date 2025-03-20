@@ -280,6 +280,12 @@ interface BookSourceDao {
     @get:Query("select max(customOrder) from book_sources")
     val maxOrder: Int
 
+    @get:Query(
+        """select exists (select 1 
+        from book_sources group by customOrder having count(customOrder) > 1)"""
+    )
+    val hasDuplicateOrder: Boolean
+
     @Query("update book_sources set enabled = :enable where bookSourceUrl = :bookSourceUrl")
     fun enable(bookSourceUrl: String, enable: Boolean)
 
