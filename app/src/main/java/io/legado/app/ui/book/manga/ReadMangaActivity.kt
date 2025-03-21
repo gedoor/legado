@@ -77,7 +77,7 @@ import java.text.DecimalFormat
 
 class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewModel>(),
     ReadManga.Callback, ChangeBookSourceDialog.CallBack, MangaMenu.CallBack,
-    MangaColorFilterDialog.Callback {
+    MangaColorFilterDialog.Callback, ScrollTimer.ScrollCallback {
 
     private val mLayoutManager by lazy {
         LinearLayoutManager(this)
@@ -179,6 +179,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
                 ?: MangaFooterConfig()
         mScrollTimer = ScrollTimer(this).apply {
             setSpeed(AppConfig.mangaAutoPageSpeed)
+            callback = this@ReadMangaActivity
         }
     }
 
@@ -424,13 +425,13 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
         }
     }
 
-    override fun scrollBy(delta: Int) {
+    override fun scrollBy(distance: Int) {
         if (binding.mRecyclerManga.isAtBottom()) {
             return
         }
         binding.mRecyclerManga.smoothScrollBy(
-            if (mAdapter.isHorizontal) delta else 0,
-            if (mAdapter.isHorizontal) 0 else delta, LinearInterpolator(), 16
+            if (mAdapter.isHorizontal) distance else 0,
+            if (mAdapter.isHorizontal) 0 else distance, LinearInterpolator(), 16
         )
     }
 

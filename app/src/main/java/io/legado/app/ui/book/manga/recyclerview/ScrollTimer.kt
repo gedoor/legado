@@ -15,7 +15,7 @@ class ScrollTimer(
     private var job: Job? = null
     private var delayMs: Long = 20L
     private var distance = 1
-
+    lateinit var callback: ScrollCallback
     var isEnabled: Boolean = false
         set(value) {
             if (field != value) {
@@ -37,10 +37,13 @@ class ScrollTimer(
         }
         job = coroutineScope.launch {
             while (isActive) {
-                ReadManga.mCallback?.scrollBy(distance)
+                callback.scrollBy(distance)
                 delay(delayMs)
             }
         }
     }
 
+    interface ScrollCallback{
+        fun scrollBy(distance:Int)
+    }
 }
