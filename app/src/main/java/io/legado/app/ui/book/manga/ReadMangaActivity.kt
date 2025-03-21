@@ -121,6 +121,9 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
     private lateinit var mScrollTimer: ScrollTimer
     private var enableAutoPageScroll = false
     private var enableAutoScroll = false
+    private val mLinearInterpolator by lazy {
+        LinearInterpolator()
+    }
 
     private val loadMoreView by lazy {
         LoadMoreView(this).apply {
@@ -431,7 +434,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
         }
         binding.mRecyclerManga.smoothScrollBy(
             if (mAdapter.isHorizontal) distance else 0,
-            if (mAdapter.isHorizontal) 0 else distance, LinearInterpolator(), 16
+            if (mAdapter.isHorizontal) 0 else distance, mLinearInterpolator, 16
         )
     }
 
