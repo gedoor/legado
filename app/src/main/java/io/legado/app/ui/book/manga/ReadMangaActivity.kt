@@ -48,6 +48,7 @@ import io.legado.app.ui.book.manga.config.MangaFooterSettingDialog
 import io.legado.app.ui.book.manga.entities.BaseMangaPage
 import io.legado.app.ui.book.manga.entities.MangaPage
 import io.legado.app.ui.book.manga.recyclerview.MangaAdapter
+import io.legado.app.ui.book.manga.recyclerview.ScrollTimer
 import io.legado.app.ui.book.read.MangaMenu
 import io.legado.app.ui.book.read.ReadBookActivity.Companion.RESULT_DELETED
 import io.legado.app.ui.book.toc.TocActivityResult
@@ -93,6 +94,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
     }
 
     private var isAutoScrollPage = false
+    private var isAutoScroll = false
 
     private val mMangaColorFilter: MangaColorFilterConfig by lazy {
         GSON.fromJsonObject<MangaColorFilterConfig>(AppConfig.mangaColorFilter).getOrNull()
@@ -120,6 +122,9 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
 
     private var justInitData: Boolean = false
     private var syncDialog: AlertDialog? = null
+    private lateinit var mScrollTimer: ScrollTimer
+    private var enableAutoPageScroll = false
+    private var enableAutoScroll = false
 
     private val loadMoreView by lazy {
         LoadMoreView(this).apply {
@@ -176,6 +181,9 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
         mMangaFooterConfig =
             GSON.fromJsonObject<MangaFooterConfig>(AppConfig.mangaFooterConfig).getOrNull()
                 ?: MangaFooterConfig()
+        mScrollTimer = ScrollTimer(this).apply {
+            setSpeed(AppConfig.mangaAutoPageSpeed)
+        }
     }
 
     override fun observeLiveBus() {
@@ -348,6 +356,9 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
             }
         }
         startAutoPage()
+        if (isAutoScroll) {
+            mScrollTimer.isEnabled = true
+        }
     }
 
     override fun onPause() {
@@ -366,6 +377,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
         ReadManga.cancelPreDownloadTask()
         networkChangedListener.unRegister()
         stopAutoPage()
+        mScrollTimer.isEnabled = false
     }
 
     override fun loadFail(msg: String) {
@@ -411,6 +423,16 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
         lifecycleScope.launch {
             loadMoreView.startLoad()
         }
+    }
+
+    override fun scrollBy(delta: Int) {
+        if (binding.mRecyclerManga.isAtBottom()) {
+            return
+        }
+        binding.mRecyclerManga.smoothScrollBy(
+            if (mAdapter.isHorizontal) delta else 0,
+            if (mAdapter.isHorizontal) 0 else delta, null, 16
+        )
     }
 
     override val oldBook: Book?
@@ -498,15 +520,29 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
                     stopAutoPage()
                     menuMangaAutoPageSpeed?.isVisible = false
                 }
+                enableAutoPageScroll = item.isChecked
+                enableAutoScroll = false
+                mScrollTimer.isEnabled = false
+                isAutoScroll = false
+                mMenu?.findItem(R.id.menu_enable_auto_scroll)?.isChecked = false
             }
 
             R.id.menu_manga_auto_page_speed -> {
-                showNumberPickerDialog(1, getString(R.string.setting_manga_auto_page_speed), 3) {
+                val mangaAutoPage = mMenu?.findItem(R.id.menu_enable_auto_page)
+                val mangaAutoScroll = mMenu?.findItem(R.id.menu_enable_auto_scroll)
+                showNumberPickerDialog(
+                    1, getString(R.string.setting_manga_auto_page_speed),
+                    AppConfig.mangaAutoPageSpeed
+                ) {
                     AppConfig.mangaAutoPageSpeed = it
                     mMangaAutoPageSpeed = it
                     item.title = getString(R.string.manga_auto_page_speed, it)
-                    stopAutoPage()
-                    startAutoPage()
+                    if (mangaAutoScroll?.isChecked == true) {
+                        mScrollTimer.setSpeed(it)
+                    }
+                    if (mangaAutoPage?.isChecked == true) {
+                        startAutoPage()
+                    }
                 }
             }
 
@@ -525,6 +561,19 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
                 binding.mangaMenu.runMenuOut()
                 showDialogFragment(MangaColorFilterDialog())
             }
+
+            R.id.menu_enable_auto_scroll -> {
+                item.isChecked = !item.isChecked
+                mScrollTimer.isEnabled = item.isChecked
+                mMenu?.findItem(R.id.menu_enable_auto_page)?.isChecked = false
+                enableAutoScroll = item.isChecked
+                enableAutoPageScroll = false
+                isAutoScrollPage = false
+                isAutoScroll = item.isChecked
+                stopAutoPage()
+                mMenu?.findItem(R.id.menu_manga_auto_page_speed)?.isVisible = item.isChecked
+                mPagerSnapHelper.attachToRecyclerView(null)
+            }
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -540,6 +589,16 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
 
     override fun upSystemUiVisibility(menuIsVisible: Boolean) {
         toggleSystemBar(menuIsVisible)
+        if (enableAutoScroll) {
+            mScrollTimer.isEnabled = !menuIsVisible
+        }
+        if (enableAutoPageScroll) {
+            if (menuIsVisible) {
+                stopAutoPage()
+            } else {
+                startAutoPage()
+            }
+        }
     }
 
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
@@ -573,7 +632,9 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
     private fun setHorizontalScroll(enable: Boolean) {
         mAdapter.isHorizontal = enable
         if (enable) {
-            mPagerSnapHelper.attachToRecyclerView(binding.mRecyclerManga)
+            if (!enableAutoScroll) {
+                mPagerSnapHelper.attachToRecyclerView(binding.mRecyclerManga)
+            }
             mLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
         } else {
             mPagerSnapHelper.attachToRecyclerView(null)
@@ -660,6 +721,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
     }
 
     private fun startAutoPage() {
+        stopAutoPage()
         if (isAutoScrollPage) {
             autoScrollHandler.postDelayed(autoScrollRunnable, mMangaAutoPageSpeed.times(1000L))
         }

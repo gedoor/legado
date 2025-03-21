@@ -602,5 +602,6 @@ object ReadManga : CoroutineScope by MainScope() {
         fun sureNewProgress(progress: BookProgress)
         fun showLoading()
         fun startLoad()
+        fun scrollBy(delta: Int)
     }
 }
