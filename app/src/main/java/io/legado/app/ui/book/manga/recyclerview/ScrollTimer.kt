@@ -1,46 +1,44 @@
 package io.legado.app.ui.book.manga.recyclerview
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
 
 class ScrollTimer(
-    private val coroutineScope: CoroutineScope,
-    private val callback: ScrollCallback
-) {
-    private var job: Job? = null
-    private var delayMs: Long = 20L
+    private val callback: ScrollCallback,
+    private val recyclerView: RecyclerView
+) : RecyclerView.OnScrollListener() {
     private var distance = 1
     var isEnabled: Boolean = false
         set(value) {
             if (field != value) {
                 field = value
-                restartJob()
+                if (value) {
+                    recyclerView.addOnScrollListener(this)
+                    startScroll()
+                } else {
+                    recyclerView.removeOnScrollListener(this)
+                }
             }
         }
+
+    override fun onScrollStateChanged(
+        recyclerView: RecyclerView,
+        newState: Int
+    ) {
+        if (newState == SCROLL_STATE_IDLE) {
+            startScroll()
+        }
+    }
 
     fun setSpeed(distance: Int) {
         this.distance = distance
-        restartJob()
     }
 
-    private fun restartJob() {
-        job?.cancel()
-        if (!isEnabled || delayMs == 0L) {
-            job = null
-            return
-        }
-        job = coroutineScope.launch {
-            while (isActive) {
-                callback.scrollBy(distance)
-                delay(delayMs)
-            }
-        }
+    private fun startScroll() {
+        callback.scrollBy(distance)
     }
 
-    interface ScrollCallback{
-        fun scrollBy(distance:Int)
+    interface ScrollCallback {
+        fun scrollBy(distance: Int)
     }
 }

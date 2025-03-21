@@ -119,7 +119,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
     private var justInitData: Boolean = false
     private var syncDialog: AlertDialog? = null
     private val mScrollTimer by lazy {
-        ScrollTimer(lifecycleScope, this).apply {
+        ScrollTimer(this, binding.mRecyclerManga).apply {
             setSpeed(AppConfig.mangaAutoPageSpeed)
         }
     }
