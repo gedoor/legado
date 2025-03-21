@@ -70,7 +70,6 @@ import io.legado.app.utils.toggleSystemBar
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.DecimalFormat
@@ -124,7 +123,6 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
     private var justInitData: Boolean = false
     private var syncDialog: AlertDialog? = null
     private lateinit var mScrollTimer: ScrollTimer
-    private val mSpeedFlow = MutableStateFlow(AppConfig.mangaAutoPageSpeed)
     private var enableAutoPageScroll = false
     private var enableAutoScroll = false
 
@@ -183,7 +181,9 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
         mMangaFooterConfig =
             GSON.fromJsonObject<MangaFooterConfig>(AppConfig.mangaFooterConfig).getOrNull()
                 ?: MangaFooterConfig()
-        mScrollTimer = ScrollTimer(this, mSpeedFlow)
+        mScrollTimer = ScrollTimer(this).apply {
+            setSpeed(AppConfig.mangaAutoPageSpeed)
+        }
     }
 
     override fun observeLiveBus() {
@@ -538,7 +538,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
                     mMangaAutoPageSpeed = it
                     item.title = getString(R.string.manga_auto_page_speed, it)
                     if (mangaAutoScroll?.isChecked == true) {
-                        mSpeedFlow.value = it
+                        mScrollTimer.setSpeed(it)
                     }
                     if (mangaAutoPage?.isChecked == true) {
                         startAutoPage()
