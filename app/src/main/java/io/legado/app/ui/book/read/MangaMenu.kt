@@ -233,7 +233,7 @@ class MangaMenu @JvmOverloads constructor(
     interface CallBack {
         fun openBookInfoActivity()
         fun upSystemUiVisibility(menuIsVisible: Boolean)
-        fun skipToPage(pos: Int)
+        fun skipToPage(index: Int)
     }
 
 }
