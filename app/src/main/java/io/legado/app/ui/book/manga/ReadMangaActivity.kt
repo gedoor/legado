@@ -118,7 +118,11 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
 
     private var justInitData: Boolean = false
     private var syncDialog: AlertDialog? = null
-    private lateinit var mScrollTimer: ScrollTimer
+    private val mScrollTimer by lazy {
+        ScrollTimer(lifecycleScope, this).apply {
+            setSpeed(AppConfig.mangaAutoPageSpeed)
+        }
+    }
     private var enableAutoPageScroll = false
     private var enableAutoScroll = false
     private val mLinearInterpolator by lazy {
@@ -180,10 +184,6 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
         mMangaFooterConfig =
             GSON.fromJsonObject<MangaFooterConfig>(AppConfig.mangaFooterConfig).getOrNull()
                 ?: MangaFooterConfig()
-        mScrollTimer = ScrollTimer(this).apply {
-            setSpeed(AppConfig.mangaAutoPageSpeed)
-            callback = this@ReadMangaActivity
-        }
     }
 
     override fun observeLiveBus() {
