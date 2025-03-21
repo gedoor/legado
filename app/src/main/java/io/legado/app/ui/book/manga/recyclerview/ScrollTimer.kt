@@ -12,17 +12,15 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlin.math.roundToLong
-
-private const val MAX_DELAY = 8L
 
 class ScrollTimer(
     lifecycleOwner: LifecycleOwner,
-    speed: MutableStateFlow<Float>,
+    speed: MutableStateFlow<Int>,
 ) {
     private val coroutineScope = lifecycleOwner.lifecycleScope
     private var job: Job? = null
-    private var delayMs: Long = 10L
+    private var delayMs: Long = 16L
+    private var distance = 1
 
     var isEnabled: Boolean = false
         set(value) {
@@ -38,16 +36,8 @@ class ScrollTimer(
         }.flowOn(Dispatchers.Default).launchIn(coroutineScope)
     }
 
-    private fun onSpeedChanged(speed: Float) {
-        var initSpeed = speed
-        if (initSpeed <= 0f) {
-            delayMs = 0L
-        }
-        if (initSpeed > 1f) {
-            initSpeed = 0.99f
-        }
-        val speedFactor = 1 - initSpeed
-        delayMs = (MAX_DELAY * speedFactor).roundToLong()
+    private fun onSpeedChanged(distance: Int) {
+        this.distance = distance
         restartJob()
     }
 
@@ -59,8 +49,8 @@ class ScrollTimer(
         }
         job = coroutineScope.launch {
             while (isActive) {
-                delay((delayMs).toLong())
-                ReadManga.mCallback?.scrollBy(1)
+                delay(delayMs)
+                ReadManga.mCallback?.scrollBy(distance)
             }
         }
     }
