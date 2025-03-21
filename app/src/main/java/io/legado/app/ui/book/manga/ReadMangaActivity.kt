@@ -96,11 +96,6 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
     private var isAutoScrollPage = false
     private var isAutoScroll = false
 
-    private val mMangaColorFilter: MangaColorFilterConfig by lazy {
-        GSON.fromJsonObject<MangaColorFilterConfig>(AppConfig.mangaColorFilter).getOrNull()
-            ?: MangaColorFilterConfig()
-    }
-
     private var mMangaAutoPageSpeed = AppConfig.mangaAutoPageSpeed
     private lateinit var mMangaFooterConfig: MangaFooterConfig
     private val mLabelBuilder by lazy { StringBuilder() }
@@ -195,7 +190,10 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
     }
 
     private fun initRecyclerView() {
-        mAdapter.setMangaImageColorFilter(mMangaColorFilter)
+        val mangaColorFilter =
+            GSON.fromJsonObject<MangaColorFilterConfig>(AppConfig.mangaColorFilter).getOrNull()
+                ?: MangaColorFilterConfig()
+        mAdapter.setMangaImageColorFilter(mangaColorFilter)
         setHorizontalScroll(AppConfig.enableMangaHorizontalScroll)
         binding.mRecyclerManga.run {
             adapter = mAdapter
