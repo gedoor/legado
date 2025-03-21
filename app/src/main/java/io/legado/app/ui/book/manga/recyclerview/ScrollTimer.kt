@@ -13,7 +13,7 @@ class ScrollTimer(
 ) {
     private val coroutineScope = lifecycleOwner.lifecycleScope
     private var job: Job? = null
-    private var delayMs: Long = 16L
+    private var delayMs: Long = 20L
     private var distance = 1
 
     var isEnabled: Boolean = false
@@ -37,8 +37,8 @@ class ScrollTimer(
         }
         job = coroutineScope.launch {
             while (isActive) {
-                delay(delayMs)
                 ReadManga.mCallback?.scrollBy(distance)
+                delay(delayMs)
             }
         }
     }

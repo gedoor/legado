@@ -9,6 +9,7 @@ import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
+import android.view.animation.LinearInterpolator
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
@@ -429,7 +430,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
         }
         binding.mRecyclerManga.smoothScrollBy(
             if (mAdapter.isHorizontal) delta else 0,
-            if (mAdapter.isHorizontal) 0 else delta, null, 16
+            if (mAdapter.isHorizontal) 0 else delta, LinearInterpolator(), 16
         )
     }
 
