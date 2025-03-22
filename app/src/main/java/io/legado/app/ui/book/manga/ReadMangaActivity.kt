@@ -73,6 +73,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.DecimalFormat
+import kotlin.math.ceil
 
 class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewModel>(),
     ReadManga.Callback, ChangeBookSourceDialog.CallBack, MangaMenu.CallBack,
@@ -428,10 +429,8 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
         if (binding.mRecyclerManga.isAtBottom()) {
             return
         }
-        binding.mRecyclerManga.smoothScrollBy(
-            if (mAdapter.isHorizontal) distance else 0,
-            if (mAdapter.isHorizontal) 0 else distance, mLinearInterpolator, 16
-        )
+        val time = ceil(16f / distance * 10000).toInt()
+        binding.mRecyclerManga.smoothScrollBy(10000, 10000, mLinearInterpolator, time)
     }
 
     override fun scrollPage() {

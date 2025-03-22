@@ -1,21 +1,17 @@
 package io.legado.app.ui.book.manga.recyclerview
 
-import androidx.lifecycle.LifecycleCoroutineScope
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.coroutineScope
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class ScrollTimer(
     private val callback: ScrollCallback,
     private val recyclerView: RecyclerView,
-    private val coroutine: LifecycleCoroutineScope,
+    private val coroutineScope: CoroutineScope,
 ) : RecyclerView.OnScrollListener() {
     private var distance = 1
     private var mScrollPageJob: Job? = null
@@ -28,6 +24,7 @@ class ScrollTimer(
                     startScroll()
                 } else {
                     recyclerView.removeOnScrollListener(this)
+                    recyclerView.stopScroll()
                 }
             }
         }
@@ -63,12 +60,10 @@ class ScrollTimer(
     }
 
     private fun startScrollPage() {
-        mScrollPageJob = coroutine.launch(Dispatchers.Default) {
+        mScrollPageJob = coroutineScope.launch {
             while (isActive) {
                 delay(distance.times(1000L))
-                withContext(Dispatchers.Main) {
-                    callback.scrollPage()
-                }
+                callback.scrollPage()
             }
         }
     }
