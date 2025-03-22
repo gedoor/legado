@@ -1,6 +1,6 @@
 package io.legado.app.ui.book.manga.recyclerview
 
-import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.coroutineScope
 import androidx.recyclerview.widget.RecyclerView
@@ -15,7 +15,7 @@ import kotlinx.coroutines.withContext
 class ScrollTimer(
     private val callback: ScrollCallback,
     private val recyclerView: RecyclerView,
-    private val lifecycleOwner: LifecycleOwner,
+    private val coroutine: LifecycleCoroutineScope,
 ) : RecyclerView.OnScrollListener() {
     private var distance = 1
     private var mScrollPageJob: Job? = null
@@ -45,15 +45,6 @@ class ScrollTimer(
             }
         }
 
-    init {
-        lifecycleOwner.lifecycle.addObserver(object : DefaultLifecycleObserver {
-            override fun onDestroy(owner: LifecycleOwner) {
-                super.onDestroy(owner)
-                mScrollPageJob?.cancel()
-            }
-        })
-    }
-
     override fun onScrollStateChanged(
         recyclerView: RecyclerView,
         newState: Int,
@@ -72,7 +63,7 @@ class ScrollTimer(
     }
 
     private fun startScrollPage() {
-        mScrollPageJob = lifecycleOwner.lifecycle.coroutineScope.launch(Dispatchers.Default) {
+        mScrollPageJob = coroutine.launch(Dispatchers.Default) {
             while (isActive) {
                 delay(distance.times(1000L))
                 withContext(Dispatchers.Main) {
