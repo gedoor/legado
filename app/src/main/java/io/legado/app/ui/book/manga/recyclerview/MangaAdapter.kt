@@ -17,18 +17,17 @@ import androidx.viewbinding.ViewBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.ListPreloader.PreloadModelProvider
 import com.bumptech.glide.RequestBuilder
-import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter.Companion.TYPE_FOOTER_VIEW
 import io.legado.app.databinding.BookComicLoadingRvBinding
 import io.legado.app.databinding.BookComicRvBinding
 import io.legado.app.help.glide.progress.ProgressManager
+import io.legado.app.help.globalExecutor
 import io.legado.app.model.BookCover
 import io.legado.app.model.ReadManga
 import io.legado.app.ui.book.manga.config.MangaColorFilterConfig
 import io.legado.app.ui.book.manga.entities.MangaPage
 import io.legado.app.ui.book.manga.entities.ReaderLoading
-import io.legado.app.utils.getCompatDrawable
 
 
 class MangaAdapter(private val context: Context) :
@@ -171,7 +170,9 @@ class MangaAdapter(private val context: Context) :
                 vh.itemView.updateLayoutParams<ViewGroup.LayoutParams> {
                     height = MATCH_PARENT
                 }
-                Glide.with(context).clear(vh.binding.image)
+                globalExecutor.execute {
+                    Glide.with(context).clear(vh.binding.image)
+                }
                 if (vh.binding.image.tag is String) {
                     ProgressManager.removeListener(vh.binding.image.tag as String)
                 }
@@ -223,12 +224,10 @@ class MangaAdapter(private val context: Context) :
 
     override fun getPreloadRequestBuilder(item: Any): RequestBuilder<*>? {
         if (item is MangaPage) {
-            return BookCover.loadManga(
+            return BookCover.preloadManga(
                 context,
                 item.mImageUrl,
                 sourceOrigin = ReadManga.book?.origin,
-                manga = true,
-                useDefaultCover = context.getCompatDrawable(R.color.book_ant_10)
             )
         }
         return null

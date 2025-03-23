@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import androidx.annotation.Keep
+import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
@@ -29,6 +30,7 @@ import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getPrefString
 import splitties.init.appCtx
+import java.io.File
 
 @Keep
 object BookCover {
@@ -102,20 +104,34 @@ object BookCover {
         path: String?,
         loadOnlyWifi: Boolean = false,
         sourceOrigin: String? = null,
-        manga: Boolean = false,
-        useDefaultCover: Drawable? = null,
     ): RequestBuilder<Drawable> {
         var options = RequestOptions().set(OkHttpModelLoader.loadOnlyWifiOption, loadOnlyWifi)
-            .set(OkHttpModelLoader.mangaOption, manga)
+            .set(OkHttpModelLoader.mangaOption, true)
         if (sourceOrigin != null) {
             options = options.set(OkHttpModelLoader.sourceOriginOption, sourceOrigin)
         }
         return ImageLoader.load(context, path)
             .apply(options)
             .override(context.resources.displayMetrics.widthPixels, SIZE_ORIGINAL)
-            .placeholder(useDefaultCover)
-            .error(useDefaultCover)
             .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .skipMemoryCache(true)
+    }
+
+    fun preloadManga(
+        context: Context,
+        path: String?,
+        loadOnlyWifi: Boolean = false,
+        sourceOrigin: String? = null,
+    ): RequestBuilder<File?> {
+        var options = RequestOptions().set(OkHttpModelLoader.loadOnlyWifiOption, loadOnlyWifi)
+            .set(OkHttpModelLoader.mangaOption, true)
+        if (sourceOrigin != null) {
+            options = options.set(OkHttpModelLoader.sourceOriginOption, sourceOrigin)
+        }
+        return Glide.with(context)
+            .downloadOnly()
+            .apply(options)
+            .load(path)
     }
 
     /**
