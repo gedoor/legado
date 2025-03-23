@@ -546,7 +546,7 @@ object ReadManga : CoroutineScope by MainScope() {
             if (simulatedChapterSize > 0 && durChapterIndex > simulatedChapterSize - 1) {
                 durChapterIndex = simulatedChapterSize - 1
             }
-            clearMangaChapter()
+            mCallback ?: clearMangaChapter()
         }
     }
 

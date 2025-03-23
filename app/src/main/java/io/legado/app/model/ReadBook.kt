@@ -925,7 +925,7 @@ object ReadBook : CoroutineScope by MainScope() {
             if (simulatedChapterSize > 0 && durChapterIndex > simulatedChapterSize - 1) {
                 durChapterIndex = simulatedChapterSize - 1
             }
-            clearTextChapter()
+            callBack ?: clearTextChapter()
         }
     }
 

@@ -137,6 +137,8 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
             if (it.resultCode == RESULT_OK) {
                 setResult(RESULT_DELETED)
                 super.finish()
+            } else {
+                ReadManga.loadOrUpContent()
             }
         }
     override val binding by viewBinding(ActivityMangaBinding::inflate)
