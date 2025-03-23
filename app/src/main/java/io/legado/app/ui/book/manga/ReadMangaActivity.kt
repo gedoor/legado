@@ -17,7 +17,6 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader
 import com.bumptech.glide.request.target.Target.SIZE_ORIGINAL
@@ -58,6 +57,7 @@ import io.legado.app.ui.widget.recycler.LoadMoreView
 import io.legado.app.utils.GSON
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.StartActivityContract
+import io.legado.app.utils.canScroll
 import io.legado.app.utils.fastBinarySearch
 import io.legado.app.utils.findCenterViewPosition
 import io.legado.app.utils.fromJsonObject
@@ -418,7 +418,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
     }
 
     override fun scrollBy(distance: Int) {
-        if (binding.recyclerView.isAtEnd()) {
+        if (!binding.recyclerView.canScroll(1)) {
             return
         }
         val time = ceil(16f / distance * 10000).toInt()
@@ -657,25 +657,15 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
     }
 
     private fun scrollToNext() {
-        if (binding.recyclerView.isAtEnd()) {
-            return
-        }
-        var dx = 0
-        var dy = 0
-        if (AppConfig.enableMangaHorizontalScroll) {
-            dx = binding.recyclerView.run {
-                width - paddingStart - paddingEnd
-            }
-        } else {
-            dy = binding.recyclerView.run {
-                height - paddingTop - paddingBottom
-            }
-        }
-        binding.recyclerView.smoothScrollBy(dx, dy)
+        scrollPageTo(1)
     }
 
     private fun scrollToPrev() {
-        if (binding.recyclerView.isAtStart()) {
+        scrollPageTo(-1)
+    }
+
+    private fun scrollPageTo(direction: Int) {
+        if (!binding.recyclerView.canScroll(direction)) {
             return
         }
         var dx = 0
@@ -689,7 +679,9 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
                 height - paddingTop - paddingBottom
             }
         }
-        binding.recyclerView.smoothScrollBy(-dx, -dy)
+        dx *= direction
+        dy *= direction
+        binding.recyclerView.smoothScrollBy(dx, dy)
     }
 
     private fun showNumberPickerDialog(
@@ -729,14 +721,6 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
                 noButton { viewModel.removeFromBookshelf { super.finish() } }
             }
         }
-    }
-
-    private fun RecyclerView.isAtStart(): Boolean {
-        return !canScrollVertically(-1) && !canScrollHorizontally(-1)
-    }
-
-    private fun RecyclerView.isAtEnd(): Boolean {
-        return !canScrollVertically(1) && !canScrollHorizontally(1)
     }
 
     fun updateWindowBrightness(brightness: Int) {
