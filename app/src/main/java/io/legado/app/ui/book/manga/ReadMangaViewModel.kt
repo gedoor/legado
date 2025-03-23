@@ -42,7 +42,6 @@ class ReadMangaViewModel(application: Application) : BaseViewModel(application) 
     fun initData(intent: Intent, success: (() -> Unit)? = null) {
         execute {
             ReadManga.inBookshelf = intent.getBooleanExtra("inBookshelf", true)
-            ReadManga.tocChanged = intent.getBooleanExtra("tocChanged", false)
             val bookUrl = intent.getStringExtra("bookUrl")
             val book = when {
                 bookUrl.isNullOrEmpty() -> appDb.bookDao.lastReadBook
