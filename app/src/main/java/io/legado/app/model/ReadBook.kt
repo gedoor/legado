@@ -56,7 +56,6 @@ object ReadBook : CoroutineScope by MainScope() {
     var book: Book? = null
     var callBack: CallBack? = null
     var inBookshelf = false
-    var tocChanged = false
     var chapterSize = 0
     var simulatedChapterSize = 0
     var durChapterIndex = 0
@@ -925,9 +924,10 @@ object ReadBook : CoroutineScope by MainScope() {
             if (simulatedChapterSize > 0 && durChapterIndex > simulatedChapterSize - 1) {
                 durChapterIndex = simulatedChapterSize - 1
             }
-            clearTextChapter()
-            if (callBack != null) {
-                loadContent(false)
+            if (callBack == null) {
+                clearTextChapter()
+            } else {
+                loadContent(true)
             }
         }
     }

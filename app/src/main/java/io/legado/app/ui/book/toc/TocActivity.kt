@@ -198,7 +198,6 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>(),
             ReadBook.book?.let { readBook ->
                 if (readBook == book) {
                     ReadBook.upMsg(null)
-                    ReadBook.loadContent(resetPageOffset = true)
                 }
             }
         }

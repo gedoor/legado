@@ -176,7 +176,6 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
         execute {
             if (loadChapterListAwait(book)) {
                 ReadBook.upMsg(null)
-                ReadBook.loadContent(resetPageOffset = true)
             }
         }
     }

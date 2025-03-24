@@ -44,7 +44,6 @@ import kotlin.math.min
 @Suppress("MemberVisibilityCanBePrivate")
 object ReadManga : CoroutineScope by MainScope() {
     var inBookshelf = false
-    var tocChanged = false
     var book: Book? = null
     val executor = globalExecutor
     var durChapterIndex = 0 //章节位置
@@ -546,8 +545,9 @@ object ReadManga : CoroutineScope by MainScope() {
             if (simulatedChapterSize > 0 && durChapterIndex > simulatedChapterSize - 1) {
                 durChapterIndex = simulatedChapterSize - 1
             }
-            clearMangaChapter()
-            if (mCallback != null) {
+            if (mCallback == null) {
+                clearMangaChapter()
+            } else {
                 loadContent()
             }
         }
