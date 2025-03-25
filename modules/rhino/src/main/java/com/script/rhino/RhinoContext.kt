@@ -9,6 +9,7 @@ import kotlin.coroutines.CoroutineContext
 class RhinoContext(factory: ContextFactory) : Context(factory) {
 
     var coroutineContext: CoroutineContext? = null
+    var allowScriptRun = false
 
     @Throws(RhinoInterruptError::class)
     fun ensureActive() {

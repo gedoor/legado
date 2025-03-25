@@ -55,6 +55,7 @@ object RhinoWrapFactory : WrapFactory() {
             is ClassLoader,
             is Class<*>,
             is Member,
+            is Context,
             is android.content.Context -> {
                 null
             }
