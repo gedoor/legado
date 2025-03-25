@@ -11,7 +11,6 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppConst
 import io.legado.app.data.appDb
 import io.legado.app.exception.NoStackTraceException
-import io.legado.app.help.IntentData
 import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.source.SourceVerificationHelp
@@ -48,8 +47,8 @@ class WebViewModel(application: Application) : BaseViewModel(application) {
             sourceOrigin = intent.getStringExtra("sourceOrigin") ?: ""
             sourceVerificationEnable = intent.getBooleanExtra("sourceVerificationEnable", false)
             refetchAfterSuccess = intent.getBooleanExtra("refetchAfterSuccess", true)
-            val headerMapF = IntentData.get<Map<String, String>>(url)
-            val analyzeUrl = AnalyzeUrl(url, headerMapF = headerMapF)
+            val source = appDb.bookSourceDao.getBookSource(sourceOrigin)
+            val analyzeUrl = AnalyzeUrl(url, source = source, coroutineContext = coroutineContext)
             baseUrl = analyzeUrl.url
             headerMap.putAll(analyzeUrl.headerMap)
             if (analyzeUrl.isPost()) {
@@ -107,7 +106,8 @@ class WebViewModel(application: Application) : BaseViewModel(application) {
                 html = AnalyzeUrl(
                     url,
                     headerMapF = headerMap,
-                    source = source
+                    source = source,
+                    coroutineContext = coroutineContext
                 ).getStrResponseAwait(useWebView = false).body
                 SourceVerificationHelp.setResult(sourceOrigin, html ?: "")
             }.onSuccess {

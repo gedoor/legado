@@ -21,11 +21,13 @@ import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.rss.Rss
+import io.legado.app.utils.runScriptWithContext
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.writeBytes
 import kotlinx.coroutines.Dispatchers.IO
 import splitties.init.appCtx
 import java.util.Date
+import kotlin.coroutines.coroutineContext
 
 
 class ReadRssViewModel(application: Application) : BaseViewModel(application), JsExtensions {
@@ -37,6 +39,7 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application), J
     var rssStar: RssStar? = null
     val upTtsMenuData = MutableLiveData<Boolean>()
     val upStarMenuData = MutableLiveData<Boolean>()
+    var headerMap: Map<String, String> = emptyMap()
 
     override fun getSource(): BaseSource? {
         return rssSource
@@ -47,6 +50,9 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application), J
             val origin = intent.getStringExtra("origin") ?: return@execute
             val link = intent.getStringExtra("link")
             rssSource = appDb.rssSourceDao.getByKey(origin)
+            headerMap = runScriptWithContext {
+                rssSource?.getHeaderMap() ?: emptyMap()
+            }
             if (link != null) {
                 rssStar = appDb.rssStarDao.get(origin, link)
                 rssArticle = rssStar?.toRssArticle() ?: appDb.rssArticleDao.get(origin, link)
@@ -80,11 +86,13 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application), J
         }
     }
 
-    private fun loadUrl(url: String, baseUrl: String) {
+    private suspend fun loadUrl(url: String, baseUrl: String) {
         val analyzeUrl = AnalyzeUrl(
             mUrl = url,
             baseUrl = baseUrl,
-            headerMapF = rssSource?.getHeaderMap()
+            source = rssSource,
+            coroutineContext = coroutineContext,
+            hasLoginHeader = false
         )
         urlLiveData.postValue(analyzeUrl)
     }

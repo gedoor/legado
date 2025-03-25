@@ -93,7 +93,9 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
     ): Any? {
         val cx = Context.enter() as RhinoContext
         val previousCoroutineContext = cx.coroutineContext
-        cx.coroutineContext = coroutineContext
+        if (coroutineContext != null) {
+            cx.coroutineContext = coroutineContext
+        }
         cx.allowScriptRun = true
         val ret: Any?
         try {

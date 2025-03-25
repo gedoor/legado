@@ -12,6 +12,8 @@ import io.legado.app.exception.NoStackTraceException
 import io.legado.app.model.ReadManga
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.ImageUtils
+import io.legado.app.utils.runScriptWithContext
+import kotlinx.coroutines.Job
 import java.io.InputStream
 
 class LegadoDataUrlLoader : ModelLoader<String, InputStream> {
@@ -33,15 +35,23 @@ class LegadoDataUrlLoader : ModelLoader<String, InputStream> {
     }
 
     class LegadoDataUrlFetcher(private val model: String) : DataFetcher<InputStream> {
+
+        private val coroutineContext = Job()
+
         override fun loadData(
             priority: Priority,
             callback: DataFetcher.DataCallback<in InputStream>
         ) {
             try {
-                val bytes = AnalyzeUrl(model, source = ReadManga.bookSource).getByteArray()
-                val decoded = ImageUtils.decode(
-                    model, bytes, isCover = false, ReadManga.bookSource, ReadManga.book
-                )?.inputStream()
+                val bytes = AnalyzeUrl(
+                    model, source = ReadManga.bookSource,
+                    coroutineContext = coroutineContext
+                ).getByteArray()
+                val decoded = runScriptWithContext(coroutineContext) {
+                    ImageUtils.decode(
+                        model, bytes, isCover = false, ReadManga.bookSource, ReadManga.book
+                    )?.inputStream()
+                }
                 if (decoded == null) {
                     throw NoStackTraceException("漫画图片解密失败")
                 }
@@ -56,7 +66,7 @@ class LegadoDataUrlLoader : ModelLoader<String, InputStream> {
         }
 
         override fun cancel() {
-            // do nothing
+            coroutineContext.cancel()
         }
 
         override fun getDataClass(): Class<InputStream> {

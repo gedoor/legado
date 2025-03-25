@@ -11,6 +11,7 @@ import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.fromJsonArray
 import io.legado.app.utils.isJsonArray
 import io.legado.app.utils.printOnDebug
+import io.legado.app.utils.runScriptWithContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -61,7 +62,9 @@ suspend fun BookSource.exploreKinds(): List<ExploreKind> {
                         } else {
                             exploreUrl.substring(4, exploreUrl.lastIndexOf("<"))
                         }
-                        ruleStr = evalJS(jsStr).toString().trim()
+                        ruleStr = runScriptWithContext {
+                            evalJS(jsStr).toString().trim()
+                        }
                         aCache.put(exploreKindsKey, ruleStr)
                     }
                 }

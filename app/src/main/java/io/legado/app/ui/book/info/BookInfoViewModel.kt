@@ -274,7 +274,10 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             val fileNameNoExtension = if (book.author.isBlank()) book.name
             else "${book.name} 作者：${book.author}"
             book.downloadUrls!!.map {
-                val analyzeUrl = AnalyzeUrl(it, source = bookSource)
+                val analyzeUrl = AnalyzeUrl(
+                    it, source = bookSource,
+                    coroutineContext = coroutineContext
+                )
                 val mFileName = UrlUtil.getFileName(analyzeUrl)
                     ?: "${fileNameNoExtension}.${analyzeUrl.type}"
                 WebFile(it, mFileName)

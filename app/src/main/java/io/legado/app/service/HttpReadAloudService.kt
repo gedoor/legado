@@ -328,7 +328,6 @@ class HttpReadAloudService : BaseReadAloudService(),
                     speakText = speakText,
                     speakSpeed = speechRate,
                     source = httpTts,
-                    headerMapF = httpTts.getHeaderMap(true),
                     readTimeout = 300 * 1000L,
                     coroutineContext = coroutineContext
                 )

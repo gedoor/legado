@@ -17,6 +17,8 @@ import io.legado.app.help.source.SourceHelp
 import io.legado.app.model.ReadManga
 import io.legado.app.utils.ImageUtils
 import io.legado.app.utils.isWifiConnect
+import io.legado.app.utils.runScriptWithContext
+import kotlinx.coroutines.Job
 import okhttp3.Call
 import okhttp3.Request
 import okhttp3.Response
@@ -38,6 +40,7 @@ class OkHttpStreamFetcher(
     private var callback: DataFetcher.DataCallback<in InputStream>? = null
     private var source: BaseSource? = null
     private val manga = options.get(OkHttpModelLoader.mangaOption) == true
+    private val coroutineContext = Job()
 
     @Volatile
     private var call: Call? = null
@@ -89,6 +92,7 @@ class OkHttpStreamFetcher(
 
     override fun cancel() {
         call?.cancel()
+        coroutineContext.cancel()
     }
 
     override fun getDataClass(): Class<InputStream> {
@@ -106,19 +110,21 @@ class OkHttpStreamFetcher(
     override fun onResponse(call: Call, response: Response) {
         responseBody = response.body
         if (response.isSuccessful) {
-            val decodeResult = if (manga) {
-                ImageUtils.decode(
-                    oldUrl.toString(),
-                    responseBody!!.bytes(),
-                    isCover = false,
-                    source,
-                    ReadManga.book
-                )?.inputStream()
-            } else {
-                ImageUtils.decode(
-                    url.toStringUrl(), responseBody!!.byteStream(),
-                    isCover = true, source
-                )
+            val decodeResult = runScriptWithContext(coroutineContext) {
+                if (manga) {
+                    ImageUtils.decode(
+                        oldUrl.toString(),
+                        responseBody!!.bytes(),
+                        isCover = false,
+                        source,
+                        ReadManga.book
+                    )?.inputStream()
+                } else {
+                    ImageUtils.decode(
+                        url.toStringUrl(), responseBody!!.byteStream(),
+                        isCover = true, source
+                    )
+                }
             }
             if (decodeResult == null) {
                 callback?.onLoadFailed(NoStackTraceException("封面二次解密失败"))

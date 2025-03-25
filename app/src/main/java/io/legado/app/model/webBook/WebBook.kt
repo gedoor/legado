@@ -62,7 +62,6 @@ object WebBook {
             key = key,
             page = page,
             baseUrl = bookSource.bookSourceUrl,
-            headerMapF = bookSource.getHeaderMap(true),
             source = bookSource,
             ruleData = ruleData,
             coroutineContext = coroutineContext
@@ -115,7 +114,6 @@ object WebBook {
             baseUrl = bookSource.bookSourceUrl,
             source = bookSource,
             ruleData = ruleData,
-            headerMapF = bookSource.getHeaderMap(true),
             coroutineContext = coroutineContext
         )
         var res = analyzeUrl.getStrResponseAwait()
@@ -173,7 +171,6 @@ object WebBook {
                 baseUrl = bookSource.bookSourceUrl,
                 source = bookSource,
                 ruleData = book,
-                headerMapF = bookSource.getHeaderMap(true),
                 coroutineContext = coroutineContext
             )
             var res = analyzeUrl.getStrResponseAwait()
@@ -249,7 +246,6 @@ object WebBook {
                     baseUrl = book.bookUrl,
                     source = bookSource,
                     ruleData = book,
-                    headerMapF = bookSource.getHeaderMap(true),
                     coroutineContext = coroutineContext
                 )
                 var res = analyzeUrl.getStrResponseAwait()
@@ -328,7 +324,6 @@ object WebBook {
                 source = bookSource,
                 ruleData = book,
                 chapter = bookChapter,
-                headerMapF = bookSource.getHeaderMap(true),
                 coroutineContext = coroutineContext
             )
             var res = analyzeUrl.getStrResponseAwait(

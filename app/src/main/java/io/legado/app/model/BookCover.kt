@@ -31,6 +31,7 @@ import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getPrefString
 import splitties.init.appCtx
 import java.io.File
+import kotlin.coroutines.coroutineContext
 
 @Keep
 object BookCover {
@@ -174,10 +175,12 @@ object BookCover {
             config.searchUrl,
             book.name,
             source = config,
-            headerMapF = config.getHeaderMap()
+            coroutineContext = coroutineContext,
+            hasLoginHeader = false
         )
         val res = analyzeUrl.getStrResponseAwait()
         val analyzeRule = AnalyzeRule(book)
+        analyzeRule.setCoroutineContext(coroutineContext)
         analyzeRule.setContent(res.body)
         analyzeRule.setRedirectUrl(res.url)
         return analyzeRule.getString(config.coverRule, isUrl = true)

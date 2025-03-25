@@ -225,6 +225,7 @@ class AudioPlayService : BaseService(),
                 source = AudioPlay.bookSource,
                 ruleData = AudioPlay.book,
                 chapter = AudioPlay.durChapter,
+                coroutineContext = coroutineContext
             )
             exoPlayer.setMediaItem(analyzeUrl.getMediaItem())
             exoPlayer.playWhenReady = true

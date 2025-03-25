@@ -16,7 +16,6 @@ import io.legado.app.data.entities.rule.RowUi
 import io.legado.app.databinding.DialogLoginBinding
 import io.legado.app.databinding.ItemFilletTextBinding
 import io.legado.app.databinding.ItemSourceEditBinding
-import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.about.AppLogDialog
@@ -26,6 +25,7 @@ import io.legado.app.utils.dpToPx
 import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.openUrl
 import io.legado.app.utils.printOnDebug
+import io.legado.app.utils.runScriptWithContext
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.toastOnUi
@@ -119,16 +119,18 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
     }
 
     private fun handleButtonClick(source: BaseSource, rowUi: RowUi, loginUi: List<RowUi>) {
-        Coroutine.async {
+        lifecycleScope.launch(IO) {
             if (rowUi.action.isAbsUrl()) {
                 context?.openUrl(rowUi.action!!)
             } else if (rowUi.action != null) {
                 // JavaScript
                 val buttonFunctionJS = rowUi.action!!
-                val loginJS = source.getLoginJs() ?: return@async
+                val loginJS = source.getLoginJs() ?: return@launch
                 kotlin.runCatching {
-                    source.evalJS("$loginJS\n$buttonFunctionJS") {
-                        put("result", getLoginData(loginUi))
+                    runScriptWithContext {
+                        source.evalJS("$loginJS\n$buttonFunctionJS") {
+                            put("result", getLoginData(loginUi))
+                        }
                     }
                 }.onFailure { e ->
                     AppLog.put("LoginUI Button ${rowUi.name} JavaScript error", e)
@@ -161,7 +163,9 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
                 }
             } else if (source.putLoginInfo(GSON.toJson(loginData))) {
                 try {
-                    source.login()
+                    runScriptWithContext {
+                        source.login()
+                    }
                     context?.toastOnUi(R.string.success)
                     withContext(Main) {
                         dismiss()

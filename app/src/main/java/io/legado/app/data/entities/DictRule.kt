@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeUrl
+import kotlin.coroutines.coroutineContext
 
 /**
  * 字典规则
@@ -36,12 +37,12 @@ data class DictRule(
      * 搜索字典
      */
     suspend fun search(word: String): String {
-        val analyzeUrl = AnalyzeUrl(urlRule, key = word)
+        val analyzeUrl = AnalyzeUrl(urlRule, key = word, coroutineContext = coroutineContext)
         val body = analyzeUrl.getStrResponseAwait().body
         if (showRule.isBlank()) {
             return body!!
         }
-        val analyzeRule = AnalyzeRule()
+        val analyzeRule = AnalyzeRule().setCoroutineContext(coroutineContext)
         return analyzeRule.getString(showRule, mContent = body)
     }
 

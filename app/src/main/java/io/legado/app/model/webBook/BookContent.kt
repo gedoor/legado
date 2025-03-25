@@ -90,7 +90,6 @@ object BookContent {
                     mUrl = nextUrl,
                     source = bookSource,
                     ruleData = book,
-                    headerMapF = bookSource.getHeaderMap(),
                     coroutineContext = coroutineContext
                 )
                 val res = analyzeUrl.getStrResponseAwait() //控制并发访问
@@ -118,7 +117,6 @@ object BookContent {
                     mUrl = urlStr,
                     source = bookSource,
                     ruleData = book,
-                    headerMapF = bookSource.getHeaderMap(),
                     coroutineContext = coroutineContext
                 )
                 val res = analyzeUrl.getStrResponseAwait() //控制并发访问

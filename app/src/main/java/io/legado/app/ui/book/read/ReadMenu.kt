@@ -18,7 +18,6 @@ import androidx.core.view.isVisible
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.ViewReadMenuBinding
-import io.legado.app.help.IntentData
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.LocalConfig
 import io.legado.app.help.config.ReadBookConfig
@@ -350,9 +349,11 @@ class ReadMenu @JvmOverloads constructor(
                 Coroutine.async {
                     context.startActivity<WebViewActivity> {
                         val url = tvChapterUrl.text.toString()
+                        val bookSource = ReadBook.bookSource
                         putExtra("title", tvChapterName.text)
                         putExtra("url", url)
-                        IntentData.put(url, ReadBook.bookSource?.getHeaderMap(true))
+                        putExtra("sourceOrigin", bookSource?.bookSourceUrl)
+                        putExtra("sourceName", bookSource?.bookSourceName)
                     }
                 }
             }

@@ -84,7 +84,6 @@ object SourceVerificationHelp {
             putExtra("sourceName", source.getTag())
             putExtra("sourceVerificationEnable", saveResult)
             putExtra("refetchAfterSuccess", refetchAfterSuccess)
-            IntentData.put(url, source.getHeaderMap(true))
             IntentData.put(getVerificationResultKey(source), Thread.currentThread())
         }
     }

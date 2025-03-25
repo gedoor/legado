@@ -11,12 +11,13 @@ import io.legado.app.model.analyzeRule.RuleData
 import io.legado.app.utils.NetworkUtils
 import splitties.init.appCtx
 import java.util.Locale
+import kotlin.coroutines.coroutineContext
 
 @Keep
 object RssParserByRule {
 
     @Throws(Exception::class)
-    fun parseXML(
+    suspend fun parseXML(
         sortName: String,
         sortUrl: String,
         redirectUrl: String,
@@ -40,6 +41,7 @@ object RssParserByRule {
         } else {
             val articleList = mutableListOf<RssArticle>()
             val analyzeRule = AnalyzeRule(ruleData, rssSource)
+            analyzeRule.setCoroutineContext(coroutineContext)
             analyzeRule.setContent(body).setBaseUrl(sortUrl)
             analyzeRule.setRedirectUrl(redirectUrl)
             var reverse = false

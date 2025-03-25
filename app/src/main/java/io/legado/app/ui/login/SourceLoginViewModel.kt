@@ -6,11 +6,13 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BaseSource
 import io.legado.app.exception.NoStackTraceException
+import io.legado.app.utils.runScriptWithContext
 import io.legado.app.utils.toastOnUi
 
 class SourceLoginViewModel(application: Application) : BaseViewModel(application) {
 
     var source: BaseSource? = null
+    var headerMap: Map<String, String> = emptyMap()
 
     fun initData(intent: Intent, success: (bookSource: BaseSource) -> Unit) {
         execute {
@@ -20,6 +22,9 @@ class SourceLoginViewModel(application: Application) : BaseViewModel(application
                 "bookSource" -> source = appDb.bookSourceDao.getBookSource(sourceKey)
                 "rssSource" -> source = appDb.rssSourceDao.getByKey(sourceKey)
                 "httpTts" -> source = appDb.httpTTSDao.get(sourceKey.toLong())
+            }
+            headerMap = runScriptWithContext {
+                source?.getHeaderMap(true) ?: emptyMap()
             }
             source
         }.onSuccess {
