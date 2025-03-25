@@ -16,7 +16,6 @@ import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.base.BaseFragment
 import io.legado.app.constant.AppConst
@@ -30,7 +29,6 @@ import io.legado.app.utils.longSnackbar
 import io.legado.app.utils.openUrl
 import io.legado.app.utils.snackbar
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import kotlinx.coroutines.launch
 
 class WebViewLoginFragment : BaseFragment(R.layout.fragment_web_view_login) {
 
@@ -146,11 +144,9 @@ class WebViewLoginFragment : BaseFragment(R.layout.fragment_web_view_login) {
     }
 
     private fun loadUrl(source: BaseSource) {
-        lifecycleScope.launch {
-            val loginUrl = source.loginUrl ?: return@launch
-            val absoluteUrl = NetworkUtils.getAbsoluteURL(source.getKey(), loginUrl)
-            binding.webView.loadUrl(absoluteUrl, viewModel.headerMap)
-        }
+        val loginUrl = source.loginUrl ?: return
+        val absoluteUrl = NetworkUtils.getAbsoluteURL(source.getKey(), loginUrl)
+        binding.webView.loadUrl(absoluteUrl, viewModel.headerMap)
     }
 
     override fun onDestroy() {

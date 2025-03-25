@@ -45,7 +45,7 @@ import io.legado.app.utils.isJson
 import io.legado.app.utils.isJsonArray
 import io.legado.app.utils.isJsonObject
 import io.legado.app.utils.isXml
-import io.legado.app.utils.runScriptWithContext
+import com.script.rhino.runScriptWithContext
 import io.legado.app.utils.splitNotBlank
 import kotlinx.coroutines.runBlocking
 import okhttp3.MediaType.Companion.toMediaType

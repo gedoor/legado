@@ -28,7 +28,7 @@ import io.legado.app.utils.getFile
 import io.legado.app.utils.isContentScheme
 import io.legado.app.utils.onEachParallel
 import io.legado.app.utils.postEvent
-import io.legado.app.utils.runScriptWithContext
+import com.script.rhino.runScriptWithContext
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.ensureActive

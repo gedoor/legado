@@ -17,7 +17,7 @@ import io.legado.app.help.source.SourceHelp
 import io.legado.app.model.ReadManga
 import io.legado.app.utils.ImageUtils
 import io.legado.app.utils.isWifiConnect
-import io.legado.app.utils.runScriptWithContext
+import com.script.rhino.runScriptWithContext
 import kotlinx.coroutines.Job
 import okhttp3.Call
 import okhttp3.Request
@@ -63,8 +63,10 @@ class OkHttpStreamFetcher(
         val headerMap = HashMap<String, String>()
         options.get(OkHttpModelLoader.sourceOriginOption)?.let { sourceUrl ->
             source = SourceHelp.getSource(sourceUrl)
-            source?.getHeaderMap(true)?.let {
-                headerMap.putAll(it)
+            runScriptWithContext(coroutineContext) {
+                source?.getHeaderMap(true)?.let {
+                    headerMap.putAll(it)
+                }
             }
             if (source?.enabledCookieJar == true) {
                 headerMap[cookieJarHeader] = "1"

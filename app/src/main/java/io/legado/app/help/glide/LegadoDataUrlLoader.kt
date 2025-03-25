@@ -12,7 +12,7 @@ import io.legado.app.exception.NoStackTraceException
 import io.legado.app.model.ReadManga
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.ImageUtils
-import io.legado.app.utils.runScriptWithContext
+import com.script.rhino.runScriptWithContext
 import kotlinx.coroutines.Job
 import java.io.InputStream
 

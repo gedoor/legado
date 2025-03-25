@@ -4,7 +4,7 @@ import android.app.Application
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssSource
-import io.legado.app.utils.runScriptWithContext
+import com.script.rhino.runScriptWithContext
 import io.legado.app.utils.toastOnUi
 
 class RssViewModel(application: Application) : BaseViewModel(application) {

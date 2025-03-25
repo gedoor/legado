@@ -1296,9 +1296,11 @@ class ReadBookActivity : BaseReadBookActivity(),
                 }.onSuccess(IO) {
                     if (it.isAbsUrl()) {
                         startActivity<WebViewActivity> {
+                            val bookSource = ReadBook.bookSource
                             putExtra("title", getString(R.string.chapter_pay))
                             putExtra("url", it)
-                            putExtra("sourceOrigin", ReadBook.bookSource?.bookSourceUrl)
+                            putExtra("sourceOrigin", bookSource?.bookSourceUrl)
+                            putExtra("sourceName", bookSource?.bookSourceName)
                         }
                     } else if (it.isTrue()) {
                         //购买成功后刷新目录

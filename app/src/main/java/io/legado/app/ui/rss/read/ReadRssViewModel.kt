@@ -21,7 +21,7 @@ import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.rss.Rss
-import io.legado.app.utils.runScriptWithContext
+import com.script.rhino.runScriptWithContext
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.writeBytes
 import kotlinx.coroutines.Dispatchers.IO

@@ -25,7 +25,7 @@ import io.legado.app.utils.dpToPx
 import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.openUrl
 import io.legado.app.utils.printOnDebug
-import io.legado.app.utils.runScriptWithContext
+import com.script.rhino.runScriptWithContext
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.toastOnUi

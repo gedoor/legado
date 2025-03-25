@@ -11,7 +11,7 @@ import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.fromJsonArray
 import io.legado.app.utils.isJsonArray
 import io.legado.app.utils.printOnDebug
-import io.legado.app.utils.runScriptWithContext
+import com.script.rhino.runScriptWithContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock

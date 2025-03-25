@@ -1,7 +1,5 @@
-package io.legado.app.utils
+package com.script.rhino
 
-import com.script.rhino.RhinoContext
-import com.script.rhino.RhinoScriptEngine
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.supervisorScope
