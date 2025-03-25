@@ -244,6 +244,7 @@ fun Book.sync(oldBook: Book) {
         }
     }
     canUpdate = curBook.canUpdate
+    readConfig = curBook.readConfig
 }
 
 fun Book.update() {

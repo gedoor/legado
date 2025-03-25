@@ -85,7 +85,12 @@ class SearchModel(private val scope: CoroutineScope, private val callBack: CallB
                 callBack.onSearchStart()
             }.mapParallelSafe(threadCount) {
                 withTimeout(30000L) {
-                    WebBook.searchBookAwait(it, searchKey, searchPage)
+                    WebBook.searchBookAwait(
+                        it, searchKey, searchPage,
+                        filter = { name, author ->
+                            !precision || name.contains(searchKey) ||
+                                    author.contains(searchKey)
+                        })
                 }
             }.onEach { items ->
                 for (book in items) {

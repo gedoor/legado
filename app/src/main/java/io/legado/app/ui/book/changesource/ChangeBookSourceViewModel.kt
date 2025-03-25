@@ -237,18 +237,18 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
     }
 
     private suspend fun search(source: BookSource) {
-        val resultBooks = WebBook.searchBookAwait(source, name)
-        resultBooks.filter { searchBook ->
-            if (searchBook.name != name) {
-                return@filter false
-            }
-            if (AppConfig.changeSourceCheckAuthor && !searchBook.author.contains(author)) {
-                return@filter false
-            }
-            true
-        }.forEach { searchBook ->
+        val checkAuthor = AppConfig.changeSourceCheckAuthor
+        val loadInfo = AppConfig.changeSourceLoadInfo
+        val loadToc = AppConfig.changeSourceLoadToc
+        val loadWordCount = AppConfig.changeSourceLoadWordCount
+        val resultBooks = WebBook.searchBookAwait(
+            source, name,
+            filter = { fName, fAuthor ->
+                fName == name && (!checkAuthor || fAuthor.contains(author))
+            })
+        resultBooks.forEach { searchBook ->
             when {
-                AppConfig.changeSourceLoadInfo || AppConfig.changeSourceLoadToc || AppConfig.changeSourceLoadWordCount -> {
+                loadInfo || loadToc || loadWordCount -> {
                     loadBookInfo(source, searchBook.toBook())
                 }
 

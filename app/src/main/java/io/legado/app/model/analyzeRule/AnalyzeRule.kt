@@ -815,7 +815,7 @@ class AnalyzeRule(
         if (bookSource == null || book == null) return
         runBlocking(coroutineContext) {
             withTimeout(1800000) {
-                WebBook.getBookInfoAwait(bookSource, book)
+                WebBook.getBookInfoAwait(bookSource, book, false)
             }
         }
     }
@@ -829,7 +829,7 @@ class AnalyzeRule(
         if (bookSource == null || book == null) return
         runBlocking(coroutineContext) {
             withTimeout(1800000) {
-                WebBook.getBookInfoAwait(bookSource, book)
+                WebBook.getBookInfoAwait(bookSource, book, false)
             }
         }
     }
