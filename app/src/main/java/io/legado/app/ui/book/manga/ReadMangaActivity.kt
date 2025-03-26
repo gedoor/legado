@@ -189,7 +189,10 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
         val mangaColorFilter =
             GSON.fromJsonObject<MangaColorFilterConfig>(AppConfig.mangaColorFilter).getOrNull()
                 ?: MangaColorFilterConfig()
-        mAdapter.setMangaImageColorFilter(mangaColorFilter)
+        mAdapter.run {
+            setMangaImageColorFilter(mangaColorFilter)
+            setHideTitle(AppConfig.hideMangaTitle)
+        }
         setHorizontalScroll(AppConfig.enableMangaHorizontalScroll)
         binding.recyclerView.run {
             adapter = mAdapter
@@ -560,6 +563,12 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
                     mPagerSnapHelper.attachToRecyclerView(binding.recyclerView)
                 }
             }
+
+            R.id.menu_hide_manga_title -> {
+                item.isChecked = !item.isChecked
+                AppConfig.hideMangaTitle = item.isChecked
+                mAdapter.setHideTitle(item.isChecked)
+            }
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -635,6 +644,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
             getString(R.string.manga_auto_page_speed, AppConfig.mangaAutoPageSpeed)
         menu.findItem(R.id.menu_enable_horizontal_scroll).isChecked =
             AppConfig.enableMangaHorizontalScroll
+        menu.findItem(R.id.menu_hide_manga_title).isChecked = AppConfig.hideMangaTitle
     }
 
     private fun setDisableMangaScale(disable: Boolean) {
@@ -757,5 +767,20 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
             upInfoBar(mAdapter.getItem(itemPos))
             ReadManga.durChapterPos = index
         }
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        when (keyCode) {
+            KeyEvent.KEYCODE_VOLUME_UP -> {
+                scrollToPrev()
+                return true
+            }
+
+            KeyEvent.KEYCODE_VOLUME_DOWN -> {
+                scrollToNext()
+                return true
+            }
+        }
+        return super.onKeyDown(keyCode, event)
     }
 }
