@@ -1,6 +1,5 @@
 package io.legado.app.ui.book.manga.recyclerview
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
@@ -28,7 +27,6 @@ import io.legado.app.model.ReadManga
 import io.legado.app.ui.book.manga.config.MangaColorFilterConfig
 import io.legado.app.ui.book.manga.entities.MangaPage
 import io.legado.app.ui.book.manga.entities.ReaderLoading
-import io.legado.app.ui.widget.anima.explosion_field.Utils
 
 
 class MangaAdapter(private val context: Context) :
@@ -43,7 +41,6 @@ class MangaAdapter(private val context: Context) :
     }
 
     var isHorizontal = false
-    private var hideTitle = false
 
     private val mDiffCallback: DiffUtil.ItemCallback<Any> = object : DiffUtil.ItemCallback<Any>() {
         override fun areItemsTheSame(oldItem: Any, newItem: Any): Boolean {
@@ -128,9 +125,6 @@ class MangaAdapter(private val context: Context) :
         fun onBind(item: ReaderLoading) {
             val message = item.mMessage
             binding.text.text = message
-            binding.root.updateLayoutParams<ViewGroup.LayoutParams> {
-                height = if (hideTitle) 0 else Utils.dp2Px(96)
-            }
         }
     }
 
@@ -238,14 +232,9 @@ class MangaAdapter(private val context: Context) :
         return null
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     fun setMangaImageColorFilter(config: MangaColorFilterConfig) {
         mConfig = config
         notifyItemRangeChanged(0, itemCount)
     }
 
-    fun setHideTitle(hide: Boolean) {
-        this.hideTitle=hide
-        notifyItemRangeChanged(0, itemCount)
-    }
 }
