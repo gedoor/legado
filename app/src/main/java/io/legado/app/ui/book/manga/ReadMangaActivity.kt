@@ -191,7 +191,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
                 ?: MangaColorFilterConfig()
         mAdapter.run {
             setMangaImageColorFilter(mangaColorFilter)
-            setDisableTitle(AppConfig.disableMangaTitle)
+            setDisableTitle(AppConfig.hideMangaTitle)
         }
         setHorizontalScroll(AppConfig.enableMangaHorizontalScroll)
         binding.recyclerView.run {
@@ -564,9 +564,9 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
                 }
             }
 
-            R.id.menu_disable_manga_title -> {
+            R.id.menu_hide_manga_title -> {
                 item.isChecked = !item.isChecked
-                AppConfig.disableMangaTitle = item.isChecked
+                AppConfig.hideMangaTitle = item.isChecked
                 mAdapter.setDisableTitle(item.isChecked)
             }
         }
@@ -644,7 +644,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
             getString(R.string.manga_auto_page_speed, AppConfig.mangaAutoPageSpeed)
         menu.findItem(R.id.menu_enable_horizontal_scroll).isChecked =
             AppConfig.enableMangaHorizontalScroll
-        menu.findItem(R.id.menu_disable_manga_title).isChecked = AppConfig.disableMangaTitle
+        menu.findItem(R.id.menu_hide_manga_title).isChecked = AppConfig.hideMangaTitle
     }
 
     private fun setDisableMangaScale(disable: Boolean) {

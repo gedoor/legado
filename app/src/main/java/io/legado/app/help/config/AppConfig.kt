@@ -658,10 +658,10 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
         }
 
     //禁用漫画内标题
-    var disableMangaTitle
-        get() = appCtx.getPrefBoolean(PreferKey.disableMangaTitle, false)
+    var hideMangaTitle
+        get() = appCtx.getPrefBoolean(PreferKey.hideMangaTitle, false)
         set(value) {
-            appCtx.putPrefBoolean(PreferKey.disableMangaTitle, value)
+            appCtx.putPrefBoolean(PreferKey.hideMangaTitle, value)
         }
 }
 

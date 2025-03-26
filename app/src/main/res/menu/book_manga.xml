@@ -82,10 +82,10 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/menu_disable_manga_title"
+        android:id="@+id/menu_hide_manga_title"
         android:checkable="true"
         android:checked="false"
-        android:title="@string/disable_manga_title"
+        android:title="@string/hide_manga_title"
         app:showAsAction="never" />
 
 </menu>
