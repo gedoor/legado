@@ -191,7 +191,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
                 ?: MangaColorFilterConfig()
         mAdapter.run {
             setMangaImageColorFilter(mangaColorFilter)
-            setDisableTitle(AppConfig.hideMangaTitle)
+            setHideTitle(AppConfig.hideMangaTitle)
         }
         setHorizontalScroll(AppConfig.enableMangaHorizontalScroll)
         binding.recyclerView.run {
@@ -567,7 +567,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
             R.id.menu_hide_manga_title -> {
                 item.isChecked = !item.isChecked
                 AppConfig.hideMangaTitle = item.isChecked
-                mAdapter.setDisableTitle(item.isChecked)
+                mAdapter.setHideTitle(item.isChecked)
             }
         }
         return super.onCompatOptionsItemSelected(item)

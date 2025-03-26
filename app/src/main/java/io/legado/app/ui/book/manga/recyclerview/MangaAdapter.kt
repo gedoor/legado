@@ -43,7 +43,7 @@ class MangaAdapter(private val context: Context) :
     }
 
     var isHorizontal = false
-    private var disabledTitle = false
+    private var hideTitle = false
 
     private val mDiffCallback: DiffUtil.ItemCallback<Any> = object : DiffUtil.ItemCallback<Any>() {
         override fun areItemsTheSame(oldItem: Any, newItem: Any): Boolean {
@@ -129,7 +129,7 @@ class MangaAdapter(private val context: Context) :
             val message = item.mMessage
             binding.text.text = message
             binding.root.updateLayoutParams<ViewGroup.LayoutParams> {
-                height = if (disabledTitle) 0 else Utils.dp2Px(96)
+                height = if (hideTitle) 0 else Utils.dp2Px(96)
             }
         }
     }
@@ -244,8 +244,8 @@ class MangaAdapter(private val context: Context) :
         notifyItemRangeChanged(0, itemCount)
     }
 
-    fun setDisableTitle(disable: Boolean) {
-        this.disabledTitle=disable
+    fun setHideTitle(hide: Boolean) {
+        this.hideTitle=hide
         notifyItemRangeChanged(0, itemCount)
     }
 }
