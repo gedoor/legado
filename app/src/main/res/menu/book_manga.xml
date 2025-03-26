@@ -81,4 +81,11 @@
         android:title="@string/manga_color_filter"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/menu_disable_manga_title"
+        android:checkable="true"
+        android:checked="false"
+        android:title="@string/disable_manga_title"
+        app:showAsAction="never" />
+
 </menu>

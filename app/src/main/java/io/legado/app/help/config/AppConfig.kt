@@ -656,5 +656,12 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
         set(value) {
             appCtx.putPrefString(PreferKey.mangaColorFilter, value)
         }
+
+    //禁用漫画内标题
+    var disableMangaTitle
+        get() = appCtx.getPrefBoolean(PreferKey.disableMangaTitle, false)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.disableMangaTitle, value)
+        }
 }
 
