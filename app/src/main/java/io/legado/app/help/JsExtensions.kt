@@ -222,6 +222,7 @@ interface JsExtensions : JsEncodeUtils {
      * @param title 浏览器页面的标题
      */
     fun startBrowser(url: String, title: String) {
+        rhinoContext.ensureActive()
         SourceVerificationHelp.startBrowser(getSource(), url, title)
     }
 
@@ -229,6 +230,7 @@ interface JsExtensions : JsEncodeUtils {
      * 使用内置浏览器打开链接，并等待网页结果
      */
     fun startBrowserAwait(url: String, title: String, refetchAfterSuccess: Boolean): StrResponse {
+        rhinoContext.ensureActive()
         val body = SourceVerificationHelp.getVerificationResult(
             getSource(), url, title, true, refetchAfterSuccess
         )
@@ -243,6 +245,7 @@ interface JsExtensions : JsEncodeUtils {
      * 打开图片验证码对话框，等待返回验证结果
      */
     fun getVerificationCode(imageUrl: String): String {
+        rhinoContext.ensureActive()
         return SourceVerificationHelp.getVerificationResult(getSource(), imageUrl, "", false)
     }
 
@@ -917,6 +920,7 @@ interface JsExtensions : JsEncodeUtils {
      * 弹窗提示
      */
     fun toast(msg: Any?) {
+        rhinoContext.ensureActive()
         appCtx.toastOnUi("${getSource()?.getTag()}: ${msg.toString()}")
     }
 
@@ -924,6 +928,7 @@ interface JsExtensions : JsEncodeUtils {
      * 弹窗提示 停留时间较长
      */
     fun longToast(msg: Any?) {
+        rhinoContext.ensureActive()
         appCtx.longToastOnUi("${getSource()?.getTag()}: ${msg.toString()}")
     }
 
@@ -934,7 +939,7 @@ interface JsExtensions : JsEncodeUtils {
         getSource()?.let {
             Debug.log(it.getKey(), msg.toString())
         } ?: Debug.log(msg.toString())
-        AppLog.putDebug("源调试输出：$msg")
+        AppLog.putDebug("${getSource()?.getTag() ?: "源"}调试输出: $msg")
         return msg
     }
 
@@ -966,6 +971,7 @@ interface JsExtensions : JsEncodeUtils {
 
     // 新增 mimeType 参数，默认为 null（保持兼容性）
     fun openUrl(url: String, mimeType: String? = null) {
+        rhinoContext.ensureActive()
         val source = getSource() ?: throw NoStackTraceException("openUrl source cannot be null")
         appCtx.startActivity<OpenUrlConfirmActivity> {
             putExtra("uri", url)
