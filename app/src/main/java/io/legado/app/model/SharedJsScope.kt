@@ -16,7 +16,7 @@ import org.mozilla.javascript.Scriptable
 import splitties.init.appCtx
 import java.io.File
 import java.lang.ref.WeakReference
-import kotlin.collections.set
+import kotlin.coroutines.CoroutineContext
 
 object SharedJsScope {
 
@@ -25,7 +25,7 @@ object SharedJsScope {
 
     private val scopeMap = hashMapOf<String, WeakReference<Scriptable>>()
 
-    fun getScope(jsLib: String?): Scriptable? {
+    fun getScope(jsLib: String?, coroutineContext: CoroutineContext?): Scriptable? {
         if (jsLib.isNullOrBlank()) {
             return null
         }
@@ -60,11 +60,11 @@ object SharedJsScope {
                                 throw NoStackTraceException("下载jsLib-${value}失败")
                             }
                         }
-                        RhinoScriptEngine.eval(js, scope)
+                        RhinoScriptEngine.eval(js, scope, coroutineContext)
                     }
                 }
             } else {
-                RhinoScriptEngine.eval(jsLib, scope)
+                RhinoScriptEngine.eval(jsLib, scope, coroutineContext)
             }
             scopeMap[key] = WeakReference(scope)
         }

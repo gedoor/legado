@@ -12,14 +12,13 @@ import io.legado.app.help.JsExtensions
 import io.legado.app.help.SymmetricCryptoAndroid
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.http.CookieStore
-import io.legado.app.model.SharedJsScope
+import io.legado.app.help.source.getShareScope
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonArray
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.has
 import io.legado.app.utils.printOnDebug
 import org.intellij.lang.annotations.Language
-import org.mozilla.javascript.Scriptable
 
 /**
  * 可在js里调用,source.xxx()
@@ -248,9 +247,5 @@ interface BaseSource : JsExtensions {
             scope.prototype = it
         }
         return RhinoScriptEngine.eval(jsStr, scope)
-    }
-
-    fun getShareScope(): Scriptable? {
-        return SharedJsScope.getScope(jsLib)
     }
 }
