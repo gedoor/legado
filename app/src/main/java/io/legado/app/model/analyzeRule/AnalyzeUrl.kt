@@ -81,6 +81,7 @@ class AnalyzeUrl(
     private val ruleData: RuleDataInterface? = null,
     private val chapter: BookChapter? = null,
     private val readTimeout: Long? = null,
+    private val callTimeout: Long? = null,
     private var coroutineContext: CoroutineContext = EmptyCoroutineContext,
     headerMapF: Map<String, String>? = null,
     hasLoginHeader: Boolean = true
@@ -456,13 +457,19 @@ class AnalyzeUrl(
 
     private fun getClient(): OkHttpClient {
         val client = getProxyClient(proxy)
-        if (readTimeout == null) {
+        if (readTimeout == null && callTimeout == null) {
             return client
         }
-        return client.newBuilder()
-            .readTimeout(readTimeout, TimeUnit.MILLISECONDS)
-            .callTimeout(max(60 * 1000L, readTimeout * 2), TimeUnit.MILLISECONDS)
-            .build()
+        return client.newBuilder().run {
+            if (readTimeout != null) {
+                readTimeout(readTimeout, TimeUnit.MILLISECONDS)
+                callTimeout(max(60 * 1000L, readTimeout * 2), TimeUnit.MILLISECONDS)
+            }
+            if (callTimeout != null) {
+                callTimeout(callTimeout, TimeUnit.MILLISECONDS)
+            }
+            build()
+        }
     }
 
     fun getResponse(): Response {

@@ -265,11 +265,8 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    private fun loadWebFile(
-        book: Book,
-        scope: CoroutineScope = viewModelScope
-    ) {
-        execute(scope) {
+    private fun loadWebFile(book: Book) {
+        execute {
             webFiles.clear()
             val fileNameNoExtension = if (book.author.isBlank()) book.name
             else "${book.name} 作者：${book.author}"

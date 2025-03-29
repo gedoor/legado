@@ -59,6 +59,7 @@ import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.InputStream
 import java.util.regex.Pattern
+import kotlin.coroutines.coroutineContext
 
 /**
  * 书籍文件导入 目录正文解析
@@ -208,7 +209,7 @@ object LocalBook {
     /**
      * 下载在线的文件并自动导入到阅读（txt umd epub)
      */
-    fun importFileOnLine(
+    suspend fun importFileOnLine(
         str: String,
         fileName: String,
         source: BaseSource? = null,
@@ -267,7 +268,9 @@ object LocalBook {
     ): List<Book> {
         val archiveFileDoc = FileDoc.fromUri(archiveFileUri, false)
         val files = ArchiveUtils.deCompress(archiveFileDoc, filter = filter)
-        if (files.isEmpty()) throw NoStackTraceException(appCtx.getString(R.string.unsupport_archivefile_entry))
+        if (files.isEmpty()) {
+            throw NoStackTraceException(appCtx.getString(R.string.unsupport_archivefile_entry))
+        }
         return files.map {
             saveBookFile(FileInputStream(it), saveFileName ?: it.name).let { uri ->
                 importFile(uri).apply {
@@ -313,7 +316,9 @@ object LocalBook {
                 errorCount += 1
             }
         }
-        if (errorCount == uris.size) throw NoStackTraceException("ImportFiles Error:\nAll input files occur error")
+        if (errorCount == uris.size) {
+            throw NoStackTraceException("ImportFiles Error:\nAll input files occur error")
+        }
     }
 
     /**
@@ -379,7 +384,7 @@ object LocalBook {
     /**
      * 下载在线的文件
      */
-    fun saveBookFile(
+    suspend fun saveBookFile(
         str: String,
         fileName: String,
         source: BaseSource? = null,
@@ -387,7 +392,11 @@ object LocalBook {
         AppConfig.defaultBookTreeUri
             ?: throw NoBooksDirException()
         val inputStream = when {
-            str.isAbsUrl() -> AnalyzeUrl(str, source = source).getInputStream()
+            str.isAbsUrl() -> AnalyzeUrl(
+                str, source = source, callTimeout = 0,
+                coroutineContext = coroutineContext
+            ).getInputStreamAwait()
+
             str.isDataUrl() -> ByteArrayInputStream(
                 Base64.decode(
                     str.substringAfter("base64,"),
