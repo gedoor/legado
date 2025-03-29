@@ -47,6 +47,7 @@ import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
 
@@ -235,6 +236,23 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
                 }
             }
         }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(STARTED) {
+                combine(
+                    viewModel.finishedSearchSourceCount,
+                    viewModel.finishedSearchSourceName
+                ) { count, name -> Pair(count, name) }
+                    .conflate()
+                    .collect { (count, name) ->
+                    binding.tvProgress.text =
+                        getString(R.string.change_source_progress, adapter.itemCount, count, viewModel.totalSourceCount, name)
+                    delay(500)
+                }
+            }
+
+        }
+
         lifecycleScope.launch {
             appDb.bookSourceDao.flowEnabledGroups().conflate().collect {
                 groups.clear()
