@@ -35,6 +35,8 @@ import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
@@ -62,9 +64,15 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
     private var oldBook: Book? = null
     private var screenKey: String = ""
     private var bookSourceParts = arrayListOf<BookSourcePart>()
+    val totalSourceCount:Int
+        get() = bookSourceParts.size
     private var searchBookList = arrayListOf<SearchBook>()
     private val searchBooks = Collections.synchronizedList(arrayListOf<SearchBook>())
     private val tocMap = ConcurrentHashMap<String, List<BookChapter>>()
+    private val _finishedSearchSourceCount: MutableStateFlow<Int> = MutableStateFlow(0)
+    val finishedSearchSourceCount= _finishedSearchSourceCount.asStateFlow()
+    private val _finishedSearchSourceName: MutableStateFlow<String> = MutableStateFlow("")
+    val finishedSearchSourceName= _finishedSearchSourceName.asStateFlow()
     private var tocMapChapterCount = 0
     private val contentProcessor by lazy {
         ContentProcessor.get(oldBook!!)
@@ -181,6 +189,8 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
             tocMap.clear()
             bookMap.clear()
             tocMapChapterCount = 0
+            _finishedSearchSourceCount.value = 0
+            _finishedSearchSourceName.value = ""
             val searchGroup = AppConfig.searchGroup
             if (searchGroup.isBlank()) {
                 bookSourceParts.addAll(appDb.bookSourceDao.allEnabledPart)
@@ -257,6 +267,8 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
                 }
             }
         }
+        _finishedSearchSourceCount.value += 1
+        _finishedSearchSourceName.value = source.bookSourceName
     }
 
     private suspend fun loadBookInfo(source: BookSource, book: Book) {

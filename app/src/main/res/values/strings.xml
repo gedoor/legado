@@ -1142,6 +1142,7 @@
     <string name="export_book_notification_content">Exporting (%1$s), with %2$d to be exported.</string>
     <string name="export_md">Export(MD)</string>
     <string name="change_source_delay">Change source delay</string>
+    <string name="change_source_progress">Result %1$d, Progress %2$d / %3$d: %4$s</string>
     <string name="open_book_info_by_click_title">Click on the book title to open details</string>
     <string name="export_wait">Waiting for export</string>
     <string name="show_bookshelf_fast_scroller">Show quick scroll bar</string>
