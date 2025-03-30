@@ -10,6 +10,7 @@ class RhinoContext(factory: ContextFactory) : Context(factory) {
 
     var coroutineContext: CoroutineContext? = null
     var allowScriptRun = false
+    var recursiveCount = 0
 
     @Throws(RhinoInterruptError::class)
     fun ensureActive() {
@@ -17,6 +18,13 @@ class RhinoContext(factory: ContextFactory) : Context(factory) {
             coroutineContext?.ensureActive()
         } catch (e: CancellationException) {
             throw RhinoInterruptError(e)
+        }
+    }
+
+    @Throws(RhinoRecursionError::class)
+    fun checkRecursive() {
+        if (recursiveCount >= 10) {
+            throw RhinoRecursionError()
         }
     }
 

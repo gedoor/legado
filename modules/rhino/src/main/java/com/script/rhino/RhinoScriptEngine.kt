@@ -33,6 +33,7 @@ import com.script.ScriptBindings
 import com.script.ScriptContext
 import com.script.ScriptException
 import com.script.SimpleBindings
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.asContextElement
 import kotlinx.coroutines.withContext
 import org.mozilla.javascript.Callable
@@ -92,11 +93,13 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
         coroutineContext: CoroutineContext?
     ): Any? {
         val cx = Context.enter() as RhinoContext
+        cx.checkRecursive()
         val previousCoroutineContext = cx.coroutineContext
-        if (coroutineContext != null) {
+        if (coroutineContext != null && coroutineContext[Job] != null) {
             cx.coroutineContext = coroutineContext
         }
         cx.allowScriptRun = true
+        cx.recursiveCount++
         val ret: Any?
         try {
             var filename = this["javax.script.filename"] as? String
@@ -117,6 +120,7 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
         } finally {
             cx.coroutineContext = previousCoroutineContext
             cx.allowScriptRun = false
+            cx.recursiveCount--
             Context.exit()
         }
         return unwrapReturnValue(ret)
@@ -125,9 +129,11 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
     @Throws(ContinuationPending::class)
     override suspend fun evalSuspend(reader: Reader, scope: Scriptable): Any? {
         val cx = Context.enter() as RhinoContext
+        cx.checkRecursive()
         var ret: Any?
         withContext(VMBridgeReflect.contextLocal.asContextElement()) {
             cx.allowScriptRun = true
+            cx.recursiveCount++
             try {
                 var filename = this@RhinoScriptEngine["javax.script.filename"] as? String
                 filename = filename ?: "<Unknown source>"
@@ -166,6 +172,7 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
                 throw ScriptException(var14)
             } finally {
                 cx.allowScriptRun = false
+                cx.recursiveCount--
                 Context.exit()
             }
         }
