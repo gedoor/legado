@@ -47,7 +47,6 @@ import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
@@ -241,11 +240,7 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
         lifecycleScope.launch {
             repeatOnLifecycle(STARTED) {
                 binding.llTopBar.visibility = View.GONE
-                combine(
-                    viewModel.finishedSearchSourceCount,
-                    viewModel.finishedSearchSourceName
-                ) { count, name -> Pair(count, name) }
-                    .conflate()
+                viewModel.finishedChangeSourceResult
                     .drop(1)
                     .collect { (count, name) ->
                         binding.llTopBar.visibility = View.VISIBLE

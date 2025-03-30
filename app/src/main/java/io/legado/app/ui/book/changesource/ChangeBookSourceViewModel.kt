@@ -44,7 +44,9 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import java.util.Collections
@@ -69,10 +71,8 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
     private var searchBookList = arrayListOf<SearchBook>()
     private val searchBooks = Collections.synchronizedList(arrayListOf<SearchBook>())
     private val tocMap = ConcurrentHashMap<String, List<BookChapter>>()
-    private val _finishedSearchSourceCount: MutableStateFlow<Int> = MutableStateFlow(0)
-    val finishedSearchSourceCount= _finishedSearchSourceCount.asStateFlow()
-    private val _finishedSearchSourceName: MutableStateFlow<String> = MutableStateFlow("")
-    val finishedSearchSourceName= _finishedSearchSourceName.asStateFlow()
+    private val _finishedChangeSourceResult = MutableStateFlow(0 to "")
+    val finishedChangeSourceResult= _finishedChangeSourceResult.asStateFlow()
     private var tocMapChapterCount = 0
     private val contentProcessor by lazy {
         ContentProcessor.get(oldBook!!)
@@ -189,8 +189,7 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
             tocMap.clear()
             bookMap.clear()
             tocMapChapterCount = 0
-            _finishedSearchSourceCount.value = 0
-            _finishedSearchSourceName.value = ""
+            _finishedChangeSourceResult.value = 0 to ""
             val searchGroup = AppConfig.searchGroup
             if (searchGroup.isBlank()) {
                 bookSourceParts.addAll(appDb.bookSourceDao.allEnabledPart)
@@ -236,6 +235,10 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
                 withTimeout(60000L) {
                     search(it)
                 }
+            }.onEach {
+                _finishedChangeSourceResult.update { currentValue ->
+                    currentValue.first + 1 to it.bookSourceName
+                }
             }.onCompletion {
                 searchStateData.postValue(false)
                 ensureActive()
@@ -246,7 +249,7 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
         }
     }
 
-    private suspend fun search(source: BookSource) {
+    private suspend fun search(source: BookSource): BookSource {
         val checkAuthor = AppConfig.changeSourceCheckAuthor
         val loadInfo = AppConfig.changeSourceLoadInfo
         val loadToc = AppConfig.changeSourceLoadToc
@@ -267,8 +270,7 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
                 }
             }
         }
-        _finishedSearchSourceCount.value += 1
-        _finishedSearchSourceName.value = source.bookSourceName
+        return source
     }
 
     private suspend fun loadBookInfo(source: BookSource, book: Book) {
