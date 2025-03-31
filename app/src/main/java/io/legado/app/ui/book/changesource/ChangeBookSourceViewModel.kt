@@ -232,14 +232,12 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
             }.onStart {
                 searchStateData.postValue(true)
             }.mapParallelSafe(threadCount) {
-                try {
+                runCatching {
                     withTimeout(60000L) {
                         search(it)
                     }
-                } catch (e: Throwable) {
-                    AppLog.put("换源搜索出错\n${e.localizedMessage}", e)
-                    it
                 }
+                it
             }.onEachIndexed { index, value ->
                 _finishedChangeSourceResult.update { _ ->
                     index + 1 to value.bookSourceName
@@ -248,11 +246,13 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
                 searchStateData.postValue(false)
                 ensureActive()
                 searchFinishCallback?.invoke(searchBooks.isEmpty())
+            }.catch {
+                AppLog.put("换源搜索出错\n${it.localizedMessage}", it)
             }.collect()
         }
     }
 
-    private suspend fun search(source: BookSource): BookSource {
+    private suspend fun search(source: BookSource) {
         val checkAuthor = AppConfig.changeSourceCheckAuthor
         val loadInfo = AppConfig.changeSourceLoadInfo
         val loadToc = AppConfig.changeSourceLoadToc
@@ -273,7 +273,6 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
                 }
             }
         }
-        return source
     }
 
     private suspend fun loadBookInfo(source: BookSource, book: Book) {
