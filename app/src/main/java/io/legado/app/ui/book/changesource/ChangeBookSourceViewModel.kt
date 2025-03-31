@@ -26,6 +26,7 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.internString
 import io.legado.app.utils.mapParallelSafe
+import io.legado.app.utils.onEachIndexed
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers.IO
@@ -44,7 +45,6 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -232,19 +232,22 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
             }.onStart {
                 searchStateData.postValue(true)
             }.mapParallelSafe(threadCount) {
-                withTimeout(60000L) {
-                    search(it)
+                try {
+                    withTimeout(60000L) {
+                        search(it)
+                    }
+                } catch (e: Throwable) {
+                    AppLog.put("换源搜索出错\n${e.localizedMessage}", e)
+                    it
                 }
-            }.onEach {
-                _finishedChangeSourceResult.update { currentValue ->
-                    currentValue.first + 1 to it.bookSourceName
+            }.onEachIndexed { index, value ->
+                _finishedChangeSourceResult.update { _ ->
+                    index + 1 to value.bookSourceName
                 }
             }.onCompletion {
                 searchStateData.postValue(false)
                 ensureActive()
                 searchFinishCallback?.invoke(searchBooks.isEmpty())
-            }.catch {
-                AppLog.put("换源搜索出错\n${it.localizedMessage}", it)
             }.collect()
         }
     }

@@ -239,12 +239,10 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
 
         lifecycleScope.launch {
             repeatOnLifecycle(STARTED) {
-                binding.llTopBar.visibility = View.GONE
                 viewModel.finishedChangeSourceResult
                     .drop(1)
                     .collect { (count, name) ->
-                        binding.llTopBar.visibility = View.VISIBLE
-                        binding.tvProgress.text =
+                        binding.tvDur.text =
                             getString(
                                 R.string.change_source_progress,
                                 adapter.itemCount,
