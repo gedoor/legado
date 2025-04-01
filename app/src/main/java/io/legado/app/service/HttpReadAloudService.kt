@@ -284,12 +284,14 @@ class HttpReadAloudService : BaseReadAloudService(),
                     null
                 } else {
                     kotlin.runCatching {
-                        runBlocking {
+                        runBlocking(lifecycleScope.coroutineContext[Job]!!) {
                             getSpeakStream(httpTts, speakText)
                         }
                     }.onFailure {
                         when (it) {
-                            is InterruptedException -> Unit
+                            is InterruptedException,
+                            is CancellationException -> Unit
+
                             else -> pauseReadAloud()
                         }
                     }.getOrThrow()
@@ -338,12 +340,15 @@ class HttpReadAloudService : BaseReadAloudService(),
                     response = analyzeUrl.evalJS(checkJs, response) as Response
                 }
                 response.headers["Content-Type"]?.let { contentType ->
+                    val contentType = contentType.substringBefore(";")
                     val ct = httpTts.contentType
-                    if (contentType == "application/json") {
+                    if (contentType == "application/json" || contentType.startsWith("text/")) {
                         throw NoStackTraceException(response.body!!.string())
                     } else if (ct?.isNotBlank() == true) {
                         if (!contentType.matches(ct.toRegex())) {
-                            throw NoStackTraceException("TTS服务器返回错误：" + response.body!!.string())
+                            throw NoStackTraceException(
+                                "TTS服务器返回错误：" + response.body!!.string()
+                            )
                         }
                     }
                 }
