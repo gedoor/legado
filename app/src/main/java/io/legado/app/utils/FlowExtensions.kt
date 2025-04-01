@@ -64,7 +64,7 @@ inline fun <T, R> Flow<T>.mapParallelSafe(
     flow {
         try {
             emit(transform(value))
-        } catch (e: Throwable) {
+        } catch (_: Throwable) {
             coroutineContext.ensureActive()
         }
     }

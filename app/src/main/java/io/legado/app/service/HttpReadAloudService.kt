@@ -550,6 +550,7 @@ class HttpReadAloudService : BaseReadAloudService(),
     override fun onPlayerError(error: PlaybackException) {
         super.onPlayerError(error)
         AppLog.put("朗读错误\n${contentList[nowSpeak]}", error)
+        deleteCurrentSpeakFile()
         playErrorNo++
         if (playErrorNo >= 5) {
             toastOnUi("朗读连续5次错误, 最后一次错误代码(${error.localizedMessage})")
@@ -558,13 +559,21 @@ class HttpReadAloudService : BaseReadAloudService(),
         } else {
             if (exoPlayer.hasNextMediaItem()) {
                 exoPlayer.seekToNextMediaItem()
-                exoPlayer.playWhenReady = true
                 exoPlayer.prepare()
             } else {
                 exoPlayer.clearMediaItems()
                 updateNextPos()
             }
         }
+    }
+
+    private fun deleteCurrentSpeakFile() {
+        if (AppConfig.streamReadAloudAudio) {
+            return
+        }
+        val mediaItem = exoPlayer.currentMediaItem ?: return
+        val filePath = mediaItem.localConfiguration!!.uri.path!!
+        File(filePath).delete()
     }
 
     override fun aloudServicePendingIntent(actionStr: String): PendingIntent? {

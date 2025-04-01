@@ -253,7 +253,6 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
                         delay(500)
                     }
             }
-
         }
 
         lifecycleScope.launch {

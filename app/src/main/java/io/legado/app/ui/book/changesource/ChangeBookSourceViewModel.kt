@@ -25,6 +25,7 @@ import io.legado.app.help.config.SourceConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.internString
+import io.legado.app.utils.mapParallel
 import io.legado.app.utils.mapParallelSafe
 import io.legado.app.utils.onEachIndexed
 import io.legado.app.utils.toastOnUi
@@ -35,6 +36,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -231,11 +233,13 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
                 }
             }.onStart {
                 searchStateData.postValue(true)
-            }.mapParallelSafe(threadCount) {
-                runCatching {
+            }.mapParallel(threadCount) {
+                try {
                     withTimeout(60000L) {
                         search(it)
                     }
+                } catch (_: Throwable) {
+                    currentCoroutineContext().ensureActive()
                 }
                 it
             }.onEachIndexed { index, value ->

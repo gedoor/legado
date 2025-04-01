@@ -27,12 +27,7 @@ class InputStreamDataSource(private val supplier: () -> InputStream) : BaseDataS
 
         inputStream.skip(dataSpec.position)
 
-        if (dataSpec.length == C.LENGTH_UNSET.toLong()) {
-            bytesRemaining = inputStream.available().toLong()
-            if (bytesRemaining == 0L) bytesRemaining = C.LENGTH_UNSET.toLong()
-        } else {
-            bytesRemaining = dataSpec.length
-        }
+        bytesRemaining = dataSpec.length
 
         opened = true
         transferStarted(dataSpec)
