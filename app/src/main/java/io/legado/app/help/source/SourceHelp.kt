@@ -4,6 +4,7 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.BaseSource
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.RssSource
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.utils.EncoderUtils
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.splitNotBlank
@@ -51,7 +52,9 @@ object SourceHelp {
         bookSourcesGroup[false]?.let {
             appDb.bookSourceDao.insert(*it.toTypedArray())
         }
-        adjustSortNumber()
+        Coroutine.async {
+            adjustSortNumber()
+        }
     }
 
     private fun is18Plus(url: String?): Boolean {
