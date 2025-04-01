@@ -26,6 +26,7 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.internString
 import io.legado.app.utils.mapParallelSafe
+import io.legado.app.utils.onEachIndexed
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers.IO
@@ -35,6 +36,8 @@ import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
@@ -43,6 +46,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import java.util.Collections
@@ -62,9 +66,13 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
     private var oldBook: Book? = null
     private var screenKey: String = ""
     private var bookSourceParts = arrayListOf<BookSourcePart>()
+    val totalSourceCount:Int
+        get() = bookSourceParts.size
     private var searchBookList = arrayListOf<SearchBook>()
     private val searchBooks = Collections.synchronizedList(arrayListOf<SearchBook>())
     private val tocMap = ConcurrentHashMap<String, List<BookChapter>>()
+    private val _finishedChangeSourceResult = MutableStateFlow(0 to "")
+    val finishedChangeSourceResult= _finishedChangeSourceResult.asStateFlow()
     private var tocMapChapterCount = 0
     private val contentProcessor by lazy {
         ContentProcessor.get(oldBook!!)
@@ -181,6 +189,7 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
             tocMap.clear()
             bookMap.clear()
             tocMapChapterCount = 0
+            _finishedChangeSourceResult.value = 0 to ""
             val searchGroup = AppConfig.searchGroup
             if (searchGroup.isBlank()) {
                 bookSourceParts.addAll(appDb.bookSourceDao.allEnabledPart)
@@ -223,8 +232,15 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
             }.onStart {
                 searchStateData.postValue(true)
             }.mapParallelSafe(threadCount) {
-                withTimeout(60000L) {
-                    search(it)
+                runCatching {
+                    withTimeout(60000L) {
+                        search(it)
+                    }
+                }
+                it
+            }.onEachIndexed { index, value ->
+                _finishedChangeSourceResult.update { _ ->
+                    index + 1 to value.bookSourceName
                 }
             }.onCompletion {
                 searchStateData.postValue(false)

@@ -48,6 +48,7 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 
 /**
@@ -235,6 +236,26 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
                 }
             }
         }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(STARTED) {
+                viewModel.finishedChangeSourceResult
+                    .drop(1)
+                    .collect { (count, name) ->
+                        binding.tvDur.text =
+                            getString(
+                                R.string.change_source_progress,
+                                adapter.itemCount,
+                                count,
+                                viewModel.totalSourceCount,
+                                name
+                            )
+                        delay(500)
+                    }
+            }
+
+        }
+
         lifecycleScope.launch {
             appDb.bookSourceDao.flowEnabledGroups().conflate().collect {
                 groups.clear()
