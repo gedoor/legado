@@ -6,7 +6,7 @@ import org.mozilla.javascript.Scriptable
 class ProtectedNativeJavaClass(
     scope: Scriptable,
     javaClass: Class<*>,
-    private val protectedName: HashSet<String>
+    private val protectedName: Set<String>
 ) : NativeJavaClass(scope, javaClass) {
 
     override fun has(

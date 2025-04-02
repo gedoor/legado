@@ -34,6 +34,7 @@ import java.io.ObjectOutputStream
 import java.lang.reflect.Member
 import java.nio.file.FileSystem
 import java.nio.file.Path
+import java.util.Collections
 
 /**
  * This class prevents script access to certain sensitive classes.
@@ -94,14 +95,19 @@ object RhinoClassShutter : ClassShutter {
             "androidx.sqlite.db",
             "androidx.room",
             "cn.hutool.core.io",
+            "cn.hutool.core.lang.reflect",
             "dalvik.system",
             "java.nio.file",
+            "java.lang.reflect",
+            "java.lang.invoke",
             "io.legado.app.data.dao",
-        )
+            "com.script",
+            "org.mozilla",
+        ).let { Collections.unmodifiableSet(it) }
     }
 
     private val systemClassProtectedName by lazy {
-        hashSetOf("load", "loadLibrary", "exit")
+        Collections.unmodifiableSet(hashSetOf("load", "loadLibrary", "exit"))
     }
 
     fun visibleToScripts(obj: Any): Boolean {
