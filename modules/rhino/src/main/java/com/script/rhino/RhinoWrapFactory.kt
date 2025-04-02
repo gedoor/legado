@@ -27,7 +27,6 @@ package com.script.rhino
 import org.mozilla.javascript.Context
 import org.mozilla.javascript.Scriptable
 import org.mozilla.javascript.WrapFactory
-import java.lang.reflect.Member
 
 /**
  * This wrap factory is used for security reasons. JSR 223 script
@@ -50,25 +49,10 @@ object RhinoWrapFactory : WrapFactory() {
         javaObject: Any,
         staticType: Class<*>?
     ): Scriptable? {
-        val classShutter = RhinoClassShutter
-        return when (javaObject) {
-            is ClassLoader,
-            is Class<*>,
-            is Member,
-            is Context,
-            is android.content.Context -> {
-                null
-            }
-
-            else -> {
-                val name = javaObject.javaClass.name
-                if (classShutter.visibleToScripts(name)) {
-                    super.wrapAsJavaObject(cx, scope, javaObject, staticType)
-                } else {
-                    null
-                }
-            }
+        if (!RhinoClassShutter.visibleToScripts(javaObject)) {
+            return null
         }
+        return super.wrapAsJavaObject(cx, scope, javaObject, staticType)
     }
 
 }

@@ -39,6 +39,7 @@ dependencies {
     api libs.mozilla.rhino
 
     implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.okhttp)
 
 //    def coroutines_version = '1.7.3'
 //    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version")

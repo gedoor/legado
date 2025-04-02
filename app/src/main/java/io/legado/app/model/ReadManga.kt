@@ -206,7 +206,7 @@ object ReadManga : CoroutineScope by MainScope() {
                     mCallback?.loadFail(errorMsg)
                     return
                 }
-                if (content.isEmpty()) {
+                if (content.isEmpty() && !chapter.isVolume) {
                     mCallback?.loadFail("正文内容为空")
                     return
                 }

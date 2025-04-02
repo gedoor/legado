@@ -24,7 +24,14 @@
  */
 package com.script.rhino
 
+import android.os.Build
 import org.mozilla.javascript.ClassShutter
+import org.mozilla.javascript.Context
+import java.io.ObjectInputStream
+import java.io.ObjectOutputStream
+import java.lang.reflect.Member
+import java.nio.file.FileSystem
+import java.nio.file.Path
 
 /**
  * This class prevents script access to certain sensitive classes.
@@ -38,28 +45,73 @@ object RhinoClassShutter : ClassShutter {
 
     private val protectedClasses by lazy {
         hashSetOf(
-            "dalvik.system",
             "java.lang.Class",
             "java.lang.ClassLoader",
             "java.net.URLClassLoader",
             "cn.hutool.core.lang.JarClassLoader",
+            "cn.hutool.core.util.RuntimeUtil",
+            "cn.hutool.core.util.ClassLoaderUtil",
             "org.mozilla.javascript.DefiningClassLoader",
             "java.lang.Runtime",
+            "java.lang.ProcessBuilder",
+            "java.lang.ProcessImpl",
+            "java.lang.UNIXProcess",
             "java.io.File",
+            "java.io.FileInputStream",
+            "java.io.FileOutputStream",
+            "java.io.FileReader",
+            "java.io.FileWriter",
+            "java.io.RandomAccessFile",
+            "java.io.ObjectInputStream",
+            "java.io.ObjectOutputStream",
             "java.security.AccessController",
             "java.nio.file.Paths",
             "java.nio.file.Files",
+            "java.nio.file.FileSystems",
             "io.legado.app.data.AppDatabase",
             "io.legado.app.data.AppDatabaseKt",
             "io.legado.app.utils.ContextExtensionsKt",
             "android.content.Intent",
             "androidx.core.content.FileProvider",
             "android.provider.Settings",
-            "androidx.sqlite.db",
             "splitties.init.AppCtxKt",
             "android.app.ActivityThread",
-            "android.app.AppGlobals"
+            "android.app.AppGlobals",
+            "okio.JvmSystemFileSystem",
+            "okio.JvmFileHandle",
+            "okio.NioSystemFileSystem",
+            "okio.NioFileSystemFileHandle",
+            "okio.Path",
+
+            "android.system",
+            "android.database",
+            "androidx.sqlite.db",
+            "cn.hutool.core.io",
+            "dalvik.system",
+            "java.nio.file",
         )
+    }
+
+    fun visibleToScripts(obj: Any): Boolean {
+        when (obj) {
+            is ClassLoader,
+            is Class<*>,
+            is Member,
+            is Context,
+            is ObjectInputStream,
+            is ObjectOutputStream,
+            is okio.FileSystem,
+            is okio.FileHandle,
+            is okio.Path,
+            is android.content.Context -> return false
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            when (obj) {
+                is FileSystem,
+                is Path -> return false
+            }
+        }
+        return visibleToScripts(obj.javaClass.name)
     }
 
     override fun visibleToScripts(fullClassName: String): Boolean {

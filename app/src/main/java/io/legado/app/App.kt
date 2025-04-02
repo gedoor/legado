@@ -216,4 +216,12 @@ class App : Application() {
         }
     }
 
+    companion object {
+        init {
+            if (BuildConfig.DEBUG) {
+                System.setProperty("kotlinx.coroutines.debug", "on")
+            }
+        }
+    }
+
 }
