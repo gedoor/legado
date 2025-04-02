@@ -55,4 +55,12 @@ object RhinoWrapFactory : WrapFactory() {
         return super.wrapAsJavaObject(cx, scope, javaObject, staticType)
     }
 
+    override fun wrapJavaClass(
+        cx: Context?,
+        scope: Scriptable,
+        javaClass: Class<*>
+    ): Scriptable? {
+        return RhinoClassShutter.wrapJavaClass(scope, javaClass)
+    }
+
 }

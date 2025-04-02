@@ -27,6 +27,8 @@ package com.script.rhino
 import android.os.Build
 import org.mozilla.javascript.ClassShutter
 import org.mozilla.javascript.Context
+import org.mozilla.javascript.NativeJavaClass
+import org.mozilla.javascript.Scriptable
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.lang.reflect.Member
@@ -51,6 +53,8 @@ object RhinoClassShutter : ClassShutter {
             "cn.hutool.core.lang.JarClassLoader",
             "cn.hutool.core.util.RuntimeUtil",
             "cn.hutool.core.util.ClassLoaderUtil",
+            "cn.hutool.core.util.ReflectUtil",
+            "cn.hutool.core.util.SerializeUtil",
             "org.mozilla.javascript.DefiningClassLoader",
             "java.lang.Runtime",
             "java.lang.ProcessBuilder",
@@ -69,6 +73,7 @@ object RhinoClassShutter : ClassShutter {
             "java.nio.file.Files",
             "java.nio.file.FileSystems",
             "io.legado.app.data.AppDatabase",
+            "io.legado.app.data.AppDatabase_Impl",
             "io.legado.app.data.AppDatabaseKt",
             "io.legado.app.utils.ContextExtensionsKt",
             "android.content.Intent",
@@ -77,6 +82,7 @@ object RhinoClassShutter : ClassShutter {
             "splitties.init.AppCtxKt",
             "android.app.ActivityThread",
             "android.app.AppGlobals",
+            "android.os.Looper",
             "okio.JvmSystemFileSystem",
             "okio.JvmFileHandle",
             "okio.NioSystemFileSystem",
@@ -86,10 +92,16 @@ object RhinoClassShutter : ClassShutter {
             "android.system",
             "android.database",
             "androidx.sqlite.db",
+            "androidx.room",
             "cn.hutool.core.io",
             "dalvik.system",
             "java.nio.file",
+            "io.legado.app.data.dao",
         )
+    }
+
+    private val systemClassProtectedName by lazy {
+        hashSetOf("load", "loadLibrary", "exit")
     }
 
     fun visibleToScripts(obj: Any): Boolean {
@@ -112,6 +124,16 @@ object RhinoClassShutter : ClassShutter {
             }
         }
         return visibleToScripts(obj.javaClass.name)
+    }
+
+    fun wrapJavaClass(scope: Scriptable, javaClass: Class<*>): Scriptable {
+        return when (javaClass) {
+            System::class.java -> {
+                ProtectedNativeJavaClass(scope, javaClass, systemClassProtectedName)
+            }
+
+            else -> NativeJavaClass(scope, javaClass)
+        }
     }
 
     override fun visibleToScripts(fullClassName: String): Boolean {
