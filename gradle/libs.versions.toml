@@ -8,7 +8,7 @@ colorpicker = "1.1.0"
 commonsText = "1.13.0"
 constraintlayout = "2.2.0"
 core = "1.15.0"
-firebaseBom = "33.2.0"
+firebaseBom = "33.11.0"
 flexbox = "3.0.0"
 fragment = "1.8.6"
 
