@@ -6,10 +6,9 @@ import android.provider.Settings
 import androidx.annotation.Keep
 import cn.hutool.crypto.digest.DigestUtil
 import io.legado.app.BuildConfig
-import io.legado.app.help.config.AppConfig
 import io.legado.app.help.update.AppVariant
+import org.apache.commons.lang3.time.FastDateFormat
 import splitties.init.appCtx
-import java.text.SimpleDateFormat
 
 @Suppress("ConstPropertyName")
 @SuppressLint("SimpleDateFormat")
@@ -32,16 +31,16 @@ object AppConst {
     private const val BETA_SIGNATURE =
         "93A28468B0F69E8D14C8A99AB45841CEF902BBBA3761BBFEE02E67CBA801563E"
 
-    val timeFormat: SimpleDateFormat by lazy {
-        SimpleDateFormat("HH:mm")
+    val timeFormat: FastDateFormat by lazy {
+        FastDateFormat.getInstance("HH:mm")
     }
 
-    val dateFormat: SimpleDateFormat by lazy {
-        SimpleDateFormat("yyyy/MM/dd HH:mm")
+    val dateFormat: FastDateFormat by lazy {
+        FastDateFormat.getInstance("yyyy/MM/dd HH:mm")
     }
 
-    val fileNameFormat: SimpleDateFormat by lazy {
-        SimpleDateFormat("yy-MM-dd-HH-mm-ss")
+    val fileNameFormat: FastDateFormat by lazy {
+        FastDateFormat.getInstance("yy-MM-dd-HH-mm-ss")
     }
 
     const val imagePathKey = "imagePath"
