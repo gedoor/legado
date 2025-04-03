@@ -6,7 +6,7 @@ import org.mozilla.javascript.Scriptable
 class ProtectedNativeJavaClass(
     scope: Scriptable,
     javaClass: Class<*>,
-    private val protectedName: Set<String>
+    private val protectedName: Set<String> = emptySet()
 ) : NativeJavaClass(scope, javaClass) {
 
     override fun has(
@@ -35,6 +35,10 @@ class ProtectedNativeJavaClass(
             return
         }
         super.put(name, start, value)
+    }
+
+    override fun unwrap(): Any? {
+        return null
     }
 
 }

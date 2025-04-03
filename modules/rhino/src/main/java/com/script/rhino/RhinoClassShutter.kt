@@ -27,7 +27,6 @@ package com.script.rhino
 import android.os.Build
 import org.mozilla.javascript.ClassShutter
 import org.mozilla.javascript.Context
-import org.mozilla.javascript.NativeJavaClass
 import org.mozilla.javascript.Scriptable
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
@@ -52,10 +51,12 @@ object RhinoClassShutter : ClassShutter {
             "java.lang.ClassLoader",
             "java.net.URLClassLoader",
             "cn.hutool.core.lang.JarClassLoader",
+            "cn.hutool.core.lang.Singleton",
             "cn.hutool.core.util.RuntimeUtil",
             "cn.hutool.core.util.ClassLoaderUtil",
             "cn.hutool.core.util.ReflectUtil",
             "cn.hutool.core.util.SerializeUtil",
+            "cn.hutool.core.util.ClassUtil",
             "org.mozilla.javascript.DefiningClassLoader",
             "java.lang.Runtime",
             "java.lang.ProcessBuilder",
@@ -95,6 +96,7 @@ object RhinoClassShutter : ClassShutter {
             "androidx.sqlite.db",
             "androidx.room",
             "cn.hutool.core.io",
+            "cn.hutool.core.bean",
             "cn.hutool.core.lang.reflect",
             "dalvik.system",
             "java.nio.file",
@@ -138,7 +140,7 @@ object RhinoClassShutter : ClassShutter {
                 ProtectedNativeJavaClass(scope, javaClass, systemClassProtectedName)
             }
 
-            else -> NativeJavaClass(scope, javaClass)
+            else -> ProtectedNativeJavaClass(scope, javaClass)
         }
     }
 
