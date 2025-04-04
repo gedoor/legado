@@ -9,6 +9,7 @@ import io.legado.app.help.http.CookieManager.cookieJarHeader
 import io.legado.app.help.http.SSLHelper
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.utils.DebugLog
+import io.legado.app.utils.externalCache
 import okhttp3.Headers
 import okhttp3.MediaType
 import okhttp3.Request
@@ -29,7 +30,7 @@ val cronetEngine: ExperimentalCronetEngine? by lazy {
         if (CronetLoader.install()) {
             setLibraryLoader(CronetLoader)//设置自定义so库加载
         }
-        setStoragePath(appCtx.externalCacheDir?.absolutePath)//设置缓存路径
+        setStoragePath(appCtx.externalCache.absolutePath)//设置缓存路径
         enableHttpCache(HTTP_CACHE_DISK, (1024 * 1024 * 50).toLong())//设置50M的磁盘缓存
         enableQuic(true)//设置支持http/3
         enableHttp2(true)  //设置支持http/2
