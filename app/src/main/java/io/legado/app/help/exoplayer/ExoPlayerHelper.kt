@@ -19,6 +19,7 @@ import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import com.google.gson.reflect.TypeToken
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.utils.GSON
+import io.legado.app.utils.externalCache
 import okhttp3.CacheControl
 import splitties.init.appCtx
 import java.io.File
@@ -114,7 +115,7 @@ object ExoPlayerHelper {
         val databaseProvider = StandaloneDatabaseProvider(appCtx)
         return@lazy SimpleCache(
             //Exoplayer的缓存路径
-            File(appCtx.externalCacheDir, "exoplayer"),
+            File(appCtx.externalCache, "exoplayer"),
             //100M的缓存
             LeastRecentlyUsedCacheEvictor((100 * 1024 * 1024).toLong()),
             //记录缓存的数据库
