@@ -109,7 +109,7 @@ fun ResponseBody.decompressed(): ResponseBody {
             throw e
         }
     }.source().buffer()
-    return RealResponseBody(contentType, contentLength(), source)
+    return RealResponseBody(contentType, -1, source)
 }
 
 fun Request.Builder.addHeaders(headers: Map<String, String>) {
