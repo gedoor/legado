@@ -147,14 +147,24 @@
 
 # 保持js引擎调用的java类
 -keep class * extends io.legado.app.help.JsExtensions{*;}
-# 保持js引擎调用的java类
--keep class **.analyzeRule.**{*;}
+-keep class * extends io.legado.app.model.analyzeRule.RuleDataInterface{*;}
 # 保持web类
 -keep class **.web.**{*;}
 # 数据类
 -keep class **.data.**{*;}
 # hutool-core hutool-crypto
--keep class cn.hutool.core.**{*;}
+-keep class
+!cn.hutool.core.io.**,
+!cn.hutool.core.bean.**,
+!cn.hutool.core.lang.reflect.**,
+!cn.hutool.core.lang.JarClassLoader,
+!cn.hutool.core.lang.Singleton,
+!cn.hutool.core.util.RuntimeUtil,
+!cn.hutool.core.util.ClassLoaderUtil,
+!cn.hutool.core.util.ReflectUtil,
+!cn.hutool.core.util.SerializeUtil,
+!cn.hutool.core.util.ClassUtil,
+cn.hutool.core.**{*;}
 -keep class cn.hutool.crypto.**{*;}
 -dontwarn cn.hutool.**
 # 缓存 Cookie

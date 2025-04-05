@@ -1,11 +1,14 @@
 package io.legado.app.model.analyzeRule;
 
+import androidx.annotation.Keep;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+@Keep
 @SuppressWarnings({"FieldCanBeLocal", "unused"})
 public class QueryTTF {
     /**
