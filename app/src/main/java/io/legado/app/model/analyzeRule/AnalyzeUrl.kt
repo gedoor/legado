@@ -609,6 +609,7 @@ class AnalyzeUrl(
         return source
     }
 
+    @Keep
     data class UrlOption(
         private var method: String? = null,
         private var charset: String? = null,
