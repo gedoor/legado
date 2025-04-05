@@ -147,6 +147,8 @@
 -keep class
 !cn.hutool.core.io.**,
 !cn.hutool.core.img.**,
+!cn.hutool.core.map.**,
+!cn.hutool.core.date.**,
 !cn.hutool.core.bean.**,
 !cn.hutool.core.text.**,
 !cn.hutool.core.swing.**,
@@ -164,7 +166,6 @@
 !cn.hutool.core.lang.loader.**,
 !cn.hutool.core.lang.mutable.**,
 !cn.hutool.core.lang.tree.**,
-!cn.hutool.core.lang.map.**,
 !cn.hutool.core.lang.JarClassLoader,
 !cn.hutool.core.lang.ResourceClassLoader,
 !cn.hutool.core.lang.Singleton,
@@ -203,7 +204,6 @@ cn.hutool.core.**{*;}
 -keep class okio.**{*;}
 -keep class com.hwangjr.rxbus.**{*;}
 -keep class org.conscrypt.**{*;}
--keep class android.support.**{*;}
 -keep class me.grantland.widget.**{*;}
 -keep class de.hdodenhof.circleimageview.**{*;}
 -keep class tyrant.explosionfield.**{*;}
@@ -264,16 +264,6 @@ cn.hutool.core.**{*;}
 -dontwarn jdk.dynalink.linker.support.CompositeTypeBasedGuardingDynamicLinker
 -dontwarn jdk.dynalink.linker.support.Guards
 -dontwarn jdk.dynalink.support.ChainedCallSite
-
-## EPUB
--dontwarn nl.siegmann.epublib.**
--dontwarn org.xmlpull.**
--keep class nl.siegmann.epublib.**{*;}
--keep class javax.xml.**{*;}
--keep class org.xmlpull.**{*;}
-
--keep class org.simpleframework.**{*;}
--dontwarn org.simpleframework.xml.**
 
 -keepclassmembers class * {
     public <init> (org.json.JSONObject);
