@@ -8,6 +8,7 @@ import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppLog
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.config.ThemeConfig
+import io.legado.app.help.http.decompressed
 import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.http.text
@@ -92,7 +93,7 @@ class ImportThemeViewModel(app: Application) : BaseViewModel(app) {
             } else {
                 url(url)
             }
-        }.text().let {
+        }.decompressed().text().let {
             importSourceAwait(it)
         }
     }

@@ -10,6 +10,7 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.ReplaceAnalyzer
+import io.legado.app.help.http.decompressed
 import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.http.text
@@ -95,10 +96,12 @@ class ImportReplaceRuleViewModel(app: Application) : BaseViewModel(app) {
                 val rules = ReplaceAnalyzer.jsonToReplaceRules(text).getOrThrow()
                 allRules.addAll(rules)
             }
+
             text.isJsonObject() -> {
                 val rule = ReplaceAnalyzer.jsonToReplaceRule(text).getOrThrow()
                 allRules.add(rule)
             }
+
             else -> throw NoStackTraceException("格式不对")
         }
     }
@@ -111,7 +114,7 @@ class ImportReplaceRuleViewModel(app: Application) : BaseViewModel(app) {
             } else {
                 url(url)
             }
-        }.text("utf-8").let {
+        }.decompressed().text("utf-8").let {
             importAwait(it)
         }
     }

@@ -9,6 +9,7 @@ import io.legado.app.constant.AppLog
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.HttpTTS
 import io.legado.app.exception.NoStackTraceException
+import io.legado.app.help.http.decompressed
 import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.http.text
@@ -96,7 +97,7 @@ class ImportHttpTtsViewModel(app: Application) : BaseViewModel(app) {
             } else {
                 url(url)
             }
-        }.text().let {
+        }.decompressed().text().let {
             importSourceAwait(it)
         }
     }

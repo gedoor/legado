@@ -11,6 +11,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSourcePart
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.help.http.decompressed
 import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.http.text
@@ -132,7 +133,7 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
                 text.isAbsUrl() -> {
                     okHttpClient.newCallResponseBody {
                         url(text)
-                    }.text().let {
+                    }.decompressed().text().let {
                         importBookshelf(it, groupId)
                     }
                 }

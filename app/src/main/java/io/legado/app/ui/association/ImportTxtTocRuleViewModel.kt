@@ -9,10 +9,16 @@ import io.legado.app.constant.AppLog
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.TxtTocRule
 import io.legado.app.exception.NoStackTraceException
+import io.legado.app.help.http.decompressed
 import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.http.text
-import io.legado.app.utils.*
+import io.legado.app.utils.GSON
+import io.legado.app.utils.fromJsonArray
+import io.legado.app.utils.fromJsonObject
+import io.legado.app.utils.isAbsUrl
+import io.legado.app.utils.isJsonArray
+import io.legado.app.utils.isJsonObject
 
 class ImportTxtTocRuleViewModel(app: Application) : BaseViewModel(app) {
 
@@ -95,7 +101,7 @@ class ImportTxtTocRuleViewModel(app: Application) : BaseViewModel(app) {
             } else {
                 url(url)
             }
-        }.text().let {
+        }.decompressed().text().let {
             importSourceAwait(it)
         }
     }
