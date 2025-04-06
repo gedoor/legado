@@ -243,37 +243,6 @@ cn.hutool.core.**{*;}
 -keep class sun.reflect.**{*;}
 -dontwarn sun.reflect.**
 
-## Rhino
--keep class
-!org.mozilla.javascript.ast.**,
-!org.mozilla.javascript.commonjs.**,
-!org.mozilla.javascript.optimizer.**,
-!org.mozilla.javascript.serialize.**,
-org.mozilla.javascript.** { *; }
--dontwarn org.mozilla.javascript.engine.RhinoScriptEngineFactory
-### 以下内容是更新rhino1.7.14.jar后IDE提示添加的
--dontwarn java.beans.**
--dontwarn javax.script.**
-### 以下内容是更新rhino1.8.0.jar后IDE提示添加的
--dontwarn jdk.dynalink.CallSiteDescriptor
--dontwarn jdk.dynalink.DynamicLinker
--dontwarn jdk.dynalink.DynamicLinkerFactory
--dontwarn jdk.dynalink.NamedOperation
--dontwarn jdk.dynalink.Namespace
--dontwarn jdk.dynalink.NamespaceOperation
--dontwarn jdk.dynalink.Operation
--dontwarn jdk.dynalink.RelinkableCallSite
--dontwarn jdk.dynalink.StandardNamespace
--dontwarn jdk.dynalink.StandardOperation
--dontwarn jdk.dynalink.linker.GuardedInvocation
--dontwarn jdk.dynalink.linker.GuardingDynamicLinker
--dontwarn jdk.dynalink.linker.LinkRequest
--dontwarn jdk.dynalink.linker.LinkerServices
--dontwarn jdk.dynalink.linker.TypeBasedGuardingDynamicLinker
--dontwarn jdk.dynalink.linker.support.CompositeTypeBasedGuardingDynamicLinker
--dontwarn jdk.dynalink.linker.support.Guards
--dontwarn jdk.dynalink.support.ChainedCallSite
-
 -keepclassmembers class * {
     public <init> (org.json.JSONObject);
 }
