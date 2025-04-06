@@ -115,31 +115,8 @@ cn.hutool.core.util.**{*;}
 # StrResponse
 -keep class **.help.http.StrResponse{*;}
 
--dontwarn rx.**
--dontwarn okio.**
--dontwarn javax.annotation.**
--dontwarn org.apache.log4j.lf5.viewer.**
--dontnote org.apache.log4j.lf5.viewer.**
--dontwarn freemarker.**
--dontnote org.python.core.**
--dontwarn com.hwangjr.rxbus.**
--dontwarn okhttp3.**
--dontwarn org.conscrypt.**
--dontwarn org.commonmark.ext.gfm.**
-
--keep,allowobfuscation,allowshrinking class com.google.gson.** { *; }
--keep,allowobfuscation,allowshrinking class com.ke.gson.** { *; }
--keep,allowobfuscation,allowshrinking class * extends com.google.gson.reflect.TypeToken
--keep class okhttp3.**{*;}
--keep class okio.**{*;}
--keep class com.hwangjr.rxbus.**{*;}
--keep class org.conscrypt.**{*;}
--keep class me.grantland.widget.**{*;}
--keep class de.hdodenhof.circleimageview.**{*;}
--keep class tyrant.explosionfield.**{*;}
--keep class tyrantgit.explosionfield.**{*;}
--keep class freemarker.**{*;}
--keep class com.gyf.barlibrary.** {*;}
+-keep class !okhttp3.internal.**,okhttp3.**{*;}
+-keep class !okio.internal.**,okio.**{*;}
 
 # LiveEventBus
 -keepclassmembers class androidx.lifecycle.LiveData {
