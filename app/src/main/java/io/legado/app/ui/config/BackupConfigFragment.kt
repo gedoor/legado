@@ -2,7 +2,6 @@ package io.legado.app.ui.config
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.net.Uri
 import android.os.Bundle
 import android.text.InputType
 import android.view.Menu
@@ -10,7 +9,6 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import androidx.core.view.MenuProvider
-import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.EditTextPreference
@@ -37,6 +35,7 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.file.HandleFileContract
 import io.legado.app.ui.widget.dialog.WaitDialog
+import io.legado.app.utils.FileDoc
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.checkWrite
 import io.legado.app.utils.getPrefString
@@ -47,7 +46,7 @@ import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.showHelp
 import io.legado.app.utils.toEditable
 import io.legado.app.utils.toastOnUi
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.ensureActive
@@ -193,21 +192,21 @@ class BackupConfigFragment : PreferenceFragment(),
                 if (value.isNullOrBlank()) {
                     preference.summary = getString(R.string.web_dav_url_s)
                 } else {
-                    preference.summary = value.toString()
+                    preference.summary = value
                 }
 
             PreferKey.webDavAccount ->
                 if (value.isNullOrBlank()) {
                     preference.summary = getString(R.string.web_dav_account_s)
                 } else {
-                    preference.summary = value.toString()
+                    preference.summary = value
                 }
 
             PreferKey.webDavPassword ->
                 if (value.isNullOrEmpty()) {
                     preference.summary = getString(R.string.web_dav_pw_s)
                 } else {
-                    preference.summary = "*".repeat(value.toString().length)
+                    preference.summary = "*".repeat(value.length)
                 }
 
             PreferKey.webDavDir -> preference.summary = when (value) {
@@ -262,12 +261,15 @@ class BackupConfigFragment : PreferenceFragment(),
             backupDir.launch()
         } else {
             if (backupPath.isContentScheme()) {
-                val uri = Uri.parse(backupPath)
-                val doc = DocumentFile.fromTreeUri(requireContext(), uri)
-                if (doc?.checkWrite() == true) {
-                    backup(backupPath)
-                } else {
-                    backupDir.launch()
+                lifecycleScope.launch {
+                    val canWrite = withContext(IO) {
+                        FileDoc.fromDir(backupPath).checkWrite()
+                    }
+                    if (canWrite) {
+                        backup(backupPath)
+                    } else {
+                        backupDir.launch()
+                    }
                 }
             } else {
                 backupUsePermission(backupPath)
@@ -340,9 +342,9 @@ class BackupConfigFragment : PreferenceFragment(),
     }
 
     private suspend fun showRestoreDialog(context: Context) {
-        val names = withContext(Dispatchers.IO) { AppWebDav.getBackupNames() }
+        val names = withContext(IO) { AppWebDav.getBackupNames() }
         if (AppWebDav.isJianGuoYun && names.size > 700) {
-            context.toastOnUi("由于坚果云限制，部分备份可能未显示")
+            context.toastOnUi("由于坚果云限制列出文件数量，部分备份可能未显示，请及时清理旧备份")
         }
         if (names.isNotEmpty()) {
             coroutineContext.ensureActive()

@@ -322,12 +322,16 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
 
     override fun export(position: Int) {
         val path = ACache.get().getAsString(exportBookPathKey)
-        if (path.isNullOrEmpty() || !FileDoc.fromDir(path).checkWrite()) {
-            selectExportFolder(position)
-        } else if (enableCustomExport()) {// 启用自定义导出 and 导出类型为Epub
-            configExportSection(path, position)
-        } else {
-            startExport(path, position)
+        lifecycleScope.launch {
+            if (path.isNullOrEmpty() ||
+                withContext(IO) { !FileDoc.fromDir(path).checkWrite() }
+            ) {
+                selectExportFolder(position)
+            } else if (enableCustomExport()) {// 启用自定义导出 and 导出类型为Epub
+                configExportSection(path, position)
+            } else {
+                startExport(path, position)
+            }
         }
     }
 

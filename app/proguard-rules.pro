@@ -151,6 +151,11 @@ cn.hutool.core.util.**{*;}
     *** putIfAbsent(...);
 }
 
+## ChangeBookSourceDialog initNavigationView
+-keepclassmembers class androidx.appcompat.widget.Toolbar {
+    *** mNavButtonView;
+}
+
 ## JSOUP
 -keep class org.jsoup.**{*;}
 -keep class **.xpath.**{*;}
