@@ -58,35 +58,10 @@
 # 屏蔽错误Unresolved class name
 #noinspection ShrinkerUnresolvedReference
 
-# 保留本地native方法不被混淆
--keepclasseswithmembernames class * {
-    native <methods>;
-}
-
-# 保留在Activity中的方法参数是view的方法，
-# 这样以来我们在layout中写的onClick就不会被影响
--keepclassmembers class * extends android.app.Activity{
-    public void *(android.view.View);
-}
-
 # 保留枚举类不被混淆
 -keepclassmembers enum * {
     public static **[] values();
     public static ** valueOf(java.lang.String);
-}
-
-# 保留我们自定义控件（继承自View）不被混淆
--keep public class * extends android.view.View{
-    *** get*();
-    void set*(***);
-    public <init>(android.content.Context);
-    public <init>(android.content.Context, android.util.AttributeSet);
-    public <init>(android.content.Context, android.util.AttributeSet, int);
-}
-
-# 保留Parcelable序列化类不被混淆
--keep class * implements android.os.Parcelable {
-    public static final android.os.Parcelable$Creator *;
 }
 
 # 保留Serializable序列化的类不被混淆
@@ -106,13 +81,6 @@
 -keepclassmembers class * {
     void *(**On*Event);
     void *(**On*Listener);
-}
-
-# webView处理，项目中没有使用到webView忽略即可
--keepclassmembers class * extends android.webkit.WebViewClient {
-    public void *(android.webkit.WebView, java.lang.String);
-    public void *(android.webkit.WebView, java.lang.String, android.graphics.Bitmap);
-    public boolean *(android.webkit.WebView, java.lang.String);
 }
 
 # 移除Log类打印各个等级日志的代码，打正式包的时候可以做为禁log使用，这里可以作为禁止log打印的功能使用
@@ -174,11 +142,11 @@ cn.hutool.core.util.**{*;}
 -keep class com.gyf.barlibrary.** {*;}
 
 # LiveEventBus
--keep class androidx.lifecycle.LiveData {
+-keepclassmembers class androidx.lifecycle.LiveData {
     *** mObservers;
     *** mActiveCount;
 }
--keep class androidx.arch.core.internal.SafeIterableMap {
+-keepclassmembers class androidx.arch.core.internal.SafeIterableMap {
     *** size();
     *** putIfAbsent(...);
 }
