@@ -48,6 +48,7 @@
 # 这个过滤器是谷歌推荐的算法，一般不做更改
 -optimizations !code/simplification/cast,!field/*,!class/merging/*
 
+-repackageclasses
 
 #############################################
 #
@@ -193,13 +194,11 @@ cn.hutool.core.**{*;}
 -dontwarn com.hwangjr.rxbus.**
 -dontwarn okhttp3.**
 -dontwarn org.conscrypt.**
--dontwarn com.jeremyliao.liveeventbus.**
 -dontwarn org.commonmark.ext.gfm.**
 
 -keep,allowobfuscation,allowshrinking class com.google.gson.** { *; }
 -keep,allowobfuscation,allowshrinking class com.ke.gson.** { *; }
 -keep,allowobfuscation,allowshrinking class * extends com.google.gson.reflect.TypeToken
--keep class com.jeremyliao.liveeventbus.** { *; }
 -keep class okhttp3.**{*;}
 -keep class okio.**{*;}
 -keep class com.hwangjr.rxbus.**{*;}
@@ -210,6 +209,16 @@ cn.hutool.core.**{*;}
 -keep class tyrantgit.explosionfield.**{*;}
 -keep class freemarker.**{*;}
 -keep class com.gyf.barlibrary.** {*;}
+
+# LiveEventBus
+-keep class androidx.lifecycle.LiveData {
+    *** mObservers;
+    *** mActiveCount;
+}
+-keep class androidx.arch.core.internal.SafeIterableMap {
+    *** size();
+    *** putIfAbsent(...);
+}
 
 ## JSOUP
 -keep class org.jsoup.**{*;}
