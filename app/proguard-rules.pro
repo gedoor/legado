@@ -244,12 +244,12 @@ cn.hutool.core.**{*;}
 -dontwarn sun.reflect.**
 
 ## Rhino
--keep class com.script.** { *; }
--keep class javax.script.** { *; }
--keep class java.lang.** { *; }
--keep class java.util.function.** { *; }
--keep class com.sun.script.javascript.** { *; }
--keep class org.mozilla.** { *; }
+-keep class
+!org.mozilla.javascript.ast.**,
+!org.mozilla.javascript.commonjs.**,
+!org.mozilla.javascript.optimizer.**,
+!org.mozilla.javascript.serialize.**,
+org.mozilla.javascript.** { *; }
 -dontwarn org.mozilla.javascript.engine.RhinoScriptEngineFactory
 ### 以下内容是更新rhino1.7.14.jar后IDE提示添加的
 -dontwarn java.beans.**
