@@ -158,26 +158,7 @@ cn.hutool.core.util.**{*;}
 
 ## JSOUP
 -keep class org.jsoup.**{*;}
--keep class **.xpath.**{*;}
 -dontwarn org.jspecify.annotations.NullMarked
-
--keep class org.slf4j.**{*;}
--dontwarn org.slf4j.**
-
--keep class org.codehaus.**{*;}
--dontwarn org.codehaus.**
--keep class com.jayway.**{*;}
--dontwarn com.jayway.**
--keep class com.fasterxml.**{*;}
-
--keep class javax.swing.**{*;}
--dontwarn javax.swing.**
--keep class java.awt.**{*;}
--dontwarn java.awt.**
--keep class sun.misc.**{*;}
--dontwarn sun.misc.**
--keep class sun.reflect.**{*;}
--dontwarn sun.reflect.**
 
 -keepclassmembers class * {
     public <init> (org.json.JSONObject);
@@ -209,6 +190,6 @@ cn.hutool.core.util.**{*;}
 -keep class io.legado.app.help.update.AppUpdateGitHub{*;}
 -keep class io.legado.app.help.AppIntentType{*;}
 # Error Exception 
--keep class * extends java.lang.Exception
--keep class * extends java.lang.Error
--keep class **Exception
+-keepnames class * extends java.lang.Exception
+-keepnames class * extends java.lang.Error
+-keepnames class **Exception
