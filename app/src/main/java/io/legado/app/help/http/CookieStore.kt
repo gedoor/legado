@@ -3,6 +3,7 @@
 package io.legado.app.help.http
 
 import android.text.TextUtils
+import androidx.annotation.Keep
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern.equalsRegex
 import io.legado.app.constant.AppPattern.semicolonRegex
@@ -15,6 +16,7 @@ import io.legado.app.help.http.api.CookieManagerInterface
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.removeCookie
 
+@Keep
 object CookieStore : CookieManagerInterface {
 
     /**

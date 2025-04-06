@@ -12,6 +12,7 @@ import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern
 import io.legado.app.data.entities.BaseSource
 import io.legado.app.exception.NoStackTraceException
+import io.legado.app.help.config.AppConfig
 import io.legado.app.help.http.BackstageWebView
 import io.legado.app.help.http.CookieManager.cookieJarHeader
 import io.legado.app.help.http.CookieStore
@@ -41,6 +42,7 @@ import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.isContentScheme
 import io.legado.app.utils.isUri
 import io.legado.app.utils.longToastOnUi
+import io.legado.app.utils.mapParallel
 import io.legado.app.utils.readBytes
 import io.legado.app.utils.readText
 import io.legado.app.utils.stackTraceStr
@@ -48,7 +50,9 @@ import io.legado.app.utils.startActivity
 import io.legado.app.utils.toStringArray
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import okio.use
 import org.jsoup.Connection
@@ -114,19 +118,12 @@ interface JsExtensions : JsEncodeUtils {
     /**
      * 并发访问网络
      */
-    fun ajaxAll(urlList: Array<String>): Array<StrResponse?> {
+    fun ajaxAll(urlList: Array<String>): Array<StrResponse> {
         return runBlocking(context) {
-            val asyncArray = Array(urlList.size) {
-                async(IO) {
-                    val url = urlList[it]
-                    val analyzeUrl = AnalyzeUrl(url, source = getSource())
-                    analyzeUrl.getStrResponseAwait()
-                }
-            }
-            val resArray = Array<StrResponse?>(urlList.size) {
-                asyncArray[it].await()
-            }
-            resArray
+            urlList.asFlow().mapParallel(AppConfig.threadCount) { url ->
+                val analyzeUrl = AnalyzeUrl(url, source = getSource())
+                analyzeUrl.getStrResponseAwait()
+            }.flowOn(IO).toList().toTypedArray()
         }
     }
 

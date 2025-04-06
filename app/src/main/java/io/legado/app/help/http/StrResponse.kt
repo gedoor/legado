@@ -1,11 +1,17 @@
 package io.legado.app.help.http
 
-import okhttp3.*
+import androidx.annotation.Keep
+import okhttp3.Headers
+import okhttp3.Protocol
+import okhttp3.Request
+import okhttp3.Response
 import okhttp3.Response.Builder
+import okhttp3.ResponseBody
 
 /**
  * An HTTP response.
  */
+@Keep
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 class StrResponse {
     var raw: Response

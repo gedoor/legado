@@ -1,5 +1,6 @@
 package io.legado.app.help
 
+import androidx.annotation.Keep
 import androidx.collection.LruCache
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Cache
@@ -7,6 +8,7 @@ import io.legado.app.model.analyzeRule.QueryTTF
 import io.legado.app.utils.ACache
 import io.legado.app.utils.memorySize
 
+@Keep
 @Suppress("unused")
 object CacheManager {
 

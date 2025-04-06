@@ -146,36 +146,13 @@
 -keep class **.data.entities.**{*;}
 # hutool-core hutool-crypto
 -keep class
-!cn.hutool.core.io.**,
-!cn.hutool.core.img.**,
-!cn.hutool.core.map.**,
-!cn.hutool.core.date.**,
-!cn.hutool.core.bean.**,
-!cn.hutool.core.text.**,
-!cn.hutool.core.swing.**,
-!cn.hutool.core.clone.**,
-!cn.hutool.core.thread.**,
-!cn.hutool.core.stream.**,
-!cn.hutool.core.builder.**,
-!cn.hutool.core.convert.**,
-!cn.hutool.core.compiler.**,
-!cn.hutool.core.annotation.**,
-!cn.hutool.core.comparator.**,
-!cn.hutool.core.lang.ansi.**,
-!cn.hutool.core.lang.reflect.**,
-!cn.hutool.core.lang.intern.**,
-!cn.hutool.core.lang.loader.**,
-!cn.hutool.core.lang.mutable.**,
-!cn.hutool.core.lang.tree.**,
-!cn.hutool.core.lang.JarClassLoader,
-!cn.hutool.core.lang.ResourceClassLoader,
-!cn.hutool.core.lang.Singleton,
 !cn.hutool.core.util.RuntimeUtil,
 !cn.hutool.core.util.ClassLoaderUtil,
 !cn.hutool.core.util.ReflectUtil,
 !cn.hutool.core.util.SerializeUtil,
 !cn.hutool.core.util.ClassUtil,
-cn.hutool.core.**{*;}
+cn.hutool.core.codec.**,
+cn.hutool.core.util.**{*;}
 -keep class cn.hutool.crypto.**{*;}
 -dontwarn cn.hutool.**
 # 缓存 Cookie

@@ -13,7 +13,6 @@ import okhttp3.Cookie
 import okhttp3.CookieJar
 import okhttp3.Credentials
 import okhttp3.HttpUrl
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import java.net.InetSocketAddress
 import java.net.Proxy
@@ -68,7 +67,7 @@ val okHttpClient: OkHttpClient by lazy {
         .followRedirects(true)
         .followSslRedirects(true)
         .addInterceptor(OkHttpExceptionInterceptor)
-        .addInterceptor(Interceptor { chain ->
+        .addInterceptor { chain ->
             val request = chain.request()
             val builder = request.newBuilder()
             if (request.header(AppConst.UA_NAME) == null) {
@@ -80,7 +79,7 @@ val okHttpClient: OkHttpClient by lazy {
             builder.addHeader("Connection", "Keep-Alive")
             builder.addHeader("Cache-Control", "no-cache")
             chain.proceed(builder.build())
-        })
+        }
         .addNetworkInterceptor { chain ->
             var request = chain.request()
             val enableCookieJar = request.header(cookieJarHeader) != null
