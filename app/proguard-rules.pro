@@ -115,6 +115,8 @@ cn.hutool.core.util.**{*;}
 # StrResponse
 -keep class **.help.http.StrResponse{*;}
 
+-dontwarn org.commonmark.ext.gfm.**
+
 -keep class !okhttp3.internal.**,okhttp3.**{*;}
 -keep class !okio.internal.**,okio.**{*;}
 
