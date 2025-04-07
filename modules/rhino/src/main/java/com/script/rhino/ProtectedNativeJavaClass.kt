@@ -38,7 +38,7 @@ class ProtectedNativeJavaClass(
     }
 
     override fun unwrap(): Any? {
-        return null
+        return javaObject.toString()
     }
 
 }
