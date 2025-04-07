@@ -176,7 +176,6 @@ dependencies {
     implementation(libs.kotlin.stdlib)
     //Kotlin反射
     //noinspection GradleDependency,DifferentStdlibGradleVersion
-    implementation(libs.kotlin.reflect)
     //implementation(libs.kotlin.reflect)
 
 

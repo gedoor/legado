@@ -42,7 +42,7 @@ import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.isContentScheme
 import io.legado.app.utils.isUri
 import io.legado.app.utils.longToastOnUi
-import io.legado.app.utils.mapParallel
+import io.legado.app.utils.mapAsync
 import io.legado.app.utils.readBytes
 import io.legado.app.utils.readText
 import io.legado.app.utils.stackTraceStr
@@ -120,7 +120,7 @@ interface JsExtensions : JsEncodeUtils {
      */
     fun ajaxAll(urlList: Array<String>): Array<StrResponse> {
         return runBlocking(context) {
-            urlList.asFlow().mapParallel(AppConfig.threadCount) { url ->
+            urlList.asFlow().mapAsync(AppConfig.threadCount) { url ->
                 val analyzeUrl = AnalyzeUrl(url, source = getSource())
                 analyzeUrl.getStrResponseAwait()
             }.flowOn(IO).toList().toTypedArray()
