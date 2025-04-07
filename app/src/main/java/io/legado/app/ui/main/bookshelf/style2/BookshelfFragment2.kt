@@ -27,7 +27,12 @@ import io.legado.app.ui.book.manga.ReadMangaActivity
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.main.bookshelf.BaseBookshelfFragment
-import io.legado.app.utils.*
+import io.legado.app.utils.cnCompare
+import io.legado.app.utils.observeEvent
+import io.legado.app.utils.setEdgeEffectColor
+import io.legado.app.utils.showDialogFragment
+import io.legado.app.utils.startActivity
+import io.legado.app.utils.startReadOrMangaActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -134,7 +139,7 @@ class BookshelfFragment2() : BaseBookshelfFragment(R.layout.fragment_bookshelf2)
             }
         }
         booksFlowJob?.cancel()
-        booksFlowJob = lifecycleScope.launch {
+        booksFlowJob = viewLifecycleOwner.lifecycleScope.launch {
             appDb.bookDao.flowByGroup(groupId).map { list ->
                 //排序
                 when (AppConfig.getBookSortByGroupId(groupId)) {
@@ -161,12 +166,10 @@ class BookshelfFragment2() : BaseBookshelfFragment(R.layout.fragment_bookshelf2)
             }.flowOn(Dispatchers.Default).catch {
                 AppLog.put("书架更新出错", it)
             }.conflate().collect { list ->
-                if (isAdded) {
-                    books = list
-                    booksAdapter.notifyDataSetChanged()
-                    binding.tvEmptyMsg.isGone = getItemCount() > 0
-                    delay(100)
-                }
+                books = list
+                booksAdapter.notifyDataSetChanged()
+                binding.tvEmptyMsg.isGone = getItemCount() > 0
+                delay(100)
             }
         }
     }
@@ -204,10 +207,12 @@ class BookshelfFragment2() : BaseBookshelfFragment(R.layout.fragment_bookshelf2)
                     startActivity<AudioPlayActivity> {
                         putExtra("bookUrl", item.bookUrl)
                     }
-                else -> startReadOrMangaActivity<ReadBookActivity,ReadMangaActivity>(item) {
+
+                else -> startReadOrMangaActivity<ReadBookActivity, ReadMangaActivity>(item) {
                     putExtra("bookUrl", item.bookUrl)
                 }
             }
+
             is BookGroup -> {
                 groupId = item.groupId
                 initBooksData()
@@ -221,6 +226,7 @@ class BookshelfFragment2() : BaseBookshelfFragment(R.layout.fragment_bookshelf2)
                 putExtra("name", item.name)
                 putExtra("author", item.author)
             }
+
             is BookGroup -> showDialogFragment(GroupEditDialog(item))
         }
     }

@@ -1,6 +1,7 @@
 package io.legado.app.help.glide
 
 import android.content.Context
+import android.util.Log
 import com.bumptech.glide.Glide
 import com.bumptech.glide.GlideBuilder
 import com.bumptech.glide.Registry
@@ -9,6 +10,8 @@ import com.bumptech.glide.load.engine.cache.InternalCacheDiskCacheFactory
 import com.bumptech.glide.load.engine.cache.MemorySizeCalculator
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.module.AppGlideModule
+import io.legado.app.BuildConfig
+import io.legado.app.help.config.AppConfig
 import java.io.InputStream
 
 
@@ -36,5 +39,8 @@ class LegadoGlideModule : AppGlideModule() {
         builder.setMemorySizeCalculator(calculator)
         builder.setBitmapPool(bitmapPool)
         builder.setDiskCache(InternalCacheDiskCacheFactory(context, 1024 * 1024 * 1000))
+        if (!BuildConfig.DEBUG && !AppConfig.recordLog) {
+            builder.setLogLevel(Log.ERROR)
+        }
     }
 }
