@@ -37,9 +37,7 @@ import org.mozilla.javascript.RhinoException
 import org.mozilla.javascript.Script
 import org.mozilla.javascript.Scriptable
 import java.io.IOException
-import kotlin.coroutines.Continuation
 import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn
 
 /**
  * Represents compiled JavaScript code.
@@ -102,11 +100,8 @@ internal class RhinoCompiledScript(
                     while (true) {
                         try {
                             @Suppress("UNCHECKED_CAST")
-                            val suspendFunction =
-                                pending.applicationState as Function1<Continuation<Any?>, Any?>
-                            val functionResult = suspendCoroutineUninterceptedOrReturn { cout ->
-                                suspendFunction.invoke(cout)
-                            }
+                            val suspendFunction = pending.applicationState as suspend () -> Any?
+                            val functionResult = suspendFunction()
                             val continuation = pending.continuation
                             ret = cx.resumeContinuation(continuation, scope, functionResult)
                             break

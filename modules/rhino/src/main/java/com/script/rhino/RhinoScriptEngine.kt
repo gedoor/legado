@@ -57,9 +57,7 @@ import java.security.AccessControlException
 import java.security.AccessController
 import java.security.AllPermission
 import java.security.PrivilegedAction
-import kotlin.coroutines.Continuation
 import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn
 
 /**
  * Implementation of `ScriptEngine` using the Mozilla Rhino
@@ -145,11 +143,8 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
                     while (true) {
                         try {
                             @Suppress("UNCHECKED_CAST")
-                            val suspendFunction =
-                                pending.applicationState as Function1<Continuation<Any?>, Any?>
-                            val functionResult = suspendCoroutineUninterceptedOrReturn { cout ->
-                                suspendFunction.invoke(cout)
-                            }
+                            val suspendFunction = pending.applicationState as suspend () -> Any?
+                            val functionResult = suspendFunction()
                             val continuation = pending.continuation
                             ret = cx.resumeContinuation(continuation, scope, functionResult)
                             break
