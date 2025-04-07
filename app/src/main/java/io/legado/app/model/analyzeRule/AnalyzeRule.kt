@@ -64,6 +64,7 @@ class AnalyzeRule(
     private var analyzeByJSonPath: AnalyzeByJSonPath? = null
 
     private val stringRuleCache = hashMapOf<String, List<SourceRule>>()
+    private val regexCache = hashMapOf<String, Regex?>()
 
     private var coroutineContext: CoroutineContext = EmptyCoroutineContext
 
@@ -413,29 +414,48 @@ class AnalyzeRule(
      */
     private fun replaceRegex(result: String, rule: SourceRule): String {
         if (rule.replaceRegex.isEmpty()) return result
-        var vResult = result
-        vResult = if (rule.replaceFirst) {
+        val replaceRegex = rule.replaceRegex
+        val replacement = rule.replacement
+        val regex = compileRegexCache(replaceRegex)
+        if (rule.replaceFirst) {
             /* ##match##replace### 获取第一个匹配到的结果并进行替换 */
-            kotlin.runCatching {
-                val pattern = Pattern.compile(rule.replaceRegex)
-                val matcher = pattern.matcher(vResult)
-                if (matcher.find()) {
-                    matcher.group(0)!!.replaceFirst(rule.replaceRegex.toRegex(), rule.replacement)
+            if (regex != null) kotlin.runCatching {
+                val pattern = regex.toPattern()
+                val matcher = pattern.matcher(result)
+                return if (matcher.find()) {
+                    matcher.group(0)!!.replaceFirst(regex, replacement)
                 } else {
                     ""
                 }
-            }.getOrElse {
-                rule.replacement
             }
+            return replacement
         } else {
             /* ##match##replace 替换*/
-            kotlin.runCatching {
-                vResult.replace(rule.replaceRegex.toRegex(), rule.replacement)
-            }.getOrElse {
-                vResult.replace(rule.replaceRegex, rule.replacement)
+            if (regex != null) kotlin.runCatching {
+                return result.replace(regex, replacement)
+            }
+            return result.replace(replaceRegex, replacement)
+        }
+    }
+
+    private fun compileRegexCache(regex: String): Regex? {
+        if (regexCache.size > 16) {
+            return try {
+                regex.toRegex()
+            } catch (e: Exception) {
+                null
             }
         }
-        return vResult
+        if (regexCache.containsKey(regex)) {
+            return regexCache[regex]
+        }
+        return regexCache.getOrPut(regex) {
+            try {
+                regex.toRegex()
+            } catch (e: Exception) {
+                null
+            }
+        }
     }
 
     /**
