@@ -64,7 +64,6 @@ class AnalyzeRule(
     private var analyzeByJSonPath: AnalyzeByJSonPath? = null
 
     private val stringRuleCache = hashMapOf<String, List<SourceRule>>()
-    private val regexCache = hashMapOf<String, Regex?>()
 
     private var coroutineContext: CoroutineContext = EmptyCoroutineContext
 
