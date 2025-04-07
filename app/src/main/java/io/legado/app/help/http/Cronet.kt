@@ -1,15 +1,13 @@
 package io.legado.app.help.http
 
+import io.legado.app.lib.cronet.CronetLoader
 import okhttp3.CookieJar
 import okhttp3.Interceptor
 
 object Cronet {
 
     val loader: LoaderInterface? by lazy {
-        kotlin.runCatching {
-            Class.forName("io.legado.app.lib.cronet.CronetLoader")
-                .kotlin.objectInstance as LoaderInterface
-        }.getOrNull()
+        CronetLoader
     }
 
     fun preDownload() {
