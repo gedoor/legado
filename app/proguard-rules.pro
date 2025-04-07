@@ -117,8 +117,9 @@ cn.hutool.core.util.**{*;}
 
 -dontwarn org.commonmark.ext.gfm.**
 
--keep class !okhttp3.internal.**,okhttp3.**{*;}
--keep class !okio.internal.**,okio.**{*;}
+-keep class okhttp3.*{*;}
+-keep class okio.*{*;}
+-keep class com.jayway.jsonpath.*{*;}
 
 # LiveEventBus
 -keepclassmembers class androidx.lifecycle.LiveData {
