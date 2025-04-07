@@ -2,6 +2,7 @@ package io.legado.app.model.analyzeRule
 
 import android.text.TextUtils
 import androidx.annotation.Keep
+import com.script.CompiledScript
 import com.script.buildScriptBindings
 import com.script.rhino.RhinoScriptEngine
 import io.legado.app.constant.AppPattern.JS_PATTERN
@@ -19,6 +20,7 @@ import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.GSON
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.fromJsonObject
+import io.legado.app.utils.getOrPutLimit
 import io.legado.app.utils.isJson
 import io.legado.app.utils.printOnDebug
 import io.legado.app.utils.splitNotBlank
@@ -65,6 +67,7 @@ class AnalyzeRule(
 
     private val stringRuleCache = hashMapOf<String, List<SourceRule>>()
     private val regexCache = hashMapOf<String, Regex?>()
+    private val scriptCache = hashMapOf<String, CompiledScript>()
 
     private var coroutineContext: CoroutineContext = EmptyCoroutineContext
 
@@ -439,17 +442,7 @@ class AnalyzeRule(
     }
 
     private fun compileRegexCache(regex: String): Regex? {
-        if (regexCache.size > 16) {
-            return try {
-                regex.toRegex()
-            } catch (e: Exception) {
-                null
-            }
-        }
-        if (regexCache.containsKey(regex)) {
-            return regexCache[regex]
-        }
-        return regexCache.getOrPut(regex) {
+        return regexCache.getOrPutLimit(regex, 16) {
             try {
                 regex.toRegex()
             } catch (e: Exception) {
@@ -769,7 +762,14 @@ class AnalyzeRule(
         source?.getShareScope(coroutineContext)?.let {
             scope.prototype = it
         }
-        return RhinoScriptEngine.eval(jsStr, scope, coroutineContext)
+        val script = compileScriptCache(jsStr)
+        return script.eval(scope, coroutineContext)
+    }
+
+    private fun compileScriptCache(jsStr: String): CompiledScript {
+        return scriptCache.getOrPutLimit(jsStr, 16) {
+            RhinoScriptEngine.compile(jsStr)
+        }
     }
 
     override fun getSource(): BaseSource? {
