@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
+import io.legado.app.constant.AppLog
 import io.legado.app.constant.EventBus
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
@@ -43,7 +44,6 @@ import io.legado.app.utils.getCompatDrawable
 import io.legado.app.utils.observeEvent
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.startActivity
-import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
@@ -185,7 +185,9 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
     private fun initNavigationView() {
         binding.toolBar.navigationIcon =
             getCompatDrawable(androidx.appcompat.R.drawable.abc_ic_ab_back_material)
-        binding.toolBar.setNavigationContentDescription(androidx.appcompat.R.string.abc_action_bar_up_description)
+        binding.toolBar.setNavigationContentDescription(
+            androidx.appcompat.R.string.abc_action_bar_up_description
+        )
         binding.toolBar.setNavigationOnClickListener {
             dismissAllowingStateLoss()
         }
@@ -239,7 +241,7 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
 
         lifecycleScope.launch {
             repeatOnLifecycle(STARTED) {
-                viewModel.finishedChangeSourceResult
+                viewModel.changeSourceProgress
                     .drop(1)
                     .collect { (count, name) ->
                         binding.tvDur.text =
@@ -387,14 +389,14 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
         waitDialog.setText(R.string.load_toc)
         waitDialog.show()
         val book = viewModel.bookMap[searchBook.primaryStr()] ?: searchBook.toBook()
-        val coroutine = viewModel.getToc(book, {
-            waitDialog.dismiss()
-            toastOnUi(it)
-        }) { toc, source ->
+        val coroutine = viewModel.getToc(book, { toc, source ->
             waitDialog.dismiss()
             callBack?.changeTo(source, book, toc)
             onSuccess?.invoke()
-        }
+        }, {
+            waitDialog.dismiss()
+            AppLog.put("换源获取目录出错\n$it", it, true)
+        })
         waitDialog.setOnCancelListener {
             coroutine.cancel()
         }

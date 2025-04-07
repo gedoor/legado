@@ -68,13 +68,13 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
     private var oldBook: Book? = null
     private var screenKey: String = ""
     private var bookSourceParts = arrayListOf<BookSourcePart>()
-    val totalSourceCount:Int
+    val totalSourceCount: Int
         get() = bookSourceParts.size
     private var searchBookList = arrayListOf<SearchBook>()
     private val searchBooks = Collections.synchronizedList(arrayListOf<SearchBook>())
     private val tocMap = ConcurrentHashMap<String, List<BookChapter>>()
-    private val _finishedChangeSourceResult = MutableStateFlow(0 to "")
-    val finishedChangeSourceResult= _finishedChangeSourceResult.asStateFlow()
+    private val _changeSourceProgress = MutableStateFlow(0 to "")
+    val changeSourceProgress = _changeSourceProgress.asStateFlow()
     private var tocMapChapterCount = 0
     private val contentProcessor by lazy {
         ContentProcessor.get(oldBook!!)
@@ -191,7 +191,7 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
             tocMap.clear()
             bookMap.clear()
             tocMapChapterCount = 0
-            _finishedChangeSourceResult.value = 0 to ""
+            _changeSourceProgress.value = 0 to ""
             val searchGroup = AppConfig.searchGroup
             if (searchGroup.isBlank()) {
                 bookSourceParts.addAll(appDb.bookSourceDao.allEnabledPart)
@@ -243,7 +243,7 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
                 }
                 it
             }.onEachIndexed { index, value ->
-                _finishedChangeSourceResult.update { _ ->
+                _changeSourceProgress.update { _ ->
                     index + 1 to value.bookSourceName
                 }
             }.onCompletion {
@@ -446,8 +446,8 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
 
     fun getToc(
         book: Book,
-        onError: (msg: String) -> Unit,
-        onSuccess: (toc: List<BookChapter>, source: BookSource) -> Unit
+        onSuccess: (toc: List<BookChapter>, source: BookSource) -> Unit,
+        onError: (e: Throwable) -> Unit
     ): Coroutine<Pair<List<BookChapter>, BookSource>> {
         return execute {
             val toc = tocMap[book.primaryStr()]
@@ -461,7 +461,7 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
         }.onSuccess {
             onSuccess.invoke(it.first, it.second)
         }.onError {
-            onError.invoke(it.localizedMessage ?: "获取目录出错")
+            onError.invoke(it)
         }
     }
 
