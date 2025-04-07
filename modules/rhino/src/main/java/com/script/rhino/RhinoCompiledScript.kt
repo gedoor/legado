@@ -89,9 +89,11 @@ internal class RhinoCompiledScript(
     }
 
     override suspend fun evalSuspend(scope: Scriptable): Any? {
-        val cx = Context.enter()
+        val cx = Context.enter() as RhinoContext
         var ret: Any?
         withContext(VMBridgeReflect.contextLocal.asContextElement()) {
+            cx.allowScriptRun = true
+            cx.recursiveCount++
             try {
                 try {
                     ret = cx.executeScriptWithContinuations(script, scope)
@@ -126,6 +128,8 @@ internal class RhinoCompiledScript(
             } catch (var14: IOException) {
                 throw ScriptException(var14)
             } finally {
+                cx.allowScriptRun = false
+                cx.recursiveCount--
                 Context.exit()
             }
         }
