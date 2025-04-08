@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isGone
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.EventBus
+import io.legado.app.data.AppDatabase
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
@@ -28,6 +30,7 @@ import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.main.bookshelf.BaseBookshelfFragment
 import io.legado.app.utils.cnCompare
+import io.legado.app.utils.flowWithLifecycleAndDatabaseChangeFirst
 import io.legado.app.utils.observeEvent
 import io.legado.app.utils.setEdgeEffectColor
 import io.legado.app.utils.showDialogFragment
@@ -70,6 +73,7 @@ class BookshelfFragment2() : BaseBookshelfFragment(R.layout.fragment_bookshelf2)
     private var booksFlowJob: Job? = null
     override var groupId = BookGroup.IdRoot
     override var books: List<Book> = emptyList()
+    private var enableRefresh = true
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         setSupportToolbar(binding.titleBar.toolbar)
@@ -90,6 +94,7 @@ class BookshelfFragment2() : BaseBookshelfFragment(R.layout.fragment_bookshelf2)
         } else {
             binding.rvBookshelf.layoutManager = GridLayoutManager(context, bookshelfLayout + 2)
         }
+        binding.rvBookshelf.itemAnimator = null
         binding.rvBookshelf.adapter = booksAdapter
         booksAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
@@ -110,12 +115,12 @@ class BookshelfFragment2() : BaseBookshelfFragment(R.layout.fragment_bookshelf2)
         })
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     override fun upGroup(data: List<BookGroup>) {
         if (data != bookGroups) {
             bookGroups = data
-            booksAdapter.notifyDataSetChanged()
+            booksAdapter.updateItems()
             binding.tvEmptyMsg.isGone = getItemCount() > 0
+            binding.refreshLayout.isEnabled = enableRefresh && getItemCount() > 0
         }
     }
 
@@ -123,12 +128,12 @@ class BookshelfFragment2() : BaseBookshelfFragment(R.layout.fragment_bookshelf2)
         initBooksData()
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     private fun initBooksData() {
-        if (groupId == -100L) {
+        if (groupId == BookGroup.IdRoot) {
             if (isAdded) {
                 binding.titleBar.title = getString(R.string.bookshelf)
                 binding.refreshLayout.isEnabled = true
+                enableRefresh = true
             }
         } else {
             bookGroups.firstOrNull {
@@ -136,6 +141,7 @@ class BookshelfFragment2() : BaseBookshelfFragment(R.layout.fragment_bookshelf2)
             }?.let {
                 binding.titleBar.title = "${getString(R.string.bookshelf)}(${it.groupName})"
                 binding.refreshLayout.isEnabled = it.enableRefresh
+                enableRefresh = it.enableRefresh
             }
         }
         booksFlowJob?.cancel()
@@ -163,20 +169,25 @@ class BookshelfFragment2() : BaseBookshelfFragment(R.layout.fragment_bookshelf2)
                         it.durChapterTime
                     }
                 }
-            }.flowOn(Dispatchers.Default).catch {
+            }.flowWithLifecycleAndDatabaseChangeFirst(
+                viewLifecycleOwner.lifecycle,
+                Lifecycle.State.RESUMED,
+                AppDatabase.BOOK_TABLE_NAME
+            ).catch {
                 AppLog.put("书架更新出错", it)
-            }.conflate().collect { list ->
+            }.conflate().flowOn(Dispatchers.Default).collect { list ->
                 books = list
-                booksAdapter.notifyDataSetChanged()
+                booksAdapter.updateItems()
                 binding.tvEmptyMsg.isGone = getItemCount() > 0
+                binding.refreshLayout.isEnabled = enableRefresh && getItemCount() > 0
                 delay(100)
             }
         }
     }
 
     fun back(): Boolean {
-        if (groupId != -100L) {
-            groupId = -100L
+        if (groupId != BookGroup.IdRoot) {
+            groupId = BookGroup.IdRoot
             initBooksData()
             return true
         }
@@ -201,7 +212,7 @@ class BookshelfFragment2() : BaseBookshelfFragment(R.layout.fragment_bookshelf2)
     }
 
     override fun onItemClick(position: Int) {
-        when (val item = getItem(position)) {
+        when (val item = booksAdapter.getItem(position)) {
             is Book -> when {
                 item.isAudio ->
                     startActivity<AudioPlayActivity> {
@@ -221,7 +232,7 @@ class BookshelfFragment2() : BaseBookshelfFragment(R.layout.fragment_bookshelf2)
     }
 
     override fun onItemLongClick(position: Int) {
-        when (val item = getItem(position)) {
+        when (val item = booksAdapter.getItem(position)) {
             is Book -> startActivity<BookInfoActivity> {
                 putExtra("name", item.name)
                 putExtra("author", item.author)
@@ -235,7 +246,7 @@ class BookshelfFragment2() : BaseBookshelfFragment(R.layout.fragment_bookshelf2)
         return activityViewModel.isUpdate(bookUrl)
     }
 
-    override fun getItemCount(): Int {
+    fun getItemCount(): Int {
         return if (groupId == BookGroup.IdRoot) {
             bookGroups.size + books.size
         } else {
@@ -253,14 +264,11 @@ class BookshelfFragment2() : BaseBookshelfFragment(R.layout.fragment_bookshelf2)
         return 0
     }
 
-    override fun getItem(position: Int): Any? {
+    override fun getItems(): List<Any> {
         if (groupId != BookGroup.IdRoot) {
-            return books.getOrNull(position)
+            return books
         }
-        if (position < bookGroups.size) {
-            return bookGroups[position]
-        }
-        return books.getOrNull(position - bookGroups.size)
+        return bookGroups + books
     }
 
     @SuppressLint("NotifyDataSetChanged")

@@ -204,7 +204,7 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
 
     private fun startLastUpdateTimeJob() {
         upLastUpdateTimeJob?.cancel()
-        if (!AppConfig.showLastUpdateTime) {
+        if (!AppConfig.showLastUpdateTime || bookshelfLayout != 0) {
             return
         }
         upLastUpdateTimeJob = lifecycleScope.launch {
