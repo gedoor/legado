@@ -78,6 +78,7 @@ cn.hutool.core.util.**{*;}
 # StrResponse
 -keep class **.help.http.StrResponse{*;}
 
+# markwon
 -dontwarn org.commonmark.ext.gfm.**
 
 -keep class okhttp3.*{*;}
@@ -107,14 +108,6 @@ cn.hutool.core.util.**{*;}
 ## JSOUP
 -keep class org.jsoup.**{*;}
 -dontwarn org.jspecify.annotations.NullMarked
-
--keepclassmembers class * {
-    public <init> (org.json.JSONObject);
-}
--keepclassmembers enum * {
-    public static **[] values();
-    public static ** valueOf(java.lang.String);
-}
 
 ## ExoPlayer 反射设置ua 保证该私有变量不被混淆
 -keepclassmembers class androidx.media3.datasource.cache.CacheDataSource$Factory {
