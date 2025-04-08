@@ -41,9 +41,6 @@
 # 避免混淆泛型
 -keepattributes Signature
 
-# 抛出异常时保留代码行号
--keepattributes SourceFile,LineNumberTable
-
 # 指定混淆是采用的算法，后面的参数是一个过滤器
 # 这个过滤器是谷歌推荐的算法，一般不做更改
 -optimizations !code/simplification/cast,!field/*,!class/merging/*
@@ -135,6 +132,11 @@ cn.hutool.core.util.**{*;}
 -keepclassmembers class androidx.appcompat.widget.Toolbar {
     *** mNavButtonView;
 }
+
+# JsoupXpath
+-keep,allowobfuscation class * implements org.seimicrawler.xpath.core.AxisSelector{*;}
+-keep,allowobfuscation class * implements org.seimicrawler.xpath.core.NodeTest{*;}
+-keep,allowobfuscation class * implements org.seimicrawler.xpath.core.Function{*;}
 
 ## JSOUP
 -keep class org.jsoup.**{*;}
