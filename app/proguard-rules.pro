@@ -125,7 +125,6 @@ cn.hutool.core.util.**{*;}
     *** sTestTrustManager;
 }
 
-# Error Exception
--keepnames class * extends java.lang.Exception
--keepnames class * extends java.lang.Error
--keepnames class **Exception
+# Throwable
+-keepnames class * extends java.lang.Throwable
+-keepclassmembernames,allowobfuscation class * extends java.lang.Throwable{*;}
