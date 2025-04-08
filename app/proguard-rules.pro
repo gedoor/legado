@@ -166,12 +166,7 @@ cn.hutool.core.util.**{*;}
     *** sTestTrustManager;
 }
 
-# Class.forName调用
--keep class io.legado.app.lib.cronet.CronetInterceptor{*;}
--keep class io.legado.app.lib.cronet.CronetLoader{*;}
--keep class io.legado.app.help.update.AppUpdateGitHub{*;}
--keep class io.legado.app.help.AppIntentType{*;}
-# Error Exception 
+# Error Exception
 -keepnames class * extends java.lang.Exception
 -keepnames class * extends java.lang.Error
 -keepnames class **Exception

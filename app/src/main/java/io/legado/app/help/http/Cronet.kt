@@ -1,7 +1,7 @@
 package io.legado.app.help.http
 
+import io.legado.app.lib.cronet.CronetInterceptor
 import io.legado.app.lib.cronet.CronetLoader
-import okhttp3.CookieJar
 import okhttp3.Interceptor
 
 object Cronet {
@@ -15,11 +15,7 @@ object Cronet {
     }
 
     val interceptor: Interceptor? by lazy {
-        kotlin.runCatching {
-            val iClass = Class.forName("io.legado.app.lib.cronet.CronetInterceptor")
-            iClass.getDeclaredConstructor(CookieJar::class.java)
-                .newInstance(cookieJar) as Interceptor
-        }.getOrNull()
+        CronetInterceptor(cookieJar)
     }
 
     interface LoaderInterface {
