@@ -125,7 +125,10 @@ abstract class BaseBooksAdapter<VH : RecyclerView.ViewHolder>(
     }
 
     override fun getItemViewType(position: Int): Int {
-        return callBack.getItemType(position)
+        if (getItem(position) is BookGroup) {
+            return 1
+        }
+        return 0
     }
 
     final override fun onBindViewHolder(holder: VH, position: Int) {}
@@ -135,7 +138,6 @@ abstract class BaseBooksAdapter<VH : RecyclerView.ViewHolder>(
         fun onItemClick(position: Int)
         fun onItemLongClick(position: Int)
         fun isUpdate(bookUrl: String): Boolean
-        fun getItemType(position: Int): Int
         fun getItems(): List<Any>
     }
 }

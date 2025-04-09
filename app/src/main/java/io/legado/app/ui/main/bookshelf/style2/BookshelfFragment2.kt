@@ -254,16 +254,6 @@ class BookshelfFragment2() : BaseBookshelfFragment(R.layout.fragment_bookshelf2)
         }
     }
 
-    override fun getItemType(position: Int): Int {
-        if (groupId != BookGroup.IdRoot) {
-            return 0
-        }
-        if (position < bookGroups.size) {
-            return 1
-        }
-        return 0
-    }
-
     override fun getItems(): List<Any> {
         if (groupId != BookGroup.IdRoot) {
             return books
