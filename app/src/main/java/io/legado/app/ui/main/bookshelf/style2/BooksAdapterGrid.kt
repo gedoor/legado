@@ -34,10 +34,12 @@ class BooksAdapterGrid(context: Context, callBack: CallBack) :
     ) {
         when (holder) {
             is BookViewHolder -> (getItem(position) as? Book)?.let {
+                holder.registerListener(position)
                 holder.onBind(it, position, payloads)
             }
 
             is GroupViewHolder -> (getItem(position) as? BookGroup)?.let {
+                holder.registerListener(position)
                 holder.onBind(it, position, payloads)
             }
         }
@@ -50,12 +52,6 @@ class BooksAdapterGrid(context: Context, callBack: CallBack) :
             tvName.text = item.name
             ivCover.load(item.getDisplayCover(), item.name, item.author, false, item.origin)
             upRefresh(this, item)
-            root.setOnClickListener {
-                callBack.onItemClick(position)
-            }
-            root.onLongClick {
-                callBack.onItemLongClick(position)
-            }
         }
 
         fun onBind(item: Book, position: Int, payloads: MutableList<Any>) = binding.run {
@@ -82,6 +78,15 @@ class BooksAdapterGrid(context: Context, callBack: CallBack) :
             }
         }
 
+        fun registerListener(position: Int) {
+            binding.root.setOnClickListener {
+                callBack.onItemClick(position)
+            }
+            binding.root.onLongClick {
+                callBack.onItemLongClick(position)
+            }
+        }
+
         private fun upRefresh(binding: ItemBookshelfGridBinding, item: Book) {
             if (!item.isLocal && callBack.isUpdate(item.bookUrl)) {
                 binding.bvUnread.invisible()
@@ -105,12 +110,6 @@ class BooksAdapterGrid(context: Context, callBack: CallBack) :
         fun onBind(item: BookGroup, position: Int) = binding.run {
             tvName.text = item.groupName
             ivCover.load(item.cover)
-            root.setOnClickListener {
-                callBack.onItemClick(position)
-            }
-            root.onLongClick {
-                callBack.onItemLongClick(position)
-            }
         }
 
         fun onBind(item: BookGroup, position: Int, payloads: MutableList<Any>) = binding.run {
@@ -126,6 +125,15 @@ class BooksAdapterGrid(context: Context, callBack: CallBack) :
                         }
                     }
                 }
+            }
+        }
+
+        fun registerListener(position: Int) {
+            binding.root.setOnClickListener {
+                callBack.onItemClick(position)
+            }
+            binding.root.onLongClick {
+                callBack.onItemLongClick(position)
             }
         }
 

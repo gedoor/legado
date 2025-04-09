@@ -95,7 +95,6 @@ abstract class BaseBooksAdapter<VH : RecyclerView.ViewHolder>(
             if (bundle.isEmpty) return null
             return bundle
         }
-
     }
 
     private val asyncListDiffer by lazy {
