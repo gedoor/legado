@@ -135,8 +135,8 @@ abstract class BaseBooksAdapter<VH : RecyclerView.ViewHolder>(
 
 
     interface CallBack {
-        fun onItemClick(position: Int)
-        fun onItemLongClick(position: Int)
+        fun onItemClick(item: Any)
+        fun onItemLongClick(item: Any)
         fun isUpdate(bookUrl: String): Boolean
         fun getItems(): List<Any>
     }

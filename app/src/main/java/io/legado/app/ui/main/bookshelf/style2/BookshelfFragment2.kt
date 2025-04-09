@@ -211,8 +211,8 @@ class BookshelfFragment2() : BaseBookshelfFragment(R.layout.fragment_bookshelf2)
         }
     }
 
-    override fun onItemClick(position: Int) {
-        when (val item = booksAdapter.getItem(position)) {
+    override fun onItemClick(item: Any) {
+        when (item) {
             is Book -> when {
                 item.isAudio ->
                     startActivity<AudioPlayActivity> {
@@ -231,8 +231,8 @@ class BookshelfFragment2() : BaseBookshelfFragment(R.layout.fragment_bookshelf2)
         }
     }
 
-    override fun onItemLongClick(position: Int) {
-        when (val item = booksAdapter.getItem(position)) {
+    override fun onItemLongClick(item: Any) {
+        when (item) {
             is Book -> startActivity<BookInfoActivity> {
                 putExtra("name", item.name)
                 putExtra("author", item.author)

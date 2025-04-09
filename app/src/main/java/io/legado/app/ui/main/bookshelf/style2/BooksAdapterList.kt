@@ -33,12 +33,12 @@ class BooksAdapterList(context: Context, callBack: CallBack) :
     ) {
         when (holder) {
             is BookViewHolder -> (getItem(position) as? Book)?.let {
-                holder.registerListener(position)
+                holder.registerListener(it)
                 holder.onBind(it, position, payloads)
             }
 
             is GroupViewHolder -> (getItem(position) as? BookGroup)?.let {
-                holder.registerListener(position)
+                holder.registerListener(it)
                 holder.onBind(it, position, payloads)
             }
         }
@@ -87,12 +87,12 @@ class BooksAdapterList(context: Context, callBack: CallBack) :
             }
         }
 
-        fun registerListener(position: Int) {
+        fun registerListener(item: Any) {
             binding.root.setOnClickListener {
-                callBack.onItemClick(position)
+                callBack.onItemClick(item)
             }
             binding.root.onLongClick {
-                callBack.onItemLongClick(position)
+                callBack.onItemLongClick(item)
             }
         }
 
@@ -144,12 +144,12 @@ class BooksAdapterList(context: Context, callBack: CallBack) :
             }
         }
 
-        fun registerListener(position: Int) {
+        fun registerListener(item: Any) {
             binding.root.setOnClickListener {
-                callBack.onItemClick(position)
+                callBack.onItemClick(item)
             }
             binding.root.onLongClick {
-                callBack.onItemLongClick(position)
+                callBack.onItemLongClick(item)
             }
         }
 
