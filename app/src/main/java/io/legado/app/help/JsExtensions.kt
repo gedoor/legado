@@ -333,8 +333,8 @@ interface JsExtensions : JsEncodeUtils {
      * @return 相对路径
      */
     @Deprecated(
-        "Depreted",
-        ReplaceWith("downloadFile(url: String)")
+        "Deprecated",
+        ReplaceWith("downloadFile(url)")
     )
     fun downloadFile(content: String, url: String): String {
         val type = AnalyzeUrl(url, source = getSource(), coroutineContext = context).type
@@ -560,7 +560,11 @@ interface JsExtensions : JsEncodeUtils {
         } else {
             cachePath + File.separator + path
         }
-        return File(aPath)
+        val file = File(aPath)
+        if (!file.canonicalPath.startsWith(cachePath)) {
+            throw SecurityException("非法路径")
+        }
+        return file
     }
 
     fun readFile(path: String): ByteArray? {
@@ -780,6 +784,10 @@ interface JsExtensions : JsEncodeUtils {
     /**
      * 解析字体Base64数据,返回字体解析类
      */
+    @Deprecated(
+        "Deprecated",
+        ReplaceWith("queryTTF(data)")
+    )
     fun queryBase64TTF(data: String?): QueryTTF? {
         log("queryBase64TTF(String)方法已过时,并将在未来删除；请无脑使用queryTTF(Any)替代，新方法支持传入 url、本地文件、base64、ByteArray 自动判断&自动缓存，特殊情况需禁用缓存请传入第二可选参数false:Boolean")
         return queryTTF(data)

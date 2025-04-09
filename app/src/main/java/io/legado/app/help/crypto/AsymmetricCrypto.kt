@@ -1,11 +1,13 @@
 package io.legado.app.help.crypto
 
+import androidx.annotation.Keep
 import cn.hutool.crypto.KeyUtil
 import cn.hutool.crypto.asymmetric.KeyType
 import io.legado.app.utils.EncoderUtils
 import java.io.InputStream
 import cn.hutool.crypto.asymmetric.AsymmetricCrypto as HutoolAsymmetricCrypto
 
+@Keep
 @Suppress("unused")
 class AsymmetricCrypto(algorithm: String) : HutoolAsymmetricCrypto(algorithm) {
 

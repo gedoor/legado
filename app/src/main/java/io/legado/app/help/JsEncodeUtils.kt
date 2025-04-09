@@ -6,6 +6,7 @@ import cn.hutool.crypto.digest.HMac
 import cn.hutool.crypto.symmetric.SymmetricCrypto
 import io.legado.app.help.crypto.AsymmetricCrypto
 import io.legado.app.help.crypto.Sign
+import io.legado.app.help.crypto.SymmetricCryptoAndroid
 import io.legado.app.utils.MD5Utils
 
 

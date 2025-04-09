@@ -112,7 +112,7 @@ object Restore {
                 if (ignoreLocalBook && book.isLocal) {
                     return@forEach
                 }
-                if (appDb.bookDao.has(book.bookUrl) == true) {
+                if (appDb.bookDao.has(book.bookUrl)) {
                     updateBooks.add(book)
                 } else {
                     newBooks.add(book)

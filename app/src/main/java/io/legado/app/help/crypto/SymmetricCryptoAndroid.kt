@@ -1,10 +1,12 @@
-package io.legado.app.help
+package io.legado.app.help.crypto
 
+import androidx.annotation.Keep
 import cn.hutool.crypto.symmetric.SymmetricCrypto
 import io.legado.app.utils.EncoderUtils
 import java.io.InputStream
 import java.nio.charset.Charset
 
+@Keep
 class SymmetricCryptoAndroid(
     algorithm: String,
     key: ByteArray?,

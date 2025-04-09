@@ -9,7 +9,7 @@ import io.legado.app.constant.AppLog
 import io.legado.app.data.entities.rule.RowUi
 import io.legado.app.help.CacheManager
 import io.legado.app.help.JsExtensions
-import io.legado.app.help.SymmetricCryptoAndroid
+import io.legado.app.help.crypto.SymmetricCryptoAndroid
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.http.CookieStore
 import io.legado.app.help.source.getShareScope
