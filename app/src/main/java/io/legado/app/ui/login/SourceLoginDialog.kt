@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.core.view.setPadding
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import com.script.rhino.runScriptWithContext
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.constant.AppLog
@@ -25,13 +26,13 @@ import io.legado.app.utils.dpToPx
 import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.openUrl
 import io.legado.app.utils.printOnDebug
-import com.script.rhino.runScriptWithContext
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import splitties.views.onClick
@@ -133,6 +134,7 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
                         }
                     }
                 }.onFailure { e ->
+                    ensureActive()
                     AppLog.put("LoginUI Button ${rowUi.name} JavaScript error", e)
                 }
             }
