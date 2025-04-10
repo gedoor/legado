@@ -56,7 +56,12 @@ internal class RhinoCompiledScript(
 
     override fun eval(scope: Scriptable, coroutineContext: CoroutineContext?): Any? {
         val cx = Context.enter() as RhinoContext
-        cx.checkRecursive()
+        try {
+            cx.checkRecursive()
+        } catch (e: RhinoRecursionError) {
+            Context.exit()
+            throw e
+        }
         val previousCoroutineContext = cx.coroutineContext
         if (coroutineContext != null && coroutineContext[Job] != null) {
             cx.coroutineContext = coroutineContext
@@ -88,6 +93,12 @@ internal class RhinoCompiledScript(
 
     override suspend fun evalSuspend(scope: Scriptable): Any? {
         val cx = Context.enter() as RhinoContext
+        try {
+            cx.checkRecursive()
+        } catch (e: RhinoRecursionError) {
+            Context.exit()
+            throw e
+        }
         var ret: Any?
         withContext(VMBridgeReflect.contextLocal.asContextElement()) {
             cx.allowScriptRun = true

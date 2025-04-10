@@ -91,7 +91,12 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
         coroutineContext: CoroutineContext?
     ): Any? {
         val cx = Context.enter() as RhinoContext
-        cx.checkRecursive()
+        try {
+            cx.checkRecursive()
+        } catch (e: RhinoRecursionError) {
+            Context.exit()
+            throw e
+        }
         val previousCoroutineContext = cx.coroutineContext
         if (coroutineContext != null && coroutineContext[Job] != null) {
             cx.coroutineContext = coroutineContext
@@ -127,7 +132,12 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
     @Throws(ContinuationPending::class)
     override suspend fun evalSuspend(reader: Reader, scope: Scriptable): Any? {
         val cx = Context.enter() as RhinoContext
-        cx.checkRecursive()
+        try {
+            cx.checkRecursive()
+        } catch (e: RhinoRecursionError) {
+            Context.exit()
+            throw e
+        }
         var ret: Any?
         withContext(VMBridgeReflect.contextLocal.asContextElement()) {
             cx.allowScriptRun = true
