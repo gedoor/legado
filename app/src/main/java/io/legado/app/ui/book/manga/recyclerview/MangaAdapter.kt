@@ -18,8 +18,8 @@ import com.bumptech.glide.ListPreloader.PreloadModelProvider
 import com.bumptech.glide.RequestBuilder
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter.Companion.TYPE_FOOTER_VIEW
-import io.legado.app.databinding.BookComicLoadingRvBinding
-import io.legado.app.databinding.BookComicRvBinding
+import io.legado.app.databinding.ItemBookMangaEdgeBinding
+import io.legado.app.databinding.ItemBookMangaPageBinding
 import io.legado.app.help.glide.progress.ProgressManager
 import io.legado.app.model.BookCover
 import io.legado.app.model.ReadManga
@@ -74,8 +74,8 @@ class MangaAdapter(private val context: Context) :
         mDiffer.submitList(contents, runnable)
     }
 
-    inner class PageViewHolder(binding: BookComicRvBinding) :
-        MangaVH<BookComicRvBinding>(binding, context) {
+    inner class PageViewHolder(binding: ItemBookMangaPageBinding) :
+        MangaVH<ItemBookMangaPageBinding>(binding, context) {
 
         init {
             initComponent(
@@ -119,7 +119,7 @@ class MangaAdapter(private val context: Context) :
         }
     }
 
-    inner class PageMoreViewHolder(val binding: BookComicLoadingRvBinding) :
+    inner class PageMoreViewHolder(val binding: ItemBookMangaEdgeBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun onBind(item: ReaderLoading) {
             val message = item.mMessage
@@ -135,11 +135,11 @@ class MangaAdapter(private val context: Context) :
             }
 
             viewType == LOADING_VIEW -> {
-                PageMoreViewHolder(BookComicLoadingRvBinding.inflate(inflater, parent, false))
+                PageMoreViewHolder(ItemBookMangaEdgeBinding.inflate(inflater, parent, false))
             }
 
             viewType == CONTENT_VIEW -> {
-                PageViewHolder(BookComicRvBinding.inflate(inflater, parent, false))
+                PageViewHolder(ItemBookMangaPageBinding.inflate(inflater, parent, false))
             }
 
             else -> error("Unknown view type!")
