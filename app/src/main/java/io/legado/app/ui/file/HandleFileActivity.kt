@@ -70,6 +70,7 @@ class HandleFileActivity :
             ).apply {
                 addAll(getDirActions())
             }
+
             else -> arrayListOf()
         }
         intent.getJsonArray<SelectItem<Int>>("otherActions")?.let {
@@ -88,8 +89,7 @@ class HandleFileActivity :
                     HandleFileContract.DIR -> kotlin.runCatching {
                         selectDocTree.launch()
                     }.onFailure {
-                        AppLog.put(getString(R.string.open_sys_dir_picker_error), it)
-                        toastOnUi(R.string.open_sys_dir_picker_error)
+                        AppLog.put(getString(R.string.open_sys_dir_picker_error), it, true)
                         checkPermissions {
                             FilePickerDialog.show(
                                 supportFragmentManager,
@@ -97,11 +97,11 @@ class HandleFileActivity :
                             )
                         }
                     }
+
                     HandleFileContract.FILE -> kotlin.runCatching {
                         selectDoc.launch(typesOfExtensions(allowExtensions))
                     }.onFailure {
-                        AppLog.put(getString(R.string.open_sys_dir_picker_error), it)
-                        toastOnUi(R.string.open_sys_dir_picker_error)
+                        AppLog.put(getString(R.string.open_sys_dir_picker_error), it, true)
                         checkPermissions {
                             FilePickerDialog.show(
                                 supportFragmentManager,
@@ -110,6 +110,7 @@ class HandleFileActivity :
                             )
                         }
                     }
+
                     10 -> checkPermissions {
                         @Suppress("DEPRECATION")
                         lifecycleScope.launchWhenResumed {
@@ -119,6 +120,7 @@ class HandleFileActivity :
                             )
                         }
                     }
+
                     11 -> checkPermissions {
                         @Suppress("DEPRECATION")
                         lifecycleScope.launchWhenResumed {
@@ -129,6 +131,7 @@ class HandleFileActivity :
                             )
                         }
                     }
+
                     111 -> getFileData()?.let {
                         viewModel.upload(it.first, it.second, it.third) { url ->
                             val uri = Uri.parse(url)
@@ -136,6 +139,7 @@ class HandleFileActivity :
                             finish()
                         }
                     }
+
                     else -> {
                         val path = item.title
                         val uri = if (path.isContentScheme()) {

@@ -23,6 +23,7 @@
 ## Rhino
 -keep class
 !org.mozilla.javascript.ast.**,
+!org.mozilla.javascript.xml.**,
 !org.mozilla.javascript.commonjs.**,
 !org.mozilla.javascript.optimizer.**,
 !org.mozilla.javascript.serialize.**,
