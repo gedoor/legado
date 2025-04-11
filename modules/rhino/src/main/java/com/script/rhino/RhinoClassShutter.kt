@@ -57,8 +57,11 @@ object RhinoClassShutter : ClassShutter {
             "java.io.File",
             "java.io.FileInputStream",
             "java.io.FileOutputStream",
+            "java.io.PrintStream",
             "java.io.FileReader",
             "java.io.FileWriter",
+            "java.io.PrintWriter",
+            "java.io.UnixFileSystem",
             "java.io.RandomAccessFile",
             "java.io.ObjectInputStream",
             "java.io.ObjectOutputStream",
@@ -66,6 +69,7 @@ object RhinoClassShutter : ClassShutter {
             "java.nio.file.Paths",
             "java.nio.file.Files",
             "java.nio.file.FileSystems",
+            "java.util.Formatter",
             "sun.misc.Unsafe",
             "android.content.Intent",
             "android.provider.Settings",
@@ -107,6 +111,7 @@ object RhinoClassShutter : ClassShutter {
             "io.legado.app.data.dao",
             "com.script",
             "org.mozilla",
+            "sun",
         ).let { Collections.unmodifiableSet(it) }
     }
 
