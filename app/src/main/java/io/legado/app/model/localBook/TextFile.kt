@@ -421,11 +421,11 @@ class TextFile(private var book: Book) {
     }
 
     /**
-     * 获取所有匹配次数大于1的目录规则
+     * 获取合适的目录规则
      */
     private fun getTocRule(content: String): Pattern? {
         val rules = getTocRules().reversed()
-        var maxCs = 1
+        var maxNum = 1
         var tocPattern: Pattern? = null
         for (tocRule in rules) {
             val pattern = try {
@@ -435,12 +435,16 @@ class TextFile(private var book: Book) {
                 continue
             }
             val matcher = pattern.matcher(content)
-            var cs = 0
+            var start = 0
+            var num = 0
             while (matcher.find()) {
-                cs++
+                if (start == 0 || matcher.start() - start > 1000) {
+                    num++
+                    start = matcher.end()
+                }
             }
-            if (cs >= maxCs) {
-                maxCs = cs
+            if (num >= maxNum) {
+                maxNum = num
                 tocPattern = pattern
             }
         }
