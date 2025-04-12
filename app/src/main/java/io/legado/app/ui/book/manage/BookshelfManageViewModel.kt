@@ -87,10 +87,18 @@ class BookshelfManageViewModel(application: Application) : BaseViewModel(applica
                 batchChangeSourceProcessLiveData.postValue("${index + 1} / ${books.size}")
                 if (book.isLocal) return@forEachIndexed
                 if (book.origin == source.bookSourceUrl) return@forEachIndexed
-                val newBook = WebBook.preciseSearchAwait(this, source, book.name, book.author)
+                val newBook = WebBook.preciseSearchAwait(source, book.name, book.author)
                     .onFailure {
-                        AppLog.put("获取书籍出错\n${it.localizedMessage}", it, true)
+                        AppLog.put("搜索书籍出错\n${it.localizedMessage}", it, true)
                     }.getOrNull() ?: return@forEachIndexed
+                kotlin.runCatching {
+                    if (book.tocUrl.isEmpty()) {
+                        WebBook.getBookInfoAwait(source, book)
+                    }
+                }.onFailure {
+                    AppLog.put("获取书籍详情出错\n${it.localizedMessage}", it, true)
+                    return@forEachIndexed
+                }
                 WebBook.getChapterListAwait(source, newBook)
                     .onFailure {
                         AppLog.put("获取目录出错\n${it.localizedMessage}", it, true)

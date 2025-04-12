@@ -195,7 +195,8 @@ class CoverImageView @JvmOverloads constructor(
         loadOnlyWifi: Boolean = false,
         sourceOrigin: String? = null,
         fragment: Fragment? = null,
-        lifecycle: Lifecycle? = null
+        lifecycle: Lifecycle? = null,
+        onLoadFinish: (() -> Unit)? = null
     ) {
         this.bitmapPath = path
         this.name = name?.replace(AppPattern.bdRegex, "")?.trim()
@@ -210,15 +211,39 @@ class CoverImageView @JvmOverloads constructor(
             if (sourceOrigin != null) {
                 options = options.set(OkHttpModelLoader.sourceOriginOption, sourceOrigin)
             }
-            val builder = if (fragment != null && lifecycle != null) {
+            var builder = if (fragment != null && lifecycle != null) {
                 ImageLoader.load(fragment, lifecycle, path)
             } else {
                 ImageLoader.load(context, path)//Glide自动识别http://,content://和file://
             }
-            builder.apply(options)
+            builder = builder.apply(options)
                 .placeholder(BookCover.defaultDrawable)
                 .error(BookCover.defaultDrawable)
                 .listener(glideListener)
+            if (onLoadFinish != null) {
+                builder = builder.addListener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<Drawable?>,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        return false
+                    }
+
+                    override fun onResourceReady(
+                        resource: Drawable,
+                        model: Any,
+                        target: Target<Drawable?>?,
+                        dataSource: DataSource,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        onLoadFinish.invoke()
+                        return false
+                    }
+                })
+            }
+            builder
                 .centerCrop()
                 .into(this)
         }

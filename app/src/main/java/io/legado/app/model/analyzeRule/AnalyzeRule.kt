@@ -812,7 +812,7 @@ class AnalyzeRule(
         if (bookSource == null || book == null) return
         runBlocking(coroutineContext) {
             withTimeout(1800000) {
-                WebBook.preciseSearchAwait(this, bookSource, book.name, book.author)
+                WebBook.preciseSearchAwait(bookSource, book.name, book.author)
                     .getOrThrow().let {
                         book.bookUrl = it.bookUrl
                         it.variableMap.forEach { entry ->
