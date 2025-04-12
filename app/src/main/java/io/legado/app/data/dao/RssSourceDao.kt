@@ -125,6 +125,9 @@ interface RssSourceDao {
     @Query("select 1 from rssSources where sourceUrl = :key")
     fun has(key: String): Boolean?
 
+    @Query("update rssSources set enabled = :enable where sourceUrl = :sourceUrl")
+    fun enable(sourceUrl: String, enable: Boolean)
+
     private fun dealGroups(list: List<String>): List<String> {
         val groups = linkedSetOf<String>()
         list.forEach {

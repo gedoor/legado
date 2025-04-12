@@ -1,5 +1,6 @@
 package io.legado.app.help.source
 
+import io.legado.app.constant.SourceType
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BaseSource
 import io.legado.app.data.entities.BookSource
@@ -28,6 +29,29 @@ object SourceHelp {
         key ?: return null
         return appDb.bookSourceDao.getBookSource(key)
             ?: appDb.rssSourceDao.getByKey(key)
+    }
+
+    fun getSource(key: String?, @SourceType.Type type: Int): BaseSource? {
+        key ?: return null
+        return when (type) {
+            SourceType.book -> appDb.bookSourceDao.getBookSource(key)
+            SourceType.rss -> appDb.rssSourceDao.getByKey(key)
+            else -> null
+        }
+    }
+
+    fun deleteSource(key: String, @SourceType.Type type: Int) {
+        when (type) {
+            SourceType.book -> appDb.bookSourceDao.delete(key)
+            SourceType.rss -> appDb.rssSourceDao.delete(key)
+        }
+    }
+
+    fun enableSource(key: String, @SourceType.Type type: Int, enable: Boolean) {
+        when (type) {
+            SourceType.book -> appDb.bookSourceDao.enable(key, enable)
+            SourceType.rss -> appDb.rssSourceDao.enable(key, enable)
+        }
     }
 
     fun insertRssSource(vararg rssSources: RssSource) {

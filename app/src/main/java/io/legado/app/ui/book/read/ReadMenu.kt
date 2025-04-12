@@ -23,6 +23,7 @@ import io.legado.app.help.config.LocalConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.help.config.ThemeConfig
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.help.source.getSourceType
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.Selector
 import io.legado.app.lib.theme.accentColor
@@ -354,6 +355,7 @@ class ReadMenu @JvmOverloads constructor(
                         putExtra("url", url)
                         putExtra("sourceOrigin", bookSource?.bookSourceUrl)
                         putExtra("sourceName", bookSource?.bookSourceName)
+                        putExtra("sourceType", bookSource?.getSourceType())
                     }
                 }
             }

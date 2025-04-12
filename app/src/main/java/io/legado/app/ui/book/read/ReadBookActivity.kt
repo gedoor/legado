@@ -52,6 +52,7 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.help.config.ReadTipConfig
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.help.source.getSourceType
 import io.legado.app.help.storage.Backup
 import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.dialogs.alert
@@ -1301,6 +1302,7 @@ class ReadBookActivity : BaseReadBookActivity(),
                             putExtra("url", it)
                             putExtra("sourceOrigin", bookSource?.bookSourceUrl)
                             putExtra("sourceName", bookSource?.bookSourceName)
+                            putExtra("sourceType", bookSource?.getSourceType())
                         }
                     } else if (it.isTrue()) {
                         //购买成功后刷新目录

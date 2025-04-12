@@ -13,6 +13,7 @@ import androidx.core.view.isVisible
 import io.legado.app.R
 import io.legado.app.databinding.ViewMangaMenuBinding
 import io.legado.app.help.config.AppConfig
+import io.legado.app.help.source.getSourceType
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.model.ReadBook
@@ -181,6 +182,7 @@ class MangaMenu @JvmOverloads constructor(
                     putExtra("url", url)
                     putExtra("sourceOrigin", bookSource?.bookSourceUrl)
                     putExtra("sourceName", bookSource?.bookSourceName)
+                    putExtra("sourceType", bookSource?.getSourceType())
                 }
             }
         }

@@ -7,21 +7,19 @@ import android.util.Base64
 import android.webkit.URLUtil
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.script.rhino.runScriptWithContext
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppConst
 import io.legado.app.data.appDb
-import io.legado.app.data.entities.BaseSource
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssSource
 import io.legado.app.data.entities.RssStar
 import io.legado.app.exception.NoStackTraceException
-import io.legado.app.help.JsExtensions
 import io.legado.app.help.TTS
 import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.rss.Rss
-import com.script.rhino.runScriptWithContext
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.writeBytes
 import kotlinx.coroutines.Dispatchers.IO
@@ -30,7 +28,7 @@ import java.util.Date
 import kotlin.coroutines.coroutineContext
 
 
-class ReadRssViewModel(application: Application) : BaseViewModel(application), JsExtensions {
+class ReadRssViewModel(application: Application) : BaseViewModel(application) {
     var rssSource: RssSource? = null
     var rssArticle: RssArticle? = null
     var tts: TTS? = null
@@ -40,10 +38,6 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application), J
     val upTtsMenuData = MutableLiveData<Boolean>()
     val upStarMenuData = MutableLiveData<Boolean>()
     var headerMap: Map<String, String> = emptyMap()
-
-    override fun getSource(): BaseSource? {
-        return rssSource
-    }
 
     fun initData(intent: Intent) {
         execute {
