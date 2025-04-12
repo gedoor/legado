@@ -19,15 +19,13 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.LocalConfig
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryTextColor
-import io.legado.app.ui.book.manga.ReadMangaActivity
-import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.utils.applyNavigationBarPadding
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.cnCompare
 import io.legado.app.utils.getInt
 import io.legado.app.utils.putInt
-import io.legado.app.utils.startReadOrMangaActivity
+import io.legado.app.utils.startActivityForBook
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
@@ -193,9 +191,7 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
                         if (book == null) {
                             SearchActivity.start(this@ReadRecordActivity, item.bookName)
                         } else {
-                            startReadOrMangaActivity<ReadBookActivity, ReadMangaActivity>(book) {
-                                putExtra("bookUrl", book.bookUrl)
-                            }
+                            startActivityForBook(book)
                         }
                     }
                 }

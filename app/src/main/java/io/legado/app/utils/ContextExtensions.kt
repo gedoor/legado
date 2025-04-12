@@ -40,8 +40,12 @@ import io.legado.app.R
 import io.legado.app.constant.AppConst
 import io.legado.app.data.entities.Book
 import io.legado.app.help.IntentHelp
+import io.legado.app.help.book.isAudio
 import io.legado.app.help.book.isImage
 import io.legado.app.help.config.AppConfig
+import io.legado.app.ui.book.audio.AudioPlayActivity
+import io.legado.app.ui.book.manga.ReadMangaActivity
+import io.legado.app.ui.book.read.ReadBookActivity
 import splitties.systemservices.clipboardManager
 import splitties.systemservices.connectivityManager
 import splitties.systemservices.uiModeManager
@@ -56,13 +60,18 @@ inline fun <reified A : Activity> Context.startActivity(configIntent: Intent.() 
     startActivity(intent)
 }
 
-inline fun <reified A : Activity, reified M : Activity> Context.startReadOrMangaActivity(
+fun Context.startActivityForBook(
     book: Book,
     configIntent: Intent.() -> Unit = {},
 ) {
-    val intent =
-        Intent(this, if (book.isImage && AppConfig.showMangaUi) M::class.java else A::class.java)
+    val cls = when {
+        book.isAudio -> AudioPlayActivity::class.java
+        book.isImage && AppConfig.showMangaUi -> ReadMangaActivity::class.java
+        else -> ReadBookActivity::class.java
+    }
+    val intent = Intent(this, cls)
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    intent.putExtra("bookUrl", book.bookUrl)
     intent.apply(configIntent)
     startActivity(intent)
 }

@@ -15,8 +15,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import io.legado.app.R
 import io.legado.app.data.entities.Book
+import io.legado.app.help.book.isAudio
 import io.legado.app.help.book.isImage
 import io.legado.app.help.config.AppConfig
+import io.legado.app.ui.book.audio.AudioPlayActivity
+import io.legado.app.ui.book.manga.ReadMangaActivity
+import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.widget.dialog.TextDialog
 
 inline fun <reified T : DialogFragment> Fragment.showDialogFragment(
@@ -84,15 +88,18 @@ inline fun <reified T : Activity> Fragment.startActivity(
     startActivity(Intent(requireContext(), T::class.java).apply(configIntent))
 }
 
-inline fun <reified A : Activity, reified M : Activity> Fragment.startReadOrMangaActivity(
+fun Fragment.startActivityForBook(
     book: Book,
     configIntent: Intent.() -> Unit = {},
 ) {
-    val intent = Intent(
-        requireActivity(),
-        if (book.isImage && AppConfig.showMangaUi) M::class.java else A::class.java
-    )
+    val cls = when {
+        book.isAudio -> AudioPlayActivity::class.java
+        book.isImage && AppConfig.showMangaUi -> ReadMangaActivity::class.java
+        else -> ReadBookActivity::class.java
+    }
+    val intent = Intent(requireActivity(), cls)
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    intent.putExtra("bookUrl", book.bookUrl)
     intent.apply(configIntent)
     startActivity(intent)
 }
