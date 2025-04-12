@@ -7,10 +7,14 @@ import android.graphics.drawable.Drawable
 import androidx.annotation.Keep
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
+import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.target.Target.SIZE_ORIGINAL
 import io.legado.app.R
 import io.legado.app.constant.PreferKey
@@ -81,6 +85,7 @@ object BookCover {
         path: String?,
         loadOnlyWifi: Boolean = false,
         sourceOrigin: String? = null,
+        onLoadFinish: (() -> Unit)? = null
     ): RequestBuilder<Drawable> {
         if (AppConfig.useDefaultCover) {
             return ImageLoader.load(context, defaultDrawable)
@@ -90,9 +95,33 @@ object BookCover {
         if (sourceOrigin != null) {
             options = options.set(OkHttpModelLoader.sourceOriginOption, sourceOrigin)
         }
-        return ImageLoader.load(context, path)
+        var builder = ImageLoader.load(context, path)
             .apply(options)
-            .placeholder(defaultDrawable)
+        if (onLoadFinish != null) {
+            builder = builder.addListener(object : RequestListener<Drawable> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Drawable?>,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    onLoadFinish.invoke()
+                    return false
+                }
+
+                override fun onResourceReady(
+                    resource: Drawable,
+                    model: Any,
+                    target: Target<Drawable?>?,
+                    dataSource: DataSource,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    onLoadFinish.invoke()
+                    return false
+                }
+            })
+        }
+        return builder.placeholder(defaultDrawable)
             .error(defaultDrawable)
             .centerCrop()
     }
