@@ -228,6 +228,7 @@ class CoverImageView @JvmOverloads constructor(
                         target: Target<Drawable?>,
                         isFirstResource: Boolean
                     ): Boolean {
+                        onLoadFinish.invoke()
                         return false
                     }
 
