@@ -102,6 +102,7 @@ interface JsExtensions : JsEncodeUtils {
         return kotlin.runCatching {
             analyzeUrl.getStrResponse().body
         }.onFailure {
+            rhinoContext.ensureActive()
             AppLog.put("ajax(${urlStr}) error\n${it.localizedMessage}", it)
         }.getOrElse {
             it.stackTraceStr
@@ -136,6 +137,7 @@ interface JsExtensions : JsEncodeUtils {
         return kotlin.runCatching {
             analyzeUrl.getStrResponse()
         }.onFailure {
+            rhinoContext.ensureActive()
             AppLog.put("connect(${urlStr}) error\n${it.localizedMessage}", it)
         }.getOrElse {
             StrResponse(analyzeUrl.url, it.stackTraceStr)
@@ -153,6 +155,7 @@ interface JsExtensions : JsEncodeUtils {
         return kotlin.runCatching {
             analyzeUrl.getStrResponse()
         }.onFailure {
+            rhinoContext.ensureActive()
             AppLog.put("ajax($urlStr,$header) error\n${it.localizedMessage}", it)
         }.getOrElse {
             StrResponse(analyzeUrl.url, it.stackTraceStr)

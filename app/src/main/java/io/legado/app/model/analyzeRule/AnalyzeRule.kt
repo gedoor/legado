@@ -25,6 +25,7 @@ import io.legado.app.utils.isJson
 import io.legado.app.utils.printOnDebug
 import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.stackTraceStr
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import org.apache.commons.text.StringEscapeUtils
@@ -794,6 +795,7 @@ class AnalyzeRule(
         return kotlin.runCatching {
             analyzeUrl.getStrResponse().body
         }.onFailure {
+            coroutineContext.ensureActive()
             log("ajax(${urlStr}) error\n${it.stackTraceToString()}")
             it.printOnDebug()
         }.getOrElse {
