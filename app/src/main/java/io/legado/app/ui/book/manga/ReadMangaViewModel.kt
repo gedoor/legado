@@ -31,6 +31,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onEmpty
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.take
+import splitties.init.appCtx
 
 class ReadMangaViewModel(application: Application) : BaseViewModel(application) {
 
@@ -111,7 +112,7 @@ class ReadMangaViewModel(application: Application) : BaseViewModel(application) 
                 return true
             }.onFailure {
                 //加载章节出错
-                ReadManga.mCallback?.loadFail("加载目录失败")
+                ReadManga.mCallback?.loadFail(appCtx.getString(R.string.error_load_toc))
                 return false
             }
         }

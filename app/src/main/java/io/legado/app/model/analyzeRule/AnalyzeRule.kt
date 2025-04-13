@@ -791,15 +791,13 @@ class AnalyzeRule(
             ruleData = book,
             coroutineContext = coroutineContext
         )
-        return runBlocking(coroutineContext) {
-            kotlin.runCatching {
-                analyzeUrl.getStrResponseAwait().body
-            }.onFailure {
-                log("ajax(${urlStr}) error\n${it.stackTraceToString()}")
-                it.printOnDebug()
-            }.getOrElse {
-                it.stackTraceStr
-            }
+        return kotlin.runCatching {
+            analyzeUrl.getStrResponse().body
+        }.onFailure {
+            log("ajax(${urlStr}) error\n${it.stackTraceToString()}")
+            it.printOnDebug()
+        }.getOrElse {
+            it.stackTraceStr
         }
     }
 

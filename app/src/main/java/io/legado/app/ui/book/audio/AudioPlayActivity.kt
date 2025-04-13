@@ -1,7 +1,6 @@
 package io.legado.app.ui.book.audio
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.icu.text.SimpleDateFormat
 import android.os.Build
 import android.os.Bundle
@@ -240,7 +239,7 @@ class AudioPlayActivity :
                     AudioPlay.book?.removeType(BookType.notShelf)
                     AudioPlay.book?.save()
                     AudioPlay.inBookshelf = true
-                    setResult(Activity.RESULT_OK)
+                    setResult(RESULT_OK)
                 }
                 noButton { viewModel.removeFromBookshelf { super.finish() } }
             }
@@ -289,7 +288,7 @@ class AudioPlayActivity :
 
         }
         observeEventSticky<Float>(EventBus.AUDIO_SPEED) {
-            binding.tvSpeed.text = String.format("%.1fX", it)
+            binding.tvSpeed.text = String.format(Locale.ROOT, "%.1fX", it)
             binding.tvSpeed.visible()
         }
         observeEventSticky<Int>(EventBus.AUDIO_DS) {
