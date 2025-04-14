@@ -11,6 +11,12 @@ import kotlin.coroutines.ContinuationInterceptor
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.coroutineContext
 
+val rhinoContext: RhinoContext
+    get() = Context.getCurrentContext() as RhinoContext
+
+val rhinoContextOrNull: RhinoContext?
+    get() = Context.getCurrentContext() as? RhinoContext
+
 @Suppress("LEAKED_IN_PLACE_LAMBDA", "WRONG_INVOCATION_KIND")
 @OptIn(ExperimentalContracts::class)
 inline fun <T> suspendContinuation(crossinline block: suspend CoroutineScope.() -> T): T {

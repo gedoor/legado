@@ -4,7 +4,8 @@ import android.webkit.WebSettings
 import androidx.annotation.Keep
 import cn.hutool.core.codec.Base64
 import cn.hutool.core.util.HexUtil
-import com.script.rhino.RhinoContext
+import com.script.rhino.rhinoContext
+import com.script.rhino.rhinoContextOrNull
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.dateFormat
 import io.legado.app.constant.AppLog
@@ -52,7 +53,6 @@ import kotlinx.coroutines.runBlocking
 import okio.use
 import org.jsoup.Connection
 import org.jsoup.Jsoup
-import org.mozilla.javascript.Context
 import splitties.init.appCtx
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -82,9 +82,6 @@ import kotlin.coroutines.EmptyCoroutineContext
 interface JsExtensions : JsEncodeUtils {
 
     fun getSource(): BaseSource?
-
-    private val rhinoContext: RhinoContext
-        get() = Context.getCurrentContext() as RhinoContext
 
     private val context: CoroutineContext
         get() = rhinoContext.coroutineContext ?: EmptyCoroutineContext
@@ -943,7 +940,7 @@ interface JsExtensions : JsEncodeUtils {
      * 输出调试日志
      */
     fun log(msg: Any?): Any? {
-        rhinoContext.ensureActive()
+        rhinoContextOrNull?.ensureActive()
         getSource()?.let {
             Debug.log(it.getKey(), msg.toString())
         } ?: Debug.log(msg.toString())

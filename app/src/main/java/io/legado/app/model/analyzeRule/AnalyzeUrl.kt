@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.util.Base64
 import androidx.annotation.Keep
 import androidx.media3.common.MediaItem
+import cn.hutool.core.net.URLEncodeUtil
 import cn.hutool.core.util.HexUtil
 import com.bumptech.glide.load.model.GlideUrl
 import com.script.buildScriptBindings
@@ -47,7 +48,6 @@ import io.legado.app.utils.isJson
 import io.legado.app.utils.isJsonArray
 import io.legado.app.utils.isJsonObject
 import io.legado.app.utils.isXml
-import io.legado.app.utils.splitNotBlank
 import kotlinx.coroutines.runBlocking
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -56,6 +56,7 @@ import okhttp3.Response
 import java.io.ByteArrayInputStream
 import java.io.InputStream
 import java.net.URLEncoder
+import java.nio.charset.Charset
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
 import kotlin.coroutines.ContinuationInterceptor
@@ -101,8 +102,8 @@ class AnalyzeUrl(
         private set
     val headerMap = HashMap<String, String>()
     private var urlNoQuery: String = ""
-    private var queryStr: String? = null
-    private val fieldMap = LinkedHashMap<String, String>()
+    private var encodedForm: String? = null
+    private var encodedQuery: String? = null
     private var charset: String? = null
     private var method = RequestMethod.GET
     private var proxy: String? = null
@@ -251,7 +252,7 @@ class AnalyzeUrl(
             RequestMethod.GET -> {
                 val pos = url.indexOf('?')
                 if (pos != -1) {
-                    analyzeFields(url.substring(pos + 1))
+                    analyzeQuery(url.substring(pos + 1))
                     urlNoQuery = url.substring(0, pos)
                 }
             }
@@ -271,23 +272,68 @@ class AnalyzeUrl(
      * name=<BASE64> eg name=bmFtZQ==
      */
     private fun analyzeFields(fieldsTxt: String) {
-        queryStr = fieldsTxt
-        val queryS = fieldsTxt.splitNotBlank("&")
-        for (query in queryS) {
-            val queryPair = query.splitNotBlank("=", limit = 2)
-            val key = queryPair[0]
-            val value = queryPair.getOrNull(1) ?: ""
-            if (charset.isNullOrEmpty()) {
-                if (NetworkUtils.hasUrlEncoded(value)) {
-                    fieldMap[key] = value
-                } else {
-                    fieldMap[key] = URLEncoder.encode(value, "UTF-8")
-                }
-            } else if (charset == "escape") {
-                fieldMap[key] = EncoderUtils.escape(value)
-            } else {
-                fieldMap[key] = URLEncoder.encode(value, charset)
+        encodedForm = encodeParams(fieldsTxt, charset, false)
+    }
+
+    private fun analyzeQuery(query: String) {
+        encodedQuery = encodeParams(query, charset, true)
+    }
+
+    private fun encodeParams(params: String, charset: String?, isQuery: Boolean): String {
+        val checkEncoded = charset.isNullOrEmpty()
+        val charset = when {
+            charset.isNullOrEmpty() -> Charsets.UTF_8
+            charset == "escape" -> null
+            else -> charset(charset)
+        }
+        val len = params.length
+        val sb = StringBuilder()
+        var pos = 0
+        while (pos <= len) {
+            if (sb.isNotEmpty()) {
+                sb.append("&")
             }
+            var ampOffset = params.indexOf("&", pos)
+            if (ampOffset == -1) {
+                ampOffset = len
+            }
+            val eqOffset = params.indexOf("=", pos)
+            val key: String
+            val value: String?
+            if (eqOffset == -1 || eqOffset > ampOffset) {
+                key = params.substring(pos, ampOffset)
+                value = null
+            } else {
+                key = params.substring(pos, eqOffset)
+                value = params.substring(eqOffset + 1, ampOffset)
+            }
+            sb.appendEncoded(key, isQuery, checkEncoded, charset)
+            if (value != null) {
+                sb.append("=")
+                sb.appendEncoded(value, isQuery, checkEncoded, charset)
+            }
+            pos = ampOffset + 1
+        }
+        return sb.toString()
+    }
+
+    private fun StringBuilder.appendEncoded(
+        value: String,
+        isQuery: Boolean,
+        checkEncoded: Boolean,
+        charset: Charset?
+    ) {
+        val needEncode = checkEncoded &&
+                ((isQuery && !NetworkUtils.encodedQuery(value)) ||
+                        (!isQuery && !NetworkUtils.encodedForm(value)))
+        if (!needEncode) {
+            append(value)
+        } else if (charset == null) {
+            append(EncoderUtils.escape(value))
+        } else if (isQuery) {
+            append(URLEncodeUtil.encodeQuery(value, charset))
+        } else {
+            append(URLEncoder.encode(value, charset))
         }
     }
 
@@ -356,8 +402,8 @@ class AnalyzeUrl(
                         val res = getClient().newCallStrResponse(retry) {
                             addHeaders(headerMap)
                             url(urlNoQuery)
-                            if (fieldMap.isNotEmpty() || body.isNullOrBlank()) {
-                                postForm(fieldMap, true)
+                            if (!encodedForm.isNullOrEmpty() || body.isNullOrBlank()) {
+                                postForm(encodedForm ?: "")
                             } else {
                                 postJson(body)
                             }
@@ -390,8 +436,8 @@ class AnalyzeUrl(
                             url(urlNoQuery)
                             val contentType = headerMap["Content-Type"]
                             val body = body
-                            if (fieldMap.isNotEmpty() || body.isNullOrBlank()) {
-                                postForm(fieldMap, true)
+                            if (!encodedForm.isNullOrEmpty() || body.isNullOrBlank()) {
+                                postForm(encodedForm ?: "")
                             } else if (!contentType.isNullOrBlank()) {
                                 val requestBody = body.toRequestBody(contentType.toMediaType())
                                 post(requestBody)
@@ -400,7 +446,7 @@ class AnalyzeUrl(
                             }
                         }
 
-                        else -> get(urlNoQuery, fieldMap, true)
+                        else -> get(urlNoQuery, encodedQuery)
                     }
                 }.let {
                     val isXml = it.raw.body?.contentType()?.toString()
@@ -438,8 +484,8 @@ class AnalyzeUrl(
                         url(urlNoQuery)
                         val contentType = headerMap["Content-Type"]
                         val body = body
-                        if (fieldMap.isNotEmpty() || body.isNullOrBlank()) {
-                            postForm(fieldMap, true)
+                        if (!encodedForm.isNullOrEmpty() || body.isNullOrBlank()) {
+                            postForm(encodedForm ?: "")
                         } else if (!contentType.isNullOrBlank()) {
                             val requestBody = body.toRequestBody(contentType.toMediaType())
                             post(requestBody)
@@ -448,7 +494,7 @@ class AnalyzeUrl(
                         }
                     }
 
-                    else -> get(urlNoQuery, fieldMap, true)
+                    else -> get(urlNoQuery, encodedQuery)
                 }
             }
             return response

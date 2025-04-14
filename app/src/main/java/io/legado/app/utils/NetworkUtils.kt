@@ -55,7 +55,7 @@ object NetworkUtils {
         return false
     }
 
-    private val notNeedEncoding: BitSet by lazy {
+    private val notNeedEncodingQuery: BitSet by lazy {
         val bitSet = BitSet(256)
         for (i in 'a'.code..'z'.code) {
             bitSet.set(i)
@@ -66,7 +66,24 @@ object NetworkUtils {
         for (i in '0'.code..'9'.code) {
             bitSet.set(i)
         }
-        for (char in "+-_.~$:()!*@&#,[]") {
+        for (char in "!$&()*+,-./:;=?@[\\]^_`{|}~") {
+            bitSet.set(char.code)
+        }
+        return@lazy bitSet
+    }
+
+    private val notNeedEncodingForm: BitSet by lazy {
+        val bitSet = BitSet(256)
+        for (i in 'a'.code..'z'.code) {
+            bitSet.set(i)
+        }
+        for (i in 'A'.code..'Z'.code) {
+            bitSet.set(i)
+        }
+        for (i in '0'.code..'9'.code) {
+            bitSet.set(i)
+        }
+        for (char in "*-._") {
             bitSet.set(char.code)
         }
         return@lazy bitSet
@@ -78,12 +95,38 @@ object NetworkUtils {
      * ! * ' ( ) ; : @ & = + $ , / ? # [ ] 保留
      * 其他字符转成%XX的格式，X是16进制的大写字符，范围是[0-9A-F]
      */
-    fun hasUrlEncoded(str: String): Boolean {
+    fun encodedQuery(str: String): Boolean {
         var needEncode = false
         var i = 0
         while (i < str.length) {
             val c = str[i]
-            if (notNeedEncoding.get(c.code)) {
+            if (notNeedEncodingQuery.get(c.code)) {
+                i++
+                continue
+            }
+            if (c == '%' && i + 2 < str.length) {
+                // 判断是否符合urlEncode规范
+                val c1 = str[++i]
+                val c2 = str[++i]
+                if (isDigit16Char(c1) && isDigit16Char(c2)) {
+                    i++
+                    continue
+                }
+            }
+            // 其他字符，肯定需要urlEncode
+            needEncode = true
+            break
+        }
+
+        return !needEncode
+    }
+
+    fun encodedForm(str: String): Boolean {
+        var needEncode = false
+        var i = 0
+        while (i < str.length) {
+            val c = str[i]
+            if (notNeedEncodingForm.get(c.code)) {
                 i++
                 continue
             }

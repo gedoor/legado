@@ -130,6 +130,18 @@ fun Request.Builder.get(url: String, queryMap: Map<String, String>, encoded: Boo
     url(httpBuilder.build())
 }
 
+fun Request.Builder.get(url: String, encodedQuery: String?) {
+    val httpBuilder = url.toHttpUrl().newBuilder()
+    httpBuilder.encodedQuery(encodedQuery)
+    url(httpBuilder.build())
+}
+
+private val formContentType = "application/x-www-form-urlencoded".toMediaType()
+
+fun Request.Builder.postForm(encodedForm: String) {
+    post(encodedForm.toRequestBody(formContentType))
+}
+
 fun Request.Builder.postForm(form: Map<String, String>, encoded: Boolean = false) {
     val formBody = FormBody.Builder()
     form.forEach {

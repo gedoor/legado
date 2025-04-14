@@ -26,6 +26,7 @@ import io.legado.app.utils.dpToPx
 import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.openUrl
 import io.legado.app.utils.printOnDebug
+import io.legado.app.utils.sendToClip
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.toastOnUi
@@ -35,6 +36,7 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import splitties.init.appCtx
 import splitties.views.onClick
 
 
@@ -109,6 +111,9 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
                     setTitle(R.string.login_header)
                     source.getLoginHeader()?.let { loginHeader ->
                         setMessage(loginHeader)
+                        positiveButton(R.string.copy_text) {
+                            appCtx.sendToClip(loginHeader)
+                        }
                     }
                 }
 
