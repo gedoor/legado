@@ -92,7 +92,6 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         upBottomMenu()
         initView()
         upHomePage()
-        viewModel.deleteNotShelfBook()
         onBackPressedDispatcher.addCallback(this) {
             if (pagePosition != 0) {
                 binding.viewPagerMain.currentItem = 0

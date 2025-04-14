@@ -58,6 +58,10 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         setMaxRecycledViews(0, 100)
     }
 
+    init {
+        deleteNotShelfBook()
+    }
+
     override fun onCleared() {
         super.onCleared()
         upTocPool.close()
@@ -247,7 +251,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun deleteNotShelfBook() {
+    private fun deleteNotShelfBook() {
         execute {
             appDb.bookDao.deleteNotShelfBook()
         }
