@@ -323,10 +323,10 @@ class AnalyzeUrl(
         checkEncoded: Boolean,
         charset: Charset?
     ) {
-        val needEncode = checkEncoded &&
-                ((isQuery && !NetworkUtils.encodedQuery(value)) ||
-                        (!isQuery && !NetworkUtils.encodedForm(value)))
-        if (!needEncode) {
+        if (checkEncoded &&
+            !((isQuery && !NetworkUtils.encodedQuery(value)) ||
+                    (!isQuery && !NetworkUtils.encodedForm(value)))
+        ) {
             append(value)
         } else if (charset == null) {
             append(EncoderUtils.escape(value))
