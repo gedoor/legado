@@ -247,8 +247,8 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
                     index + 1 to value.bookSourceName
                 }
             }.onCompletion {
-                searchStateData.postValue(false)
                 ensureActive()
+                searchStateData.postValue(false)
                 searchFinishCallback?.invoke(searchBooks.isEmpty())
             }.catch {
                 AppLog.put("换源搜索出错\n${it.localizedMessage}", it)

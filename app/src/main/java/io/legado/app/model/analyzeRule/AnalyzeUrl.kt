@@ -4,7 +4,8 @@ import android.annotation.SuppressLint
 import android.util.Base64
 import androidx.annotation.Keep
 import androidx.media3.common.MediaItem
-import cn.hutool.core.net.URLEncodeUtil
+import cn.hutool.core.codec.PercentCodec
+import cn.hutool.core.net.RFC3986
 import cn.hutool.core.util.HexUtil
 import com.bumptech.glide.load.model.GlideUrl
 import com.script.buildScriptBindings
@@ -90,6 +91,8 @@ class AnalyzeUrl(
     companion object {
         val paramPattern: Pattern = Pattern.compile("\\s*,\\s*(?=\\{)")
         private val pagePattern = Pattern.compile("<(.*?)>")
+        private val queryEncoder =
+            RFC3986.UNRESERVED.orNew(PercentCodec.of("!$%&()*+,/:;=?@[\\]^`{|}"))
     }
 
     var ruleUrl = ""
@@ -286,6 +289,12 @@ class AnalyzeUrl(
             charset == "escape" -> null
             else -> charset(charset)
         }
+        if (isQuery && charset != null) {
+            if (NetworkUtils.encodedQuery(params)) {
+                return params
+            }
+            return queryEncoder.encode(params, charset)
+        }
         val len = params.length
         val sb = StringBuilder()
         var pos = 0
@@ -307,10 +316,10 @@ class AnalyzeUrl(
                 key = params.substring(pos, eqOffset)
                 value = params.substring(eqOffset + 1, ampOffset)
             }
-            sb.appendEncoded(key, isQuery, checkEncoded, charset)
+            sb.appendEncoded(key, checkEncoded, charset)
             if (value != null) {
                 sb.append("=")
-                sb.appendEncoded(value, isQuery, checkEncoded, charset)
+                sb.appendEncoded(value, checkEncoded, charset)
             }
             pos = ampOffset + 1
         }
@@ -319,19 +328,13 @@ class AnalyzeUrl(
 
     private fun StringBuilder.appendEncoded(
         value: String,
-        isQuery: Boolean,
         checkEncoded: Boolean,
         charset: Charset?
     ) {
-        if (checkEncoded &&
-            !((isQuery && !NetworkUtils.encodedQuery(value)) ||
-                    (!isQuery && !NetworkUtils.encodedForm(value)))
-        ) {
+        if (checkEncoded && NetworkUtils.encodedForm(value)) {
             append(value)
         } else if (charset == null) {
             append(EncoderUtils.escape(value))
-        } else if (isQuery) {
-            append(URLEncodeUtil.encodeQuery(value, charset))
         } else {
             append(URLEncoder.encode(value, charset))
         }
