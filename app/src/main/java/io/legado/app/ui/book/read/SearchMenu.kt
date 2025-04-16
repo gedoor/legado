@@ -139,6 +139,7 @@ class SearchMenu @JvmOverloads constructor(
         //主菜单
         llMainMenu.setOnClickListener {
             runMenuOut {
+                callBack.cancelSelect()
                 callBack.showMenuBar()
                 this@SearchMenu.invisible()
             }
@@ -246,6 +247,7 @@ class SearchMenu @JvmOverloads constructor(
         fun navigateToSearch(searchResult: SearchResult, index: Int)
         fun onMenuShow()
         fun onMenuHide()
+        fun cancelSelect()
     }
 
 }

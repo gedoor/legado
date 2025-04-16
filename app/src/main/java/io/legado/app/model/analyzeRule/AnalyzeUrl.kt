@@ -528,6 +528,9 @@ class AnalyzeUrl(
     }
 
     private fun getByteArrayIfDataUri(): ByteArray? {
+        if (!urlNoQuery.startsWith("data:")) {
+            return null
+        }
         val dataUriFindResult = dataUriRegex.find(urlNoQuery)
         if (dataUriFindResult != null) {
             val dataUriBase64 = dataUriFindResult.groupValues[1]

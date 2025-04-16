@@ -112,8 +112,8 @@ java.getWebViewUA(): String
 * 网络请求
 ```js
 java.ajax(urlStr): String
-java.ajaxAll(urlList: Array<String>): Array<StrResponse?>
-//返回Response 方法body() code() message() header() raw() toString() 
+java.ajaxAll(urlList: Array<String>): Array<StrResponse>
+//返回StrResponse 方法body() code() message() headers() raw() toString() 
 java.connect(urlStr): StrResponse
 
 java.post(url: String, body: String, headerMap: Map<String, String>): Connection.Response
