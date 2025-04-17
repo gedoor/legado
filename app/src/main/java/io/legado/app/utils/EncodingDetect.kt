@@ -4,7 +4,6 @@ import android.text.TextUtils
 import io.legado.app.lib.icu4j.CharsetDetector
 import org.jsoup.Jsoup
 import java.io.File
-import java.io.FileInputStream
 
 /**
  * 自动获取文件的编码
@@ -70,18 +69,30 @@ object EncodingDetect {
      */
     fun getEncode(file: File): String {
         val tempByte = getFileBytes(file)
+        if (tempByte.isEmpty()) {
+            return "UTF-8"
+        }
         return getEncode(tempByte)
     }
 
-    private fun getFileBytes(file: File?): ByteArray {
+    private fun getFileBytes(file: File): ByteArray {
         val byteArray = ByteArray(8000)
+        var pos = 0
         try {
-            FileInputStream(file).use {
-                it.read(byteArray)
+            file.inputStream().buffered().use {
+                while (pos < byteArray.size) {
+                    val n = it.read(byteArray, pos, 1)
+                    if (n == -1) {
+                        break
+                    }
+                    if (byteArray[pos] < 0) {
+                        pos++
+                    }
+                }
             }
         } catch (e: Exception) {
             System.err.println("Error: $e")
         }
-        return byteArray
+        return byteArray.copyOf(pos)
     }
 }

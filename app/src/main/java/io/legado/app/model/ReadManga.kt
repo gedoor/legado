@@ -250,9 +250,13 @@ object ReadManga : CoroutineScope by MainScope() {
         curMangaChapter?.let {
             curFinish = true
             items.addAll(it.pages)
-            durChapterPos = durChapterPos.coerceIn(0, it.imageCount - 1)
+            durChapterPos = if (it.imageCount > 0) {
+                durChapterPos.coerceIn(0, it.imageCount - 1)
+            } else {
+                0
+            }
             pos += durChapterPos
-            if (!AppConfig.hideMangaTitle) {
+            if (!AppConfig.hideMangaTitle && it.imageCount > 0) {
                 pos++
             }
         }
