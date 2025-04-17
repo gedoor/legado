@@ -26,6 +26,7 @@ import io.legado.app.model.ReadManga
 import io.legado.app.ui.book.manga.config.MangaColorFilterConfig
 import io.legado.app.ui.book.manga.entities.MangaPage
 import io.legado.app.ui.book.manga.entities.ReaderLoading
+import io.legado.app.utils.dpToPx
 
 
 class MangaAdapter(private val context: Context) :
@@ -124,6 +125,13 @@ class MangaAdapter(private val context: Context) :
         fun onBind(item: ReaderLoading) {
             val message = item.mMessage
             binding.text.text = message
+            itemView.updateLayoutParams {
+                height = if (item.isVolume) {
+                    MATCH_PARENT
+                } else {
+                    96.dpToPx()
+                }
+            }
         }
     }
 

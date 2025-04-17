@@ -17,8 +17,6 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader
 import com.bumptech.glide.request.target.Target.SIZE_ORIGINAL
@@ -50,6 +48,7 @@ import io.legado.app.ui.book.manga.config.MangaFooterSettingDialog
 import io.legado.app.ui.book.manga.entities.BaseMangaPage
 import io.legado.app.ui.book.manga.entities.MangaPage
 import io.legado.app.ui.book.manga.recyclerview.MangaAdapter
+import io.legado.app.ui.book.manga.recyclerview.MangaLayoutManager
 import io.legado.app.ui.book.manga.recyclerview.ScrollTimer
 import io.legado.app.ui.book.read.MangaMenu
 import io.legado.app.ui.book.read.ReadBookActivity.Companion.RESULT_DELETED
@@ -82,7 +81,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
     MangaColorFilterDialog.Callback, ScrollTimer.ScrollCallback {
 
     private val mLayoutManager by lazy {
-        LinearLayoutManager(this)
+        MangaLayoutManager(this)
     }
     private val mAdapter: MangaAdapter by lazy {
         MangaAdapter(this)
@@ -206,7 +205,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
             setPreScrollListener { _, _, _, position ->
                 if (mAdapter.isNotEmpty()) {
                     val item = mAdapter.getItem(position)
-                    if (item is MangaPage) {
+                    if (item is BaseMangaPage) {
                         if (ReadManga.durChapterIndex < item.chapterIndex) {
                             ReadManga.moveToNextChapter()
                         } else if (ReadManga.durChapterIndex > item.chapterIndex) {
@@ -215,25 +214,13 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
                             ReadManga.durChapterPos = item.index
                             ReadManga.curPageChanged()
                         }
-                        binding.mangaMenu.upSeekBar(item.index, item.imageCount)
-                        upInfoBar(item)
+                        if (item is MangaPage) {
+                            binding.mangaMenu.upSeekBar(item.index, item.imageCount)
+                            upInfoBar(item)
+                        }
                     }
                 }
             }
-            addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrollStateChanged(
-                    recyclerView: RecyclerView,
-                    newState: Int
-                ) {
-                    if (newState == SCROLL_STATE_IDLE &&
-                        !canScroll(1) &&
-                        ReadManga.hasNextChapter && !loadMoreView.isLoading
-                    ) {
-                        loadMoreView.startLoad()
-                        ReadManga.moveToNextChapter()
-                    }
-                }
-            })
         }
         binding.webtoonFrame.run {
             onTouchMiddle {
