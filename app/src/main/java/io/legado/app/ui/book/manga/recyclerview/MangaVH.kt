@@ -7,6 +7,7 @@ import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
@@ -101,6 +102,7 @@ open class MangaVH<VB : ViewBinding>(val binding: VB, private val context: Conte
                         mImage.updateLayoutParams<FrameLayout.LayoutParams> {
                             gravity = Gravity.CENTER
                         }
+                        mImage.scaleType = ImageView.ScaleType.FIT_CENTER
                     }
                     return false
                 }
