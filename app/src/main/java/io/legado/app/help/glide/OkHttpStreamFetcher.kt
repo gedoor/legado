@@ -46,7 +46,7 @@ class OkHttpStreamFetcher(
     private var call: Call? = null
 
     companion object {
-        val failUrl = hashSetOf<String>()
+        private val failUrl = hashSetOf<String>()
     }
 
     override fun loadData(priority: Priority, callback: DataFetcher.DataCallback<in InputStream>) {
@@ -114,7 +114,9 @@ class OkHttpStreamFetcher(
         responseBody = response.body
         if (response.isSuccessful) {
             val decodeResult = runScriptWithContext(coroutineContext) {
-                if (manga) {
+                if (ImageUtils.skipDecode(source, !manga)) {
+                    responseBody!!.byteStream()
+                } else if (manga) {
                     ImageUtils.decode(
                         oldUrl.toString(),
                         responseBody!!.bytes(),

@@ -1,12 +1,12 @@
 package io.legado.app.utils
 
 import io.legado.app.constant.AppLog
-import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BaseSource
+import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.RssSource
-import java.io.InputStream
 import java.io.ByteArrayInputStream
+import java.io.InputStream
 
 /**
  * 加密图片解密工具
@@ -54,13 +54,18 @@ object ImageUtils {
         }.getOrNull()
     }
 
+    fun skipDecode(source: BaseSource?, isCover: Boolean): Boolean {
+        return getRuleJs(source, isCover).isNullOrBlank()
+    }
 
     private fun getRuleJs(
         source: BaseSource?, isCover: Boolean
     ): String? {
         return when (source) {
             is BookSource ->
-                if (isCover) source.coverDecodeJs else source.getContentRule().imageDecode
+                if (isCover) source.coverDecodeJs
+                else source.getContentRule().imageDecode
+
             is RssSource -> source.coverDecodeJs
             else -> null
         }
