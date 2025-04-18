@@ -34,6 +34,8 @@ open class MangaVH<VB : ViewBinding>(val binding: VB, private val context: Conte
     protected lateinit var mFlProgress: FrameLayout
     protected var mRetry: Button? = null
 
+    private val minHeight = context.resources.displayMetrics.heightPixels * 2 / 3
+
     fun initComponent(
         loading: ProgressBar,
         image: AppCompatImageView,
@@ -49,7 +51,7 @@ open class MangaVH<VB : ViewBinding>(val binding: VB, private val context: Conte
     }
 
     @SuppressLint("CheckResult")
-    fun loadImageWithRetry(imageUrl: String, isHorizontal: Boolean, singleImage: Boolean) {
+    fun loadImageWithRetry(imageUrl: String, isHorizontal: Boolean, isLastImage: Boolean) {
         mFlProgress.isVisible = true
         mLoading.isVisible = true
         mRetry?.isGone = true
@@ -92,14 +94,29 @@ open class MangaVH<VB : ViewBinding>(val binding: VB, private val context: Conte
                     mFlProgress.isGone = true
                     if (!isHorizontal) {
                         itemView.updateLayoutParams<ViewGroup.LayoutParams> {
-                            height = if (singleImage) {
-                                ViewGroup.LayoutParams.MATCH_PARENT
-                            } else {
-                                ViewGroup.LayoutParams.WRAP_CONTENT
-                            }
+                            height = ViewGroup.LayoutParams.WRAP_CONTENT
                         }
-                    } else {
                         mImage.updateLayoutParams<FrameLayout.LayoutParams> {
+                            gravity = Gravity.NO_GRAVITY
+                        }
+                        if (isLastImage) {
+                            mImage.updateLayoutParams<FrameLayout.LayoutParams> {
+                                height = ViewGroup.LayoutParams.WRAP_CONTENT
+                            }
+                            itemView.minimumHeight = minHeight
+                        } else {
+                            mImage.updateLayoutParams<FrameLayout.LayoutParams> {
+                                height = ViewGroup.LayoutParams.MATCH_PARENT
+                            }
+                            itemView.minimumHeight = 0
+                        }
+                        mImage.scaleType = ImageView.ScaleType.FIT_XY
+                    } else {
+                        itemView.updateLayoutParams<ViewGroup.LayoutParams> {
+                            height = ViewGroup.LayoutParams.MATCH_PARENT
+                        }
+                        mImage.updateLayoutParams<FrameLayout.LayoutParams> {
+                            height = ViewGroup.LayoutParams.MATCH_PARENT
                             gravity = Gravity.CENTER
                         }
                         mImage.scaleType = ImageView.ScaleType.FIT_CENTER
