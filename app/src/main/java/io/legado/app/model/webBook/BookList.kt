@@ -61,7 +61,8 @@ object BookList {
                     body,
                     baseUrl,
                     ruleData.getVariable(),
-                    isRedirect
+                    isRedirect,
+                    filter
                 )?.let { searchBook ->
                     searchBook.infoHtml = body
                     bookList.add(searchBook)
@@ -91,7 +92,7 @@ object BookList {
             Debug.log(bookSource.bookSourceUrl, "└列表为空,按详情页解析")
             getInfoItem(
                 bookSource, analyzeRule, analyzeUrl, body, baseUrl, ruleData.getVariable(),
-                isRedirect
+                isRedirect, filter
             )?.let { searchBook ->
                 searchBook.infoHtml = body
                 bookList.add(searchBook)
@@ -148,7 +149,8 @@ object BookList {
         body: String,
         baseUrl: String,
         variable: String?,
-        isRedirect: Boolean
+        isRedirect: Boolean,
+        filter: ((name: String, author: String) -> Boolean)?
     ): SearchBook? {
         val book = Book(variable = variable)
         book.bookUrl = if (isRedirect) {
@@ -170,6 +172,9 @@ object BookList {
             baseUrl,
             false
         )
+        if (filter?.invoke(book.name, book.author) == false) {
+            return null
+        }
         if (book.name.isNotBlank()) {
             return book.toSearchBook()
         }
