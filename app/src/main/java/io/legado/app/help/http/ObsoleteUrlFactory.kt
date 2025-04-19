@@ -22,7 +22,6 @@ import okhttp3.internal.notifyAll
 import okhttp3.internal.wait
 import okio.Buffer
 import okio.BufferedSink
-import okio.ByteString.Companion.encode
 import okio.Pipe
 import okio.Timeout
 import okio.buffer
@@ -211,9 +210,8 @@ class ObsoleteUrlFactory(private var client: OkHttpClient) : URLStreamHandlerFac
         override fun getHeaderField(position: Int): String? {
             return try {
                 val headers = headers
-                if (position < 0 || position >= headers.size) null else headers.value(
-                    position
-                ).encode().string(Charsets.ISO_8859_1)
+                if (position < 0 || position >= headers.size) null
+                else headers.value(position)
             } catch (e: IOException) {
                 null
             }
@@ -1120,7 +1118,9 @@ class ObsoleteUrlFactory(private var client: OkHttpClient) : URLStreamHandlerFac
                 var j = i + Character.charCount(c)
                 while (j < length) {
                     c = s.codePointAt(j)
-                    buffer.writeUtf8CodePoint((if (c > '\u001f'.code && c < '\u007f'.code) c else '?') as Int)
+                    buffer.writeUtf8CodePoint(
+                        (if (c > '\u001f'.code && c < '\u007f'.code) c else '?') as Int
+                    )
                     j += Character.charCount(c)
                 }
                 return buffer.readUtf8()

@@ -13,6 +13,7 @@ import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.isJsonObject
 import kotlinx.coroutines.runBlocking
 import org.mozilla.javascript.Scriptable
+import org.mozilla.javascript.ScriptableObject
 import splitties.init.appCtx
 import java.io.File
 import java.lang.ref.WeakReference
@@ -65,6 +66,9 @@ object SharedJsScope {
                 }
             } else {
                 RhinoScriptEngine.eval(jsLib, scope, coroutineContext)
+            }
+            if (scope is ScriptableObject) {
+                scope.sealObject()
             }
             scopeMap[key] = WeakReference(scope)
         }

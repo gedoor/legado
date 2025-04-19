@@ -115,6 +115,7 @@ open class MangaVH<VB : ViewBinding>(val binding: VB, private val context: Conte
                         itemView.updateLayoutParams<ViewGroup.LayoutParams> {
                             height = ViewGroup.LayoutParams.MATCH_PARENT
                         }
+                        itemView.minimumHeight = 0
                         mImage.updateLayoutParams<FrameLayout.LayoutParams> {
                             height = ViewGroup.LayoutParams.MATCH_PARENT
                             gravity = Gravity.CENTER
