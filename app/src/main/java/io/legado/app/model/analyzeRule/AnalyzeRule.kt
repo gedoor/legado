@@ -88,11 +88,6 @@ class AnalyzeRule(
         return this
     }
 
-    fun setCoroutineContext(context: CoroutineContext): AnalyzeRule {
-        coroutineContext = context.minusKey(ContinuationInterceptor)
-        return this
-    }
-
     fun setBaseUrl(baseUrl: String?): AnalyzeRule {
         baseUrl?.let {
             this.baseUrl = baseUrl
@@ -861,6 +856,12 @@ class AnalyzeRule(
         private val evalPattern =
             Pattern.compile("@get:\\{[^}]+?\\}|\\{\\{[\\w\\W]*?\\}\\}", Pattern.CASE_INSENSITIVE)
         private val regexPattern = Pattern.compile("\\$\\d{1,2}")
+
+        fun AnalyzeRule.setCoroutineContext(context: CoroutineContext): AnalyzeRule {
+            coroutineContext = context.minusKey(ContinuationInterceptor)
+            return this
+        }
+
     }
 
 }

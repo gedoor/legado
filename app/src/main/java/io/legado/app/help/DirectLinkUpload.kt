@@ -3,6 +3,7 @@ package io.legado.app.help
 import androidx.annotation.Keep
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.model.analyzeRule.AnalyzeRule
+import io.legado.app.model.analyzeRule.AnalyzeRule.Companion.setCoroutineContext
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.ACache
 import io.legado.app.utils.FileUtils
