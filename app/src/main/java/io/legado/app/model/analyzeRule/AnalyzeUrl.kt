@@ -97,7 +97,7 @@ class AnalyzeUrl(
         private set
     var type: String? = null
         private set
-    val headerMap = HashMap<String, String>()
+    val headerMap = LinkedHashMap<String, String>()
     private var urlNoQuery: String = ""
     private var encodedForm: String? = null
     private var encodedQuery: String? = null

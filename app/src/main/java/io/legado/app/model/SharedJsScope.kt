@@ -70,13 +70,6 @@ object SharedJsScope {
             if (scope is ScriptableObject) {
                 scope.sealObject()
             }
-            if (scope is Map<*, *>) {
-                scope.entries.forEach {
-                    if (it is ScriptableObject) {
-                        it.sealObject()
-                    }
-                }
-            }
             scopeMap[key] = WeakReference(scope)
         }
         return scope

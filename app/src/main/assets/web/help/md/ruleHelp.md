@@ -17,6 +17,8 @@
 > `JavaScript Code` 直接填写JavaScript片段  
 > `{"example":"https://www.example.com/js/example.js", ...}` 自动复用已经下载的js文件
 
+> 注意此处定义的函数可能会被多个线程同时调用，在函数里的全局变量内容将会共享使用，对其进行修改可能会出现竞争问题
+
 * 并发率
 > 并发限制，单位ms，可填写两种格式
 

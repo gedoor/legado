@@ -189,7 +189,7 @@ object BookList {
         baseUrl: String,
         variable: String?,
         log: Boolean,
-        filter: ((name: String, author: String) -> Boolean)? = null,
+        filter: ((name: String, author: String) -> Boolean)?,
         ruleName: List<AnalyzeRule.SourceRule>,
         ruleBookUrl: List<AnalyzeRule.SourceRule>,
         ruleAuthor: List<AnalyzeRule.SourceRule>,
