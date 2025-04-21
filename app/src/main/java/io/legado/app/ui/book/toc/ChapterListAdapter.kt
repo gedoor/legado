@@ -159,6 +159,12 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
                     tvWordCount.gone()
                 }
 
+                if (item.isVip && !item.isPay) {
+                    ivLocked.visible()
+                } else {
+                    ivLocked.gone()
+                }
+
                 upHasCache(binding, isDur, cached)
             } else {
                 tvChapterName.text = getDisplayTitle(item)

@@ -9,13 +9,26 @@
     android:orientation="vertical"
     android:padding="12dp">
 
+    <ImageView
+        android:id="@+id/iv_locked"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:contentDescription="@string/success"
+        android:paddingEnd="8dp"
+        android:src="@drawable/ic_lock_outline"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/secondaryText" />
+
     <TextView
         android:id="@+id/tv_chapter_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:singleLine="true"
         app:layout_constraintBottom_toTopOf="@id/barrier"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/iv_locked"
         app:layout_constraintRight_toLeftOf="@+id/iv_checked"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -35,7 +48,7 @@
         android:textSize="12sp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/iv_locked"
         app:layout_constraintTop_toBottomOf="@+id/barrier"
         tools:ignore="RtlSymmetry" />
 

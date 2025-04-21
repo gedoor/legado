@@ -195,6 +195,8 @@ class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookS
             R.id.menu_content_src -> showDialogFragment(TextDialog("html", viewModel.contentSrc))
             R.id.menu_refresh_explore -> lifecycleScope.launch {
                 viewModel.bookSource?.clearExploreKindsCache()
+                adapter.clearItems()
+                openOrCloseHelp(true)
                 initExploreKinds()
             }
             R.id.menu_help -> showHelp("debugHelp")
