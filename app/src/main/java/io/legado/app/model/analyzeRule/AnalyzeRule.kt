@@ -32,6 +32,8 @@ import kotlinx.coroutines.withTimeout
 import org.apache.commons.text.StringEscapeUtils
 import org.jsoup.nodes.Node
 import org.mozilla.javascript.NativeObject
+import org.mozilla.javascript.Scriptable
+import java.lang.ref.WeakReference
 import java.net.URL
 import java.util.Locale
 import java.util.regex.Pattern
@@ -70,6 +72,7 @@ class AnalyzeRule(
     private val stringRuleCache = hashMapOf<String, List<SourceRule>>()
     private val regexCache = hashMapOf<String, Regex?>()
     private val scriptCache = hashMapOf<String, CompiledScript>()
+    private var topScopeRef: WeakReference<Scriptable>? = null
 
     private var coroutineContext: CoroutineContext = EmptyCoroutineContext
 
@@ -758,9 +761,15 @@ class AnalyzeRule(
             bindings["nextChapterUrl"] = nextChapterUrl
             bindings["rssArticle"] = rssArticle
         }
-        val scope = RhinoScriptEngine.getRuntimeScope(bindings)
-        source?.getShareScope(coroutineContext)?.let {
-            scope.prototype = it
+        val topScope = source?.getShareScope(coroutineContext) ?: topScopeRef?.get()
+        val scope = if (topScope == null) {
+            RhinoScriptEngine.getRuntimeScope(bindings).apply {
+                topScopeRef = WeakReference(prototype)
+            }
+        } else {
+            bindings.apply {
+                prototype = topScope
+            }
         }
         val script = compileScriptCache(jsStr)
         return script.eval(scope, coroutineContext)
