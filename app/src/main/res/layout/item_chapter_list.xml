@@ -13,7 +13,6 @@
         android:id="@+id/iv_locked"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:contentDescription="@string/success"
         android:paddingEnd="8dp"
         android:src="@drawable/ic_lock_outline"
         android:visibility="gone"
