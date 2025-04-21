@@ -1,5 +1,6 @@
 package io.legado.app.model
 
+import androidx.collection.LruCache
 import com.google.gson.reflect.TypeToken
 import com.script.ScriptBindings
 import com.script.rhino.RhinoScriptEngine
@@ -24,7 +25,7 @@ object SharedJsScope {
     private val cacheFolder = File(appCtx.cacheDir, "shareJs")
     private val aCache = ACache.get(cacheFolder)
 
-    private val scopeMap = hashMapOf<String, WeakReference<Scriptable>>()
+    private val scopeMap = LruCache<String, WeakReference<Scriptable>>(16)
 
     fun getScope(jsLib: String?, coroutineContext: CoroutineContext?): Scriptable? {
         if (jsLib.isNullOrBlank()) {
@@ -70,7 +71,7 @@ object SharedJsScope {
             if (scope is ScriptableObject) {
                 scope.sealObject()
             }
-            scopeMap[key] = WeakReference(scope)
+            scopeMap.put(key, WeakReference(scope))
         }
         return scope
     }

@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.databinding.ActivitySourceDebugBinding
+import io.legado.app.help.source.clearExploreKindsCache
 import io.legado.app.help.source.exploreKinds
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.accentColor
@@ -117,6 +118,10 @@ class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookS
         binding.textContent.onClick {
             prefixAutoComplete("--")
         }
+        initExploreKinds()
+    }
+
+    private fun initExploreKinds() {
         lifecycleScope.launch {
             val exploreKinds = viewModel.bookSource?.exploreKinds()?.filter {
                 !it.url.isNullOrBlank()
@@ -188,6 +193,10 @@ class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookS
             R.id.menu_book_src -> showDialogFragment(TextDialog("html", viewModel.bookSrc))
             R.id.menu_toc_src -> showDialogFragment(TextDialog("html", viewModel.tocSrc))
             R.id.menu_content_src -> showDialogFragment(TextDialog("html", viewModel.contentSrc))
+            R.id.menu_refresh_explore -> lifecycleScope.launch {
+                viewModel.bookSource?.clearExploreKindsCache()
+                initExploreKinds()
+            }
             R.id.menu_help -> showHelp("debugHelp")
         }
         return super.onCompatOptionsItemSelected(item)

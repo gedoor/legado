@@ -12,8 +12,18 @@ import io.legado.app.help.config.SourceConfig
 import io.legado.app.help.http.CookieStore
 import io.legado.app.help.http.newCallStrResponse
 import io.legado.app.help.http.okHttpClient
+import io.legado.app.help.source.clearExploreKindsCache
 import io.legado.app.help.storage.ImportOldData
-import io.legado.app.utils.*
+import io.legado.app.utils.GSON
+import io.legado.app.utils.fromJsonArray
+import io.legado.app.utils.fromJsonObject
+import io.legado.app.utils.getClipText
+import io.legado.app.utils.isAbsUrl
+import io.legado.app.utils.isJsonArray
+import io.legado.app.utils.isJsonObject
+import io.legado.app.utils.jsonPath
+import io.legado.app.utils.printOnDebug
+import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.Dispatchers
 
 
@@ -41,8 +51,12 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
             if (source.bookSourceUrl.isBlank() || source.bookSourceName.isBlank()) {
                 throw NoStackTraceException(context.getString(R.string.non_null_name_url))
             }
-            if (!source.equal(bookSource ?: BookSource())) {
+            val oldSource = bookSource ?: BookSource()
+            if (!source.equal(oldSource)) {
                 source.lastUpdateTime = System.currentTimeMillis()
+                if (oldSource.exploreUrl != source.exploreUrl) {
+                    oldSource.clearExploreKindsCache()
+                }
             }
             bookSource?.let {
                 appDb.bookSourceDao.delete(it)

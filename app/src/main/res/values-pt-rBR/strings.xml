@@ -1212,4 +1212,5 @@
     <string name="enable_manga_horizontal_scroll">水平滚动</string>
     <string name="manga_color_filter">滤镜</string>
     <string name="hide_manga_title">隐藏漫画列表标题</string>
+    <string name="refresh_explore">刷新发现</string>
 </resources>
