@@ -201,10 +201,8 @@ class CoverImageView @JvmOverloads constructor(
         this.bitmapPath = path
         this.name = name?.replace(AppPattern.bdRegex, "")?.trim()
         this.author = author?.replace(AppPattern.bdRegex, "")?.trim()
-        if (!defaultCover) {
-            defaultCover = true
-            invalidate()
-        }
+        defaultCover = true
+        invalidate()
         if (AppConfig.useDefaultCover) {
             ImageLoader.load(context, BookCover.defaultDrawable)
                 .centerCrop()

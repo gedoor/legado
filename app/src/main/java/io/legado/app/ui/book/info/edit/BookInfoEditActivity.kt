@@ -1,6 +1,5 @@
 package io.legado.app.ui.book.info.edit
 
-import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
@@ -112,8 +111,8 @@ class BookInfoEditActivity :
     }
 
     private fun upCover() {
-        viewModel.book.let {
-            binding.ivCover.load(it?.getDisplayCover(), it?.name, it?.author)
+        viewModel.book?.let {
+            binding.ivCover.load(it.getDisplayCover(), it.name, it.author, false, it.origin)
         }
     }
 
