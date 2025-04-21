@@ -14,6 +14,7 @@ import io.legado.app.help.http.newCallStrResponse
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.source.clearExploreKindsCache
 import io.legado.app.help.storage.ImportOldData
+import io.legado.app.model.SharedJsScope
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonArray
 import io.legado.app.utils.fromJsonObject
@@ -56,6 +57,9 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
                 source.lastUpdateTime = System.currentTimeMillis()
                 if (oldSource.exploreUrl != source.exploreUrl) {
                     oldSource.clearExploreKindsCache()
+                }
+                if (oldSource.jsLib != source.jsLib) {
+                    SharedJsScope.remove(oldSource.jsLib)
                 }
             }
             bookSource?.let {

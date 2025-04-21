@@ -56,7 +56,7 @@ object SharedJsScope {
                                     url(value)
                                 }.body
                             }
-                            if (js !== null) {
+                            if (js != null) {
                                 aCache.put(fileName, js)
                             } else {
                                 throw NoStackTraceException("下载jsLib-${value}失败")
@@ -74,6 +74,14 @@ object SharedJsScope {
             scopeMap.put(key, WeakReference(scope))
         }
         return scope
+    }
+
+    fun remove(jsLib: String?) {
+        if (jsLib.isNullOrBlank()) {
+            return
+        }
+        val key = MD5Utils.md5Encode(jsLib)
+        scopeMap.remove(key)
     }
 
 }
