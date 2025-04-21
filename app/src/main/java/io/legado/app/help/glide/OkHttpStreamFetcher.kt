@@ -10,6 +10,7 @@ import com.bumptech.glide.util.ContentLengthInputStream
 import com.script.rhino.runScriptWithContext
 import io.legado.app.data.entities.BaseSource
 import io.legado.app.exception.NoStackTraceException
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.http.addHeaders
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.http.okHttpClientManga
@@ -18,7 +19,9 @@ import io.legado.app.model.ReadManga
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.ImageUtils
 import io.legado.app.utils.isWifiConnect
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.SupervisorJob
 import okhttp3.Call
 import okhttp3.Request
 import okhttp3.Response
@@ -39,7 +42,8 @@ class OkHttpStreamFetcher(
     private var callback: DataFetcher.DataCallback<in InputStream>? = null
     private var source: BaseSource? = null
     private val manga = options.get(OkHttpModelLoader.mangaOption) == true
-    private val coroutineContext = Job()
+    private val coroutineContext = SupervisorJob()
+    private val coroutineScope = CoroutineScope(coroutineContext)
     private lateinit var analyzedUrl: GlideUrl
 
     @Volatile
@@ -110,11 +114,20 @@ class OkHttpStreamFetcher(
 
     override fun onResponse(call: Call, response: Response) {
         responseBody = response.body
-        if (response.isSuccessful) {
+        if (!response.isSuccessful) {
+            if (!manga) {
+                failUrl.add(url.toStringUrl())
+            }
+            callback?.onLoadFailed(HttpException(response.message, response.code))
+            return
+        }
+        if (ImageUtils.skipDecode(source, !manga)) {
+            onStreamReady(responseBody!!.byteStream())
+            return
+        }
+        Coroutine.async(coroutineScope, executeContext = IO) {
             val decodeResult = runScriptWithContext(coroutineContext) {
-                if (ImageUtils.skipDecode(source, !manga)) {
-                    responseBody!!.byteStream()
-                } else if (manga) {
+                if (manga) {
                     ImageUtils.decode(
                         url.toString(),
                         responseBody!!.bytes(),
@@ -129,20 +142,23 @@ class OkHttpStreamFetcher(
                     )
                 }
             }
-            if (decodeResult == null) {
-                callback?.onLoadFailed(NoStackTraceException("封面二次解密失败"))
-            } else {
-                val contentLength: Long =
-                    if (decodeResult is ByteArrayInputStream) decodeResult.available().toLong()
-                    else responseBody!!.contentLength()
-                stream = ContentLengthInputStream.obtain(decodeResult, contentLength)
-                callback?.onDataReady(stream)
-            }
-        } else {
-            if (!manga) {
-                failUrl.add(analyzedUrl.toStringUrl())
-            }
-            callback?.onLoadFailed(HttpException(response.message, response.code))
+            onStreamReady(decodeResult)
         }
     }
+
+    private fun onStreamReady(inputStream: InputStream?) {
+        if (inputStream == null) {
+            if (!manga) {
+                failUrl.add(url.toStringUrl())
+            }
+            callback?.onLoadFailed(NoStackTraceException("封面二次解密失败"))
+        } else {
+            val contentLength: Long =
+                if (inputStream is ByteArrayInputStream) inputStream.available().toLong()
+                else responseBody!!.contentLength()
+            stream = ContentLengthInputStream.obtain(inputStream, contentLength)
+            callback?.onDataReady(stream)
+        }
+    }
+
 }
