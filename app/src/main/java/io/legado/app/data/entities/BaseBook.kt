@@ -2,6 +2,8 @@ package io.legado.app.data.entities
 
 import io.legado.app.help.RuleBigDataHelp
 import io.legado.app.model.analyzeRule.RuleDataInterface
+import io.legado.app.utils.ConvertUtils
+import io.legado.app.utils.FileUtils
 import io.legado.app.utils.GSON
 import io.legado.app.utils.splitNotBlank
 
@@ -43,6 +45,12 @@ interface BaseBook : RuleDataInterface {
         val kindList = arrayListOf<String>()
         wordCount?.let {
             if (it.isNotBlank()) kindList.add(it)
+        }
+        if (bookUrl.startsWith("/")) {
+            val size = FileUtils.getLength(bookUrl)
+            if (size > 0) {
+                kindList.add(ConvertUtils.formatFileSize(size))
+            }
         }
         kind?.let {
             val kinds = it.splitNotBlank(",", "\n")
