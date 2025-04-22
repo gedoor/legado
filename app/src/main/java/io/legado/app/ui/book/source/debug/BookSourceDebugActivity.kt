@@ -199,6 +199,7 @@ class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookS
                 openOrCloseHelp(true)
                 initExploreKinds()
             }
+
             R.id.menu_help -> showHelp("debugHelp")
         }
         return super.onCompatOptionsItemSelected(item)

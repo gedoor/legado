@@ -224,6 +224,7 @@ object BookList {
                 searchBook.kind = analyzeRule.getStringList(ruleKind)?.joinToString(",")
                 Debug.log(bookSource.bookSourceUrl, "└${searchBook.kind ?: ""}", log)
             } catch (e: Exception) {
+                coroutineContext.ensureActive()
                 Debug.log(bookSource.bookSourceUrl, "└${e.localizedMessage}", log)
             }
             coroutineContext.ensureActive()
@@ -231,7 +232,8 @@ object BookList {
             try {
                 searchBook.wordCount = wordCountFormat(analyzeRule.getString(ruleWordCount))
                 Debug.log(bookSource.bookSourceUrl, "└${searchBook.wordCount}", log)
-            } catch (e: java.lang.Exception) {
+            } catch (e: Exception) {
+                coroutineContext.ensureActive()
                 Debug.log(bookSource.bookSourceUrl, "└${e.localizedMessage}", log)
             }
             coroutineContext.ensureActive()
@@ -239,7 +241,8 @@ object BookList {
             try {
                 searchBook.latestChapterTitle = analyzeRule.getString(ruleLastChapter)
                 Debug.log(bookSource.bookSourceUrl, "└${searchBook.latestChapterTitle}", log)
-            } catch (e: java.lang.Exception) {
+            } catch (e: Exception) {
+                coroutineContext.ensureActive()
                 Debug.log(bookSource.bookSourceUrl, "└${e.localizedMessage}", log)
             }
             coroutineContext.ensureActive()
@@ -247,7 +250,8 @@ object BookList {
             try {
                 searchBook.intro = HtmlFormatter.format(analyzeRule.getString(ruleIntro))
                 Debug.log(bookSource.bookSourceUrl, "└${searchBook.intro}", log)
-            } catch (e: java.lang.Exception) {
+            } catch (e: Exception) {
+                coroutineContext.ensureActive()
                 Debug.log(bookSource.bookSourceUrl, "└${e.localizedMessage}", log)
             }
             coroutineContext.ensureActive()
@@ -259,7 +263,8 @@ object BookList {
                     }
                 }
                 Debug.log(bookSource.bookSourceUrl, "└${searchBook.coverUrl ?: ""}", log)
-            } catch (e: java.lang.Exception) {
+            } catch (e: Exception) {
+                coroutineContext.ensureActive()
                 Debug.log(bookSource.bookSourceUrl, "└${e.localizedMessage}", log)
             }
             coroutineContext.ensureActive()

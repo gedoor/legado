@@ -89,6 +89,7 @@ object BookInfo {
                     Debug.log(bookSource.bookSourceUrl, "└${it}")
                 } ?: Debug.log(bookSource.bookSourceUrl, "└")
         } catch (e: Exception) {
+            coroutineContext.ensureActive()
             Debug.log(bookSource.bookSourceUrl, "└${e.localizedMessage}")
             DebugLog.e("获取分类出错", e)
         }
@@ -100,6 +101,7 @@ object BookInfo {
                 Debug.log(bookSource.bookSourceUrl, "└${it}")
             }
         } catch (e: Exception) {
+            coroutineContext.ensureActive()
             Debug.log(bookSource.bookSourceUrl, "└${e.localizedMessage}")
             DebugLog.e("获取字数出错", e)
         }
@@ -111,6 +113,7 @@ object BookInfo {
                 Debug.log(bookSource.bookSourceUrl, "└${it}")
             }
         } catch (e: Exception) {
+            coroutineContext.ensureActive()
             Debug.log(bookSource.bookSourceUrl, "└${e.localizedMessage}")
             DebugLog.e("获取最新章节出错", e)
         }
@@ -122,6 +125,7 @@ object BookInfo {
                 Debug.log(bookSource.bookSourceUrl, "└${it}")
             }
         } catch (e: Exception) {
+            coroutineContext.ensureActive()
             Debug.log(bookSource.bookSourceUrl, "└${e.localizedMessage}")
             DebugLog.e("获取简介出错", e)
         }
@@ -136,11 +140,12 @@ object BookInfo {
                 Debug.log(bookSource.bookSourceUrl, "└${it}")
             }
         } catch (e: Exception) {
+            coroutineContext.ensureActive()
             Debug.log(bookSource.bookSourceUrl, "└${e.localizedMessage}")
             DebugLog.e("获取封面出错", e)
         }
+        coroutineContext.ensureActive()
         if (!book.isWebFile) {
-            coroutineContext.ensureActive()
             Debug.log(bookSource.bookSourceUrl, "┌获取目录链接")
             book.tocUrl = analyzeRule.getString(infoRule.tocUrl, isUrl = true)
             if (book.tocUrl.isEmpty()) book.tocUrl = baseUrl
@@ -149,7 +154,6 @@ object BookInfo {
             }
             Debug.log(bookSource.bookSourceUrl, "└${book.tocUrl}")
         } else {
-            coroutineContext.ensureActive()
             Debug.log(bookSource.bookSourceUrl, "┌获取文件下载链接")
             book.downloadUrls = analyzeRule.getStringList(infoRule.downloadUrls, isUrl = true)
             if (book.downloadUrls.isNullOrEmpty()) {

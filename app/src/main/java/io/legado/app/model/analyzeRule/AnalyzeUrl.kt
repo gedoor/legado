@@ -351,9 +351,13 @@ class AnalyzeUrl(
             bindings["source"] = source
             bindings["result"] = result
         }
-        val scope = RhinoScriptEngine.getRuntimeScope(bindings)
-        source?.getShareScope(coroutineContext)?.let {
-            scope.prototype = it
+        val sharedScope = source?.getShareScope(coroutineContext)
+        val scope = if (sharedScope == null) {
+            RhinoScriptEngine.getRuntimeScope(bindings)
+        } else {
+            bindings.apply {
+                prototype = sharedScope
+            }
         }
         return RhinoScriptEngine.eval(jsStr, scope, coroutineContext)
     }
