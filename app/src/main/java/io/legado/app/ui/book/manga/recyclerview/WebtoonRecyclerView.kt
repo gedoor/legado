@@ -2,6 +2,7 @@ package io.legado.app.ui.book.manga.recyclerview
 
 import android.animation.AnimatorSet
 import android.animation.ValueAnimator
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import android.view.HapticFeedbackConstants
@@ -53,9 +54,9 @@ class WebtoonRecyclerView @JvmOverloads constructor(
         super.onMeasure(widthSpec, heightSpec)
     }
 
-    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-        detector.onTouchEvent(ev)
-        return super.dispatchTouchEvent(ev)
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onTouchEvent(e: MotionEvent): Boolean {
+        return detector.onTouchEvent(e) || super.onTouchEvent(e)
     }
 
     override fun onScrolled(dx: Int, dy: Int) {
