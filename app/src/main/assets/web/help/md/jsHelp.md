@@ -173,7 +173,7 @@ java.cacheFile(url)
 java.cacheFile(url,saveTime)
 执行内容
 eval(String(java.cacheFile(url)))
-删除缓存文件
+使缓存失效
 cache.delete(java.md5Encode16(url))
 ```
 * 获取网络压缩文件里面指定路径的数据 *可替换Zip Rar 7Z

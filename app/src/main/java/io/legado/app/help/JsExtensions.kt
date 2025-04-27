@@ -505,15 +505,6 @@ interface JsExtensions : JsEncodeUtils {
         return dateFormat.format(Date(time))
     }
 
-    /**
-     * utf8编码转gbk编码
-     */
-    fun utf8ToGbk(str: String): String {
-        val utf8 = String(str.toByteArray(charset("UTF-8")))
-        val unicode = String(utf8.toByteArray(), charset("UTF-8"))
-        return String(unicode.toByteArray(charset("GBK")))
-    }
-
     fun encodeURI(str: String): String {
         return try {
             URLEncoder.encode(str, "UTF-8")
