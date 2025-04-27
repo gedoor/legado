@@ -170,7 +170,7 @@ data class Book(
     fun getDisplayIntro() = if (customIntro.isNullOrEmpty()) intro else customIntro
 
     override fun getKindList(): List<String> {
-        val kindList = super.getKindList()
+        val kindList = super.getKindList().toMutableList()
         if (isLocal) {
             // local book add filesize tag
             val size = FileUtils.getLength(bookUrl)
