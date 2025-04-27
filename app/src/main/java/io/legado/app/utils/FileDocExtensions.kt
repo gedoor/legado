@@ -45,7 +45,7 @@ data class FileDoc(
     fun asDocumentFile(): DocumentFile? {
         if (isContentScheme) {
             return if (isDir) {
-                TreeDocumentFileConstructor.newInstance(null, appCtx, uri) as DocumentFile
+                treeDocumentFileConstructor.newInstance(null, appCtx, uri) as DocumentFile
             } else {
                 DocumentFile.fromSingleUri(appCtx, uri)
             }
@@ -62,7 +62,7 @@ data class FileDoc(
 
     companion object {
 
-        private val TreeDocumentFileConstructor by lazy {
+        private val treeDocumentFileConstructor by lazy {
             Class.forName("androidx.documentfile.provider.TreeDocumentFile")
                 .getDeclaredConstructor(
                     DocumentFile::class.java,

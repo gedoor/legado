@@ -100,7 +100,7 @@ cn.hutool.core.util.**{*;}
     *** mNavButtonView;
 }
 
-# FileDocExtensions.kt TreeDocumentFileConstructor
+# FileDocExtensions.kt treeDocumentFileConstructor
 -keep class androidx.documentfile.provider.TreeDocumentFile
 
 # JsoupXpath
