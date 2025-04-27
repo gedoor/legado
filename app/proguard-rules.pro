@@ -101,7 +101,9 @@ cn.hutool.core.util.**{*;}
 }
 
 # FileDocExtensions.kt treeDocumentFileConstructor
--keep class androidx.documentfile.provider.TreeDocumentFile
+-keep class androidx.documentfile.provider.TreeDocumentFile {
+    <init>(...);
+}
 
 # JsoupXpath
 -keep,allowobfuscation class * implements org.seimicrawler.xpath.core.AxisSelector{*;}
