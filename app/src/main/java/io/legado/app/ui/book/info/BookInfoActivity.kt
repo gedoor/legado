@@ -60,6 +60,8 @@ import io.legado.app.ui.widget.dialog.PhotoDialog
 import io.legado.app.ui.widget.dialog.VariableDialog
 import io.legado.app.ui.widget.dialog.WaitDialog
 import io.legado.app.utils.ColorUtils
+import io.legado.app.utils.ConvertUtils
+import io.legado.app.utils.FileDoc
 import io.legado.app.utils.GSON
 import io.legado.app.utils.StartActivityContract
 import io.legado.app.utils.applyNavigationBarPadding
@@ -339,14 +341,29 @@ class BookInfoActivity :
         tvIntro.text = book.getDisplayIntro()
         llToc?.visible(!book.isWebFile)
         upTvBookshelf()
-        val kinds = book.getKindList()
-        if (kinds.isEmpty()) {
-            lbKind.gone()
-        } else {
-            lbKind.visible()
-            lbKind.setLabels(kinds)
-        }
+        upKinds(book)
         upGroup(book.group)
+    }
+
+    private fun upKinds(book: Book) = binding.run {
+        lifecycleScope.launch {
+            var kinds = book.getKindList()
+            if (book.isLocal) {
+                withContext(IO) {
+                    val size = FileDoc.fromFile(book.bookUrl).size
+                    if (size > 0) {
+                        kinds = kinds.toMutableList()
+                        kinds.add(ConvertUtils.formatFileSize(size))
+                    }
+                }
+            }
+            if (kinds.isEmpty()) {
+                lbKind.gone()
+            } else {
+                lbKind.visible()
+                lbKind.setLabels(kinds)
+            }
+        }
     }
 
     private fun showCover(book: Book) {

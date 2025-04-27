@@ -45,14 +45,7 @@ data class FileDoc(
     fun asDocumentFile(): DocumentFile? {
         if (isContentScheme) {
             return if (isDir) {
-                Class.forName("androidx.documentfile.provider.TreeDocumentFile")
-                    .getDeclaredConstructor(
-                        DocumentFile::class.java,
-                        Context::class.java,
-                        Uri::class.java
-                    ).apply {
-                        isAccessible = true
-                    }.newInstance(null, appCtx, uri) as DocumentFile
+                TreeDocumentFileConstructor.newInstance(null, appCtx, uri) as DocumentFile
             } else {
                 DocumentFile.fromSingleUri(appCtx, uri)
             }
@@ -69,8 +62,23 @@ data class FileDoc(
 
     companion object {
 
+        private val TreeDocumentFileConstructor by lazy {
+            Class.forName("androidx.documentfile.provider.TreeDocumentFile")
+                .getDeclaredConstructor(
+                    DocumentFile::class.java,
+                    Context::class.java,
+                    Uri::class.java
+                ).apply {
+                    isAccessible = true
+                }
+        }
+
         fun fromDir(path: String): FileDoc {
             return fromUri(path.toUri(), true)
+        }
+
+        fun fromFile(path: String): FileDoc {
+            return fromUri(path.toUri(), false)
         }
 
         fun fromUri(uri: Uri, isDir: Boolean): FileDoc {

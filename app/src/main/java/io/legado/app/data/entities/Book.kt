@@ -17,15 +17,12 @@ import io.legado.app.help.book.ContentProcessor
 import io.legado.app.help.book.getFolderNameNoCache
 import io.legado.app.help.book.isEpub
 import io.legado.app.help.book.isImage
-import io.legado.app.help.book.isLocal
 import io.legado.app.help.book.simulatedTotalChapterNum
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.model.ReadBook
-import io.legado.app.utils.ConvertUtils
-import io.legado.app.utils.fromJsonObject
-import io.legado.app.utils.FileUtils
 import io.legado.app.utils.GSON
+import io.legado.app.utils.fromJsonObject
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import java.nio.charset.Charset
@@ -169,17 +166,6 @@ data class Book(
 
     fun getDisplayIntro() = if (customIntro.isNullOrEmpty()) intro else customIntro
 
-    override fun getKindList(): List<String> {
-        val kindList = super.getKindList().toMutableList()
-        if (isLocal) {
-            // local book add filesize tag
-            val size = FileUtils.getLength(bookUrl)
-            if (size > 0) {
-                kindList.add(ConvertUtils.formatFileSize(size))
-            }
-        }
-        return kindList
-    }
     //自定义简介有自动更新的需求时，可通过更新intro再调用upCustomIntro()完成
     @Suppress("unused")
     fun upCustomIntro() {

@@ -862,6 +862,7 @@ interface JsExtensions : JsEncodeUtils {
     ): String {
         if (errorQueryTTF == null || correctQueryTTF == null) return text
         val contentArray = text.toStringArray() //这里不能用toCharArray,因为有些文字占多个字节
+        val intArray = IntArray(1)
         contentArray.forEachIndexed { index, s ->
             val oldCode = s.codePointAt(0)
             // 忽略正常的空白字符
@@ -878,7 +879,8 @@ interface JsExtensions : JsEncodeUtils {
             // 使用轮廓数据反查Unicode
             val code = correctQueryTTF.getUnicodeByGlyf(glyf)
             if (code != 0) {
-                contentArray[index] = code.toChar().toString()
+                intArray[0] = code
+                contentArray[index] = String(intArray, 0, 1)
             }
         }
         return contentArray.joinToString("")
