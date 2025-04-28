@@ -22,7 +22,6 @@ import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.sync.Semaphore
-import kotlinx.coroutines.sync.withPermit
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.coroutineContext
 
@@ -283,12 +282,14 @@ object WebBook {
         executeContext: CoroutineContext = Dispatchers.Main,
         semaphore: Semaphore? = null,
     ): Coroutine<String> {
-        return Coroutine.async(scope, context, start = start, executeContext = executeContext) {
-            semaphore?.withPermit {
-                getContentAwait(bookSource, book, bookChapter, nextChapterUrl, needSave)
-            } ?: run {
-                getContentAwait(bookSource, book, bookChapter, nextChapterUrl, needSave)
-            }
+        return Coroutine.async(
+            scope,
+            context,
+            start = start,
+            executeContext = executeContext,
+            semaphore = semaphore
+        ) {
+            getContentAwait(bookSource, book, bookChapter, nextChapterUrl, needSave)
         }
     }
 
@@ -360,8 +361,9 @@ object WebBook {
         name: String,
         author: String,
         context: CoroutineContext = Dispatchers.IO,
+        semaphore: Semaphore? = null,
     ): Coroutine<Pair<Book, BookSource>> {
-        return Coroutine.async(scope, context) {
+        return Coroutine.async(scope, context, semaphore = semaphore) {
             for (s in bookSourceParts) {
                 val source = s.getBookSource() ?: continue
                 val book = preciseSearchAwait(source, name, author).getOrNull()

@@ -10,6 +10,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.sync.Semaphore
 import kotlin.coroutines.CoroutineContext
 
 @Suppress("unused")
@@ -22,18 +23,22 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
         context: CoroutineContext = Dispatchers.IO,
         start: CoroutineStart = CoroutineStart.DEFAULT,
         executeContext: CoroutineContext = Dispatchers.Main,
+        semaphore: Semaphore? = null,
         block: suspend CoroutineScope.() -> T
     ): Coroutine<T> {
-        return Coroutine.async(scope, context, start, executeContext, block)
+        return Coroutine.async(scope, context, start, executeContext, semaphore, block)
     }
 
     fun <T> executeLazy(
         scope: CoroutineScope = viewModelScope,
         context: CoroutineContext = Dispatchers.IO,
         executeContext: CoroutineContext = Dispatchers.Main,
+        semaphore: Semaphore? = null,
         block: suspend CoroutineScope.() -> T
     ): Coroutine<T> {
-        return Coroutine.async(scope, context, CoroutineStart.LAZY, executeContext, block)
+        return Coroutine.async(
+            scope, context, CoroutineStart.LAZY, executeContext, semaphore, block
+        )
     }
 
     fun <R> submit(

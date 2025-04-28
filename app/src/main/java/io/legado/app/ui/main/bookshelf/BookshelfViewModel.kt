@@ -10,6 +10,7 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSourcePart
 import io.legado.app.exception.NoStackTraceException
+import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.http.decompressed
 import io.legado.app.help.http.newCallResponseBody
@@ -24,7 +25,8 @@ import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.isJsonArray
 import io.legado.app.utils.printOnDebug
 import io.legado.app.utils.toastOnUi
-import kotlinx.coroutines.isActive
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStreamWriter
@@ -154,21 +156,26 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
     private fun importBookshelfByJson(json: String, groupId: Long) {
         execute {
             val bookSourceParts = appDb.bookSourceDao.allEnabledPart
+            val semaphore = Semaphore(AppConfig.threadCount + 1)
             GSON.fromJsonArray<Map<String, String?>>(json).getOrThrow().forEach { bookInfo ->
-                if (!isActive) return@execute
                 val name = bookInfo["name"] ?: ""
                 val author = bookInfo["author"] ?: ""
-                if (name.isNotEmpty() && appDb.bookDao.getBook(name, author) == null) {
-                    WebBook.preciseSearch(this, bookSourceParts, name, author)
-                        .onSuccess {
-                            val book = it.first
-                            if (groupId > 0) {
-                                book.group = groupId
-                            }
-                            book.save()
-                        }.onError { e ->
-                            context.toastOnUi(e.localizedMessage)
+                if (name.isEmpty() || appDb.bookDao.has(name, author)) {
+                    return@forEach
+                }
+                semaphore.withPermit {
+                    WebBook.preciseSearch(
+                        this, bookSourceParts, name, author,
+                        semaphore = semaphore
+                    ).onSuccess {
+                        val book = it.first
+                        if (groupId > 0) {
+                            book.group = groupId
                         }
+                        book.save()
+                    }.onError { e ->
+                        context.toastOnUi(e.localizedMessage)
+                    }
                 }
             }
         }.onError {

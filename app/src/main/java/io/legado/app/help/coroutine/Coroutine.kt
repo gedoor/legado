@@ -13,6 +13,7 @@ import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
+import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import kotlin.coroutines.CoroutineContext
@@ -23,10 +24,11 @@ import kotlin.coroutines.CoroutineContext
  */
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 class Coroutine<T>(
-    val scope: CoroutineScope,
+    private val scope: CoroutineScope,
     context: CoroutineContext = Dispatchers.IO,
-    val startOption: CoroutineStart = CoroutineStart.DEFAULT,
-    val executeContext: CoroutineContext = Dispatchers.Main,
+    private val startOption: CoroutineStart = CoroutineStart.DEFAULT,
+    private val executeContext: CoroutineContext = Dispatchers.Main,
+    private val semaphore: Semaphore? = null,
     block: suspend CoroutineScope.() -> T
 ) {
 
@@ -39,9 +41,10 @@ class Coroutine<T>(
             context: CoroutineContext = Dispatchers.IO,
             start: CoroutineStart = CoroutineStart.DEFAULT,
             executeContext: CoroutineContext = Dispatchers.Main,
+            semaphore: Semaphore? = null,
             block: suspend CoroutineScope.() -> T
         ): Coroutine<T> {
-            return Coroutine(scope, context, start, executeContext, block)
+            return Coroutine(scope, context, start, executeContext, semaphore, block)
         }
 
     }
@@ -169,6 +172,7 @@ class Coroutine<T>(
         block: suspend CoroutineScope.() -> T
     ): Job {
         return (scope.plus(executeContext)).launch(start = startOption) {
+            semaphore?.acquire()
             try {
                 start?.let { dispatchVoidCallback(this, it) }
                 ensureActive()
@@ -185,7 +189,11 @@ class Coroutine<T>(
                     error?.let { dispatchCallback(this, e, it) }
                 }
             } finally {
-                finally?.let { dispatchVoidCallback(this, it) }
+                try {
+                    finally?.let { dispatchVoidCallback(this, it) }
+                } finally {
+                    semaphore?.release()
+                }
             }
         }
     }
