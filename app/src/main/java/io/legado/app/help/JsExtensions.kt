@@ -57,7 +57,6 @@ import splitties.init.appCtx
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.FileOutputStream
 import java.net.URLEncoder
 import java.nio.charset.Charset
 import java.security.MessageDigest
@@ -310,16 +309,24 @@ interface JsExtensions : JsEncodeUtils {
      * @return 下载的文件相对路径
      */
     fun downloadFile(url: String): String {
+        rhinoContext.ensureActive()
         val analyzeUrl = AnalyzeUrl(url, source = getSource(), coroutineContext = context)
         val type = UrlUtil.getSuffix(url, analyzeUrl.type)
         val path = FileUtils.getPath(
             File(FileUtils.getCachePath()),
             "${MD5Utils.md5Encode16(url)}.${type}"
         )
-        val file = File(path).createFileReplace()
+        val file = File(path)
+        file.delete()
         analyzeUrl.getInputStream().use { iStream ->
-            FileOutputStream(file).use { oStream ->
-                iStream.copyTo(oStream)
+            file.createFileReplace()
+            try {
+                file.outputStream().buffered().use { oStream ->
+                    iStream.copyTo(oStream)
+                }
+            } catch (e: Throwable) {
+                file.delete()
+                throw e
             }
         }
         return path.substring(FileUtils.getCachePath().length)
@@ -337,6 +344,7 @@ interface JsExtensions : JsEncodeUtils {
         ReplaceWith("downloadFile(url)")
     )
     fun downloadFile(content: String, url: String): String {
+        rhinoContext.ensureActive()
         val type = AnalyzeUrl(url, source = getSource(), coroutineContext = context).type
             ?: return ""
         val path = FileUtils.getPath(
