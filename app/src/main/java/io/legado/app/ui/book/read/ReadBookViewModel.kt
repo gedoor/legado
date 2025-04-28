@@ -500,7 +500,6 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     /**
      * 保存图片
      */
-    @Suppress("BlockingMethodInNonBlockingContext")
     fun saveImage(src: String?, uri: Uri) {
         src ?: return
         val book = ReadBook.book ?: return

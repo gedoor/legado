@@ -127,15 +127,16 @@ class AudioPlayService : BaseService(),
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
         doDs()
         execute {
-            @Suppress("BlockingMethodInNonBlockingContext")
             ImageLoader
                 .loadBitmap(this@AudioPlayService, AudioPlay.book?.getDisplayCover())
                 .submit()
                 .get()
         }.onSuccess {
-            cover = it
-            upMediaMetadata()
-            upAudioPlayNotification()
+            if (it.width > 16 && it.height > 16) {
+                cover = it
+                upMediaMetadata()
+                upAudioPlayNotification()
+            }
         }
     }
 

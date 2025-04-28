@@ -156,7 +156,7 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
     private fun importBookshelfByJson(json: String, groupId: Long) {
         execute {
             val bookSourceParts = appDb.bookSourceDao.allEnabledPart
-            val semaphore = Semaphore(AppConfig.threadCount + 1)
+            val semaphore = Semaphore(AppConfig.threadCount)
             GSON.fromJsonArray<Map<String, String?>>(json).getOrThrow().forEach { bookInfo ->
                 val name = bookInfo["name"] ?: ""
                 val author = bookInfo["author"] ?: ""

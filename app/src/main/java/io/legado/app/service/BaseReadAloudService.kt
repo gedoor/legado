@@ -156,14 +156,15 @@ abstract class BaseReadAloudService : BaseService(),
             toastOnUi("朗读定时 ${AppConfig.ttsTimer} 分钟")
         }
         execute {
-            @Suppress("BlockingMethodInNonBlockingContext")
             ImageLoader
                 .loadBitmap(this@BaseReadAloudService, ReadBook.book?.getDisplayCover())
                 .submit()
                 .get()
         }.onSuccess {
-            cover = it
-            upReadAloudNotification()
+            if (it.width > 16 && it.height > 16) {
+                cover = it
+                upReadAloudNotification()
+            }
         }
     }
 
