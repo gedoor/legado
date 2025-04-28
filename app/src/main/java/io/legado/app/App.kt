@@ -28,6 +28,7 @@ import io.legado.app.help.RuleBigDataHelp
 import io.legado.app.help.book.BookHelp
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ThemeConfig.applyDayNight
+import io.legado.app.help.config.ThemeConfig.initNightMode
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.http.Cronet
 import io.legado.app.help.http.ObsoleteUrlFactory
@@ -55,27 +56,27 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         CrashHandler(this)
-        LogUtils.init(this)
-        LogUtils.d("App", "onCreate")
         if (isDebuggable) {
             ThreadUtils.setThreadAssertsDisabledForTesting(true)
         }
         oldConfig = Configuration(resources.configuration)
-        //预下载Cronet so
-        Cronet.preDownload()
-        createNotificationChannels()
-        LiveEventBus.config()
-            .lifecycleObserverAlwaysActive(true)
-            .autoClear(false)
-            .enableLogger(BuildConfig.DEBUG || AppConfig.recordLog)
-            .setLogger(EventLogger())
-        applyDayNight(this)
+        initNightMode()
         registerActivityLifecycleCallbacks(LifecycleHelp)
         defaultSharedPreferences.registerOnSharedPreferenceChangeListener(AppConfig)
-        DefaultData.upVersion()
-        AppFreezeMonitor.init(this)
         Coroutine.async {
+            LogUtils.init(this@App)
+            LogUtils.d("App", "onCreate")
             LogUtils.logDeviceInfo()
+            //预下载Cronet so
+            Cronet.preDownload()
+            createNotificationChannels()
+            LiveEventBus.config()
+                .lifecycleObserverAlwaysActive(true)
+                .autoClear(false)
+                .enableLogger(BuildConfig.DEBUG || AppConfig.recordLog)
+                .setLogger(EventLogger())
+            DefaultData.upVersion()
+            AppFreezeMonitor.init(this@App)
             URL.setURLStreamHandlerFactory(ObsoleteUrlFactory(okHttpClient))
             launch { installGmsTlsProvider(appCtx) }
             RhinoScriptEngine

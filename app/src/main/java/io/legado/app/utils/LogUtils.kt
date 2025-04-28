@@ -10,6 +10,7 @@ import io.legado.app.BuildConfig
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppLog
 import io.legado.app.help.config.AppConfig
+import io.legado.app.help.globalExecutor
 import splitties.init.appCtx
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -26,7 +27,9 @@ object LogUtils {
     val logTimeFormat by lazy { SimpleDateFormat(TIME_PATTERN) }
 
     fun init(context: Context) {
-        fileHandler = createFileHandler(context)
+        fileHandler = createFileHandler(context)?.also {
+            logger.addHandler(it)
+        }
     }
 
     @JvmStatic
@@ -46,11 +49,7 @@ object LogUtils {
     }
 
     val logger: Logger by lazy {
-        Logger.getLogger("Legado").apply {
-            fileHandler?.let {
-                addHandler(it)
-            }
-        }
+        Logger.getLogger("Legado")
     }
 
     private var fileHandler: FileHandler? = null
@@ -59,10 +58,12 @@ object LogUtils {
         try {
             val root = context.externalCacheDir ?: return null
             val logFolder = FileUtils.createFolderIfNotExist(root, "logs")
-            val expiredTime = System.currentTimeMillis() - 7.days.inWholeMilliseconds
-            logFolder.listFiles()?.forEach {
-                if (it.lastModified() < expiredTime || it.name.endsWith(".lck")) {
-                    it.delete()
+            globalExecutor.execute {
+                val expiredTime = System.currentTimeMillis() - 7.days.inWholeMilliseconds
+                logFolder.listFiles()?.forEach {
+                    if (it.lastModified() < expiredTime || it.name.endsWith(".lck")) {
+                        it.delete()
+                    }
                 }
             }
             val date = getCurrentDateStr(TIME_PATTERN)
