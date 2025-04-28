@@ -5,14 +5,12 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.PorterDuff
 import android.util.AttributeSet
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.animation.Animation
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import io.legado.app.R
 import io.legado.app.databinding.ViewSearchMenuBinding
-import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.lib.theme.Selector
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
@@ -20,15 +18,10 @@ import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.searchContent.SearchResult
 import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.activity
+import io.legado.app.utils.applyNavigationBarPadding
 import io.legado.app.utils.invisible
 import io.legado.app.utils.loadAnimation
-import io.legado.app.utils.navigationBarGravity
-import io.legado.app.utils.navigationBarHeight
 import io.legado.app.utils.visible
-import splitties.views.bottomPadding
-import splitties.views.leftPadding
-import splitties.views.padding
-import splitties.views.rightPadding
 
 /**
  * 搜索界面菜单
@@ -91,6 +84,7 @@ class SearchMenu @JvmOverloads constructor(
         ivSearchContentUp.setColorFilter(textColor, PorterDuff.Mode.SRC_IN)
         ivSearchContentDown.setColorFilter(textColor, PorterDuff.Mode.SRC_IN)
         tvCurrentSearchInfo.setTextColor(textColor)
+        applyNavigationBarPadding()
     }
 
 
@@ -196,20 +190,7 @@ class SearchMenu @JvmOverloads constructor(
 
             @SuppressLint("RtlHardcoded")
             override fun onAnimationEnd(animation: Animation) {
-                val navigationBarHeight = if (ReadBookConfig.hideNavigationBar) {
-                    activity?.navigationBarHeight ?: 0
-                } else {
-                    0
-                }
-                binding.run {
-                    vwMenuBg.setOnClickListener { runMenuOut() }
-                    root.padding = 0
-                    when (activity?.navigationBarGravity) {
-                        Gravity.BOTTOM -> root.bottomPadding = navigationBarHeight
-                        Gravity.LEFT -> root.leftPadding = navigationBarHeight
-                        Gravity.RIGHT -> root.rightPadding = navigationBarHeight
-                    }
-                }
+                binding.vwMenuBg.setOnClickListener { runMenuOut() }
                 callBack.upSystemUiVisibility()
             }
 

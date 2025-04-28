@@ -126,21 +126,7 @@ class ReadMenu @JvmOverloads constructor(
 
         @SuppressLint("RtlHardcoded")
         override fun onAnimationEnd(animation: Animation) {
-//            val navigationBarHeight =
-//                if (ReadBookConfig.hideNavigationBar) {
-//                    activity?.navigationBarHeight ?: 0
-//                } else {
-//                    0
-//                }
-            binding.run {
-                vwMenuBg.setOnClickListener { runMenuOut() }
-//                root.padding = 0
-//                when (activity?.navigationBarGravity) {
-//                    Gravity.BOTTOM -> root.bottomPadding = navigationBarHeight
-//                    Gravity.LEFT -> root.leftPadding = navigationBarHeight
-//                    Gravity.RIGHT -> root.rightPadding = navigationBarHeight
-//                }
-            }
+            binding.vwMenuBg.setOnClickListener { runMenuOut() }
             callBack.upSystemUiVisibility()
             if (!LocalConfig.readMenuHelpVersionIsLast) {
                 callBack.showHelp()
