@@ -159,7 +159,9 @@ class BookSourceAdapter(
     override fun onCurrentListChanged() {
         callBack.upCountView()
         recyclerView.doOnLayout {
-            notifyItemRangeChanged(0, itemCount, bundleOf("upSourceHost" to null))
+            handler.post {
+                notifyItemRangeChanged(0, itemCount, bundleOf("upSourceHost" to null))
+            }
         }
     }
 
