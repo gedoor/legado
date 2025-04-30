@@ -25,6 +25,11 @@
     <string name="dialog_setting">Ir a Ajustes</string>
     <string name="tip_cannot_jump_setting_page">No se puede ir a los ajustes.</string>
 
+    <string name="manual_input">Entrada manual</string>
+    <string name="enter_directory_path">Introduzca la ruta del directorio</string>
+    <string name="invalid_directory">Ruta de directorio no válida</string>
+    <string name="empty_directory_input">La ruta del directorio no puede estar vacía</string>
+
     <string name="dynamic_click_retry">Reintentar</string>
     <string name="dynamic_loading">Cargando</string>
     <string name="draw">Advertencia</string>

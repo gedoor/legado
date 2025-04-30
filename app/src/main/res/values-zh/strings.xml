@@ -24,6 +24,11 @@
     <string name="dialog_setting">去设置</string>
     <string name="tip_cannot_jump_setting_page">无法跳转至设置界面</string>
 
+    <string name="manual_input">手动输入</string>
+    <string name="enter_directory_path">请输入目录路径</string>
+    <string name="invalid_directory">目录路径无效</string>
+    <string name="empty_directory_input">目录路径不能为空</string>
+
     <string name="dynamic_click_retry">点击重试</string>
     <string name="dynamic_loading">正在加载</string>
     <string name="draw">提醒</string>

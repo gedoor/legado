@@ -24,6 +24,11 @@
     <string name="dialog_setting">Đi tới cài đặt</string>
     <string name="tip_cannot_jump_setting_page">Không thể chuyển đến cài đặt.</string>
 
+    <string name="manual_input">Nhập thủ công</string>
+    <string name="enter_directory_path">Nhập đường dẫn thư mục</string>
+    <string name="invalid_directory">Đường dẫn thư mục không hợp lệ</string>
+    <string name="empty_directory_input">Đường dẫn thư mục không được để trống</string>
+
     <string name="dynamic_click_retry">Thử lại</string>
     <string name="dynamic_loading">Đang tải</string>
     <string name="draw">Cảnh báo</string>

@@ -4,8 +4,10 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.webkit.MimeTypeMap
+import android.widget.EditText
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -140,6 +142,10 @@ class HandleFileActivity :
                         }
                     }
 
+                    112 -> { // 手动输入目录路径
+                        showInputDirectoryDialog()
+                    }
+
                     else -> {
                         val path = item.title
                         val uri = if (path.isContentScheme()) {
@@ -157,6 +163,33 @@ class HandleFileActivity :
         }
     }
 
+    private fun showInputDirectoryDialog() {
+        val inputEditText = EditText(this).apply {
+            hint = getString(R.string.enter_directory_path)
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.manual_input))
+            .setView(inputEditText)
+            .setPositiveButton(getString(R.string.ok)) { _, _ ->
+                val inputPath = inputEditText.text.toString()
+                if (inputPath.isNotBlank()) {
+                    val file = File(inputPath)
+                    if (file.exists() && file.isDirectory && file.canRead()) {
+                        onResult(Intent().setData(Uri.fromFile(file)))
+                    } else {
+                        toastOnUi(getString(R.string.invalid_directory))
+                    }
+                } else {
+                    toastOnUi(getString(R.string.empty_directory_input))
+                }
+            }
+            .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
+
     private fun getFileData(): Triple<String, Any, String>? {
         val fileName = intent.getStringExtra("fileName")
         val file = intent.getStringExtra("fileKey")?.let {
@@ -171,11 +204,15 @@ class HandleFileActivity :
 
     private fun getDirActions(onlySys: Boolean = false): ArrayList<SelectItem<Int>> {
         return if (onlySys) {
-            arrayListOf(SelectItem(getString(R.string.sys_folder_picker), HandleFileContract.DIR))
+            arrayListOf(
+                SelectItem(getString(R.string.sys_folder_picker), HandleFileContract.DIR),
+                SelectItem(getString(R.string.manual_input), 112) // 添加手动输入选项
+            )
         } else {
             arrayListOf(
                 SelectItem(getString(R.string.sys_folder_picker), HandleFileContract.DIR),
-                SelectItem(getString(R.string.app_folder_picker), 10)
+                SelectItem(getString(R.string.app_folder_picker), 10),
+                SelectItem(getString(R.string.manual_input), 112) // 添加手动输入选项
             )
         }
     }
@@ -243,5 +280,4 @@ class HandleFileActivity :
             finish()
         }
     }
-
 }
