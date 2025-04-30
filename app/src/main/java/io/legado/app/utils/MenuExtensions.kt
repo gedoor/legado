@@ -80,6 +80,17 @@ fun Menu.iconItemOnLongClick(id: Int, function: (view: View) -> Unit) {
     }
 }
 
+@SuppressLint("RestrictedApi")
+inline fun Menu.transaction(block: (Menu) -> Unit) {
+    val menuBuilder = this as? MenuBuilder
+    menuBuilder?.stopDispatchingItemsChanged()
+    try {
+        block(this)
+    } finally {
+        menuBuilder?.startDispatchingItemsChanged()
+    }
+}
+
 object MenuExtensions {
 
     fun getMenuColor(

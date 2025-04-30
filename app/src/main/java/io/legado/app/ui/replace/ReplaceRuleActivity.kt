@@ -49,6 +49,7 @@ import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.showHelp
 import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.toastOnUi
+import io.legado.app.utils.transaction
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
@@ -282,10 +283,10 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
         return false
     }
 
-    private fun upGroupMenu() {
-        groupMenu?.removeGroup(R.id.replace_group)
-        groups.map {
-            groupMenu?.add(R.id.replace_group, Menu.NONE, Menu.NONE, it)
+    private fun upGroupMenu() = groupMenu?.transaction { menu ->
+        menu.removeGroup(R.id.replace_group)
+        groups.forEach {
+            menu.add(R.id.replace_group, Menu.NONE, Menu.NONE, it)
         }
     }
 

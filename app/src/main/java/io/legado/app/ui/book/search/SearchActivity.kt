@@ -44,6 +44,7 @@ import io.legado.app.utils.putPrefBoolean
 import io.legado.app.utils.setEdgeEffectColor
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.startActivity
+import io.legado.app.utils.transaction
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
 import kotlinx.coroutines.Dispatchers.IO
@@ -109,40 +110,42 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     }
 
     override fun onMenuOpened(featureId: Int, menu: Menu): Boolean {
-        menu.removeGroup(R.id.menu_group_1)
-        menu.removeGroup(R.id.menu_group_2)
-        var hasChecked = false
-        val searchScopeNames = viewModel.searchScope.displayNames
-        if (viewModel.searchScope.isSource()) {
-            menu.add(R.id.menu_group_1, Menu.NONE, Menu.NONE, searchScopeNames.first()).apply {
-                isChecked = true
-                hasChecked = true
-            }
-        }
-        val allSourceMenu =
-            menu.add(R.id.menu_group_2, R.id.menu_1, Menu.NONE, getString(R.string.all_source))
-                .apply {
-                    if (searchScopeNames.isEmpty()) {
-                        isChecked = true
-                        hasChecked = true
-                    }
-                }
-        groups?.forEach {
-            if (searchScopeNames.contains(it)) {
-                menu.add(R.id.menu_group_1, Menu.NONE, Menu.NONE, it).apply {
+        menu.transaction {
+            menu.removeGroup(R.id.menu_group_1)
+            menu.removeGroup(R.id.menu_group_2)
+            var hasChecked = false
+            val searchScopeNames = viewModel.searchScope.displayNames
+            if (viewModel.searchScope.isSource()) {
+                menu.add(R.id.menu_group_1, Menu.NONE, Menu.NONE, searchScopeNames.first()).apply {
                     isChecked = true
                     hasChecked = true
                 }
-            } else {
-                menu.add(R.id.menu_group_2, Menu.NONE, Menu.NONE, it)
             }
+            val allSourceMenu =
+                menu.add(R.id.menu_group_2, R.id.menu_1, Menu.NONE, getString(R.string.all_source))
+                    .apply {
+                        if (searchScopeNames.isEmpty()) {
+                            isChecked = true
+                            hasChecked = true
+                        }
+                    }
+            groups?.forEach {
+                if (searchScopeNames.contains(it)) {
+                    menu.add(R.id.menu_group_1, Menu.NONE, Menu.NONE, it).apply {
+                        isChecked = true
+                        hasChecked = true
+                    }
+                } else {
+                    menu.add(R.id.menu_group_2, Menu.NONE, Menu.NONE, it)
+                }
+            }
+            if (!hasChecked) {
+                viewModel.searchScope.update("")
+                allSourceMenu.isChecked = true
+            }
+            menu.setGroupCheckable(R.id.menu_group_1, true, false)
+            menu.setGroupCheckable(R.id.menu_group_2, true, true)
         }
-        if (!hasChecked) {
-            viewModel.searchScope.update("")
-            allSourceMenu.isChecked = true
-        }
-        menu.setGroupCheckable(R.id.menu_group_1, true, false)
-        menu.setGroupCheckable(R.id.menu_group_2, true, true)
         return super.onMenuOpened(featureId, menu)
     }
 

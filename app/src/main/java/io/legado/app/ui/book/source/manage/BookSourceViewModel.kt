@@ -254,7 +254,7 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
     fun addGroup(group: String) {
         execute {
             val sources = appDb.bookSourceDao.noGroup
-            sources.map { source ->
+            sources.forEach { source ->
                 source.bookSourceGroup = group
             }
             appDb.bookSourceDao.update(*sources.toTypedArray())
@@ -264,7 +264,7 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
     fun upGroup(oldGroup: String, newGroup: String?) {
         execute {
             val sources = appDb.bookSourceDao.getByGroup(oldGroup)
-            sources.map { source ->
+            sources.forEach { source ->
                 source.bookSourceGroup?.splitNotBlank(",")?.toHashSet()?.let {
                     it.remove(oldGroup)
                     if (!newGroup.isNullOrEmpty())
@@ -280,7 +280,7 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
         execute {
             execute {
                 val sources = appDb.bookSourceDao.getByGroup(group)
-                sources.map { source ->
+                sources.forEach { source ->
                     source.removeGroup(group)
                 }
                 appDb.bookSourceDao.update(*sources.toTypedArray())

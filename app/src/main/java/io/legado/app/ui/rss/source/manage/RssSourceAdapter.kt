@@ -81,7 +81,7 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
             } else {
                 for (i in payloads.indices) {
                     val bundle = payloads[i] as Bundle
-                    bundle.keySet().map {
+                    bundle.keySet().forEach {
                         when (it) {
                             "upName" -> cbSource.text = item.getDisplayNameGroup()
                             "enabled" -> swtEnabled.isChecked = bundle.getBoolean("enabled")

@@ -113,7 +113,7 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
     fun addGroup(group: String) {
         execute {
             val sources = appDb.rssSourceDao.noGroup
-            sources.map { source ->
+            sources.forEach { source ->
                 source.sourceGroup = group
             }
             appDb.rssSourceDao.update(*sources.toTypedArray())
@@ -123,7 +123,7 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
     fun upGroup(oldGroup: String, newGroup: String?) {
         execute {
             val sources = appDb.rssSourceDao.getByGroup(oldGroup)
-            sources.map { source ->
+            sources.forEach { source ->
                 source.sourceGroup?.splitNotBlank(",")?.toHashSet()?.let {
                     it.remove(oldGroup)
                     if (!newGroup.isNullOrEmpty())
@@ -139,7 +139,7 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
         execute {
             execute {
                 val sources = appDb.rssSourceDao.getByGroup(group)
-                sources.map { source ->
+                sources.forEach { source ->
                     source.sourceGroup?.splitNotBlank(",")?.toHashSet()?.let {
                         it.remove(group)
                         source.sourceGroup = TextUtils.join(",", it)

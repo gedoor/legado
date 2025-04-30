@@ -259,7 +259,7 @@ class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
                 } else {
                     for (i in payloads.indices) {
                         val bundle = payloads[i] as Bundle
-                        bundle.keySet().map {
+                        bundle.keySet().forEach {
                             when (it) {
                                 "upName" -> rbRegexName.text = item.name
                                 "upExample" -> titleExample.text = item.example

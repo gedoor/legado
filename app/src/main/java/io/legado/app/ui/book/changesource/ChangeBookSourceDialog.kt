@@ -38,12 +38,12 @@ import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.StartActivityContract
 import io.legado.app.utils.applyTint
-import io.legado.app.utils.cnCompare
 import io.legado.app.utils.dpToPx
 import io.legado.app.utils.getCompatDrawable
 import io.legado.app.utils.observeEvent
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.startActivity
+import io.legado.app.utils.transaction
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
@@ -407,14 +407,12 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
      */
     private fun upGroupMenu() {
         binding.toolBar.menu.findItem(R.id.menu_group)?.run {
-            subMenu?.let { menu ->
+            subMenu?.transaction { menu ->
                 val selectedGroup = AppConfig.searchGroup
                 menu.removeGroup(R.id.source_group)
                 val allItem = menu.add(R.id.source_group, Menu.NONE, Menu.NONE, R.string.all_source)
                 var hasSelectedGroup = false
-                groups.sortedWith { o1, o2 ->
-                    o1.cnCompare(o2)
-                }.forEach { group ->
+                groups.forEach { group ->
                     menu.add(R.id.source_group, Menu.NONE, Menu.NONE, group)?.let {
                         if (group == selectedGroup) {
                             it.isChecked = true

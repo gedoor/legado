@@ -103,7 +103,7 @@ class DictRuleAdapter(context: Context, var callBack: CallBack) :
             } else {
                 for (i in payloads.indices) {
                     val bundle = payloads[i] as Bundle
-                    bundle.keySet().map {
+                    bundle.keySet().forEach {
                         when (it) {
                             "selected" -> cbName.isChecked = selected.contains(item)
                             "upName" -> cbName.text = item.name

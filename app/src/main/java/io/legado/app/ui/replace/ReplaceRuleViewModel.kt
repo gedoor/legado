@@ -96,7 +96,7 @@ class ReplaceRuleViewModel(application: Application) : BaseViewModel(application
     fun addGroup(group: String) {
         execute {
             val sources = appDb.replaceRuleDao.noGroup
-            sources.map { source ->
+            sources.forEach { source ->
                 source.group = group
             }
             appDb.replaceRuleDao.update(*sources.toTypedArray())
@@ -106,7 +106,7 @@ class ReplaceRuleViewModel(application: Application) : BaseViewModel(application
     fun upGroup(oldGroup: String, newGroup: String?) {
         execute {
             val sources = appDb.replaceRuleDao.getByGroup(oldGroup)
-            sources.map { source ->
+            sources.forEach { source ->
                 source.group?.splitNotBlank(",")?.toHashSet()?.let {
                     it.remove(oldGroup)
                     if (!newGroup.isNullOrEmpty())
@@ -122,7 +122,7 @@ class ReplaceRuleViewModel(application: Application) : BaseViewModel(application
         execute {
             execute {
                 val sources = appDb.replaceRuleDao.getByGroup(group)
-                sources.map { source ->
+                sources.forEach { source ->
                     source.group?.splitNotBlank(",")?.toHashSet()?.let {
                         it.remove(group)
                         source.group = TextUtils.join(",", it)

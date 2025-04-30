@@ -68,7 +68,7 @@ class ChangeBookSourceAdapter(
             } else {
                 for (i in payloads.indices) {
                     val bundle = payloads[i] as Bundle
-                    bundle.keySet().map {
+                    bundle.keySet().forEach {
                         when (it) {
                             "name" -> tvOrigin.text = item.originName
                             "latest" -> tvLast.text = item.getDisplayLastChapterTitle()
