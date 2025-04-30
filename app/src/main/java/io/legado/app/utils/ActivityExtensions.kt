@@ -34,6 +34,14 @@ inline fun <reified T : DialogFragment> AppCompatActivity.showDialogFragment(
     dialog.show(supportFragmentManager, T::class.simpleName)
 }
 
+inline fun <reified T : DialogFragment> AppCompatActivity.dismissDialogFragment() {
+    supportFragmentManager.fragments.forEach {
+        if (it is T) {
+            it.dismissAllowingStateLoss()
+        }
+    }
+}
+
 fun AppCompatActivity.showDialogFragment(dialogFragment: DialogFragment) {
     dialogFragment.show(supportFragmentManager, dialogFragment::class.simpleName)
 }
@@ -44,7 +52,9 @@ val WindowManager.windowSize: DisplayMetrics
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             val windowMetrics: WindowMetrics = currentWindowMetrics
             val insets = windowMetrics.windowInsets
-                .getInsetsIgnoringVisibility(WindowInsets.Type.systemBars() or WindowInsets.Type.displayCutout())
+                .getInsetsIgnoringVisibility(
+                    WindowInsets.Type.systemBars() or WindowInsets.Type.displayCutout()
+                )
             val windowWidth = windowMetrics.bounds.width()
             val windowHeight = windowMetrics.bounds.height()
             var insetsWidth = insets.left + insets.right

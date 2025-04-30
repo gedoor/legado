@@ -18,7 +18,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.get
-import androidx.core.view.isVisible
 import androidx.core.view.size
 import androidx.lifecycle.lifecycleScope
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
@@ -106,6 +105,7 @@ import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.StartActivityContract
 import io.legado.app.utils.applyOpenTint
 import io.legado.app.utils.buildMainHandler
+import io.legado.app.utils.dismissDialogFragment
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.hexString
@@ -175,23 +175,22 @@ class ReadBookActivity : BaseReadBookActivity(),
             }
         }
     private val searchContentActivity =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            it.data?.let { data ->
-                val key = data.getLongExtra("key", System.currentTimeMillis())
-                val index = data.getIntExtra("index", 0)
-                val searchResult = IntentData.get<SearchResult>("searchResult$key")
-                val searchResultList = IntentData.get<List<SearchResult>>("searchResultList$key")
-                if (searchResult != null && searchResultList != null) {
-                    viewModel.searchContentQuery = searchResult.query
-                    binding.searchMenu.upSearchResultList(searchResultList)
-                    isShowingSearchResult = true
-                    viewModel.searchResultIndex = index
-                    binding.searchMenu.updateSearchResultIndex(index)
-                    binding.searchMenu.selectedSearchResult?.let { currentResult ->
-                        ReadBook.saveCurrentBookProgress() //退出全文搜索恢复此时进度
-                        skipToSearch(currentResult)
-                        showActionMenu()
-                    }
+        registerForActivityResult(StartActivityContract(SearchContentActivity::class.java)) {
+            val data = it.data ?: return@registerForActivityResult
+            val key = data.getLongExtra("key", System.currentTimeMillis())
+            val index = data.getIntExtra("index", 0)
+            val searchResult = IntentData.get<SearchResult>("searchResult$key")
+            val searchResultList = IntentData.get<List<SearchResult>>("searchResultList$key")
+            if (searchResult != null && searchResultList != null) {
+                viewModel.searchContentQuery = searchResult.query
+                binding.searchMenu.upSearchResultList(searchResultList)
+                isShowingSearchResult = true
+                viewModel.searchResultIndex = index
+                binding.searchMenu.updateSearchResultIndex(index)
+                binding.searchMenu.selectedSearchResult?.let { currentResult ->
+                    ReadBook.saveCurrentBookProgress() //退出全文搜索恢复此时进度
+                    skipToSearch(currentResult)
+                    showActionMenu()
                 }
             }
         }
@@ -1138,6 +1137,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         if (isAutoPage) {
             binding.readView.autoPager.stop()
             binding.readMenu.setAutoPage(false)
+            dismissDialogFragment<AutoReadDialog>()
             upScreenTimeOut()
         }
     }
@@ -1179,17 +1179,16 @@ class ReadBookActivity : BaseReadBookActivity(),
      * 打开搜索界面
      */
     override fun openSearchActivity(searchWord: String?) {
-        ReadBook.book?.let {
-            searchContentActivity.launch(Intent(this, SearchContentActivity::class.java).apply {
-                putExtra("bookUrl", it.bookUrl)
-                putExtra("searchWord", searchWord ?: viewModel.searchContentQuery)
-                putExtra("searchResultIndex", viewModel.searchResultIndex)
-                viewModel.searchResultList?.first()?.let {
-                    if (it.query == viewModel.searchContentQuery) {
-                        IntentData.put("searchResultList", viewModel.searchResultList)
-                    }
+        val book = ReadBook.book ?: return
+        searchContentActivity.launch {
+            putExtra("bookUrl", book.bookUrl)
+            putExtra("searchWord", searchWord ?: viewModel.searchContentQuery)
+            putExtra("searchResultIndex", viewModel.searchResultIndex)
+            viewModel.searchResultList?.first()?.let {
+                if (it.query == viewModel.searchContentQuery) {
+                    IntentData.put("searchResultList", viewModel.searchResultList)
                 }
-            })
+            }
         }
     }
 
