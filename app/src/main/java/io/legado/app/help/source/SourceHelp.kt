@@ -5,6 +5,7 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.BaseSource
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.RssSource
+import io.legado.app.help.config.SourceConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.AudioPlay
 import io.legado.app.model.ReadBook
@@ -52,9 +53,14 @@ object SourceHelp {
 
     fun deleteSource(key: String, @SourceType.Type type: Int) {
         when (type) {
-            SourceType.book -> appDb.bookSourceDao.delete(key)
+            SourceType.book -> deleteBookSource(key)
             SourceType.rss -> appDb.rssSourceDao.delete(key)
         }
+    }
+
+    fun deleteBookSource(key: String) {
+        appDb.bookSourceDao.delete(key)
+        SourceConfig.removeSource(key)
     }
 
     fun enableSource(key: String, @SourceType.Type type: Int, enable: Boolean) {

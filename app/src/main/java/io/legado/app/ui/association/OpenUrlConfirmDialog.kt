@@ -27,13 +27,15 @@ class OpenUrlConfirmDialog() : BaseDialogFragment(R.layout.dialog_open_url_confi
         uri: String,
         mimeType: String?,
         sourceOrigin: String? = null,
-        sourceName: String? = null
+        sourceName: String? = null,
+        sourceType: Int
     ) : this() {
         arguments = Bundle().apply {
             putString("uri", uri)
             putString("mimeType", mimeType)
             putString("sourceOrigin", sourceOrigin)
             putString("sourceName", sourceName)
+            putInt("sourceType", sourceType)
         }
     }
 

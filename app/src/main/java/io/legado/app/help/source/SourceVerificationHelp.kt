@@ -43,6 +43,7 @@ object SourceVerificationHelp {
                 putExtra("imageUrl", url)
                 putExtra("sourceOrigin", source.getKey())
                 putExtra("sourceName", source.getTag())
+                putExtra("sourceType", source.getSourceType())
                 IntentData.put(getVerificationResultKey(source), Thread.currentThread())
             }
         } else {

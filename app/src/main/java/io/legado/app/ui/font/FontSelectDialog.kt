@@ -124,7 +124,7 @@ class FontSelectDialog : BaseDialogFragment(R.layout.dialog_font_select),
     }
 
     private fun openFolder() {
-        lifecycleScope.launch(Main) {
+        lifecycleScope.launch {
             val defaultPath = "SD${File.separator}Fonts"
             selectFontDir.launch {
                 otherActions = arrayListOf(SelectItem(defaultPath, -1))

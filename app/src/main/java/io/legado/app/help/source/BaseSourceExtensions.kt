@@ -16,6 +16,6 @@ fun BaseSource.getSourceType(): Int {
     return when (this) {
         is BookSource -> SourceType.book
         is RssSource -> SourceType.rss
-        else -> error("unknown source type.")
+        else -> error("unknown source type: ${this::class.simpleName}.")
     }
 }

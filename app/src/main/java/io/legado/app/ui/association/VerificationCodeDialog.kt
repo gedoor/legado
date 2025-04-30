@@ -41,12 +41,14 @@ class VerificationCodeDialog() : BaseDialogFragment(R.layout.dialog_verification
     constructor(
         imageUrl: String,
         sourceOrigin: String? = null,
-        sourceName: String? = null
+        sourceName: String? = null,
+        sourceType: Int
     ) : this() {
         arguments = Bundle().apply {
             putString("imageUrl", imageUrl)
             putString("sourceOrigin", sourceOrigin)
             putString("sourceName", sourceName)
+            putInt("sourceType", sourceType)
         }
     }
 
