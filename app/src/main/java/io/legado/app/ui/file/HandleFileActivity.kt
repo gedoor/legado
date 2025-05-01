@@ -19,11 +19,13 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.permission.Permissions
 import io.legado.app.lib.permission.PermissionsCompat
 import io.legado.app.utils.checkWrite
+import io.legado.app.utils.externalFiles
 import io.legado.app.utils.getJsonArray
 import io.legado.app.utils.isContentScheme
 import io.legado.app.utils.launch
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import splitties.init.appCtx
 import java.io.File
 
 class HandleFileActivity :
@@ -196,6 +198,9 @@ class HandleFileActivity :
     }
 
     private fun isExternalStorage(path: File): Boolean {
+        if (path.canonicalPath.startsWith(appCtx.externalFiles.parent!!)) {
+            return false
+        }
         try {
             if (Environment.isExternalStorageEmulated(path)) {
                 return true
