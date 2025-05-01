@@ -78,12 +78,12 @@ abstract class BaseImportBookActivity<VM : ViewModel> : VMBaseActivity<ActivityI
         val storageHelp = String(assets.open("storageHelp.md").readBytes())
         val hint = getString(R.string.select_book_folder)
         alert(hint, storageHelp) {
-            yesButton {
+            okButton {
                 localBookTreeSelect.launch {
                     title = hint
                 }
             }
-            noButton {
+            cancelButton {
                 localBookTreeSelectListener = null
                 block.resume(false)
             }

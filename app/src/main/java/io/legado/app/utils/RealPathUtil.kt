@@ -54,30 +54,22 @@ object RealPathUtil {
                     "image" -> {
                         contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
                     }
+
                     "video" -> {
                         contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
                     }
+
                     "audio" -> {
                         contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
                     }
                 }
                 val selection = "_id=?"
-                val selectionArgs = arrayOf(
-                    split[1]
-                )
+                val selectionArgs = arrayOf(split[1])
                 return getDataColumn(context, contentUri, selection, selectionArgs)
             }
-        } else if ("content".equals(
-                uri.scheme,
-                ignoreCase = true
-            )
-        ) { // Return the remote address
-            return if (isGooglePhotosUri(uri)) uri.lastPathSegment else getDataColumn(
-                context,
-                uri,
-                null,
-                null
-            )
+        } else if ("content".equals(uri.scheme, ignoreCase = true)) { // Return the remote address
+            return if (isGooglePhotosUri(uri)) uri.lastPathSegment
+            else getDataColumn(context, uri, null, null)
         } else if ("file".equals(uri.scheme, ignoreCase = true)) {
             return uri.path
         }

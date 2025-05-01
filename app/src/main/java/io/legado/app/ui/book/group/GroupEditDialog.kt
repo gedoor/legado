@@ -10,8 +10,18 @@ import io.legado.app.data.entities.BookGroup
 import io.legado.app.databinding.DialogBookGroupEditBinding
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
-import io.legado.app.utils.*
+import io.legado.app.utils.FileUtils
+import io.legado.app.utils.MD5Utils
+import io.legado.app.utils.SelectImageContract
+import io.legado.app.utils.externalFiles
+import io.legado.app.utils.gone
+import io.legado.app.utils.inputStream
+import io.legado.app.utils.launch
+import io.legado.app.utils.readUri
+import io.legado.app.utils.setLayout
+import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import io.legado.app.utils.visible
 import splitties.init.appCtx
 import splitties.views.onClick
 import java.io.FileOutputStream
@@ -28,7 +38,6 @@ class GroupEditDialog() : BaseDialogFragment(R.layout.dialog_book_group_edit) {
     private val viewModel by viewModels<GroupViewModel>()
     private var bookGroup: BookGroup? = null
     private val selectImage = registerForActivityResult(SelectImageContract()) {
-        it ?: return@registerForActivityResult
         it.uri ?: return@registerForActivityResult
         readUri(it.uri) { fileDoc, inputStream ->
             try {

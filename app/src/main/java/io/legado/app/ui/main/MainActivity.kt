@@ -217,10 +217,6 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         }
         val privacyPolicy = String(assets.open("privacyPolicy.md").readBytes())
         alert(getString(R.string.privacy_policy), privacyPolicy) {
-            noButton {
-                finish()
-                block.resume(false)
-            }
             positiveButton(R.string.agree) {
                 LocalConfig.privacyPolicyOk = true
                 block.resume(true)

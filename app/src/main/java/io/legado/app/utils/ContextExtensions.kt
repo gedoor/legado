@@ -373,6 +373,8 @@ fun Context.openFileUri(uri: Uri, type: String? = null) {
         //7.0版本以上
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }
+    val uri = if (uri.isContentScheme()) uri
+    else FileProvider.getUriForFile(this, AppConst.authority, File(uri.path!!))
     intent.setDataAndType(uri, type ?: IntentType.from(uri))
     try {
         startActivity(intent)

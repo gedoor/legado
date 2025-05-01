@@ -352,7 +352,7 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
                     importNetConfig(url)
                 }
             }
-            noButton()
+            cancelButton()
         }
     }
 

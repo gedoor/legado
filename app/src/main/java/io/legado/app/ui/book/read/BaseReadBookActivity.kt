@@ -271,7 +271,7 @@ abstract class BaseReadBookActivity :
                     editEnd.setText(book.totalChapterNum.toString())
                 }
                 customView { alertBinding.root }
-                yesButton {
+                okButton {
                     alertBinding.run {
                         val start = editStart.text!!.toString().let {
                             if (it.isEmpty()) 0 else it.toInt()
@@ -282,7 +282,7 @@ abstract class BaseReadBookActivity :
                         CacheBook.start(this@BaseReadBookActivity, book, start - 1, end - 1)
                     }
                 }
-                noButton()
+                cancelButton()
             }
         }
     }
@@ -317,7 +317,7 @@ abstract class BaseReadBookActivity :
         }
         alert(titleResource = R.string.simulated_reading) {
             customView { alertBinding.root }
-            yesButton {
+            okButton {
                 alertBinding.run {
                     val start = editStart.text!!.toString().let {
                         if (it.isEmpty()) 0 else it.toInt()
@@ -339,7 +339,7 @@ abstract class BaseReadBookActivity :
                     viewModel.initData(intent)
                 }
             }
-            noButton()
+            cancelButton()
         }
     }
 

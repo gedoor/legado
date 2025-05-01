@@ -20,7 +20,7 @@ class QrCodeActivity : BaseActivity<ActivityQrcodeCaptureBinding>(), ScanResultC
     override val binding by viewBinding(ActivityQrcodeCaptureBinding::inflate)
 
     private val selectQrImage = registerForActivityResult(SelectImageContract()) {
-        it?.uri?.readBytes(this)?.let { bytes ->
+        it.uri?.readBytes(this)?.let { bytes ->
             val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
             onScanResultCallback(QRCodeUtils.parseCodeResult(bitmap))
         }

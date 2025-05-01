@@ -157,7 +157,7 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
                     viewModel.addBookByUrl(it)
                 }
             }
-            noButton()
+            cancelButton()
         }
     }
 
@@ -238,7 +238,7 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
                     viewModel.importBookshelf(it, groupId)
                 }
             }
-            noButton()
+            cancelButton()
             neutralButton(R.string.select_file) {
                 importBookshelf.launch {
                     mode = HandleFileContract.FILE

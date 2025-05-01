@@ -231,7 +231,7 @@ class ThemeConfigFragment : PreferenceFragment(),
                     }
                 }
             }
-            noButton()
+            cancelButton()
         }
     }
 
@@ -291,7 +291,7 @@ class ThemeConfigFragment : PreferenceFragment(),
                     success.invoke()
                 }
             }
-            noButton()
+            cancelButton()
         }
     }
 
