@@ -25,6 +25,11 @@
     <string name="dialog_setting">Vá até às Configurações</string>
     <string name="tip_cannot_jump_setting_page">Não foi possível abrir Configurações.</string>
 
+    <string name="manual_input">Entrada manual</string>
+    <string name="enter_directory_path">Digite o caminho do diretório</string>
+    <string name="invalid_directory">Caminho do diretório inválido</string>
+    <string name="empty_directory_input">O caminho do diretório não pode estar vazio</string>
+
     <string name="dynamic_click_retry">Tentar novamente</string>
     <string name="dynamic_loading">Carregando</string>
     <string name="draw">Aviso</string>

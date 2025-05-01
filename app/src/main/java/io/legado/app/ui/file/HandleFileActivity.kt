@@ -11,6 +11,7 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppLog
 import io.legado.app.databinding.ActivityTranslucenceBinding
+import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.help.IntentData
 import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.dialogs.alert
@@ -140,6 +141,10 @@ class HandleFileActivity :
                         }
                     }
 
+                    112 -> { // 手动输入目录路径
+                        showInputDirectoryDialog()
+                    }
+
                     else -> {
                         val path = item.title
                         val uri = if (path.isContentScheme()) {
@@ -157,6 +162,30 @@ class HandleFileActivity :
         }
     }
 
+    private fun showInputDirectoryDialog() {
+        val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+            editView.hint = getString(R.string.enter_directory_path)
+        }
+
+        alert(getString(R.string.manual_input)) {
+            customView { alertBinding.root }
+            okButton {
+                val inputPath = alertBinding.editView.text.toString()
+                if (inputPath.isNotBlank()) {
+                    val file = File(inputPath)
+                    if (file.exists() && file.isDirectory && file.canRead()) {
+                        onResult(Intent().setData(Uri.fromFile(file)))
+                    } else {
+                        toastOnUi(getString(R.string.invalid_directory))
+                    }
+                } else {
+                    toastOnUi(getString(R.string.empty_directory_input))
+                }
+            }
+            cancelButton()
+        }
+    }
+
     private fun getFileData(): Triple<String, Any, String>? {
         val fileName = intent.getStringExtra("fileName")
         val file = intent.getStringExtra("fileKey")?.let {
@@ -171,11 +200,15 @@ class HandleFileActivity :
 
     private fun getDirActions(onlySys: Boolean = false): ArrayList<SelectItem<Int>> {
         return if (onlySys) {
-            arrayListOf(SelectItem(getString(R.string.sys_folder_picker), HandleFileContract.DIR))
+            arrayListOf(
+                SelectItem(getString(R.string.sys_folder_picker), HandleFileContract.DIR),
+                SelectItem(getString(R.string.manual_input), 112) // 添加手动输入选项
+            )
         } else {
             arrayListOf(
                 SelectItem(getString(R.string.sys_folder_picker), HandleFileContract.DIR),
-                SelectItem(getString(R.string.app_folder_picker), 10)
+                SelectItem(getString(R.string.app_folder_picker), 10),
+                SelectItem(getString(R.string.manual_input), 112) // 添加手动输入选项
             )
         }
     }
@@ -243,5 +276,4 @@ class HandleFileActivity :
             finish()
         }
     }
-
 }

@@ -25,6 +25,11 @@
     <string name="dialog_setting">Go to Settings</string>
     <string name="tip_cannot_jump_setting_page">Cannot jump to Settings.</string>
 
+    <string name="manual_input">Manual Input</string>
+    <string name="enter_directory_path">Enter directory path</string>
+    <string name="invalid_directory">Invalid directory path</string>
+    <string name="empty_directory_input">Directory path cannot be empty</string>
+
     <string name="dynamic_click_retry">Retry</string>
     <string name="dynamic_loading">Loading</string>
     <string name="draw">Warning</string>
