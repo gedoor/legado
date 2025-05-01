@@ -4,15 +4,14 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.webkit.MimeTypeMap
-import android.widget.EditText
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppLog
 import io.legado.app.databinding.ActivityTranslucenceBinding
+import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.help.IntentData
 import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.dialogs.alert
@@ -164,15 +163,14 @@ class HandleFileActivity :
     }
 
     private fun showInputDirectoryDialog() {
-        val inputEditText = EditText(this).apply {
-            hint = getString(R.string.enter_directory_path)
+        val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+            editView.hint = getString(R.string.enter_directory_path)
         }
 
-        AlertDialog.Builder(this)
-            .setTitle(getString(R.string.manual_input))
-            .setView(inputEditText)
-            .setPositiveButton(getString(R.string.ok)) { _, _ ->
-                val inputPath = inputEditText.text.toString()
+        alert(getString(R.string.manual_input)) {
+            customView { alertBinding.root }
+            okButton {
+                val inputPath = alertBinding.editView.text.toString()
                 if (inputPath.isNotBlank()) {
                     val file = File(inputPath)
                     if (file.exists() && file.isDirectory && file.canRead()) {
@@ -184,10 +182,8 @@ class HandleFileActivity :
                     toastOnUi(getString(R.string.empty_directory_input))
                 }
             }
-            .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
-                dialog.dismiss()
-            }
-            .show()
+            cancelButton()
+        }
     }
 
     private fun getFileData(): Triple<String, Any, String>? {
