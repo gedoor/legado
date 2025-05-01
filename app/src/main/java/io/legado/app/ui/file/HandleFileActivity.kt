@@ -3,6 +3,7 @@ package io.legado.app.ui.file
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.webkit.MimeTypeMap
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -17,6 +18,7 @@ import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.permission.Permissions
 import io.legado.app.lib.permission.PermissionsCompat
+import io.legado.app.utils.checkWrite
 import io.legado.app.utils.getJsonArray
 import io.legado.app.utils.isContentScheme
 import io.legado.app.utils.launch
@@ -141,7 +143,7 @@ class HandleFileActivity :
                         }
                     }
 
-                    112 -> { // 手动输入目录路径
+                    112 -> checkPermissions { // 手动输入目录路径
                         showInputDirectoryDialog()
                     }
 
@@ -171,19 +173,42 @@ class HandleFileActivity :
             customView { alertBinding.root }
             okButton {
                 val inputPath = alertBinding.editView.text.toString()
-                if (inputPath.isNotBlank()) {
-                    val file = File(inputPath)
-                    if (file.exists() && file.isDirectory && file.canRead()) {
-                        onResult(Intent().setData(Uri.fromFile(file)))
-                    } else {
-                        toastOnUi(getString(R.string.invalid_directory))
-                    }
-                } else {
+                if (inputPath.isBlank()) {
                     toastOnUi(getString(R.string.empty_directory_input))
+                    return@okButton
                 }
+                val file = File(inputPath)
+                if (file.exists() &&
+                    file.isDirectory &&
+                    isExternalStorage(file) &&
+                    file.checkWrite()
+                ) {
+                    onResult(Intent().setData(Uri.fromFile(file)))
+                } else {
+                    toastOnUi(getString(R.string.invalid_directory))
+                }
+            }
+            onDismiss {
+                finish()
             }
             cancelButton()
         }
+    }
+
+    private fun isExternalStorage(path: File): Boolean {
+        try {
+            if (Environment.isExternalStorageEmulated(path)) {
+                return true
+            }
+        } catch (_: IllegalArgumentException) {
+        }
+        try {
+            if (Environment.isExternalStorageRemovable(path)) {
+                return true
+            }
+        } catch (_: IllegalArgumentException) {
+        }
+        return false
     }
 
     private fun getFileData(): Triple<String, Any, String>? {
