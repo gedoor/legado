@@ -25,6 +25,8 @@
 package com.script.rhino
 
 import org.mozilla.javascript.Context
+import org.mozilla.javascript.NativeJavaPackage
+import org.mozilla.javascript.ScriptRuntime
 import org.mozilla.javascript.Scriptable
 import org.mozilla.javascript.WrapFactory
 
@@ -56,10 +58,16 @@ object RhinoWrapFactory : WrapFactory() {
     }
 
     override fun wrapJavaClass(
-        cx: Context?,
+        cx: Context,
         scope: Scriptable,
         javaClass: Class<*>
-    ): Scriptable? {
+    ): Scriptable {
+        if (!RhinoClassShutter.visibleToScripts(javaClass)) {
+            @Suppress("DEPRECATION")
+            val pkg = NativeJavaPackage(javaClass.name, null)
+            ScriptRuntime.setObjectProtoAndParent(pkg, scope)
+            return pkg
+        }
         return RhinoClassShutter.wrapJavaClass(scope, javaClass)
     }
 

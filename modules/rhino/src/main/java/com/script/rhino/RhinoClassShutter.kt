@@ -45,7 +45,7 @@ import java.util.Collections
  */
 object RhinoClassShutter : ClassShutter {
 
-    private val protectedClasses by lazy {
+    private val protectedClassNames by lazy {
         hashSetOf(
             "java.lang.Class",
             "java.lang.ClassLoader",
@@ -120,6 +120,25 @@ object RhinoClassShutter : ClassShutter {
         Collections.unmodifiableSet(hashSetOf("load", "loadLibrary", "exit"))
     }
 
+    private val protectedClasses by lazy {
+        arrayOf(
+            ClassLoader::class.java,
+            Class::class.java,
+            Member::class.java,
+            Context::class.java,
+            ObjectInputStream::class.java,
+            ObjectOutputStream::class.java,
+            okio.FileSystem::class.java,
+            okio.FileHandle::class.java,
+            okio.Path::class.java,
+            android.content.Context::class.java,
+        ) + if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            arrayOf(FileSystem::class.java, Path::class.java)
+        } else {
+            emptyArray()
+        }
+    }
+
     fun visibleToScripts(obj: Any): Boolean {
         when (obj) {
             is ClassLoader,
@@ -142,6 +161,15 @@ object RhinoClassShutter : ClassShutter {
         return visibleToScripts(obj.javaClass.name)
     }
 
+    fun visibleToScripts(clazz: Class<*>): Boolean {
+        protectedClasses.forEach {
+            if (it.isAssignableFrom(clazz)) {
+                return false
+            }
+        }
+        return true
+    }
+
     fun wrapJavaClass(scope: Scriptable, javaClass: Class<*>): Scriptable {
         return when (javaClass) {
             System::class.java -> {
@@ -153,17 +181,14 @@ object RhinoClassShutter : ClassShutter {
     }
 
     override fun visibleToScripts(fullClassName: String): Boolean {
-        if (!protectedClasses.contains(fullClassName)) {
-            var className = fullClassName
-            while (className.contains(".")) {
-                className = className.substringBeforeLast(".")
-                if (protectedClasses.contains(className)) {
-                    return false
-                }
+        var className = fullClassName
+        while (className.isNotEmpty()) {
+            if (protectedClassNames.contains(className)) {
+                return false
             }
-            return true
+            className = className.substringBeforeLast(".", "")
         }
-        return false
+        return true
     }
 
 }
