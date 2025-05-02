@@ -25,7 +25,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.size
 import androidx.lifecycle.lifecycleScope
-import com.script.rhino.RhinoScriptEngine
+import com.script.rhino.runScriptWithContext
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst
@@ -473,11 +473,13 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             val source = viewModel.rssSource
             val js = source?.shouldOverrideUrlLoading
             if (!js.isNullOrBlank()) {
-                val result = RhinoScriptEngine.runCatching {
-                    eval(js) {
-                        put("java", rssJsExtensions)
-                        put("url", url.toString())
-                    }.toString()
+                val result = kotlin.runCatching {
+                    runScriptWithContext(lifecycleScope.coroutineContext) {
+                        source.evalJS(js) {
+                            put("java", rssJsExtensions)
+                            put("url", url.toString())
+                        }.toString()
+                    }
                 }.onFailure {
                     AppLog.put("url跳转拦截js出错", it)
                 }.getOrNull()

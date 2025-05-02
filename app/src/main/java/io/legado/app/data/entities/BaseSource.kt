@@ -235,12 +235,12 @@ interface BaseSource : JsExtensions {
     @Throws(Exception::class)
     fun evalJS(jsStr: String, bindingsConfig: ScriptBindings.() -> Unit = {}): Any? {
         val bindings = buildScriptBindings { bindings ->
-            bindings.apply(bindingsConfig)
             bindings["java"] = this
             bindings["source"] = this
             bindings["baseUrl"] = getKey()
             bindings["cookie"] = CookieStore
             bindings["cache"] = CacheManager
+            bindings.apply(bindingsConfig)
         }
         val sharedScope = getShareScope()
         val scope = if (sharedScope == null) {
