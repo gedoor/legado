@@ -212,7 +212,7 @@ object WebBook {
         return kotlin.runCatching {
             val preUpdateJs = bookSource.ruleToc?.preUpdateJs
             if (!preUpdateJs.isNullOrBlank()) {
-                AnalyzeRule(book, bookSource)
+                AnalyzeRule(book, bookSource, true)
                     .setCoroutineContext(coroutineContext)
                     .evalJS(preUpdateJs)
             }

@@ -87,7 +87,7 @@ java.getElements(ruleStr: String)
 
 * 重新搜索书籍/重新获取目录url
 
-> 可以在刷新目录之前使用,有些书源书籍地址和目录url会变
+> 只能在刷新目录之前使用,有些书源书籍地址和目录url会变
 
 ```js
 java.reGetBook()

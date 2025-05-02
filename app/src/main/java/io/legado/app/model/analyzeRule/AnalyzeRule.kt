@@ -48,7 +48,8 @@ import kotlin.coroutines.EmptyCoroutineContext
 @Suppress("unused", "RegExpRedundantEscape", "MemberVisibilityCanBePrivate")
 class AnalyzeRule(
     var ruleData: RuleDataInterface? = null,
-    private val source: BaseSource? = null
+    private val source: BaseSource? = null,
+    private val preUpdateJs: Boolean = false
 ) : JsExtensions {
 
     val book get() = ruleData as? BaseBook
@@ -815,6 +816,7 @@ class AnalyzeRule(
      * 重新获取book
      */
     fun reGetBook() {
+        if (!preUpdateJs) return
         val bookSource = source as? BookSource
         val book = book as? Book
         if (bookSource == null || book == null) return
@@ -833,23 +835,10 @@ class AnalyzeRule(
     }
 
     /**
-     * 刷新详情页
-     */
-    fun refreshBook() {
-        val bookSource = source as? BookSource
-        val book = book as? Book
-        if (bookSource == null || book == null) return
-        runBlocking(coroutineContext) {
-            withTimeout(1800000) {
-                WebBook.getBookInfoAwait(bookSource, book, false)
-            }
-        }
-    }
-
-    /**
      * 更新tocUrl,有些书源目录url定期更新,可以在js调用更新
      */
     fun refreshTocUrl() {
+        if (!preUpdateJs) return
         val bookSource = source as? BookSource
         val book = book as? Book
         if (bookSource == null || book == null) return
