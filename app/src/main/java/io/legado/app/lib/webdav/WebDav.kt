@@ -2,6 +2,7 @@ package io.legado.app.lib.webdav
 
 import android.annotation.SuppressLint
 import android.net.Uri
+import cn.hutool.core.net.URLDecoder
 import io.legado.app.constant.AppLog
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.http.newCallResponse
@@ -29,7 +30,6 @@ import java.io.FileOutputStream
 import java.io.InputStream
 import java.net.MalformedURLException
 import java.net.URL
-import java.net.URLDecoder
 import java.net.URLEncoder
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -182,18 +182,20 @@ open class WebDav(
         val baseUrl = NetworkUtils.getBaseUrl(urlStr)
         for (element in elements) {
             //依然是优化支持 caddy 自建的 WebDav ，其目录后缀都为“/”, 所以删除“/”的判定，不然无法获取该目录项
-            val href = element.findNS("href", ns)[0].text().replace("+", "%2B")
-            val hrefDecode = URLDecoder.decode(href, "UTF-8")
-            val fileName = hrefDecode.removeSuffix("/").substringAfterLast("/")
+            val href = element.findNS("href", ns)[0].text()
+            val fileName = URLDecoder.decodeForPath(
+                href.removeSuffix("/").substringAfterLast("/"),
+                Charsets.UTF_8
+            )
             val webDavFile: WebDav
             try {
-                val urlName = hrefDecode.ifEmpty {
+                val urlName = href.ifEmpty {
                     url.file.replace("/", "")
                 }
                 val displayName = element
                     .findNS("displayname", ns)
                     .firstOrNull()?.text()?.takeIf { it.isNotEmpty() }
-                    ?.let { URLDecoder.decode(it.replace("+", "%2B"), "UTF-8") } ?: fileName
+                    ?.let { URLDecoder.decodeForPath(it, Charsets.UTF_8) } ?: fileName
                 val contentType = element
                     .findNS("getcontenttype", ns)
                     .firstOrNull()?.text().orEmpty()
@@ -211,7 +213,7 @@ open class WebDav(
                                 .toInstant(ZoneOffset.of("+8")).toEpochMilli()
                         }
                 }.getOrNull() ?: 0
-                var fullURL = NetworkUtils.getAbsoluteURL(baseUrl, hrefDecode)
+                var fullURL = NetworkUtils.getAbsoluteURL(baseUrl, href)
                 if (WebDavFile.isDir(contentType, resourceType) && !fullURL.endsWith("/")) {
                     fullURL += "/"
                 }
