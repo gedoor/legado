@@ -12,6 +12,7 @@ import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.module.AppGlideModule
 import io.legado.app.BuildConfig
 import io.legado.app.help.config.AppConfig
+import java.io.File
 import java.io.InputStream
 
 
@@ -29,6 +30,11 @@ class LegadoGlideModule : AppGlideModule() {
             String::class.java,
             InputStream::class.java,
             LegadoDataUrlLoader.Factory()
+        )
+        registry.prepend(
+            String::class.java,
+            File::class.java,
+            FilePathLoader.Factory()
         )
     }
 
