@@ -6,6 +6,7 @@ import android.content.res.Configuration
 import android.net.Uri
 import android.net.http.SslError
 import android.os.Bundle
+import android.os.SystemClock
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -473,6 +474,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             val source = viewModel.rssSource
             val js = source?.shouldOverrideUrlLoading
             if (!js.isNullOrBlank()) {
+                val t = SystemClock.uptimeMillis()
                 val result = kotlin.runCatching {
                     runScriptWithContext(lifecycleScope.coroutineContext) {
                         source.evalJS(js) {
@@ -481,8 +483,11 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                         }.toString()
                     }
                 }.onFailure {
-                    AppLog.put("url跳转拦截js出错", it)
+                    AppLog.put("${source.getKey()}: url跳转拦截js出错", it)
                 }.getOrNull()
+                if (SystemClock.uptimeMillis() - t > 30) {
+                    AppLog.put("${source.getKey()}: url跳转拦截js执行耗时过长")
+                }
                 if (result.isTrue()) {
                     return true
                 }

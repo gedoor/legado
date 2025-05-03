@@ -7,6 +7,7 @@ import io.legado.app.help.CacheManager
 import io.legado.app.help.IntentData
 import io.legado.app.ui.association.VerificationCodeActivity
 import io.legado.app.ui.browser.WebViewActivity
+import io.legado.app.utils.isMainThread
 import io.legado.app.utils.startActivity
 import splitties.init.appCtx
 import java.util.concurrent.locks.LockSupport
@@ -19,7 +20,9 @@ object SourceVerificationHelp {
 
     private val waitTime = 1.minutes.inWholeNanoseconds
 
-    private fun getVerificationResultKey(source: BaseSource) = getVerificationResultKey(source.getKey())
+    private fun getVerificationResultKey(source: BaseSource) =
+        getVerificationResultKey(source.getKey())
+
     private fun getVerificationResultKey(sourceKey: String) = "${sourceKey}_verificationResult"
 
     /**
@@ -35,6 +38,9 @@ object SourceVerificationHelp {
     ): String {
         source
             ?: throw NoStackTraceException("getVerificationResult parameter source cannot be null")
+        if (isMainThread) {
+            error("getVerificationResult must be called on a background thread")
+        }
 
         clearResult(source.getKey())
 

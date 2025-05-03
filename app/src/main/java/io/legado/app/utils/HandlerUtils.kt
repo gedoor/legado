@@ -14,7 +14,7 @@ private val mainLooper: Looper = Looper.getMainLooper()
 
 private val mainThread: Thread = mainLooper.thread
 
-private val isMainThread: Boolean inline get() = mainThread === Thread.currentThread()
+val isMainThread: Boolean get() = mainThread === Thread.currentThread()
 
 fun buildMainHandler(): Handler {
     return if (SDK_INT >= 28) Handler.createAsync(mainLooper) else try {

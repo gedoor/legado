@@ -40,6 +40,7 @@ import io.legado.app.utils.createFileReplace
 import io.legado.app.utils.externalCache
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.isAbsUrl
+import io.legado.app.utils.isMainThread
 import io.legado.app.utils.longToastOnUi
 import io.legado.app.utils.mapAsync
 import io.legado.app.utils.stackTraceStr
@@ -167,6 +168,9 @@ interface JsExtensions : JsEncodeUtils {
      * @return 返回js获取的内容
      */
     fun webView(html: String?, url: String?, js: String?): String? {
+        if (isMainThread) {
+            error("webView must be called on a background thread")
+        }
         return runBlocking(context) {
             BackstageWebView(
                 url = url,
@@ -182,6 +186,9 @@ interface JsExtensions : JsEncodeUtils {
      * 使用webView获取资源url
      */
     fun webViewGetSource(html: String?, url: String?, js: String?, sourceRegex: String): String? {
+        if (isMainThread) {
+            error("webViewGetSource must be called on a background thread")
+        }
         return runBlocking(context) {
             BackstageWebView(
                 url = url,
@@ -203,6 +210,9 @@ interface JsExtensions : JsEncodeUtils {
         js: String?,
         overrideUrlRegex: String
     ): String? {
+        if (isMainThread) {
+            error("webViewGetOverrideUrl must be called on a background thread")
+        }
         return runBlocking(context) {
             BackstageWebView(
                 url = url,
