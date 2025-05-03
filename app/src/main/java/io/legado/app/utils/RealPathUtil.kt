@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
+import androidx.core.provider.DocumentsContractCompat
 
 import java.io.File
 import java.io.FileInputStream
@@ -32,7 +33,7 @@ object RealPathUtil {
         if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) { // ExternalStorageProvider
             if (isExternalStorageDocument(uri)) {
                 val docId = DocumentsContract.getDocumentId(uri)
-                val split = docId.split(":").toTypedArray()
+                val split = docId.split(":")
                 val type = split[0]
                 if ("primary".equals(type, ignoreCase = true)) {
                     return Environment.getExternalStorageDirectory().toString() + "/" + split[1]
@@ -66,6 +67,15 @@ object RealPathUtil {
                 val selection = "_id=?"
                 val selectionArgs = arrayOf(split[1])
                 return getDataColumn(context, contentUri, selection, selectionArgs)
+            }
+        } else if (DocumentsContractCompat.isTreeUri(uri)) {
+            if (isExternalStorageDocument(uri)) {
+                val docId = DocumentsContract.getTreeDocumentId(uri)
+                val split = docId.split(":")
+                val type = split[0]
+                if ("primary".equals(type, ignoreCase = true)) {
+                    return Environment.getExternalStorageDirectory().toString() + "/" + split[1]
+                }
             }
         } else if ("content".equals(uri.scheme, ignoreCase = true)) { // Return the remote address
             return if (isGooglePhotosUri(uri)) uri.lastPathSegment
