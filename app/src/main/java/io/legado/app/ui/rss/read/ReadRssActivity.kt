@@ -483,10 +483,10 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                         }.toString()
                     }
                 }.onFailure {
-                    AppLog.put("${source.getKey()}: url跳转拦截js出错", it)
+                    AppLog.put("${source.getTag()}: url跳转拦截js出错", it)
                 }.getOrNull()
                 if (SystemClock.uptimeMillis() - t > 30) {
-                    AppLog.put("${source.getKey()}: url跳转拦截js执行耗时过长")
+                    AppLog.put("${source.getTag()}: url跳转拦截js执行耗时过长")
                 }
                 if (result.isTrue()) {
                     return true
