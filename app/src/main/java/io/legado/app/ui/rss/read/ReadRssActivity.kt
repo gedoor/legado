@@ -176,7 +176,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             R.id.menu_aloud -> readAloud()
             R.id.menu_login -> startActivity<SourceLoginActivity> {
                 putExtra("type", "rssSource")
-                putExtra("key", viewModel.rssSource?.loginUrl)
+                putExtra("key", viewModel.rssSource?.sourceUrl)
             }
 
             R.id.menu_browser_open -> binding.webView.url?.let {
