@@ -35,6 +35,16 @@ class CronetInterceptor(private val cookieJar: CookieJar) : Interceptor {
             builder.removeHeader("Keep-Alive")
             builder.removeHeader("Accept-Encoding")
 
+            // https://github.com/gedoor/legado/issues/5025#issuecomment-2851156500
+            if (!original.isHttps &&
+                original.header("User-Agent")
+                    ?.startsWith("Mozilla", true) == true) {
+                val referer = original.header("Referer")
+                if (referer != null && referer.startsWith("https:", true)) {
+                    builder.header("Referer", "http" + referer.substring(5))
+                }
+            }
+
             var newReq = builder.build()
 
             if (newReq.header(cookieJarHeader) != null) {
