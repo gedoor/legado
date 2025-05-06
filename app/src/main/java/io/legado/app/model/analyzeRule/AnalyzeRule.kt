@@ -17,8 +17,10 @@ import io.legado.app.help.CacheManager
 import io.legado.app.help.JsExtensions
 import io.legado.app.help.http.CookieStore
 import io.legado.app.help.source.getShareScope
+import io.legado.app.model.Debug
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.GSON
+import io.legado.app.utils.GSONStrict
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.getOrPutLimit
@@ -77,6 +79,8 @@ class AnalyzeRule(
     private var topScopeRef: WeakReference<Scriptable>? = null
 
     private var coroutineContext: CoroutineContext = EmptyCoroutineContext
+
+    private var loggedNonStandardJSON = false
 
     @JvmOverloads
     fun setContent(content: Any?, baseUrl: String? = null): AnalyzeRule {
@@ -408,9 +412,20 @@ class AnalyzeRule(
         val putMatcher = putPattern.matcher(vRuleStr)
         while (putMatcher.find()) {
             vRuleStr = vRuleStr.replace(putMatcher.group(), "")
-            GSON.fromJsonObject<Map<String, String>>(putMatcher.group(1))
+            val putJsonStr = putMatcher.group(1)
+            val putJson = GSONStrict.fromJsonObject<Map<String, String>>(putJsonStr)
+                .getOrNull()
+            if (putJson != null) {
+                putMap.putAll(putJson)
+                continue
+            }
+            GSON.fromJsonObject<Map<String, String>>(putJsonStr)
                 .getOrNull()
                 ?.let {
+                    if (!loggedNonStandardJSON) {
+                        Debug.log("≡@put 规则 JSON 格式不规范，请改为规范格式")
+                        loggedNonStandardJSON = true
+                    }
                     putMap.putAll(it)
                 }
         }

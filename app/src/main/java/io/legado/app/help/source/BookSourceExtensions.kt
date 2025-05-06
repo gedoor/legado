@@ -104,6 +104,13 @@ suspend fun BookSource.clearExploreKindsCache() {
     }
 }
 
+fun BookSource.exploreKindsJson(): String {
+    val exploreKindsKey = getExploreKindsKey()
+    return aCache.getAsString(exploreKindsKey)?.takeIf { it.isJsonArray() }
+        ?: exploreUrl.takeIf { it.isJsonArray() }
+        ?: ""
+}
+
 fun BookSource.getBookType(): Int {
     return when (bookSourceType) {
         BookSourceType.file -> BookType.text or BookType.webFile

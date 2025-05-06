@@ -5,17 +5,22 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.data.entities.rule.BookListRule
+import io.legado.app.data.entities.rule.ExploreKind
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.book.BookHelp
+import io.legado.app.help.source.exploreKindsJson
 import io.legado.app.help.source.getBookType
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeRule.Companion.setCoroutineContext
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.analyzeRule.RuleData
+import io.legado.app.utils.GSON
+import io.legado.app.utils.GSONStrict
 import io.legado.app.utils.HtmlFormatter
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.StringUtils.wordCountFormat
+import io.legado.app.utils.fromJsonArray
 import kotlinx.coroutines.ensureActive
 import splitties.init.appCtx
 import kotlin.coroutines.coroutineContext
@@ -50,6 +55,9 @@ object BookList {
         analyzeRule.setContent(body).setBaseUrl(baseUrl)
         analyzeRule.setRedirectUrl(baseUrl)
         analyzeRule.setCoroutineContext(coroutineContext)
+        if (!isSearch) {
+            checkExploreJson(bookSource)
+        }
         if (isSearch) bookSource.bookUrlPattern?.let {
             coroutineContext.ensureActive()
             if (baseUrl.matches(it.toRegex())) {
@@ -277,6 +285,23 @@ object BookList {
             return searchBook
         }
         return null
+    }
+
+    private fun checkExploreJson(bookSource: BookSource) {
+        if (Debug.callback == null) {
+            return
+        }
+        val json = bookSource.exploreKindsJson()
+        if (json.isEmpty()) {
+            return
+        }
+        val kinds = GSONStrict.fromJsonArray<ExploreKind>(json).getOrNull()
+        if (kinds != null) {
+            return
+        }
+        GSON.fromJsonArray<ExploreKind>(json).getOrNull()?.let {
+            Debug.log("≡发现地址规则 JSON 格式不规范，请改为规范格式")
+        }
     }
 
 }

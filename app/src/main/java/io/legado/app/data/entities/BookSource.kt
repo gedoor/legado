@@ -148,12 +148,12 @@ data class BookSource(
         return rule
     }
 
-    fun getReviewRule(): ReviewRule {
-        ruleReview?.let { return it }
-        val rule = ReviewRule()
-        ruleReview = rule
-        return rule
-    }
+//    fun getReviewRule(): ReviewRule {
+//        ruleReview?.let { return it }
+//        val rule = ReviewRule()
+//        ruleReview = rule
+//        return rule
+//    }
 
     fun getDisPlayNameGroup(): String {
         return if (bookSourceGroup.isNullOrBlank()) {
