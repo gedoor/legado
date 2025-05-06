@@ -1,6 +1,5 @@
 package io.legado.app.ui.book.source.edit
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -388,6 +387,7 @@ class BookSourceEditActivity :
         val contentRule = ContentRule()
 //        val reviewRule = ReviewRule()
         sourceEntities.forEach {
+            it.value = it.value?.takeIf { s -> s.isNotBlank() }
             when (it.key) {
                 "bookSourceUrl" -> source.bookSourceUrl = it.value ?: ""
                 "bookSourceName" -> source.bookSourceName = it.value ?: ""
@@ -405,6 +405,7 @@ class BookSourceEditActivity :
             }
         }
         searchEntities.forEach {
+            it.value = it.value?.takeIf { s -> s.isNotBlank() }
             when (it.key) {
                 "searchUrl" -> source.searchUrl = it.value
                 "checkKeyWord" -> searchRule.checkKeyWord = it.value
@@ -438,6 +439,7 @@ class BookSourceEditActivity :
             }
         }
         exploreEntities.forEach {
+            it.value = it.value?.takeIf { s -> s.isNotBlank() }
             when (it.key) {
                 "exploreUrl" -> source.exploreUrl = it.value
                 "bookList" -> exploreRule.bookList = it.value
@@ -470,6 +472,7 @@ class BookSourceEditActivity :
             }
         }
         infoEntities.forEach {
+            it.value = it.value?.takeIf { s -> s.isNotBlank() }
             when (it.key) {
                 "init" -> bookInfoRule.init = it.value
                 "name" -> bookInfoRule.name = viewModel.ruleComplete(it.value, bookInfoRule.init)
@@ -503,6 +506,7 @@ class BookSourceEditActivity :
             }
         }
         tocEntities.forEach {
+            it.value = it.value?.takeIf { s -> s.isNotBlank() }
             when (it.key) {
                 "preUpdateJs" -> tocRule.preUpdateJs = it.value
                 "chapterList" -> tocRule.chapterList = it.value
@@ -522,6 +526,7 @@ class BookSourceEditActivity :
             }
         }
         contentEntities.forEach {
+            it.value = it.value?.takeIf { s -> s.isNotBlank() }
             when (it.key) {
                 "content" -> contentRule.content = viewModel.ruleComplete(it.value)
                 "title" -> contentRule.title = viewModel.ruleComplete(it.value)
