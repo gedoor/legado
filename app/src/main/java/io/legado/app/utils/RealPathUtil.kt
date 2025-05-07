@@ -86,6 +86,22 @@ object RealPathUtil {
         return uri.path
     }
 
+    fun getTreePath(uri: Uri): String? {
+        if (!DocumentsContractCompat.isTreeUri(uri) || !isExternalStorageDocument(uri)) {
+            return null
+        }
+        val docId = DocumentsContract.getTreeDocumentId(uri)
+        val split = docId.split(":")
+        if (split.size < 2) {
+            return null
+        }
+        val type = split[0]
+        if ("primary".equals(type, ignoreCase = true)) {
+            return Environment.getExternalStorageDirectory().toString() + "/" + split[1]
+        }
+        return null
+    }
+
     /**
      * Get the value of the data column for this Uri. This is useful for
      * MediaStore Uris, and other file-based ContentProviders.

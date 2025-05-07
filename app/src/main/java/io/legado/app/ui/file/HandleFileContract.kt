@@ -42,7 +42,7 @@ class HandleFileContract :
 
     override fun parseResult(resultCode: Int, intent: Intent?): Result {
         val uri = if (resultCode != RESULT_OK || intent?.data == null ||
-            RealPathUtil.getPath(appCtx, intent.data!!)
+            RealPathUtil.getTreePath(intent.data!!)
                 ?.startsWith(appCtx.externalFiles.parent!!) == true
         ) {
             null
