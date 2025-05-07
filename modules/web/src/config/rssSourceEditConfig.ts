@@ -82,6 +82,12 @@ export default {
         type: 'String',
         hint: '并发率',
       },
+      {
+        title: 'js库',
+        id: 'jsLib',
+        type: 'String',
+        hint: 'js库, 可填写js或者key-value object获取在线js文件',
+      },
     ],
   },
   list: {
