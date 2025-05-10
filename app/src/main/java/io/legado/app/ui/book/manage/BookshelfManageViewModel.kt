@@ -22,6 +22,7 @@ import io.legado.app.utils.stackTraceStr
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.writeToOutputStream
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.ensureActive
 import java.io.File
 
 
@@ -92,8 +93,8 @@ class BookshelfManageViewModel(application: Application) : BaseViewModel(applica
                         AppLog.put("搜索书籍出错\n${it.localizedMessage}", it, true)
                     }.getOrNull() ?: return@forEachIndexed
                 kotlin.runCatching {
-                    if (book.tocUrl.isEmpty()) {
-                        WebBook.getBookInfoAwait(source, book)
+                    if (newBook.tocUrl.isEmpty()) {
+                        WebBook.getBookInfoAwait(source, newBook)
                     }
                 }.onFailure {
                     AppLog.put("获取书籍详情出错\n${it.localizedMessage}", it, true)

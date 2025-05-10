@@ -200,6 +200,7 @@ object ReadBook : CoroutineScope by MainScope() {
         ) {
             durChapterIndex = progress.durChapterIndex
             durChapterPos = progress.durChapterPos
+            saveRead()
             clearTextChapter()
             callBack?.upContent()
             loadContent(resetPageOffset = true)

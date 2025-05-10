@@ -1557,7 +1557,6 @@ class ReadBookActivity : BaseReadBookActivity(),
             setMessage(R.string.cloud_progress_exceeds_current)
             okButton {
                 ReadBook.setProgress(progress)
-                ReadBook.saveRead()
             }
             noButton()
         }
