@@ -2,7 +2,6 @@ package io.legado.app.utils
 
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.room.invalidationTrackerFlow
 import io.legado.app.data.appDb
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
@@ -215,7 +214,8 @@ fun <T> Flow<T>.flowWithLifecycleAndDatabaseChange(
     table: String
 ): Flow<T> = callbackFlow {
     var update = 0
-    val channel = appDb.invalidationTrackerFlow(table)
+    val channel = appDb.invalidationTracker
+        .createFlow(table)
         .conflate()
         .onEach { update++ }
         .produceIn(this)
@@ -238,7 +238,8 @@ fun <T> Flow<T>.flowWithLifecycleAndDatabaseChangeFirst(
 ): Flow<T> = callbackFlow {
     var update = 0
     val isActive = lifecycle.currentState.isAtLeast(minActiveState)
-    val channel = appDb.invalidationTrackerFlow(table, emitInitialState = isActive)
+    val channel = appDb.invalidationTracker
+        .createFlow(table, emitInitialState = isActive)
         .conflate()
         .onEach { update++ }
         .produceIn(this)

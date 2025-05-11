@@ -237,7 +237,7 @@ dependencies {
     implementation(libs.json.path)
     implementation(libs.jsoupxpath)
     implementation(project(path: ':modules:book'))
-    implementation implementation(project(path: ':modules:rhino'))
+    implementation(project(path: ':modules:rhino'))
 
     //JS rhino
 

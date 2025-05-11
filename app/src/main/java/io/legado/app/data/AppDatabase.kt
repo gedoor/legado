@@ -57,7 +57,7 @@ import java.util.Locale
 
 val appDb by lazy {
     Room.databaseBuilder(appCtx, AppDatabase::class.java, AppDatabase.DATABASE_NAME)
-        .fallbackToDestructiveMigrationFrom(1, 2, 3, 4, 5, 6, 7, 8, 9)
+        .fallbackToDestructiveMigrationFrom(false, 1, 2, 3, 4, 5, 6, 7, 8, 9)
         .addMigrations(*DatabaseMigrations.migrations)
         .allowMainThreadQueries()
         .addCallback(AppDatabase.dbCallback)
