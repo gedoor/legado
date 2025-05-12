@@ -31,7 +31,12 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.file.HandleFileContract.Companion.FILE
 import io.legado.app.ui.file.utils.FilePickerIcon
 import io.legado.app.ui.widget.recycler.VerticalDivider
-import io.legado.app.utils.*
+import io.legado.app.utils.ConvertUtils
+import io.legado.app.utils.FileUtils
+import io.legado.app.utils.applyTint
+import io.legado.app.utils.getCompatColor
+import io.legado.app.utils.setLayout
+import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import java.io.File
 
@@ -76,13 +81,6 @@ class FilePickerDialog : BaseDialogFragment(R.layout.dialog_file_chooser),
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         binding.toolBar.setBackgroundColor(primaryColor)
         view.setBackgroundResource(R.color.background_card)
-        binding.toolBar.title = arguments?.getString("title") ?: let {
-            if (viewModel.isSelectDir) {
-                getString(R.string.folder_chooser)
-            } else {
-                getString(R.string.file_chooser)
-            }
-        }
         initMenu()
         initContentView()
         viewModel.filesLiveData.observe(viewLifecycleOwner) {
@@ -90,6 +88,13 @@ class FilePickerDialog : BaseDialogFragment(R.layout.dialog_file_chooser),
             fileAdapter.setItems(it)
         }
         viewModel.initData(arguments)
+        binding.toolBar.title = arguments?.getString("title") ?: let {
+            if (viewModel.isSelectDir) {
+                getString(R.string.folder_chooser)
+            } else {
+                getString(R.string.file_chooser)
+            }
+        }
     }
 
     private fun initMenu() {
