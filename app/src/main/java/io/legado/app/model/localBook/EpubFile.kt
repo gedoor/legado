@@ -214,13 +214,14 @@ class EpubFile(var book: Book) {
          */
         if (!startFragmentId.isNullOrBlank()) {
             bodyElement.getElementById(startFragmentId)?.outerHtml()?.let {
-                /* 章节内容在fragmentI对应的div下时 会截取空白 */
-                bodyString = bodyString.substringAfter(it).ifBlank { bodyString }
+                val tagStart = it.substringBefore("\n")
+                bodyString = tagStart + bodyString.substringAfter(tagStart)
             }
         }
         if (!endFragmentId.isNullOrBlank() && endFragmentId != startFragmentId) {
             bodyElement.getElementById(endFragmentId)?.outerHtml()?.let {
-                bodyString = bodyString.substringBefore(it)
+                val tagStart = it.substringBefore("\n")
+                bodyString = bodyString.substringBefore(tagStart)
             }
         }
         //截取过再重新解析
