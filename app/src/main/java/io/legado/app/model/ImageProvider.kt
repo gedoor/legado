@@ -55,15 +55,15 @@ object ImageProvider {
 
         val count get() = putCount() + createCount() - evictionCount() - removeCount
 
-        override fun sizeOf(filePath: String, bitmap: Bitmap): Int {
-            return bitmap.byteCount
+        override fun sizeOf(key: String, value: Bitmap): Int {
+            return value.byteCount
         }
 
         override fun entryRemoved(
             evicted: Boolean,
-            filePath: String,
-            oldBitmap: Bitmap,
-            newBitmap: Bitmap?
+            key: String,
+            oldValue: Bitmap,
+            newValue: Bitmap?
         ) {
             if (!evicted) {
                 synchronized(this) {
@@ -71,8 +71,8 @@ object ImageProvider {
                 }
             }
             //错误图片不能释放,占位用,防止一直重复获取图片
-            if (oldBitmap != errorBitmap) {
-                oldBitmap.recycle()
+            if (oldValue != errorBitmap) {
+                oldValue.recycle()
                 //putDebug("ImageProvider: trigger bitmap recycle. URI: $filePath")
                 //putDebug("ImageProvider : cacheUsage ${size()}bytes / ${maxSize()}bytes")
             }
@@ -86,7 +86,7 @@ object ImageProvider {
     }
 
     fun get(key: String): Bitmap? {
-        return bitmapLruCache.get(key)
+        return bitmapLruCache[key]
     }
 
     fun remove(key: String): Bitmap? {
@@ -94,7 +94,7 @@ object ImageProvider {
     }
 
     private fun getNotRecycled(key: String): Bitmap? {
-        val bitmap = bitmapLruCache.get(key) ?: return null
+        val bitmap = bitmapLruCache[key] ?: return null
         if (bitmap.isRecycled) {
             bitmapLruCache.remove(key)
             return null
