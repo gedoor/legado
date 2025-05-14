@@ -6,7 +6,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.widget.CheckBox
-import android.widget.EditText
 import android.widget.LinearLayout
 import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
@@ -124,8 +123,10 @@ class BookshelfManageActivity :
         if (ev.action == MotionEvent.ACTION_DOWN) {
             currentFocus?.let {
                 if (it.shouldHideSoftInput(ev)) {
-                    it.clearFocus()
-                    it.hideSoftInput()
+                    it.post {
+                        it.clearFocus()
+                        it.hideSoftInput()
+                    }
                 }
             }
         }

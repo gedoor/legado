@@ -27,7 +27,8 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-abstract class BaseImportBookActivity<VM : ViewModel> : VMBaseActivity<ActivityImportBookBinding, VM>() {
+abstract class BaseImportBookActivity<VM : ViewModel> :
+    VMBaseActivity<ActivityImportBookBinding, VM>() {
 
     final override val binding by viewBinding(ActivityImportBookBinding::inflate)
 
@@ -52,8 +53,10 @@ abstract class BaseImportBookActivity<VM : ViewModel> : VMBaseActivity<ActivityI
         if (ev.action == MotionEvent.ACTION_DOWN) {
             currentFocus?.let {
                 if (it.shouldHideSoftInput(ev)) {
-                    it.clearFocus()
-                    it.hideSoftInput()
+                    it.post {
+                        it.clearFocus()
+                        it.hideSoftInput()
+                    }
                 }
             }
         }

@@ -121,8 +121,10 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
         if (ev.action == MotionEvent.ACTION_DOWN) {
             currentFocus?.let {
                 if (it.shouldHideSoftInput(ev)) {
-                    it.clearFocus()
-                    it.hideSoftInput()
+                    it.post {
+                        it.clearFocus()
+                        it.hideSoftInput()
+                    }
                 }
             }
         }
@@ -147,6 +149,7 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
                 mode = HandleFileContract.FILE
                 allowExtensions = arrayOf("txt", "json")
             }
+
             R.id.menu_import_onLine -> showImportDialog()
             R.id.menu_import_qr -> qrCodeResult.launch()
             R.id.menu_group_manage -> showDialogFragment<GroupManageDialog>()
@@ -154,15 +157,19 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
             R.id.menu_enabled_group -> {
                 searchView.setQuery(getString(R.string.enabled), true)
             }
+
             R.id.menu_disabled_group -> {
                 searchView.setQuery(getString(R.string.disabled), true)
             }
+
             R.id.menu_group_login -> {
                 searchView.setQuery(getString(R.string.need_login), true)
             }
+
             R.id.menu_group_null -> {
                 searchView.setQuery(getString(R.string.no_group), true)
             }
+
             R.id.menu_help -> showHelp("SourceMRssHelp")
             else -> if (item.groupId == R.id.source_group) {
                 searchView.setQuery("group:${item.title}", true)
@@ -182,13 +189,16 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
             R.id.menu_export_selection -> viewModel.saveToFile(adapter.selection) { file ->
                 exportResult.launch {
                     mode = HandleFileContract.EXPORT
-                    fileData = HandleFileContract.FileData("exportRssSource.json", file, "application/json")
+                    fileData = HandleFileContract.FileData(
+                        "exportRssSource.json", file, "application/json"
+                    )
                 }
             }
 
             R.id.menu_share_source -> viewModel.saveToFile(adapter.selection) {
                 share(it)
             }
+
             R.id.menu_check_selected_interval -> adapter.checkSelectedInterval()
         }
         return true
@@ -330,16 +340,20 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
                 searchKey == getString(R.string.disabled) -> {
                     appDb.rssSourceDao.flowDisabled()
                 }
+
                 searchKey == getString(R.string.need_login) -> {
                     appDb.rssSourceDao.flowLogin()
                 }
+
                 searchKey == getString(R.string.no_group) -> {
                     appDb.rssSourceDao.flowNoGroup()
                 }
+
                 searchKey.startsWith("group:") -> {
                     val key = searchKey.substringAfter("group:")
                     appDb.rssSourceDao.flowGroupSearch(key)
                 }
+
                 else -> {
                     appDb.rssSourceDao.flowSearch(searchKey)
                 }
