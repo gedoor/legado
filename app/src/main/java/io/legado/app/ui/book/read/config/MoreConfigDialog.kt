@@ -25,9 +25,11 @@ import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.widget.number.NumberPickerDialog
+import io.legado.app.utils.canvasrecorder.CanvasRecorderFactory
 import io.legado.app.utils.dpToPx
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.postEvent
+import io.legado.app.utils.removePref
 import io.legado.app.utils.setEdgeEffectColor
 
 class MoreConfigDialog : BasePrefDialogFragment() {
@@ -83,6 +85,10 @@ class MoreConfigDialog : BasePrefDialogFragment() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             addPreferencesFromResource(R.xml.pref_config_read)
             upPreferenceSummary(PreferKey.pageTouchSlop, slopSquare.toString())
+            if (!CanvasRecorderFactory.isSupport) {
+                removePref(PreferKey.optimizeRender)
+                preferenceScreen.removePreferenceRecursively(PreferKey.optimizeRender)
+            }
         }
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

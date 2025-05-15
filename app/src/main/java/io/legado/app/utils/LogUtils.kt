@@ -124,6 +124,7 @@ object LogUtils {
                     }
                     append("WebViewUserAgent=").append(userAgent).append("\n")
                     append("packageName=").append(appCtx.packageName).append("\n")
+                    append("heapSize=").append(Runtime.getRuntime().maxMemory()).append("\n")
                     //获取app版本信息
                     AppConst.appInfo.let {
                         append("versionName=").append(it.versionName).append("\n")

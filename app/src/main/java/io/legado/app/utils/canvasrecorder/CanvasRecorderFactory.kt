@@ -7,6 +7,7 @@ object CanvasRecorderFactory {
 
     private val atLeastApi24 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
     private val atLeastApi29 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+    val isSupport = atLeastApi24
 
     // issue 3868
     fun create(locked: Boolean = false): CanvasRecorder {

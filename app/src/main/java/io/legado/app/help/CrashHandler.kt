@@ -90,7 +90,7 @@ class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
          * 存储异常和参数信息
          */
         private val paramsMap by lazy {
-            val map = HashMap<String, String>()
+            val map = LinkedHashMap<String, String>()
             kotlin.runCatching {
                 //获取系统信息
                 map["MANUFACTURER"] = Build.MANUFACTURER
@@ -104,6 +104,7 @@ class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
                     e.toString()
                 }
                 map["packageName"] = appCtx.packageName
+                map["heapSize"] = Runtime.getRuntime().maxMemory().toString()
                 //获取app版本信息
                 AppConst.appInfo.let {
                     map["versionName"] = it.versionName
