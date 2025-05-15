@@ -16,6 +16,7 @@ import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.CacheManager
 import io.legado.app.help.JsExtensions
 import io.legado.app.help.http.CookieStore
+import io.legado.app.help.source.copy
 import io.legado.app.help.source.getShareScope
 import io.legado.app.model.Debug
 import io.legado.app.model.webBook.WebBook
@@ -78,6 +79,8 @@ class AnalyzeRule(
     private val scriptCache = hashMapOf<String, CompiledScript>()
     private var topScopeRef: WeakReference<Scriptable>? = null
     private var evalJSCallCount = 0
+
+    private val sourceCopy = source?.copy()
 
     private var coroutineContext: CoroutineContext = EmptyCoroutineContext
 
@@ -769,7 +772,7 @@ class AnalyzeRule(
             bindings["java"] = this
             bindings["cookie"] = CookieStore
             bindings["cache"] = CacheManager
-            bindings["source"] = source
+            bindings["source"] = sourceCopy
             bindings["book"] = book
             bindings["result"] = result
             bindings["baseUrl"] = baseUrl
