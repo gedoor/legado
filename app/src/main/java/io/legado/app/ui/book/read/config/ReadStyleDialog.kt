@@ -123,7 +123,7 @@ class ReadStyleDialog : BaseDialogFragment(R.layout.dialog_read_book_style),
                 items = resources.getStringArray(R.array.indent).toList()
             ) { _, index ->
                 ReadBookConfig.paragraphIndent = "　".repeat(index)
-                postEvent(EventBus.UP_CONFIG, arrayListOf(5))
+                postEvent(EventBus.UP_CONFIG, arrayListOf(8, 5))
             }
         }
         tvPadding.setOnClickListener {
