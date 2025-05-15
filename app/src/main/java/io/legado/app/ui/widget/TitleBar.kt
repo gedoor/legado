@@ -14,7 +14,6 @@ import androidx.annotation.ColorInt
 import androidx.annotation.StyleRes
 import androidx.appcompat.widget.Toolbar
 import androidx.core.graphics.alpha
-import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.children
 import com.google.android.material.appbar.AppBarLayout
@@ -23,6 +22,7 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.theme.elevation
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.activity
+import io.legado.app.utils.setOnApplyWindowInsetsListenerCompat
 import splitties.views.bottomPadding
 import splitties.views.topPadding
 
@@ -165,7 +165,7 @@ class TitleBar @JvmOverloads constructor(
 //            }
 
             if (fitStatusBar || fitNavigationBar) {
-                ViewCompat.setOnApplyWindowInsetsListener(this) { _, windowInsets ->
+                setOnApplyWindowInsetsListenerCompat { _, windowInsets ->
                     val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
                     if (fitStatusBar) {
                         topPadding = insets.top
