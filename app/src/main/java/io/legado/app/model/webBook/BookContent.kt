@@ -13,7 +13,9 @@ import io.legado.app.help.book.BookHelp
 import io.legado.app.help.config.AppConfig
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
+import io.legado.app.model.analyzeRule.AnalyzeRule.Companion.setChapter
 import io.legado.app.model.analyzeRule.AnalyzeRule.Companion.setCoroutineContext
+import io.legado.app.model.analyzeRule.AnalyzeRule.Companion.setNextChapterUrl
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.HtmlFormatter
 import io.legado.app.utils.NetworkUtils
@@ -58,8 +60,8 @@ object BookContent {
         analyzeRule.setContent(body, baseUrl)
         analyzeRule.setRedirectUrl(redirectUrl)
         analyzeRule.setCoroutineContext(coroutineContext)
-        analyzeRule.chapter = bookChapter
-        analyzeRule.nextChapterUrl = mNextChapterUrl
+        analyzeRule.setChapter(bookChapter)
+        analyzeRule.setNextChapterUrl(mNextChapterUrl)
         coroutineContext.ensureActive()
         val titleRule = contentRule.title
         if (!titleRule.isNullOrBlank()) {
@@ -170,9 +172,9 @@ object BookContent {
         analyzeRule.setContent(body, baseUrl)
         analyzeRule.setCoroutineContext(coroutineContext)
         val rUrl = analyzeRule.setRedirectUrl(redirectUrl)
-        analyzeRule.nextChapterUrl = nextChapterUrl
+        analyzeRule.setNextChapterUrl(nextChapterUrl)
         val nextUrlList = arrayListOf<String>()
-        analyzeRule.chapter = chapter
+        analyzeRule.setChapter(chapter)
         //获取正文
         var content = analyzeRule.getString(contentRule.content, unescape = false)
         content = HtmlFormatter.formatKeepImg(content, rUrl)

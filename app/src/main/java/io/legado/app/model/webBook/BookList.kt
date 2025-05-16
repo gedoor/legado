@@ -13,6 +13,7 @@ import io.legado.app.help.source.getBookType
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeRule.Companion.setCoroutineContext
+import io.legado.app.model.analyzeRule.AnalyzeRule.Companion.setRuleData
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.analyzeRule.RuleData
 import io.legado.app.utils.GSON
@@ -170,7 +171,7 @@ object BookList {
         book.originName = bookSource.bookSourceName
         book.originOrder = bookSource.customOrder
         book.type = bookSource.getBookType()
-        analyzeRule.ruleData = book
+        analyzeRule.setRuleData(book)
         BookInfo.analyzeBookInfo(
             book,
             body,
@@ -212,7 +213,7 @@ object BookList {
         searchBook.origin = bookSource.bookSourceUrl
         searchBook.originName = bookSource.bookSourceName
         searchBook.originOrder = bookSource.customOrder
-        analyzeRule.ruleData = searchBook
+        analyzeRule.setRuleData(searchBook)
         analyzeRule.setContent(item)
         coroutineContext.ensureActive()
         Debug.log(bookSource.bookSourceUrl, "┌获取书名", log)

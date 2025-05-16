@@ -8,6 +8,7 @@ import io.legado.app.exception.NoStackTraceException
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeRule.Companion.setCoroutineContext
+import io.legado.app.model.analyzeRule.AnalyzeRule.Companion.setRuleData
 import io.legado.app.model.analyzeRule.RuleData
 import io.legado.app.utils.NetworkUtils
 import splitties.init.appCtx
@@ -101,7 +102,7 @@ object RssParserByRule {
         ruleLink: List<AnalyzeRule.SourceRule>
     ): RssArticle? {
         val rssArticle = RssArticle(variable = variable)
-        analyzeRule.ruleData = rssArticle
+        analyzeRule.setRuleData(rssArticle)
         analyzeRule.setContent(item)
         Debug.log(sourceUrl, "┌获取标题", log)
         rssArticle.title = analyzeRule.getString(ruleTitle)
