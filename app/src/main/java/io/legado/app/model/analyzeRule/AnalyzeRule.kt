@@ -30,6 +30,7 @@ import io.legado.app.utils.isJson
 import io.legado.app.utils.printOnDebug
 import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.stackTraceStr
+import io.legado.app.utils.updateVariableTo
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
@@ -79,8 +80,6 @@ class AnalyzeRule(
     private val scriptCache = hashMapOf<String, CompiledScript>()
     private var topScopeRef: WeakReference<Scriptable>? = null
     private var evalJSCallCount = 0
-
-    private val sourceCopy = source?.copy()
 
     private var coroutineContext: CoroutineContext = EmptyCoroutineContext
 
@@ -768,19 +767,21 @@ class AnalyzeRule(
      * 执行JS
      */
     fun evalJS(jsStr: String, result: Any? = null): Any? {
+        val chapterCopy = chapter?.copy()
+        val rssArticleCopy = rssArticle?.copy()
         val bindings = buildScriptBindings { bindings ->
             bindings["java"] = this
             bindings["cookie"] = CookieStore
             bindings["cache"] = CacheManager
-            bindings["source"] = sourceCopy
+            bindings["source"] = source?.copy()
             bindings["book"] = book
             bindings["result"] = result
             bindings["baseUrl"] = baseUrl
-            bindings["chapter"] = chapter
-            bindings["title"] = chapter?.title
+            bindings["chapter"] = chapterCopy
+            bindings["title"] = chapterCopy?.title
             bindings["src"] = content
             bindings["nextChapterUrl"] = nextChapterUrl
-            bindings["rssArticle"] = rssArticle
+            bindings["rssArticle"] = rssArticleCopy
         }
         val topScope = source?.getShareScope(coroutineContext) ?: topScopeRef?.get()
         val scope = if (topScope == null) {
@@ -795,7 +796,18 @@ class AnalyzeRule(
             }
         }
         val script = compileScriptCache(jsStr)
-        return script.eval(scope, coroutineContext)
+        val result = script.eval(scope, coroutineContext)
+        updateVariable(chapterCopy, rssArticleCopy)
+        return result
+    }
+
+    private fun updateVariable(chapterCopy: BookChapter?, rssArticleCopy: RssArticle?) {
+        chapter?.let {
+            chapterCopy?.updateVariableTo(it)
+        }
+        rssArticle?.let {
+            rssArticleCopy?.updateVariableTo(it)
+        }
     }
 
     private fun compileScriptCache(jsStr: String): CompiledScript {
