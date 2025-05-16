@@ -61,7 +61,7 @@ interface BaseSource : JsExtensions {
     fun getKey(): String
 
     override fun getSource(): BaseSource? {
-        return this
+        return copy()
     }
 
     fun loginUi(): List<RowUi>? {

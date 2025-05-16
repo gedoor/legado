@@ -814,7 +814,7 @@ class AnalyzeRule(
     }
 
     override fun getSource(): BaseSource? {
-        return source
+        return source?.copy()
     }
 
     /**

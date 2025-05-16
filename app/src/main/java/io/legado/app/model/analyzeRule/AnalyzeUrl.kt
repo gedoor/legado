@@ -660,7 +660,7 @@ class AnalyzeUrl(
     }
 
     override fun getSource(): BaseSource? {
-        return source
+        return source?.copy()
     }
 
     companion object {
