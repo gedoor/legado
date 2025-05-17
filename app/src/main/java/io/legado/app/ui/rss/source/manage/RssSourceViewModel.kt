@@ -6,7 +6,12 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssSource
 import io.legado.app.help.DefaultData
-import io.legado.app.utils.*
+import io.legado.app.help.source.SourceHelp
+import io.legado.app.utils.FileUtils
+import io.legado.app.utils.GSON
+import io.legado.app.utils.splitNotBlank
+import io.legado.app.utils.stackTraceStr
+import io.legado.app.utils.toastOnUi
 import java.io.File
 
 /**
@@ -39,10 +44,7 @@ class RssSourceViewModel(application: Application) : BaseViewModel(application) 
 
     fun del(vararg rssSource: RssSource) {
         execute {
-            appDb.rssSourceDao.delete(*rssSource)
-            rssSource.forEach {
-                appDb.rssArticleDao.delete(it.sourceUrl)
-            }
+            SourceHelp.deleteRssSources(rssSource.toList())
         }
     }
 

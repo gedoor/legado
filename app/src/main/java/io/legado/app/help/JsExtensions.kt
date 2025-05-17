@@ -819,7 +819,7 @@ interface JsExtensions : JsEncodeUtils {
                     if (useCache) {
                         key = MessageDigest.getInstance("SHA-256").digest(data.toByteArray())
                             .toHexString()
-                        qTTF = CacheManager.getQueryTTF(key)
+                        qTTF = AppCacheManager.getQueryTTF(key)
                         if (qTTF != null) return qTTF
                     }
                     val font: ByteArray? = when {
@@ -838,7 +838,7 @@ interface JsExtensions : JsEncodeUtils {
                 is ByteArray -> {
                     if (useCache) {
                         key = MessageDigest.getInstance("SHA-256").digest(data).toHexString()
-                        qTTF = CacheManager.getQueryTTF(key)
+                        qTTF = AppCacheManager.getQueryTTF(key)
                         if (qTTF != null) return qTTF
                     }
                     qTTF = QueryTTF(data)
@@ -846,7 +846,7 @@ interface JsExtensions : JsEncodeUtils {
 
                 else -> return null
             }
-            if (key != null) CacheManager.put(key, qTTF)
+            if (key != null) AppCacheManager.put(key, qTTF)
             return qTTF
         } catch (e: Exception) {
             AppLog.put("[queryTTF] 获取字体处理类出错", e)

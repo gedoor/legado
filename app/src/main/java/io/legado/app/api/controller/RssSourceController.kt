@@ -5,6 +5,7 @@ import android.text.TextUtils
 import io.legado.app.api.ReturnData
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssSource
+import io.legado.app.help.source.SourceHelp
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonArray
 import io.legado.app.utils.fromJsonObject
@@ -69,9 +70,7 @@ object RssSourceController {
         GSON.fromJsonArray<RssSource>(postData).onFailure {
             return ReturnData().setErrorMsg("格式不对")
         }.onSuccess {
-            it.forEach { source ->
-                appDb.rssSourceDao.delete(source)
-            }
+            SourceHelp.deleteRssSources(it)
         }
         return ReturnData().setData("已执行"/*okSources*/)
     }

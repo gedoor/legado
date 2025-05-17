@@ -1,10 +1,11 @@
 package io.legado.app.ui.main.rss
 
 import android.app.Application
+import com.script.rhino.runScriptWithContext
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssSource
-import com.script.rhino.runScriptWithContext
+import io.legado.app.help.source.SourceHelp
 import io.legado.app.utils.toastOnUi
 
 class RssViewModel(application: Application) : BaseViewModel(application) {
@@ -33,10 +34,7 @@ class RssViewModel(application: Application) : BaseViewModel(application) {
 
     fun del(vararg rssSource: RssSource) {
         execute {
-            appDb.rssSourceDao.delete(*rssSource)
-            rssSource.forEach {
-                appDb.rssArticleDao.delete(it.sourceUrl)
-            }
+            SourceHelp.deleteRssSources(rssSource.toList())
         }
     }
 
