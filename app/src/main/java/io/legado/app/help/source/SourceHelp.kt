@@ -61,15 +61,19 @@ object SourceHelp {
     }
 
     fun deleteBookSourceParts(sources: List<BookSourcePart>) {
-        sources.forEach {
-            deleteBookSourceInternal(it.bookSourceUrl)
+        appDb.runInTransaction {
+            sources.forEach {
+                deleteBookSourceInternal(it.bookSourceUrl)
+            }
         }
         AppCacheManager.clearSourceVariables()
     }
 
     fun deleteBookSources(sources: List<BookSource>) {
-        sources.forEach {
-            deleteBookSourceInternal(it.bookSourceUrl)
+        appDb.runInTransaction {
+            sources.forEach {
+                deleteBookSourceInternal(it.bookSourceUrl)
+            }
         }
         AppCacheManager.clearSourceVariables()
     }
@@ -86,8 +90,10 @@ object SourceHelp {
     }
 
     fun deleteRssSources(sources: List<RssSource>) {
-        sources.forEach {
-            deleteRssSourceInternal(it.sourceUrl)
+        appDb.runInTransaction {
+            sources.forEach {
+                deleteRssSourceInternal(it.sourceUrl)
+            }
         }
         AppCacheManager.clearSourceVariables()
     }
