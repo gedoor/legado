@@ -22,7 +22,6 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.addCallback
 import androidx.activity.viewModels
-import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.size
 import androidx.lifecycle.lifecycleScope
@@ -54,6 +53,7 @@ import io.legado.app.utils.keepScreenOn
 import io.legado.app.utils.longSnackbar
 import io.legado.app.utils.openUrl
 import io.legado.app.utils.setDarkeningAllowed
+import io.legado.app.utils.setOnApplyWindowInsetsListenerCompat
 import io.legado.app.utils.setTintMutate
 import io.legado.app.utils.share
 import io.legado.app.utils.showDialogFragment
@@ -208,10 +208,10 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
     }
 
     private fun initView() {
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, windowInsets ->
+        binding.root.setOnApplyWindowInsetsListenerCompat { view, windowInsets ->
             val typeMask = WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.ime()
             val insets = windowInsets.getInsets(typeMask)
-            binding.root.bottomPadding = insets.bottom
+            view.bottomPadding = insets.bottom
             windowInsets
         }
     }

@@ -9,7 +9,6 @@ import android.view.MotionEvent
 import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.activity.viewModels
-import androidx.core.view.ViewCompat
 import androidx.core.view.postDelayed
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -48,6 +47,7 @@ import io.legado.app.utils.isCreated
 import io.legado.app.utils.navigationBarHeight
 import io.legado.app.utils.observeEvent
 import io.legado.app.utils.setEdgeEffectColor
+import io.legado.app.utils.setOnApplyWindowInsetsListenerCompat
 import io.legado.app.utils.shouldHideSoftInput
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.toastOnUi
@@ -202,9 +202,9 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         if (AppConfig.isEInkMode) {
             bottomNavigationView.setBackgroundResource(R.drawable.bg_eink_border_top)
         }
-        ViewCompat.setOnApplyWindowInsetsListener(root) { _, windowInsets ->
+        bottomNavigationView.setOnApplyWindowInsetsListenerCompat { view, windowInsets ->
             val height = windowInsets.navigationBarHeight
-            bottomNavigationView.bottomPadding = height
+            view.bottomPadding = height
             windowInsets.inset(0, 0, 0, height)
         }
     }

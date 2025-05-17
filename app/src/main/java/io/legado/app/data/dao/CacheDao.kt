@@ -21,6 +21,14 @@ interface CacheDao {
     @Query("delete from caches where `key` = :key")
     fun delete(key: String)
 
+    @Query(
+        """delete from caches where `key` like 'v_' || :key || '_%'
+        or `key` = 'userInfo_' || :key
+        or `key` = 'loginHeader_' || :key
+        or `key` = 'sourceVariable_' || :key"""
+    )
+    fun deleteSourceVariables(key: String)
+
     @Query("delete from caches where deadline > 0 and deadline < :now")
     fun clearDeadline(now: Long)
 

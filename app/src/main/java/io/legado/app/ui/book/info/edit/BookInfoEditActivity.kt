@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
-import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -26,6 +25,7 @@ import io.legado.app.utils.externalFiles
 import io.legado.app.utils.inputStream
 import io.legado.app.utils.launch
 import io.legado.app.utils.readUri
+import io.legado.app.utils.setOnApplyWindowInsetsListenerCompat
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -70,10 +70,10 @@ class BookInfoEditActivity :
     }
 
     private fun initView() {
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, windowInsets ->
+        binding.root.setOnApplyWindowInsetsListenerCompat { view, windowInsets ->
             val typeMask = WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.ime()
             val insets = windowInsets.getInsets(typeMask)
-            binding.root.bottomPadding = insets.bottom
+            view.bottomPadding = insets.bottom
             windowInsets
         }
     }

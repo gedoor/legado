@@ -18,6 +18,7 @@ import io.legado.app.ui.widget.keyboard.KeyboardToolPop
 import io.legado.app.utils.GSON
 import io.legado.app.utils.imeHeight
 import io.legado.app.utils.sendToClip
+import io.legado.app.utils.setOnApplyWindowInsetsListenerCompat
 import io.legado.app.utils.showHelp
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
@@ -91,7 +92,7 @@ class ReplaceEditActivity :
         binding.ivHelp.setOnClickListener {
             showHelp("regexHelp")
         }
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, windowInsets ->
+        binding.root.setOnApplyWindowInsetsListenerCompat { _, windowInsets ->
             softKeyboardTool.initialPadding = windowInsets.imeHeight
             windowInsets
         }

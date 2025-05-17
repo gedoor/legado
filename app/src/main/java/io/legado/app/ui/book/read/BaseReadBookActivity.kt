@@ -10,7 +10,6 @@ import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
 import androidx.activity.viewModels
-import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
@@ -44,6 +43,7 @@ import io.legado.app.utils.gone
 import io.legado.app.utils.isTv
 import io.legado.app.utils.setLightStatusBar
 import io.legado.app.utils.setNavigationBarColorAuto
+import io.legado.app.utils.setOnApplyWindowInsetsListenerCompat
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import java.time.LocalDate
@@ -84,9 +84,9 @@ abstract class BaseReadBookActivity :
         setOrientation()
         upLayoutInDisplayCutoutMode()
         super.onCreate(savedInstanceState)
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, windowInsets ->
+        binding.navigationBar.setOnApplyWindowInsetsListenerCompat { view, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
-            binding.navigationBar.updateLayoutParams {
+            view.updateLayoutParams {
                 height = insets.bottom
             }
             windowInsets

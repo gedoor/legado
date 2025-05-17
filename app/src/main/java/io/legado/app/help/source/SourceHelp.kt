@@ -54,13 +54,19 @@ object SourceHelp {
     fun deleteSource(key: String, @SourceType.Type type: Int) {
         when (type) {
             SourceType.book -> deleteBookSource(key)
-            SourceType.rss -> appDb.rssSourceDao.delete(key)
+            SourceType.rss -> deleteRssSource(key)
         }
     }
 
     fun deleteBookSource(key: String) {
         appDb.bookSourceDao.delete(key)
+        appDb.cacheDao.deleteSourceVariables(key)
         SourceConfig.removeSource(key)
+    }
+
+    fun deleteRssSource(key: String) {
+        appDb.rssSourceDao.delete(key)
+        appDb.cacheDao.deleteSourceVariables(key)
     }
 
     fun enableSource(key: String, @SourceType.Type type: Int, enable: Boolean) {

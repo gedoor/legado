@@ -4,11 +4,13 @@ import android.app.Application
 import android.text.TextUtils
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
+import io.legado.app.constant.SourceType
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.BookSourcePart
 import io.legado.app.data.entities.toBookSource
 import io.legado.app.help.config.SourceConfig
+import io.legado.app.help.source.SourceHelp
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.GSON
 import io.legado.app.utils.cnCompare
@@ -50,9 +52,8 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
 
     fun del(sources: List<BookSourcePart>) {
         execute {
-            appDb.bookSourceDao.delete(sources)
             sources.forEach {
-                SourceConfig.removeSource(it.bookSourceUrl)
+                SourceHelp.deleteBookSource(it.bookSourceUrl)
             }
         }
     }

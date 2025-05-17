@@ -266,7 +266,7 @@ fun View.shouldHideSoftInput(event: MotionEvent): Boolean {
 
 fun View.applyStatusBarPadding(withInitialPadding: Boolean = false) {
     val initialPadding = if (withInitialPadding) topPadding else 0
-    ViewCompat.setOnApplyWindowInsetsListener(this) { _, windowInsets ->
+    setOnApplyWindowInsetsListenerCompat { _, windowInsets ->
         val insets = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars())
         topPadding = initialPadding + insets.top
         windowInsets
@@ -275,7 +275,7 @@ fun View.applyStatusBarPadding(withInitialPadding: Boolean = false) {
 
 fun View.applyNavigationBarPadding(withInitialPadding: Boolean = false) {
     val initialPadding = if (withInitialPadding) bottomPadding else 0
-    ViewCompat.setOnApplyWindowInsetsListener(this) { _, windowInsets ->
+    setOnApplyWindowInsetsListenerCompat { _, windowInsets ->
         bottomPadding = initialPadding + windowInsets.navigationBarHeight
         windowInsets
     }
@@ -283,7 +283,7 @@ fun View.applyNavigationBarPadding(withInitialPadding: Boolean = false) {
 
 fun View.applyNavigationBarMargin(withInitialMargin: Boolean = false) {
     val initialMargin = if (withInitialMargin) marginBottom else 0
-    ViewCompat.setOnApplyWindowInsetsListener(this) { _, windowInsets ->
+    setOnApplyWindowInsetsListenerCompat { _, windowInsets ->
         updateLayoutParams<ViewGroup.MarginLayoutParams> {
             bottomMargin = initialMargin + windowInsets.navigationBarHeight
         }
@@ -304,10 +304,13 @@ fun View.canScroll(direction: Int): Boolean {
     return canScrollVertically(direction) || canScrollHorizontally(direction)
 }
 
+private val requestLayoutBroken = Build.VERSION.SDK_INT <= Build.VERSION_CODES.M
+        || Build.VERSION.SDK_INT in Build.VERSION_CODES.O..Build.VERSION_CODES.Q
+
 fun View.setOnApplyWindowInsetsListenerCompat(listener: (View, WindowInsetsCompat) -> WindowInsetsCompat) {
     ViewCompat.setOnApplyWindowInsetsListener(this) { view, insets ->
         val windowInsets = listener(view, insets)
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M && isLayoutRequested) {
+        if (requestLayoutBroken && isLayoutRequested) {
             post {
                 requestLayout()
             }

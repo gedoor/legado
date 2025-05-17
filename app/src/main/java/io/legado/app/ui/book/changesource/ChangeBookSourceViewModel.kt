@@ -23,6 +23,7 @@ import io.legado.app.help.book.releaseHtmlData
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.SourceConfig
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.help.source.SourceHelp
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.internString
 import io.legado.app.utils.mapParallel
@@ -520,11 +521,8 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
 
     fun del(searchBook: SearchBook) {
         execute {
-            appDb.bookSourceDao.getBookSource(searchBook.origin)?.let { source ->
-                appDb.bookSourceDao.delete(source)
-                appDb.searchBookDao.delete(searchBook)
-                SourceConfig.removeSource(source.bookSourceUrl)
-            }
+            SourceHelp.deleteBookSource(searchBook.origin)
+            appDb.searchBookDao.delete(searchBook)
         }
         searchBooks.remove(searchBook)
         searchCallback?.upAdapter()

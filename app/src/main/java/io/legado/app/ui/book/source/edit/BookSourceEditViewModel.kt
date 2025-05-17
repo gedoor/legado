@@ -8,10 +8,10 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.RuleComplete
-import io.legado.app.help.config.SourceConfig
 import io.legado.app.help.http.CookieStore
 import io.legado.app.help.http.newCallStrResponse
 import io.legado.app.help.http.okHttpClient
+import io.legado.app.help.source.SourceHelp
 import io.legado.app.help.source.clearExploreKindsCache
 import io.legado.app.help.storage.ImportOldData
 import io.legado.app.model.SharedJsScope
@@ -63,8 +63,7 @@ class BookSourceEditViewModel(application: Application) : BaseViewModel(applicat
                 }
             }
             bookSource?.let {
-                appDb.bookSourceDao.delete(it)
-                SourceConfig.removeSource(it.bookSourceUrl)
+                SourceHelp.deleteBookSource(it.bookSourceUrl)
             }
             appDb.bookSourceDao.insert(source)
             bookSource = source

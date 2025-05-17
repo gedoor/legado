@@ -3,9 +3,10 @@ package io.legado.app.api.controller
 
 import android.text.TextUtils
 import io.legado.app.api.ReturnData
+import io.legado.app.constant.SourceType
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
-import io.legado.app.help.config.SourceConfig
+import io.legado.app.help.source.SourceHelp
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonArray
 import io.legado.app.utils.fromJsonObject
@@ -71,8 +72,7 @@ object BookSourceController {
         kotlin.runCatching {
             GSON.fromJsonArray<BookSource>(postData).getOrThrow().let {
                 it.forEach { source ->
-                    appDb.bookSourceDao.delete(source)
-                    SourceConfig.removeSource(source.bookSourceUrl)
+                    SourceHelp.deleteBookSource(source.bookSourceUrl)
                 }
             }
         }.onFailure {
