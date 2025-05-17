@@ -227,9 +227,7 @@ decodeImage(result, key)
 > 同图片解密 其中result为待解密封面的`inputStream`
 
 ```js
-var out = new Packages.java.io.ByteArrayOutputStream()
-java.createSymmetricCrypto("AES/CBC/PKCS5Padding", key, iv).decrypt(result, out, true)
-out.toByteArray()
+java.createSymmetricCrypto("AES/CBC/PKCS5Padding", key, iv).decrypt(result)
 ```
 
 ```js
