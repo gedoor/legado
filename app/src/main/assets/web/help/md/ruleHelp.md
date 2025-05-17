@@ -205,11 +205,11 @@ let options = {
 > 适用于图片需要二次解密的情况，直接填写JavaScript，返回解密后的`ByteArray`  
 > 部分变量说明：java（仅支持[js扩展类](https://github.com/gedoor/legado/blob/master/app/src/main/java/io/legado/app/help/JsExtensions.kt)），result为待解密图片的`ByteArray`，src为图片链接
 
-```
+```js
 java.createSymmetricCrypto("AES/CBC/PKCS5Padding", key, iv).decrypt(result)
 ```
 
-```
+```js
 function decodeImage(data, key) {
   var input = new Packages.java.io.ByteArrayInputStream(data)
   var out = new Packages.java.io.ByteArrayOutputStream()
@@ -226,13 +226,13 @@ decodeImage(result, key)
 * 封面解密
 > 同图片解密 其中result为待解密封面的`inputStream`
 
-```
+```js
 var out = new Packages.java.io.ByteArrayOutputStream()
-java.createSymmetricCrypto("AES/CBC/PKCS5Padding", key, iv).decrypt(data, out, true)
+java.createSymmetricCrypto("AES/CBC/PKCS5Padding", key, iv).decrypt(result, out, true)
 out.toByteArray()
 ```
 
-```
+```js
 function decodeImage(data, key) {
   var out = new Packages.java.io.ByteArrayOutputStream()
   var byte
