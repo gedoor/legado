@@ -318,12 +318,15 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
         chapters: List<BookChapter>
     ) = coroutineScope {
         val chapterIndex = if (fromReadBookActivity) {
-            oldBook?.let {
-                BookHelp.getDurChapter(it, chapters)
-            } ?: chapters.lastIndex
-        } else chapters.lastIndex
+            BookHelp.getDurChapter(oldBook!!, chapters)
+        } else {
+            chapters.lastIndex
+        }
         val bookChapter = chapters[chapterIndex]
-        val title = bookChapter.title.trim()
+        var title = bookChapter.title.trim()
+        if (title.length > 20) {
+            title = title.substring(0, 20) + "…"
+        }
         val startTime = System.currentTimeMillis()
         val pair = try {
             val nextChapterUrl = chapters.getOrNull(chapterIndex + 1)?.url
