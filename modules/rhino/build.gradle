@@ -40,6 +40,7 @@ dependencies {
 
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.okhttp)
+    implementation(libs.androidx.collection)
 
 //    def coroutines_version = '1.7.3'
 //    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version")

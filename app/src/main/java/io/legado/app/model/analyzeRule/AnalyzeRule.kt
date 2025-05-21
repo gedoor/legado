@@ -520,6 +520,12 @@ class AnalyzeRule(
         return ruleList
     }
 
+    private fun getOrCreateSingleSourceRule(rule: String): List<SourceRule> {
+        return stringRuleCache.getOrPutLimit(rule, 16) {
+            listOf(SourceRule(rule))
+        }
+    }
+
     /**
      * 规则类
      */
@@ -672,7 +678,8 @@ class AnalyzeRule(
 
                         regType == jsRuleType -> {
                             if (isRule(ruleParam[index])) {
-                                getString(arrayListOf(SourceRule(ruleParam[index]))).let {
+                                val ruleList = getOrCreateSingleSourceRule(ruleParam[index])
+                                getString(ruleList).let {
                                     infoVal.insert(0, it)
                                 }
                             } else {
