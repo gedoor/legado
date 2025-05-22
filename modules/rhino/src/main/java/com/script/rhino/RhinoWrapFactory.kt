@@ -45,6 +45,8 @@ import org.mozilla.javascript.WrapFactory
  */
 object RhinoWrapFactory : WrapFactory() {
 
+    private val factories = hashMapOf<Class<*>, JavaObjectWrapFactory>()
+
     override fun wrapAsJavaObject(
         cx: Context,
         scope: Scriptable?,
@@ -54,7 +56,8 @@ object RhinoWrapFactory : WrapFactory() {
         if (!RhinoClassShutter.visibleToScripts(javaObject)) {
             return null
         }
-        return super.wrapAsJavaObject(cx, scope, javaObject, staticType)
+        return wrapOrNull(scope, javaObject, staticType)
+            ?: super.wrapAsJavaObject(cx, scope, javaObject, staticType)
     }
 
     override fun wrapJavaClass(
@@ -69,6 +72,20 @@ object RhinoWrapFactory : WrapFactory() {
             return pkg
         }
         return RhinoClassShutter.wrapJavaClass(scope, javaClass)
+    }
+
+    private fun wrapOrNull(
+        scope: Scriptable?,
+        javaObject: Any,
+        staticType: Class<*>?
+    ): Scriptable? {
+        return factories[javaObject.javaClass]?.wrap(scope, javaObject, staticType)
+    }
+
+    fun register(clazz: Class<*>, factory: JavaObjectWrapFactory) {
+        if (!factories.contains(clazz)) {
+            factories.put(clazz, factory)
+        }
     }
 
 }

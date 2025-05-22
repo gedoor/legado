@@ -78,6 +78,12 @@ fun String?.isTrue(nullIsTrue: Boolean = false): Boolean {
     return !this.trim().matches("(?i)^(false|no|not|0)$".toRegex())
 }
 
+fun String.isHex(): Boolean {
+    return all {c ->
+        c in '0'..'9' || c in 'A'..'F' || c in 'a'..'f'
+    }
+}
+
 fun String.splitNotBlank(vararg delimiter: String, limit: Int = 0): Array<String> = run {
     this.split(*delimiter, limit = limit).map { it.trim() }.filterNot { it.isBlank() }
         .toTypedArray()

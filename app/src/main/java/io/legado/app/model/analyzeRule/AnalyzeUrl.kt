@@ -38,7 +38,6 @@ import io.legado.app.help.http.newCallStrResponse
 import io.legado.app.help.http.postForm
 import io.legado.app.help.http.postJson
 import io.legado.app.help.http.postMultipart
-import io.legado.app.help.source.copy
 import io.legado.app.help.source.getShareScope
 import io.legado.app.model.Debug
 import io.legado.app.utils.EncoderUtils
@@ -357,7 +356,7 @@ class AnalyzeUrl(
             bindings["speakText"] = speakText
             bindings["speakSpeed"] = speakSpeed
             bindings["book"] = ruleData as? Book
-            bindings["source"] = source?.copy()
+            bindings["source"] = source
             bindings["result"] = result
         }
         val sharedScope = source?.getShareScope(coroutineContext)
@@ -660,7 +659,7 @@ class AnalyzeUrl(
     }
 
     override fun getSource(): BaseSource? {
-        return source?.copy()
+        return source
     }
 
     companion object {

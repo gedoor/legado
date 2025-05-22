@@ -12,13 +12,24 @@ import android.os.Build
 import com.github.liuyueyi.quick.transfer.constants.TransType
 import com.jeremyliao.liveeventbus.LiveEventBus
 import com.jeremyliao.liveeventbus.logger.DefaultLogger
+import com.script.rhino.ReadOnlyJavaObject
 import com.script.rhino.RhinoScriptEngine
+import com.script.rhino.RhinoWrapFactory
 import io.legado.app.base.AppContextWrapper
 import io.legado.app.constant.AppConst.channelIdDownload
 import io.legado.app.constant.AppConst.channelIdReadAloud
 import io.legado.app.constant.AppConst.channelIdWeb
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
+import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookChapter
+import io.legado.app.data.entities.BookSource
+import io.legado.app.data.entities.HttpTTS
+import io.legado.app.data.entities.RssSource
+import io.legado.app.data.entities.rule.BookInfoRule
+import io.legado.app.data.entities.rule.ContentRule
+import io.legado.app.data.entities.rule.ExploreRule
+import io.legado.app.data.entities.rule.SearchRule
 import io.legado.app.help.AppFreezeMonitor
 import io.legado.app.help.AppWebDav
 import io.legado.app.help.CrashHandler
@@ -33,6 +44,7 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.http.Cronet
 import io.legado.app.help.http.ObsoleteUrlFactory
 import io.legado.app.help.http.okHttpClient
+import io.legado.app.help.rhino.NativeBaseSource
 import io.legado.app.help.source.SourceHelp
 import io.legado.app.help.storage.Backup
 import io.legado.app.model.BookCover
@@ -79,7 +91,7 @@ class App : Application() {
             AppFreezeMonitor.init(this@App)
             URL.setURLStreamHandlerFactory(ObsoleteUrlFactory(okHttpClient))
             launch { installGmsTlsProvider(appCtx) }
-            RhinoScriptEngine
+            initRhino()
             //初始化封面
             BookCover.toString()
             //清除过期数据
@@ -198,6 +210,19 @@ class App : Application() {
                 webChannel
             )
         )
+    }
+
+    private fun initRhino() {
+        RhinoScriptEngine
+        RhinoWrapFactory.register(BookSource::class.java, NativeBaseSource.factory)
+        RhinoWrapFactory.register(RssSource::class.java, NativeBaseSource.factory)
+        RhinoWrapFactory.register(HttpTTS::class.java, NativeBaseSource.factory)
+        RhinoWrapFactory.register(ExploreRule::class.java, ReadOnlyJavaObject.factory)
+        RhinoWrapFactory.register(SearchRule::class.java, ReadOnlyJavaObject.factory)
+        RhinoWrapFactory.register(BookInfoRule::class.java, ReadOnlyJavaObject.factory)
+        RhinoWrapFactory.register(ContentRule::class.java, ReadOnlyJavaObject.factory)
+        RhinoWrapFactory.register(BookChapter::class.java, ReadOnlyJavaObject.factory)
+        RhinoWrapFactory.register(Book.ReadConfig::class.java, ReadOnlyJavaObject.factory)
     }
 
     class EventLogger : DefaultLogger() {

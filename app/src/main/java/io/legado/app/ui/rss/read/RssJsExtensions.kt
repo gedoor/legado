@@ -10,7 +10,7 @@ import io.legado.app.utils.showDialogFragment
 class RssJsExtensions(private val activity: ReadRssActivity) : JsExtensions {
 
     override fun getSource(): BaseSource? {
-        return activity.getSource()?.copy()
+        return activity.getSource()
     }
 
     fun searchBook(key: String) {

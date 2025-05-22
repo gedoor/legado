@@ -16,7 +16,6 @@ import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.CacheManager
 import io.legado.app.help.JsExtensions
 import io.legado.app.help.http.CookieStore
-import io.legado.app.help.source.copy
 import io.legado.app.help.source.getShareScope
 import io.legado.app.model.Debug
 import io.legado.app.model.webBook.WebBook
@@ -30,7 +29,6 @@ import io.legado.app.utils.isJson
 import io.legado.app.utils.printOnDebug
 import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.stackTraceStr
-import io.legado.app.utils.updateVariableTo
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
@@ -777,15 +775,15 @@ class AnalyzeRule(
             bindings["java"] = this
             bindings["cookie"] = CookieStore
             bindings["cache"] = CacheManager
-            bindings["source"] = source?.copy()
+            bindings["source"] = source
             bindings["book"] = book
             bindings["result"] = result
             bindings["baseUrl"] = baseUrl
-            bindings["chapter"] = chapterCopy
-            bindings["title"] = chapterCopy?.title
+            bindings["chapter"] = chapter
+            bindings["title"] = chapter?.title
             bindings["src"] = content
             bindings["nextChapterUrl"] = nextChapterUrl
-            bindings["rssArticle"] = rssArticleCopy
+            bindings["rssArticle"] = rssArticle
         }
         val topScope = source?.getShareScope(coroutineContext) ?: topScopeRef?.get()
         val scope = if (topScope == null) {
@@ -801,17 +799,7 @@ class AnalyzeRule(
         }
         val script = compileScriptCache(jsStr)
         val result = script.eval(scope, coroutineContext)
-        updateVariable(chapterCopy, rssArticleCopy)
         return result
-    }
-
-    private fun updateVariable(chapterCopy: BookChapter?, rssArticleCopy: RssArticle?) {
-        chapter?.let {
-            chapterCopy?.updateVariableTo(it)
-        }
-        rssArticle?.let {
-            rssArticleCopy?.updateVariableTo(it)
-        }
     }
 
     private fun compileScriptCache(jsStr: String): CompiledScript {
@@ -821,7 +809,7 @@ class AnalyzeRule(
     }
 
     override fun getSource(): BaseSource? {
-        return source?.copy()
+        return source
     }
 
     /**

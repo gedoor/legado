@@ -12,7 +12,6 @@ import io.legado.app.help.JsExtensions
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.crypto.SymmetricCryptoAndroid
 import io.legado.app.help.http.CookieStore
-import io.legado.app.help.source.copy
 import io.legado.app.help.source.getShareScope
 import io.legado.app.model.Debug
 import io.legado.app.utils.GSON
@@ -63,7 +62,7 @@ interface BaseSource : JsExtensions {
     fun getKey(): String
 
     override fun getSource(): BaseSource? {
-        return copy()
+        return this
     }
 
     fun loginUi(): List<RowUi>? {
@@ -240,10 +239,9 @@ interface BaseSource : JsExtensions {
      */
     @Throws(Exception::class)
     fun evalJS(jsStr: String, bindingsConfig: ScriptBindings.() -> Unit = {}): Any? {
-        val sourceCopy = copy()
         val bindings = buildScriptBindings { bindings ->
-            bindings["java"] = sourceCopy
-            bindings["source"] = sourceCopy
+            bindings["java"] = this
+            bindings["source"] = this
             bindings["baseUrl"] = getKey()
             bindings["cookie"] = CookieStore
             bindings["cache"] = CacheManager
