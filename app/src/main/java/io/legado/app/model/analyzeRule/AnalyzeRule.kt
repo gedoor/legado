@@ -769,8 +769,6 @@ class AnalyzeRule(
      * 执行JS
      */
     fun evalJS(jsStr: String, result: Any? = null): Any? {
-        val chapterCopy = chapter?.copy()
-        val rssArticleCopy = rssArticle?.copy()
         val bindings = buildScriptBindings { bindings ->
             bindings["java"] = this
             bindings["cookie"] = CookieStore
