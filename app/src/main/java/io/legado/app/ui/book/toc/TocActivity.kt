@@ -195,9 +195,11 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>(),
         waitDialog.show()
         viewModel.upBookTocRule(book) {
             waitDialog.dismiss()
-            ReadBook.book?.let { readBook ->
-                if (readBook == book) {
+            if (ReadBook.book == book) {
+                if (it == null) {
                     ReadBook.upMsg(null)
+                } else {
+                    ReadBook.upMsg("LoadTocError:${it.localizedMessage}")
                 }
             }
         }

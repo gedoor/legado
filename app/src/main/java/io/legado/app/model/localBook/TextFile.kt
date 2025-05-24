@@ -76,16 +76,17 @@ class TextFile(private var book: Book) {
      */
     @Throws(FileNotFoundException::class, SecurityException::class, EmptyFileException::class)
     fun getChapterList(): ArrayList<BookChapter> {
-        if (book.charset == null || book.tocUrl.isBlank()) {
+        val modified = book.isLocalModified()
+        if (book.charset == null || book.tocUrl.isBlank() || modified) {
             LocalBook.getBookInputStream(book).use { bis ->
                 val buffer = ByteArray(bufferSize)
                 val length = bis.read(buffer)
                 if (length == -1) throw EmptyFileException("Unexpected Empty Txt File")
-                if (book.charset.isNullOrBlank()) {
+                if (book.charset.isNullOrBlank() || modified) {
                     book.charset = EncodingDetect.getEncode(buffer.copyOf(length))
                 }
                 charset = book.fileCharset()
-                if (book.tocUrl.isBlank()) {
+                if (book.tocUrl.isBlank() || modified) {
                     val blockContent = String(buffer, 0, length, charset)
                     book.tocUrl = getTocRule(blockContent)?.pattern() ?: ""
                 }
@@ -223,7 +224,7 @@ class TextFile(private var book: Book) {
                          */
                         if (toc.isEmpty()) { //如果当前没有章节，那么就是序章
                             //加入简介
-                            if (StringUtils.trim(chapterContent).isNotEmpty()) {
+                            if (chapterContent.isNotBlank()) {
                                 val qyChapter = BookChapter()
                                 qyChapter.title = "前言"
                                 qyChapter.start = curOffset

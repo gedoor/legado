@@ -245,6 +245,8 @@ object LocalBook {
         } else {
             deleteBook(book, false)
             upBookInfo(book)
+            // 触发 isLocalModified
+            book.latestChapterTime = 0
             //已有书籍说明是更新,删除原有目录
             appDb.bookChapterDao.delByBook(bookUrl)
         }

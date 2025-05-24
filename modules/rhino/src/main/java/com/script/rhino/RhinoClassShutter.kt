@@ -55,6 +55,7 @@ object RhinoClassShutter : ClassShutter {
             "java.lang.ProcessImpl",
             "java.lang.UNIXProcess",
             "java.io.File",
+            "java.io.FileDescriptor",
             "java.io.FileInputStream",
             "java.io.FileOutputStream",
             "java.io.PrintStream",
@@ -113,6 +114,7 @@ object RhinoClassShutter : ClassShutter {
             "com.script",
             "org.mozilla",
             "sun",
+            "libcore",
         ).let { ClassNameMatcher(it) }
     }
 

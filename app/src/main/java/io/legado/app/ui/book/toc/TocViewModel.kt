@@ -35,7 +35,7 @@ class TocViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun upBookTocRule(book: Book, finally: () -> Unit) {
+    fun upBookTocRule(book: Book, complete: (Throwable?) -> Unit) {
         execute {
             appDb.bookDao.update(book)
             LocalBook.getChapterList(book).let {
@@ -45,8 +45,10 @@ class TocViewModel(application: Application) : BaseViewModel(application) {
                 ReadBook.onChapterListUpdated(book)
                 bookData.postValue(book)
             }
-        }.onFinally {
-            finally.invoke()
+        }.onSuccess {
+            complete.invoke(null)
+        }.onError {
+            complete.invoke(it)
         }
     }
 
