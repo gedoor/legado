@@ -78,6 +78,7 @@ object RhinoClassShutter : ClassShutter {
             "android.app.AppGlobals",
             "android.os.Looper",
             "android.os.Process",
+            "android.os.FileUtils",
 
             "cn.hutool.core.lang.JarClassLoader",
             "cn.hutool.core.lang.Singleton",

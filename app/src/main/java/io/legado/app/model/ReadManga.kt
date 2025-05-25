@@ -49,6 +49,7 @@ object ReadManga : CoroutineScope by MainScope() {
     var durChapterIndex = 0 //章节位置
     var chapterSize = 0//总章节
     var durChapterPos = 0
+    var chapterChanged = false
     var prevMangaChapter: MangaChapter? = null
     var curMangaChapter: MangaChapter? = null
     var nextMangaChapter: MangaChapter? = null

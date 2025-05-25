@@ -10,11 +10,14 @@ import io.legado.app.constant.EventBus
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.data.entities.BookProgress
 import io.legado.app.exception.NoStackTraceException
+import io.legado.app.help.AppWebDav
 import io.legado.app.help.book.BookHelp
 import io.legado.app.help.book.isLocal
 import io.legado.app.help.book.isLocalModified
 import io.legado.app.help.book.removeType
+import io.legado.app.help.book.simulatedTotalChapterNum
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.ReadManga
@@ -43,6 +46,7 @@ class ReadMangaViewModel(application: Application) : BaseViewModel(application) 
     fun initData(intent: Intent, success: (() -> Unit)? = null) {
         execute {
             ReadManga.inBookshelf = intent.getBooleanExtra("inBookshelf", true)
+            ReadManga.chapterChanged = intent.getBooleanExtra("chapterChanged", false)
             val bookUrl = intent.getStringExtra("bookUrl")
             val book = when {
                 bookUrl.isNullOrEmpty() -> appDb.bookDao.lastReadBook
@@ -88,6 +92,17 @@ class ReadMangaViewModel(application: Application) : BaseViewModel(application) 
             ReadManga.loadOrUpContent()
         }
 
+        if (ReadManga.chapterChanged) {
+            // 有章节跳转不同步阅读进度
+            ReadManga.chapterChanged = false
+        } else if (!isSameBook) {
+            if (AppConfig.syncBookProgressPlus) {
+                ReadManga.syncProgress(
+                    { progress -> ReadManga.mCallback?.sureNewProgress(progress) })
+            } else {
+                syncBookProgress(book)
+            }
+        }
 
         //自动换源
         if (!book.isLocal && ReadManga.bookSource == null) {
@@ -130,8 +145,7 @@ class ReadMangaViewModel(application: Application) : BaseViewModel(application) 
             WebBook.getBookInfoAwait(source, book, canReName = false)
             return true
         } catch (e: Throwable) {
-            //  加载详情页失败
-//            ReadBook.upMsg("详情页出错: ${e.localizedMessage}")
+            ReadManga.mCallback?.loadFail("详情页出错: ${e.localizedMessage}")
             return false
         }
     }
@@ -181,6 +195,32 @@ class ReadMangaViewModel(application: Application) : BaseViewModel(application) 
                 AppLog.put("自动换源失败\n${it.localizedMessage}", it)
                 context.toastOnUi("自动换源失败\n${it.localizedMessage}")
             }.collect()
+        }
+    }
+
+    /**
+     * 同步进度
+     */
+    fun syncBookProgress(
+        book: Book,
+        alertSync: ((progress: BookProgress) -> Unit)? = null
+    ) {
+        if (!AppConfig.syncBookProgress) return
+        execute {
+            AppWebDav.getBookProgress(book)
+        }.onError {
+            AppLog.put("拉取阅读进度失败《${book.name}》\n${it.localizedMessage}", it)
+        }.onSuccess { progress ->
+            progress ?: return@onSuccess
+            if (progress.durChapterIndex < book.durChapterIndex ||
+                (progress.durChapterIndex == book.durChapterIndex
+                        && progress.durChapterPos < book.durChapterPos)
+            ) {
+                alertSync?.invoke(progress)
+            } else if (progress.durChapterIndex < book.simulatedTotalChapterNum()) {
+                ReadManga.setProgress(progress)
+                AppLog.put("自动同步阅读进度成功《${book.name}》 ${progress.durChapterTitle}")
+            }
         }
     }
 
