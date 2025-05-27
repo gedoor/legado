@@ -14,6 +14,7 @@ import io.legado.app.data.entities.BaseBook
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
 import io.legado.app.exception.NoStackTraceException
+import io.legado.app.help.RuleBigDataHelp
 import io.legado.app.help.config.AppConfig
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.FileDoc
@@ -268,11 +269,16 @@ fun Book.updateTo(newBook: Book): Book {
     newBook.canUpdate = canUpdate
     newBook.readConfig = readConfig
     val variableMap = variableMap.toMutableMap()
-    variableMap.putAll(newBook.variableMap)
-    newBook.variableMap.clear()
+    variableMap.keys.removeIf {
+        newBook.hasVariable(it)
+    }
     newBook.variableMap.putAll(variableMap)
     newBook.variable = GSON.toJson(variableMap)
     return newBook
+}
+
+fun Book.hasVariable(key: String): Boolean {
+    return variableMap.contains(key) || RuleBigDataHelp.hasBookVariable(bookUrl, key)
 }
 
 fun Book.getFolderNameNoCache(): String {

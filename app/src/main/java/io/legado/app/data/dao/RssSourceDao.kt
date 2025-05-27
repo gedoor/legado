@@ -122,8 +122,8 @@ interface RssSourceDao {
     @Query("select * from rssSources where sourceGroup like '%' || :group || '%'")
     fun getByGroup(group: String): List<RssSource>
 
-    @Query("select 1 from rssSources where sourceUrl = :key")
-    fun has(key: String): Boolean?
+    @Query("select exists(select 1 from rssSources where sourceUrl = :key)")
+    fun has(key: String): Boolean
 
     @Query("update rssSources set enabled = :enable where sourceUrl = :sourceUrl")
     fun enable(sourceUrl: String, enable: Boolean)
