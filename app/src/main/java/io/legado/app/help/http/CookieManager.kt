@@ -144,6 +144,7 @@ object CookieManager {
         val baseUrl = NetworkUtils.getBaseUrl(url) ?: return
         val cookies = CookieStore.getCookie(url).splitNotBlank(";")
         val cookieManager = CookieManager.getInstance()
+        cookieManager.removeSessionCookies(null)
         cookies.forEach {
             cookieManager.setCookie(baseUrl, it)
         }
