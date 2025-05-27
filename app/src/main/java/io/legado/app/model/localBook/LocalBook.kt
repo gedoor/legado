@@ -411,6 +411,7 @@ object LocalBook {
         return saveBookFile(inputStream, fileName)
     }
 
+    @Throws(SecurityException::class)
     fun saveBookFile(
         inputStream: InputStream,
         fileName: String
@@ -431,12 +432,18 @@ object LocalBook {
                 }
                 doc.uri
             } else {
-                val treeFile = File(treeUri.path!!)
-                val file = treeFile.getFile(fileName)
-                FileOutputStream(file).use { oStream ->
-                    it.copyTo(oStream)
+                try {
+                    val treeFile = File(treeUri.path!!)
+                    val file = treeFile.getFile(fileName)
+                    FileOutputStream(file).use { oStream ->
+                        it.copyTo(oStream)
+                    }
+                    Uri.fromFile(file)
+                } catch (e: FileNotFoundException) {
+                    throw SecurityException("请重新设置书籍保存位置\nPermission Denial\n$e").apply {
+                        addSuppressed(e)
+                    }
                 }
-                Uri.fromFile(file)
             }
         }
     }
