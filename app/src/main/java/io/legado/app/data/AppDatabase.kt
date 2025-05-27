@@ -2,6 +2,8 @@ package io.legado.app.data
 
 import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase
+import android.os.Build
+import android.util.Log
 import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.Room
@@ -143,7 +145,19 @@ abstract class AppDatabase : RoomDatabase() {
         val dbCallback = object : Callback() {
 
             override fun onCreate(db: SupportSQLiteDatabase) {
-                db.setLocale(Locale.CHINESE)
+                // 只在 API 级别 23 (Marshmallow) 及以上版本尝试设置区域设置
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    try {
+                        Log.d("AppDatabaseCallback", "准备 设置 locale for API ${Build.VERSION.SDK_INT}...")
+                        db.setLocale(Locale.CHINESE)
+                        // 在 21 上报错，但无法拦截
+                        Log.d("AppDatabaseCallback", "成功 设置 locale for API ${Build.VERSION.SDK_INT}.")
+                    } catch (e: Exception) {
+                        Log.e("AppDatabaseCallback", "错误 设置 locale in onCreate for API ${Build.VERSION.SDK_INT}", e)
+                    }
+                } else {
+                    Log.i("AppDatabaseCallback", "跳过 setLocale for API ${Build.VERSION.SDK_INT} (below M).")
+                }
             }
 
             override fun onOpen(db: SupportSQLiteDatabase) {
