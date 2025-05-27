@@ -48,6 +48,7 @@ import io.legado.app.utils.activityPendingIntent
 import io.legado.app.utils.broadcastPendingIntent
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.isVivoDevice
+import io.legado.app.utils.isSamsungDevice
 import io.legado.app.utils.observeEvent
 import io.legado.app.utils.observeSharedPreferences
 import io.legado.app.utils.postEvent
@@ -452,11 +453,34 @@ abstract class BaseReadAloudService : BaseService(),
      */
     @SuppressLint("UnspecifiedImmutableFlag")
     private fun initMediaSession() {
-        mediaSessionCompat.setCallback(object : MediaSessionCompat.Callback() {
-            override fun onMediaButtonEvent(mediaButtonEvent: Intent): Boolean {
-                return MediaButtonReceiver.handleIntent(this@BaseReadAloudService, mediaButtonEvent)
-            }
-        })
+        if (isSamsungDevice) {
+            mediaSessionCompat.setCallback(object : MediaSessionCompat.Callback() {
+                override fun onPlay() {
+                    resumeReadAloud()
+                }
+                override fun onPause() {
+                    pauseReadAloud()
+                }
+                override fun onSkipToNext() {
+                    nextChapter()
+                }
+                override fun onSkipToPrevious() {
+                    prevChapter()
+                }
+                override fun onStop() {
+                    stopSelf()
+                }
+                override fun onMediaButtonEvent(mediaButtonEvent: Intent): Boolean {
+                    return MediaButtonReceiver.handleIntent(this@BaseReadAloudService, mediaButtonEvent)
+                }
+            })
+        } else {
+            mediaSessionCompat.setCallback(object : MediaSessionCompat.Callback() {
+                override fun onMediaButtonEvent(mediaButtonEvent: Intent): Boolean {
+                    return MediaButtonReceiver.handleIntent(this@BaseReadAloudService, mediaButtonEvent)
+                }
+            })
+        }
         mediaSessionCompat.setMediaButtonReceiver(
             broadcastPendingIntent<MediaButtonReceiver>(Intent.ACTION_MEDIA_BUTTON)
         )
@@ -523,7 +547,7 @@ abstract class BaseReadAloudService : BaseService(),
     private fun choiceMediaStyle(): androidx.media.app.NotificationCompat.MediaStyle {
         val mediaStyle = androidx.media.app.NotificationCompat.MediaStyle()
             .setShowActionsInCompactView(1, 2, 4)
-        if (isVivoDevice) {
+        if (isVivoDevice || isSamsungDevice) {
             //fix #4090 android 14 can not show play control in lock screen
             mediaStyle.setMediaSession(mediaSessionCompat.sessionToken)
         }
