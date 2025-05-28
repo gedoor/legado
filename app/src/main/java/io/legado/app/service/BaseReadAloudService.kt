@@ -444,6 +444,14 @@ abstract class BaseReadAloudService : BaseService(),
             PlaybackStateCompat.Builder()
                 .setActions(MediaHelp.MEDIA_SESSION_ACTIONS)
                 .setState(state, nowSpeak.toLong(), 1f)
+                // 为系统媒体控件添加定时按钮
+                .addCustomAction(
+                    PlaybackStateCompat.CustomAction.Builder(
+                        "ACTION_ADD_TIMER",
+                        getString(R.string.set_timer),
+                        R.drawable.ic_time_add_24dp
+                    ).build()
+                )
                 .build()
         )
     }
@@ -477,6 +485,9 @@ abstract class BaseReadAloudService : BaseService(),
                 }
                 override fun onStop() {
                     stopSelf()
+                }
+                override fun onCustomAction(action: String, extras: Bundle?) {
+                    if (action == "ACTION_ADD_TIMER") addTimer()
                 }
                 override fun onMediaButtonEvent(mediaButtonEvent: Intent): Boolean {
                     return MediaButtonReceiver.handleIntent(this@BaseReadAloudService, mediaButtonEvent)
