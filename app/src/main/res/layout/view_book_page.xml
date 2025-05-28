@@ -19,10 +19,19 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <io.legado.app.ui.book.read.page.ContentTextView
+        android:id="@+id/content_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        app:layout_constraintTop_toBottomOf="@id/vw_status_bar"
+        app:layout_constraintBottom_toTopOf="@id/vw_navigation_bar" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/ll_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="#27673AB7"
         android:gravity="center_vertical"
         app:layout_constraintTop_toBottomOf="@id/vw_status_bar">
 
@@ -74,7 +83,7 @@
         android:background="@color/divider"
         android:visibility="invisible"
         app:layout_constraintTop_toBottomOf="@id/ll_header" />
-
+<!--
     <io.legado.app.ui.book.read.page.ContentTextView
         android:id="@+id/content_text_view"
         android:layout_width="match_parent"
@@ -82,7 +91,7 @@
         android:layout_weight="1"
         app:layout_constraintBottom_toTopOf="@id/vw_bottom_divider"
         app:layout_constraintTop_toBottomOf="@id/vw_top_divider" />
-
+-->
     <View
         android:id="@+id/vw_bottom_divider"
         android:layout_width="match_parent"
@@ -95,6 +104,7 @@
         android:id="@+id/ll_footer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="#27673AB7"
         android:gravity="center_vertical"
         app:layout_constraintBottom_toTopOf="@id/vw_navigation_bar">
 
