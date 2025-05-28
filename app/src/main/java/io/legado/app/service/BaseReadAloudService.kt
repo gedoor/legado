@@ -462,10 +462,18 @@ abstract class BaseReadAloudService : BaseService(),
                     pauseReadAloud()
                 }
                 override fun onSkipToNext() {
-                    nextChapter()
+                    if (getPrefBoolean("mediaButtonPerNext", false)) {
+                        nextChapter()
+                    } else{
+                        nextP()
+                    }
                 }
                 override fun onSkipToPrevious() {
-                    prevChapter()
+                    if (getPrefBoolean("mediaButtonPerNext", false)) {
+                        prevChapter()
+                    } else{
+                        prevP()
+                    }
                 }
                 override fun onStop() {
                     stopSelf()
