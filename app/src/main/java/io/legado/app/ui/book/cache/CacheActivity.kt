@@ -48,6 +48,7 @@ import io.legado.app.utils.flowWithLifecycleAndDatabaseChange
 import io.legado.app.utils.iconItemOnLongClick
 import io.legado.app.utils.isContentScheme
 import io.legado.app.utils.observeEvent
+import io.legado.app.utils.setIconCompat
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.startService
 import io.legado.app.utils.toastOnUi
@@ -301,13 +302,13 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
         observeEvent<String>(EventBus.UP_DOWNLOAD) {
             if (!CacheBook.isRun) {
                 menu?.findItem(R.id.menu_download)?.let { item ->
-                    item.setIcon(R.drawable.ic_play_24dp)
+                    item.setIconCompat(R.drawable.ic_play_24dp)
                     item.setTitle(R.string.download_start)
                 }
                 menu?.applyTint(this)
             } else {
                 menu?.findItem(R.id.menu_download)?.let { item ->
-                    item.setIcon(R.drawable.ic_stop_black_24dp)
+                    item.setIconCompat(R.drawable.ic_stop_black_24dp)
                     item.setTitle(R.string.stop)
                 }
                 menu?.applyTint(this)
