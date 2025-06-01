@@ -61,7 +61,7 @@ class PageView(context: Context) : FrameLayout(context) {
         get() {
             val h1 = if (binding.vwStatusBar.isGone) 0 else binding.vwStatusBar.height
             val h2 = if (binding.llHeader.isGone) 0 else binding.llHeader.height
-            return h1 + h2
+            return h1 + h2 + binding.vwRoot.paddingTop
         }
 
     init {
