@@ -870,10 +870,11 @@ class ReadBookActivity : BaseReadBookActivity(),
                 ReadBook.bookSource?.bookSourceUrl?.let {
                     scopes.add(it)
                 }
+                val text = selectedText.lineSequence().map { it.trim() }.joinToString("\n")
                 replaceActivity.launch(
                     ReplaceEditActivity.startIntent(
                         this,
-                        pattern = selectedText,
+                        pattern = text,
                         scope = scopes.joinToString(";")
                     )
                 )
