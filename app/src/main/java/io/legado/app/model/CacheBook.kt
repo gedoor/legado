@@ -11,6 +11,7 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.exception.ConcurrentException
 import io.legado.app.help.book.BookHelp
 import io.legado.app.help.book.isLocal
+import io.legado.app.help.coroutine.CompositeCoroutine
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.service.CacheBookService
@@ -96,15 +97,11 @@ object CacheBook {
         }
     }
 
-    fun clear() {
-        successDownloadSet.clear()
-        errorDownloadMap.clear()
-    }
-
     fun close() {
         cacheBookMap.forEach { it.value.stop() }
         cacheBookMap.clear()
-        clear()
+        successDownloadSet.clear()
+        errorDownloadMap.clear()
     }
 
     val downloadSummary: String
@@ -146,6 +143,7 @@ object CacheBook {
 
         private val waitDownloadSet = linkedSetOf<Int>()
         private val onDownloadSet = linkedSetOf<Int>()
+        private val tasks = CompositeCoroutine()
         private var isStopped = false
         private var waitingRetry = false
 
@@ -158,7 +156,7 @@ object CacheBook {
 
         @Synchronized
         fun isRun(): Boolean {
-            return waitDownloadSet.size > 0 || onDownloadSet.size > 0
+            return waitDownloadSet.isNotEmpty() || onDownloadSet.isNotEmpty()
         }
 
         @Synchronized
@@ -169,6 +167,7 @@ object CacheBook {
         @Synchronized
         fun stop() {
             waitDownloadSet.clear()
+            tasks.clear()
             isStopped = true
             postEvent(EventBus.UP_DOWNLOAD, book.bookUrl)
         }
@@ -285,6 +284,8 @@ object CacheBook {
                     onCancel(chapterIndex)
                 }.onFinally {
                     onFinally()
+                }.let {
+                    tasks.add(it)
                 }
                 return
             }
@@ -309,6 +310,8 @@ object CacheBook {
                 onCancel(chapterIndex)
             }.onFinally {
                 onFinally()
+            }.apply {
+                tasks.add(this)
             }.start()
         }
 

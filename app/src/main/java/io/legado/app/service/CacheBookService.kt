@@ -65,7 +65,6 @@ class CacheBookService : BaseService() {
     override fun onCreate() {
         super.onCreate()
         isRun = true
-        CacheBook.clear()
         lifecycleScope.launch {
             while (isActive) {
                 delay(1000)
