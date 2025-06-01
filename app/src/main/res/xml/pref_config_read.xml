@@ -28,6 +28,13 @@
         app:isBottomBackground="true" />
 
     <io.legado.app.lib.prefs.SwitchPreference
+        android:defaultValue="false"
+        android:key="hideNavigationBar"
+        android:title="@string/pt_hide_navigation_bar"
+        app:iconSpaceReserved="false"
+        app:isBottomBackground="true" />
+
+    <io.legado.app.lib.prefs.SwitchPreference
         android:defaultValue="true"
         android:key="readBodyToLh"
         android:title="@string/read_body_to_lh"
@@ -36,8 +43,8 @@
 
     <io.legado.app.lib.prefs.SwitchPreference
         android:defaultValue="false"
-        android:key="hideNavigationBar"
-        android:title="@string/pt_hide_navigation_bar"
+        android:key="paddingDisplayCutouts"
+        android:title="@string/padding_display_cutouts"
         app:iconSpaceReserved="false"
         app:isBottomBackground="true" />
 

@@ -513,6 +513,9 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
     val mouseWheelPage
         get() = appCtx.getPrefBoolean(PreferKey.mouseWheelPage, true)
 
+    val paddingDisplayCutouts
+        get() = appCtx.getPrefBoolean(PreferKey.paddingDisplayCutouts, false)
+
     var searchScope: String
         get() = appCtx.getPrefString("searchScope") ?: ""
         set(value) {

@@ -47,8 +47,8 @@ import io.legado.app.utils.LogUtils
 import io.legado.app.utils.activityPendingIntent
 import io.legado.app.utils.broadcastPendingIntent
 import io.legado.app.utils.getPrefBoolean
-import io.legado.app.utils.isVivoDevice
 import io.legado.app.utils.isSamsungDevice
+import io.legado.app.utils.isVivoDevice
 import io.legado.app.utils.observeEvent
 import io.legado.app.utils.observeSharedPreferences
 import io.legado.app.utils.postEvent
@@ -467,37 +467,47 @@ abstract class BaseReadAloudService : BaseService(),
                 override fun onPlay() {
                     resumeReadAloud()
                 }
+
                 override fun onPause() {
                     pauseReadAloud()
                 }
+
                 override fun onSkipToNext() {
                     if (getPrefBoolean("mediaButtonPerNext", false)) {
                         nextChapter()
-                    } else{
+                    } else {
                         nextP()
                     }
                 }
+
                 override fun onSkipToPrevious() {
                     if (getPrefBoolean("mediaButtonPerNext", false)) {
                         prevChapter()
-                    } else{
+                    } else {
                         prevP()
                     }
                 }
+
                 override fun onStop() {
                     stopSelf()
                 }
+
                 override fun onCustomAction(action: String, extras: Bundle?) {
                     if (action == "ACTION_ADD_TIMER") addTimer()
                 }
+
                 override fun onMediaButtonEvent(mediaButtonEvent: Intent): Boolean {
-                    return MediaButtonReceiver.handleIntent(this@BaseReadAloudService, mediaButtonEvent)
+                    return MediaButtonReceiver.handleIntent(
+                        this@BaseReadAloudService, mediaButtonEvent
+                    )
                 }
             })
         } else {
             mediaSessionCompat.setCallback(object : MediaSessionCompat.Callback() {
                 override fun onMediaButtonEvent(mediaButtonEvent: Intent): Boolean {
-                    return MediaButtonReceiver.handleIntent(this@BaseReadAloudService, mediaButtonEvent)
+                    return MediaButtonReceiver.handleIntent(
+                        this@BaseReadAloudService, mediaButtonEvent
+                    )
                 }
             })
         }
