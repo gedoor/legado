@@ -307,7 +307,7 @@ const getContent = (index: number, reloadChapter = true, chapterPos = 0) => {
           const content = data.split(/\n+/)
           for (let i = 0; i < content.length; i++) {
             if (!/^\s*<img[^>]*src[^>]+>$/.test(content[i])) {
-              content[i] = content[i].replaceAll('img src="', `img src="/image?url=${bookUrl}&path=`);
+              content[i] = content[i].replace(new RegExp('img src="', 'g'), `img src="/image?url=${bookUrl}&path=`);
             }
           }
           chapterData.value.push({ index, content, title })
