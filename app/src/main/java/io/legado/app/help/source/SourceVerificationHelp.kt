@@ -29,6 +29,7 @@ object SourceVerificationHelp {
      * 获取书源验证结果
      * 图片验证码 防爬 滑动验证码 点击字符 等等
      */
+    @Synchronized
     fun getVerificationResult(
         source: BaseSource?,
         url: String,
