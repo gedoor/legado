@@ -59,7 +59,7 @@ const calculateWordCount = (paragraph: string) => {
   const imgPattern = /<img[^>]*src="[^"]*(?:"[^>]+\})?"[^>]*>/g
   //内嵌图片文字为1
   const imagePlaceHolder = ' '
-  return paragraph.replaceAll(imgPattern, imagePlaceHolder).length
+  return paragraph.replace(imgPattern, imagePlaceHolder).length
 }
 const chapterPos = computed(() => {
   let pos = -1
