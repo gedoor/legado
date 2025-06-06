@@ -9,6 +9,7 @@ import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
 import androidx.core.os.postDelayed
+import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.EventBus
 import io.legado.app.data.entities.Book
@@ -34,7 +35,6 @@ import io.legado.app.utils.postEvent
 import io.legado.app.utils.spToPx
 import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.textHeight
-import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.CoroutineScope
 import splitties.init.appCtx
 import java.util.LinkedList
@@ -1021,7 +1021,7 @@ object ChapterProvider {
         visibleBottom = paddingTop + visibleHeight
 
         if (paddingLeft >= visibleRight || paddingTop >= visibleBottom) {
-            appCtx.toastOnUi("边距设置过大，请重新设置")
+            AppLog.put("边距设置过大，请重新设置", toast = true)
             visibleRect.set(
                 0f,
                 0f,

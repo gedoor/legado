@@ -215,6 +215,7 @@ class TextFile(private var book: Book) {
                         val curChapter = BookChapter()
                         curChapter.title = matcher.group()
                         curChapter.start = curOffset + chapterLength
+                        curChapter.end = curChapter.start
                         toc.add(curChapter)
                         lastChapterWordCount = 0
                     } else if (seekPos == 0 && chapterStart != 0) {
@@ -242,6 +243,7 @@ class TextFile(private var book: Book) {
                             val curChapter = BookChapter()
                             curChapter.title = matcher.group()
                             curChapter.start = curOffset + chapterLength
+                            curChapter.end = curChapter.start
                             toc.add(curChapter)
                         } else { //否则就block分割之后，上一个章节的剩余内容
                             //获取上一章节
@@ -257,6 +259,7 @@ class TextFile(private var book: Book) {
                             val curChapter = BookChapter()
                             curChapter.title = matcher.group()
                             curChapter.start = lastChapter.end
+                            curChapter.end = curChapter.start
                             toc.add(curChapter)
                         }
                         bookWordCount += chapterContent.length
@@ -275,6 +278,7 @@ class TextFile(private var book: Book) {
                             val curChapter = BookChapter()
                             curChapter.title = matcher.group()
                             curChapter.start = lastChapter.end
+                            curChapter.end = curChapter.start
                             toc.add(curChapter)
                         } else { //如果章节不存在则创建章节
                             val curChapter = BookChapter()
