@@ -29,6 +29,13 @@
 
         <io.legado.app.lib.prefs.SwitchPreference
             android:defaultValue="false"
+            android:title="@string/system_media_control_compatibility_change"
+            android:summary="@string/system_media_control_compatibility_change_summary"
+            android:key="systemMediaControlCompatibilityChange"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.lib.prefs.SwitchPreference
+            android:defaultValue="false"
             android:title="@string/pref_media_button_per_next"
             android:summary="@string/pref_media_button_per_next_summary"
             android:key="mediaButtonPerNext"

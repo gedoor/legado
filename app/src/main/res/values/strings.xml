@@ -1219,4 +1219,6 @@
     <string name="hide_manga_title">隐藏漫画列表标题</string>
     <string name="refresh_explore">刷新发现</string>
     <string name="padding_display_cutouts">Padding display cutouts</string>
+    <string name="system_media_control_compatibility_change">System Media Control Compatibility Change</string>
+    <string name="system_media_control_compatibility_change_summary">If system media controls do not appear on the lock screen, you can try enabling this, for example on OneUI 7.0 or Vivo devices.</string>
 </resources>
