@@ -1218,4 +1218,6 @@
     <string name="hide_manga_title">隐藏漫画列表标题</string>
     <string name="refresh_explore">刷新发现</string>
     <string name="padding_display_cutouts">填充刘海区域</string>
+    <string name="system_media_control_compatibility_change">系统媒体控件兼容性更改</string>
+    <string name="system_media_control_compatibility_change_summary">当锁屏不显示系统媒体控件时可以尝试开启，比如oneui7.0或vivo等</string>
 </resources>
