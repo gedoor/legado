@@ -36,7 +36,8 @@ class ClickActionConfigDialog : BaseDialogFragment(R.layout.dialog_click_action_
             Pair(9, getString(R.string.replace_state_change)),
             Pair(10, getString(R.string.chapter_list)),
             Pair(11, getString(R.string.search_content)),
-            Pair(12, getString(R.string.sync_book_progress_t))
+            Pair(12, getString(R.string.sync_book_progress_t)),
+            Pair(13, getString(R.string.read_aloud_pause_resume))
         )
     }
 
