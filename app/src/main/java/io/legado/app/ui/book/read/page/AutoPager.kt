@@ -80,7 +80,10 @@ class AutoPager(private val readView: ReadView) {
         }
 
         if (readView.isScroll) {
-            if (!isPausing) readView.curPage.scroll(-scrollOffset)
+            if (!isPausing) {
+                readView.curPage.scroll(-scrollOffset)
+                scrollOffset = 0
+            }
         } else {
             val bottom = progress
             val width = readView.width
