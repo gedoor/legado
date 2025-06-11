@@ -988,6 +988,7 @@ interface JsExtensions : JsEncodeUtils {
 
     // 新增 mimeType 参数，默认为 null（保持兼容性）
     fun openUrl(url: String, mimeType: String? = null) {
+        require(url.length < 64 * 1024) { "openUrl parameter url too long" }
         rhinoContext.ensureActive()
         val source = getSource() ?: throw NoStackTraceException("openUrl source cannot be null")
         appCtx.startActivity<OpenUrlConfirmActivity> {

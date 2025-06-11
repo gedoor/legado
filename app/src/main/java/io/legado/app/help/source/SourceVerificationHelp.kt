@@ -39,9 +39,8 @@ object SourceVerificationHelp {
     ): String {
         source
             ?: throw NoStackTraceException("getVerificationResult parameter source cannot be null")
-        if (isMainThread) {
-            error("getVerificationResult must be called on a background thread")
-        }
+        require(url.length < 64 * 1024) { "getVerificationResult parameter url too long" }
+        check(!isMainThread) { "getVerificationResult must be called on a background thread" }
 
         clearResult(source.getKey())
 
@@ -85,6 +84,7 @@ object SourceVerificationHelp {
         refetchAfterSuccess: Boolean? = true
     ) {
         source ?: throw NoStackTraceException("startBrowser parameter source cannot be null")
+        require(url.length < 64 * 1024) { "startBrowser parameter url too long" }
         appCtx.startActivity<WebViewActivity> {
             putExtra("title", title)
             putExtra("url", url)
