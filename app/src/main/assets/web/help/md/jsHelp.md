@@ -232,9 +232,6 @@ java.s2t(text: String): String
 * 时间格式化
 ```js
 java.timeFormatUTC(time: Long, format: String, sh: Int): String?
-```
-* 格式化时间
-```js
 java.timeFormat(time: Long): String
 ```
 * html格式化
