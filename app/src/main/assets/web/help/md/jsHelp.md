@@ -45,7 +45,7 @@
 * 调用阅读搜索
 
 ```js
-java.searchBook(bookName: string)
+java.searchBook(bookName: String)
 ```
 
 * 添加书架
@@ -232,6 +232,11 @@ java.s2t(text: String): String
 * 时间格式化
 ```js
 java.timeFormatUTC(time: Long, format: String, sh: Int): String?
+java.timeFormat(time: Long): String
+```
+* html格式化
+```js
+java.htmlFormat(str: String): String
 ```
 * 文件
 >  所有对于文件的读写删操作都是相对路径,只能操作阅读缓存/android/data/{package}/cache/内的文件
@@ -441,10 +446,11 @@ cache.putFile(key: String, value: String, saveTime: Int)
 读取文件内容
 cache.getFile(key: String): String?
 保存到内存
-cache.deleteMemory(key: String)
-cache.getFromMemory(key: String): Any?
 cache.putMemory(key: String, value: Any)
-
+读取内存
+cache.getFromMemory(key: String): Any?
+删除内存
+cache.deleteMemory(key: String)
 ```
 
 ## 跳转外部链接/应用函数
