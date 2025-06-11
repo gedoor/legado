@@ -449,10 +449,11 @@ cache.putFile(key: String, value: String, saveTime: Int)
 读取文件内容
 cache.getFile(key: String): String?
 保存到内存
-cache.deleteMemory(key: String)
-cache.getFromMemory(key: String): Any?
 cache.putMemory(key: String, value: Any)
-
+读取内存
+cache.getFromMemory(key: String): Any?
+删除内存
+cache.deleteMemory(key: String)
 ```
 
 ## 跳转外部链接/应用函数
