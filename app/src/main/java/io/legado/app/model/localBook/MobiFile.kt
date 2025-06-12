@@ -229,7 +229,7 @@ class MobiFile(var book: Book) {
                 break
             }
             section = section.next ?: break
-            if (section.linear) {
+            if (!section.linear) {
                 continue
             }
             if (section.href == nextSectionHref) {
