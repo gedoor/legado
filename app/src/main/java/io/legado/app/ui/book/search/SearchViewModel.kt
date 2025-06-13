@@ -117,6 +117,14 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
         searchModel.cancelSearch()
     }
 
+    fun pause() {
+        searchModel.pause()
+    }
+
+    fun resume() {
+        searchModel.resume()
+    }
+
     /**
      * 保存搜索关键字
      */
