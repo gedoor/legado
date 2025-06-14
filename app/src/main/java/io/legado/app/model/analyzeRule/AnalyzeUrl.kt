@@ -39,7 +39,6 @@ import io.legado.app.help.http.postForm
 import io.legado.app.help.http.postJson
 import io.legado.app.help.http.postMultipart
 import io.legado.app.help.source.getShareScope
-import io.legado.app.model.Debug
 import io.legado.app.utils.EncoderUtils
 import io.legado.app.utils.GSON
 import io.legado.app.utils.GSONStrict
@@ -225,32 +224,32 @@ class AnalyzeUrl(
             if (urlOption == null) {
                 urlOption = GSON.fromJsonObject<UrlOption>(urlOptionStr).getOrNull()
                 if (urlOption != null) {
-                    Debug.log("≡链接参数 JSON 格式不规范，请改为规范格式")
+                    log("链接参数 JSON 格式不规范，请改为规范格式")
                 }
             }
             urlOption?.let { option ->
-                    option.getMethod()?.let {
-                        if (it.equals("POST", true)) method = RequestMethod.POST
-                    }
-                    option.getHeaderMap()?.forEach { entry ->
-                        headerMap[entry.key.toString()] = entry.value.toString()
-                    }
-                    option.getBody()?.let {
-                        body = it
-                    }
-                    type = option.getType()
-                    charset = option.getCharset()
-                    retry = option.getRetry()
-                    useWebView = option.useWebView()
-                    webJs = option.getWebJs()
-                    option.getJs()?.let { jsStr ->
-                        evalJS(jsStr, url)?.toString()?.let {
-                            url = it
-                        }
-                    }
-                    serverID = option.getServerID()
-                    webViewDelayTime = max(0, option.getWebViewDelayTime() ?: 0)
+                option.getMethod()?.let {
+                    if (it.equals("POST", true)) method = RequestMethod.POST
                 }
+                option.getHeaderMap()?.forEach { entry ->
+                    headerMap[entry.key.toString()] = entry.value.toString()
+                }
+                option.getBody()?.let {
+                    body = it
+                }
+                type = option.getType()
+                charset = option.getCharset()
+                retry = option.getRetry()
+                useWebView = option.useWebView()
+                webJs = option.getWebJs()
+                option.getJs()?.let { jsStr ->
+                    evalJS(jsStr, url)?.toString()?.let {
+                        url = it
+                    }
+                }
+                serverID = option.getServerID()
+                webViewDelayTime = max(0, option.getWebViewDelayTime() ?: 0)
+            }
         }
         urlNoQuery = url
         when (method) {

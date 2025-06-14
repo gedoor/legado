@@ -13,7 +13,6 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.help.crypto.SymmetricCryptoAndroid
 import io.legado.app.help.http.CookieStore
 import io.legado.app.help.source.getShareScope
-import io.legado.app.model.Debug
 import io.legado.app.utils.GSON
 import io.legado.app.utils.GSONStrict
 import io.legado.app.utils.fromJsonArray
@@ -116,7 +115,7 @@ interface BaseSource : JsExtensions {
                 GSONStrict.fromJsonObject<Map<String, String>>(json).getOrNull()?.let { map ->
                     putAll(map)
                 } ?: GSON.fromJsonObject<Map<String, String>>(json).getOrNull()?.let { map ->
-                    Debug.log("≡请求头规则 JSON 格式不规范，请改为规范格式")
+                    log("请求头规则 JSON 格式不规范，请改为规范格式")
                     putAll(map)
                 }
             } catch (e: Exception) {
