@@ -544,6 +544,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
             R.id.menu_enable_horizontal_scroll -> {
                 item.isChecked = !item.isChecked
                 AppConfig.enableMangaHorizontalScroll = item.isChecked
+                mMenu?.findItem(R.id.menu_disable_horizontal_animation)?.isVisible = item.isChecked
                 setHorizontalScroll(item.isChecked)
                 mAdapter.notifyDataSetChanged()
             }
@@ -583,6 +584,16 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
 
             R.id.menu_epaper_manga_setting -> {
                 showDialogFragment(MangaEpaperDialog())
+            }
+
+            R.id.menu_disable_horizontal_animation -> {
+                item.isChecked = !item.isChecked
+                AppConfig.disableHorizontalAnimator = item.isChecked
+                if (item.isChecked) {
+                    mPagerSnapHelper.attachToRecyclerView(null)
+                } else {
+                    mPagerSnapHelper.attachToRecyclerView(binding.recyclerView)
+                }
             }
         }
         return super.onCompatOptionsItemSelected(item)
@@ -639,7 +650,11 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
         mAdapter.isHorizontal = enable
         if (enable) {
             if (!enableAutoScroll) {
-                mPagerSnapHelper.attachToRecyclerView(binding.recyclerView)
+                if (AppConfig.disableHorizontalAnimator){
+                    mPagerSnapHelper.attachToRecyclerView(null)
+                }else{
+                    mPagerSnapHelper.attachToRecyclerView(binding.recyclerView)
+                }
             }
             mLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
         } else {
@@ -661,6 +676,11 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
             AppConfig.enableMangaHorizontalScroll
         menu.findItem(R.id.menu_epaper_manga).isChecked = AppConfig.enableEpaper
         menu.findItem(R.id.menu_epaper_manga_setting).isVisible = AppConfig.enableEpaper
+        menu.findItem(R.id.menu_disable_horizontal_animation).run {
+            isVisible =
+                AppConfig.enableMangaHorizontalScroll
+            isChecked = AppConfig.disableHorizontalAnimator
+        }
     }
 
     private fun setDisableMangaScale(disable: Boolean) {

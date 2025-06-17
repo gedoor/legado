@@ -681,5 +681,11 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
         set(value) {
             appCtx.putPrefInt(PreferKey.epaperValue, value)
         }
+
+    var disableHorizontalAnimator
+        get() = appCtx.getPrefBoolean(PreferKey.disableHorizontalAnimator, false)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.disableHorizontalAnimator, value)
+        }
 }
 

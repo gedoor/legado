@@ -182,5 +182,6 @@ object PreferKey {
     const val contentSelectSpeakMod = "contentReadAloudMod"
     const val enableEpaper = "enableEpaper"
     const val epaperValue = "epaperValue"
+    const val disableHorizontalAnimator = "disableHorizontalAnimator"
 
 }

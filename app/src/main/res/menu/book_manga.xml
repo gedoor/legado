@@ -72,6 +72,14 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_disable_horizontal_animation"
+        android:checkable="true"
+        android:checked="false"
+        android:visible="false"
+        android:title="@string/disable_horizontal_animation"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_manga_footer_config"
         android:title="@string/manga_footer_config"
         app:showAsAction="never" />
