@@ -670,16 +670,16 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
         }
 
     //开启墨水屏模式
-    var enableEpaper
-        get() = appCtx.getPrefBoolean(PreferKey.enableEpaper, false)
+    var enableMangaEInk
+        get() = appCtx.getPrefBoolean(PreferKey.enableMangaEInk, false)
         set(value) {
-            appCtx.putPrefBoolean(PreferKey.enableEpaper, value)
+            appCtx.putPrefBoolean(PreferKey.enableMangaEInk, value)
         }
 
-    var epaperValue
-        get() = appCtx.getPrefInt(PreferKey.epaperValue, 150)
+    var mangaEInkThreshold
+        get() = appCtx.getPrefInt(PreferKey.mangaEInkThreshold, 150)
         set(value) {
-            appCtx.putPrefInt(PreferKey.epaperValue, value)
+            appCtx.putPrefInt(PreferKey.mangaEInkThreshold, value)
         }
 
     var disableHorizontalAnimator

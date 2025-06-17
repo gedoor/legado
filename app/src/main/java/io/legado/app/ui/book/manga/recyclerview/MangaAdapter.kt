@@ -30,6 +30,7 @@ import io.legado.app.ui.book.manga.entities.GrayscaleTransformation
 import io.legado.app.ui.book.manga.entities.MangaPage
 import io.legado.app.ui.book.manga.entities.ReaderLoading
 import io.legado.app.utils.dpToPx
+import androidx.core.util.size
 
 
 class MangaAdapter(private val context: Context) :
@@ -38,7 +39,7 @@ class MangaAdapter(private val context: Context) :
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private lateinit var mConfig: MangaColorFilterConfig
     private var mTransformation: BitmapTransformation? = null
-    private var currentThreshold = 0
+    private var currentMangaEInkThreshold = 0
 
     companion object {
         private const val LOADING_VIEW = 0
@@ -172,7 +173,7 @@ class MangaAdapter(private val context: Context) :
         }
     }
 
-    fun getFooterCount() = footerItems.size()
+    fun getFooterCount() = footerItems.size
 
     private fun isFooter(position: Int) = position >= getActualItemCount()
 
@@ -204,8 +205,8 @@ class MangaAdapter(private val context: Context) :
     @Synchronized
     fun addFooterView(footer: ((parent: ViewGroup) -> ViewBinding)) {
         kotlin.runCatching {
-            val index = getActualItemCount() + footerItems.size()
-            footerItems.put(TYPE_FOOTER_VIEW + footerItems.size(), footer)
+            val index = getActualItemCount() + footerItems.size
+            footerItems.put(TYPE_FOOTER_VIEW + footerItems.size, footer)
             notifyItemInserted(index)
         }
     }
@@ -249,20 +250,20 @@ class MangaAdapter(private val context: Context) :
         notifyItemRangeChanged(0, itemCount)
     }
 
-    fun enableEpaper(enable: Boolean, value: Int) {
+    fun enableMangaEInk(enable: Boolean, value: Int) {
         if (enable) {
-            this.currentThreshold = value
-            mTransformation = EpaperTransformation(true, currentThreshold)
+            currentMangaEInkThreshold = value
+            mTransformation = EpaperTransformation(currentMangaEInkThreshold)
         } else {
             mTransformation = null
         }
         notifyItemRangeChanged(0, itemCount)
     }
 
-    fun updateThreshold(newThreshold: Int) {
-        if (this.currentThreshold != newThreshold) {
-            this.currentThreshold = newThreshold
-            mTransformation = EpaperTransformation(true, currentThreshold)
+    fun updateThreshold(mangaEInkThreshold : Int) {
+        if (currentMangaEInkThreshold != mangaEInkThreshold ) {
+            currentMangaEInkThreshold = mangaEInkThreshold
+            mTransformation = EpaperTransformation(currentMangaEInkThreshold)
             notifyItemRangeChanged(0, itemCount)
         }
     }
@@ -270,9 +271,9 @@ class MangaAdapter(private val context: Context) :
     //开启灰色图片
     fun enableGray(enable: Boolean) {
         if (enable) {
-            this.mTransformation = GrayscaleTransformation()
+            mTransformation = GrayscaleTransformation()
         } else {
-            this.mTransformation == null
+            mTransformation == null
         }
         notifyItemRangeChanged(0, itemCount)
     }

@@ -15,7 +15,7 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 class MangaEpaperDialog : BaseDialogFragment(R.layout.dialog_manga_epaper) {
     private val binding by viewBinding(DialogMangaEpaperBinding::bind)
     private val callback get() = activity as? Callback
-    private var mEpaperValue = 150
+    private var mMangaEInkThreshold = 150
     override fun onStart() {
         super.onStart()
         dialog?.window?.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
@@ -28,19 +28,19 @@ class MangaEpaperDialog : BaseDialogFragment(R.layout.dialog_manga_epaper) {
     }
 
     private fun initData() {
-        binding.dsbEpaper.progress = AppConfig.epaperValue
+        binding.dsbEpaper.progress = AppConfig.mangaEInkThreshold
     }
 
     private fun initView() {
         binding.dsbEpaper.onChanged = {
-            mEpaperValue = it
+            mMangaEInkThreshold = it
             callback?.updateEepaper(it)
         }
     }
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-        AppConfig.epaperValue = mEpaperValue
+        AppConfig.mangaEInkThreshold = mMangaEInkThreshold
     }
 
     interface Callback {

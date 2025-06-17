@@ -193,7 +193,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
                 ?: MangaColorFilterConfig()
         mAdapter.run {
             setMangaImageColorFilter(mangaColorFilter)
-            enableEpaper(AppConfig.enableEpaper, AppConfig.epaperValue)
+            enableMangaEInk(AppConfig.enableMangaEInk, AppConfig.mangaEInkThreshold)
             enableGray(AppConfig.enableMangaGray)
         }
         setHorizontalScroll(AppConfig.enableMangaHorizontalScroll)
@@ -578,11 +578,11 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
 
             R.id.menu_epaper_manga -> {
                 item.isChecked = !item.isChecked
-                AppConfig.enableEpaper = item.isChecked
+                AppConfig.enableMangaEInk = item.isChecked
                 mMenu?.findItem(R.id.menu_gray_manga)?.isChecked = false
                 AppConfig.enableMangaGray = false
                 mMenu?.findItem(R.id.menu_epaper_manga_setting)?.isVisible = item.isChecked
-                mAdapter.enableEpaper(item.isChecked, AppConfig.epaperValue)
+                mAdapter.enableMangaEInk(item.isChecked, AppConfig.mangaEInkThreshold)
             }
 
             R.id.menu_epaper_manga_setting -> {
@@ -603,7 +603,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
                 item.isChecked = !item.isChecked
                 AppConfig.enableMangaGray = item.isChecked
                 mMenu?.findItem(R.id.menu_epaper_manga)?.isChecked = false
-                AppConfig.enableEpaper = false
+                AppConfig.enableMangaEInk = false
                 mMenu?.findItem(R.id.menu_epaper_manga_setting)?.isVisible = false
                 mAdapter.enableGray(item.isChecked)
             }
@@ -686,8 +686,8 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
             getString(R.string.manga_auto_page_speed, AppConfig.mangaAutoPageSpeed)
         menu.findItem(R.id.menu_enable_horizontal_scroll).isChecked =
             AppConfig.enableMangaHorizontalScroll
-        menu.findItem(R.id.menu_epaper_manga).isChecked = AppConfig.enableEpaper
-        menu.findItem(R.id.menu_epaper_manga_setting).isVisible = AppConfig.enableEpaper
+        menu.findItem(R.id.menu_epaper_manga).isChecked = AppConfig.enableMangaEInk
+        menu.findItem(R.id.menu_epaper_manga_setting).isVisible = AppConfig.enableMangaEInk
         menu.findItem(R.id.menu_disable_horizontal_animation).run {
             isVisible =
                 AppConfig.enableMangaHorizontalScroll

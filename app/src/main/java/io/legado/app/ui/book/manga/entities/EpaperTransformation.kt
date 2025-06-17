@@ -15,18 +15,15 @@ import java.security.MessageDigest
  * 墨水屏图片转换器。
  * 将彩色图片转换为灰度图，并可选择进行简单的二值化处理，以提高墨水屏显示效果。
  *
- * @param applyBinarization 是否应用二值化处理。墨水屏通常只有黑白两色，二值化可以增强对比度。
- *                          如果设置为false，则只进行灰度转换。
  * @param threshold 二值化的阈值（0-255）。低于此值的像素变为黑色，高于此值的像素变为白色。
  *                  仅当applyBinarization为true时有效。
  */
 class EpaperTransformation(
-    private val applyBinarization: Boolean = true,
-    @IntRange(0, 255) private val threshold: Int = 128, // 默认阈值，可根据实际效果调整
+    @IntRange(0, 255) private val threshold: Int = 128,
 ) : BitmapTransformation() {
 
     private val ID =
-        "io.legado.app.model.EpaperTransformation.${applyBinarization}.${threshold}"
+        "io.legado.app.model.EpaperTransformation.${threshold}"
     private val ID_BYTES = ID.toByteArray(CHARSET)
 
     override fun transform(
@@ -40,23 +37,21 @@ class EpaperTransformation(
         val paint = Paint()
 
         val colorMatrix = ColorMatrix()
-        colorMatrix.setSaturation(0f) // 将饱和度设置为0，实现灰度
+        colorMatrix.setSaturation(0f)
         val filter = ColorMatrixColorFilter(colorMatrix)
         paint.colorFilter = filter
         canvas.drawBitmap(toTransform, 0f, 0f, paint)
 
-        if (applyBinarization) {
-            val pixels = IntArray(outWidth * outHeight)
-            resultBitmap.getPixels(pixels, 0, outWidth, 0, 0, outWidth, outHeight)
+        val pixels = IntArray(outWidth * outHeight)
+        resultBitmap.getPixels(pixels, 0, outWidth, 0, 0, outWidth, outHeight)
 
-            for (i in pixels.indices) {
-                val pixel = pixels[i]
-                val gray = Color.red(pixel)
-                pixels[i] =
-                    if (gray < threshold) Color.BLACK else Color.WHITE
-            }
-            resultBitmap.setPixels(pixels, 0, outWidth, 0, 0, outWidth, outHeight)
+        for (i in pixels.indices) {
+            val pixel = pixels[i]
+            val gray = Color.red(pixel)
+            pixels[i] =
+                if (gray < threshold) Color.BLACK else Color.WHITE
         }
+        resultBitmap.setPixels(pixels, 0, outWidth, 0, 0, outWidth, outHeight)
 
         return resultBitmap
     }
@@ -71,17 +66,15 @@ class EpaperTransformation(
 
         other as EpaperTransformation
 
-        if (applyBinarization != other.applyBinarization) return false
         if (threshold != other.threshold) return false
-        if (ID != other.ID) return false // 确保ID也参与比较，因为ID包含了所有参数
+        if (ID != other.ID) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        var result = applyBinarization.hashCode()
-        result = 31 * result + threshold
-        result = 31 * result + ID.hashCode() // 确保ID也参与哈希计算
+        var result = 31 + threshold
+        result = 31 * result + ID.hashCode()
         return result
     }
 }
