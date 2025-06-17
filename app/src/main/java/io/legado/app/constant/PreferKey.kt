@@ -183,5 +183,6 @@ object PreferKey {
     const val enableEpaper = "enableEpaper"
     const val epaperValue = "epaperValue"
     const val disableHorizontalAnimator = "disableHorizontalAnimator"
+    const val enableMangaGray = "enableMangaGray"
 
 }

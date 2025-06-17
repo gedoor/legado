@@ -194,6 +194,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
         mAdapter.run {
             setMangaImageColorFilter(mangaColorFilter)
             enableEpaper(AppConfig.enableEpaper, AppConfig.epaperValue)
+            enableGray(AppConfig.enableMangaGray)
         }
         setHorizontalScroll(AppConfig.enableMangaHorizontalScroll)
         binding.recyclerView.run {
@@ -578,6 +579,8 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
             R.id.menu_epaper_manga -> {
                 item.isChecked = !item.isChecked
                 AppConfig.enableEpaper = item.isChecked
+                mMenu?.findItem(R.id.menu_gray_manga)?.isChecked = false
+                AppConfig.enableMangaGray = false
                 mMenu?.findItem(R.id.menu_epaper_manga_setting)?.isVisible = item.isChecked
                 mAdapter.enableEpaper(item.isChecked, AppConfig.epaperValue)
             }
@@ -594,6 +597,17 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
                 } else {
                     mPagerSnapHelper.attachToRecyclerView(binding.recyclerView)
                 }
+            }
+
+            R.id.menu_gray_manga -> {
+                item.isChecked = !item.isChecked
+                AppConfig.enableMangaGray = item.isChecked
+                if (item.isChecked) {
+                    mMenu?.findItem(R.id.menu_epaper_manga)?.isChecked = false
+                    AppConfig.enableEpaper = false
+                    mMenu?.findItem(R.id.menu_epaper_manga_setting)?.isVisible = false
+                }
+                mAdapter.enableGray(item.isChecked)
             }
         }
         return super.onCompatOptionsItemSelected(item)
@@ -650,9 +664,9 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
         mAdapter.isHorizontal = enable
         if (enable) {
             if (!enableAutoScroll) {
-                if (AppConfig.disableHorizontalAnimator){
+                if (AppConfig.disableHorizontalAnimator) {
                     mPagerSnapHelper.attachToRecyclerView(null)
-                }else{
+                } else {
                     mPagerSnapHelper.attachToRecyclerView(binding.recyclerView)
                 }
             }
@@ -681,6 +695,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
                 AppConfig.enableMangaHorizontalScroll
             isChecked = AppConfig.disableHorizontalAnimator
         }
+        menu.findItem(R.id.menu_gray_manga).isChecked = AppConfig.enableMangaGray
     }
 
     private fun setDisableMangaScale(disable: Boolean) {

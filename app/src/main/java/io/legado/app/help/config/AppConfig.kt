@@ -687,5 +687,12 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
         set(value) {
             appCtx.putPrefBoolean(PreferKey.disableHorizontalAnimator, value)
         }
+
+    var enableMangaGray
+        get() = appCtx.getPrefBoolean(PreferKey.enableMangaGray, false)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.enableMangaGray, value)
+        }
+
 }
 

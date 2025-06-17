@@ -16,15 +16,17 @@ import androidx.viewbinding.ViewBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.ListPreloader.PreloadModelProvider
 import com.bumptech.glide.RequestBuilder
+import com.bumptech.glide.load.resource.bitmap.BitmapTransformation
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter.Companion.TYPE_FOOTER_VIEW
 import io.legado.app.databinding.ItemBookMangaEdgeBinding
 import io.legado.app.databinding.ItemBookMangaPageBinding
 import io.legado.app.help.glide.progress.ProgressManager
 import io.legado.app.model.BookCover
-import io.legado.app.ui.book.manga.entities.EpaperTransformation
 import io.legado.app.model.ReadManga
 import io.legado.app.ui.book.manga.config.MangaColorFilterConfig
+import io.legado.app.ui.book.manga.entities.EpaperTransformation
+import io.legado.app.ui.book.manga.entities.GrayscaleTransformation
 import io.legado.app.ui.book.manga.entities.MangaPage
 import io.legado.app.ui.book.manga.entities.ReaderLoading
 import io.legado.app.utils.dpToPx
@@ -35,7 +37,7 @@ class MangaAdapter(private val context: Context) :
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private lateinit var mConfig: MangaColorFilterConfig
-    private var mEpaperTransformation: EpaperTransformation? = null
+    private var mTransformation: BitmapTransformation? = null
     private var currentThreshold = 0
 
     companion object {
@@ -94,7 +96,7 @@ class MangaAdapter(private val context: Context) :
                 if (item is MangaPage) {
                     val isLastImage = item.imageCount > 0 && item.index == item.imageCount - 1
                     loadImageWithRetry(
-                        item.mImageUrl, isHorizontal, isLastImage, mEpaperTransformation
+                        item.mImageUrl, isHorizontal, isLastImage, mTransformation
                     )
                 }
             }
@@ -103,7 +105,7 @@ class MangaAdapter(private val context: Context) :
         fun onBind(item: MangaPage) {
             setImageColorFilter()
             val isLastImage = item.imageCount > 0 && item.index == item.imageCount - 1
-            loadImageWithRetry(item.mImageUrl, isHorizontal, isLastImage, mEpaperTransformation)
+            loadImageWithRetry(item.mImageUrl, isHorizontal, isLastImage, mTransformation)
         }
 
         fun setImageColorFilter() {
@@ -250,9 +252,9 @@ class MangaAdapter(private val context: Context) :
     fun enableEpaper(enable: Boolean, value: Int) {
         if (enable) {
             this.currentThreshold = value
-            mEpaperTransformation = EpaperTransformation(true, currentThreshold)
+            mTransformation = EpaperTransformation(true, currentThreshold)
         } else {
-            mEpaperTransformation = null
+            mTransformation = null
         }
         notifyItemRangeChanged(0, itemCount)
     }
@@ -260,9 +262,18 @@ class MangaAdapter(private val context: Context) :
     fun updateThreshold(newThreshold: Int) {
         if (this.currentThreshold != newThreshold) {
             this.currentThreshold = newThreshold
-            mEpaperTransformation = EpaperTransformation(true, currentThreshold)
+            mTransformation = EpaperTransformation(true, currentThreshold)
             notifyItemRangeChanged(0, itemCount)
         }
     }
 
+    //开启灰色图片
+    fun enableGray(enable: Boolean) {
+        if (enable) {
+            this.mTransformation = GrayscaleTransformation()
+        } else {
+            this.mTransformation == null
+        }
+        notifyItemRangeChanged(0, itemCount)
+    }
 }
