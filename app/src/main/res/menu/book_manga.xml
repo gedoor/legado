@@ -72,6 +72,14 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_disable_horizontal_animation"
+        android:checkable="true"
+        android:checked="false"
+        android:visible="false"
+        android:title="@string/disable_horizontal_animation"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_manga_footer_config"
         android:title="@string/manga_footer_config"
         app:showAsAction="never" />
@@ -87,5 +95,25 @@
         android:checked="false"
         android:title="@string/hide_manga_title"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_epaper_manga"
+        android:checkable="true"
+        android:checked="false"
+        android:title="@string/manga_epaper"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_epaper_manga_setting"
+        android:title="@string/manga_epaper_stting"
+        android:visible="false"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_gray_manga"
+        android:checkable="true"
+        android:checked="false"
+        android:title="@string/enable_manga_gray"
+        app:showAsAction="never"/>
 
 </menu>

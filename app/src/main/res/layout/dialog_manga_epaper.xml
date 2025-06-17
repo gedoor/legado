@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <io.legado.app.ui.widget.text.AccentTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
+            android:text="@string/manga_epaper_stting"
+            android:textSize="18sp" />
+
+        <io.legado.app.ui.widget.DetailSeekBar
+            android:id="@+id/dsb_epaper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:max="255"
+            app:title="@string/manga_epaper_value" />
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

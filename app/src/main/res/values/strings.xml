@@ -1222,4 +1222,9 @@
     <string name="system_media_control_compatibility_change">System Media Control Compatibility Change</string>
     <string name="system_media_control_compatibility_change_summary">If system media controls do not appear on the lock screen, you can try enabling this, for example on OneUI 7.0 or Vivo devices.</string>
     <string name="read_aloud_pause_resume">Pause/Resume Speech</string>
+    <string name="manga_epaper">墨水屏</string>
+    <string name="manga_epaper_stting">墨水屏设置</string>
+    <string name="manga_epaper_value">阈值</string>
+    <string name="disable_horizontal_animation">禁用水平滚动动画</string>
+    <string name="enable_manga_gray">开启图片灰色</string>
 </resources>

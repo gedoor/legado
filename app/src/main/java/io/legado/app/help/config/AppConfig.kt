@@ -668,5 +668,31 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
         set(value) {
             appCtx.putPrefBoolean(PreferKey.hideMangaTitle, value)
         }
+
+    //开启墨水屏模式
+    var enableMangaEInk
+        get() = appCtx.getPrefBoolean(PreferKey.enableMangaEInk, false)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.enableMangaEInk, value)
+        }
+
+    var mangaEInkThreshold
+        get() = appCtx.getPrefInt(PreferKey.mangaEInkThreshold, 150)
+        set(value) {
+            appCtx.putPrefInt(PreferKey.mangaEInkThreshold, value)
+        }
+
+    var disableHorizontalAnimator
+        get() = appCtx.getPrefBoolean(PreferKey.disableHorizontalAnimator, false)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.disableHorizontalAnimator, value)
+        }
+
+    var enableMangaGray
+        get() = appCtx.getPrefBoolean(PreferKey.enableMangaGray, false)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.enableMangaGray, value)
+        }
+
 }
 

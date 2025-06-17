@@ -1216,4 +1216,9 @@
     <string name="hide_manga_title">隐藏漫画列表标题</string>
     <string name="refresh_explore">刷新发现</string>
     <string name="padding_display_cutouts">Padding display cutouts</string>
+    <string name="manga_epaper">墨水屏</string>
+    <string name="manga_epaper_stting">墨水屏设置</string>
+    <string name="manga_epaper_value">阈值</string>
+    <string name="disable_horizontal_animation">禁用水平滚动动画</string>
+    <string name="enable_manga_gray">开启图片灰色</string>灰色
 </resources>

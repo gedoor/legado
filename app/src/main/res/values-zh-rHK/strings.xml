@@ -1214,4 +1214,9 @@
     <string name="system_media_control_compatibility_change">系統媒體控件相容性更改</string>
     <string name="system_media_control_compatibility_change_summary">當鎖屏不顯示系統媒體控件時可以嘗試開啟，比如 OneUI7.0 或 vivo 等</string>
     <string name="read_aloud_pause_resume">朗讀暫停/繼續</string>
+    <string name="manga_epaper">墨水屏</string>
+    <string name="manga_epaper_stting">墨水屏设置</string>
+    <string name="manga_epaper_value">阈值</string>
+    <string name="disable_horizontal_animation">禁用水平滚动动画</string>
+    <string name="enable_manga_gray">开启图片灰色</string>
 </resources>

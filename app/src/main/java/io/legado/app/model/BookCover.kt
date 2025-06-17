@@ -2,12 +2,14 @@ package io.legado.app.model
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import androidx.annotation.Keep
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.Transformation
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
@@ -29,6 +31,7 @@ import io.legado.app.help.glide.OkHttpModelLoader
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeRule.Companion.setCoroutineContext
 import io.legado.app.model.analyzeRule.AnalyzeUrl
+import io.legado.app.ui.book.manga.entities.EpaperTransformation
 import io.legado.app.utils.BitmapUtils
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
@@ -86,7 +89,7 @@ object BookCover {
         path: String?,
         loadOnlyWifi: Boolean = false,
         sourceOrigin: String? = null,
-        onLoadFinish: (() -> Unit)? = null
+        onLoadFinish: (() -> Unit)? = null,
     ): RequestBuilder<Drawable> {
         if (AppConfig.useDefaultCover) {
             return ImageLoader.load(context, defaultDrawable)
@@ -104,7 +107,7 @@ object BookCover {
                     e: GlideException?,
                     model: Any?,
                     target: Target<Drawable?>,
-                    isFirstResource: Boolean
+                    isFirstResource: Boolean,
                 ): Boolean {
                     onLoadFinish.invoke()
                     return false
@@ -115,7 +118,7 @@ object BookCover {
                     model: Any,
                     target: Target<Drawable?>?,
                     dataSource: DataSource,
-                    isFirstResource: Boolean
+                    isFirstResource: Boolean,
                 ): Boolean {
                     onLoadFinish.invoke()
                     return false
@@ -130,11 +133,13 @@ object BookCover {
     /**
      * 加载漫画图片
      */
+    @SuppressLint("CheckResult")
     fun loadManga(
         context: Context,
         path: String?,
         loadOnlyWifi: Boolean = false,
         sourceOrigin: String? = null,
+        transformation: Transformation<Bitmap>? = null,
     ): RequestBuilder<Drawable> {
         var options = RequestOptions().set(OkHttpModelLoader.loadOnlyWifiOption, loadOnlyWifi)
             .set(OkHttpModelLoader.mangaOption, true)
@@ -145,7 +150,12 @@ object BookCover {
             .apply(options)
             .override(context.resources.displayMetrics.widthPixels, SIZE_ORIGINAL)
             .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .skipMemoryCache(true)
+            .skipMemoryCache(true).let {
+                if (transformation != null) {
+                    it.transform(transformation)
+                }
+                it
+            }
     }
 
     fun preloadManga(

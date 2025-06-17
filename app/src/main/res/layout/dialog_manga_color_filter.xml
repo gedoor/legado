@@ -14,7 +14,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingBottom="8dp"
-            android:text="滤镜"
+            android:text="@string/manga_color_filter"
             android:textSize="18sp" />
 
         <io.legado.app.ui.widget.DetailSeekBar
