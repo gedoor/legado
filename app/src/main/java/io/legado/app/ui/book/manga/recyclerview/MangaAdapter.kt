@@ -270,10 +270,10 @@ class MangaAdapter(private val context: Context) :
 
     //开启灰色图片
     fun enableGray(enable: Boolean) {
-        if (enable) {
-            mTransformation = GrayscaleTransformation()
+        mTransformation = if (enable) {
+            GrayscaleTransformation()
         } else {
-            mTransformation = null
+            null
         }
         notifyItemRangeChanged(0, itemCount)
     }
