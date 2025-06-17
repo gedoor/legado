@@ -43,6 +43,7 @@ import io.legado.app.ui.book.changesource.ChangeBookSourceDialog
 import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.book.manga.config.MangaColorFilterConfig
 import io.legado.app.ui.book.manga.config.MangaColorFilterDialog
+import io.legado.app.ui.book.manga.config.MangaEpaperDialog
 import io.legado.app.ui.book.manga.config.MangaFooterConfig
 import io.legado.app.ui.book.manga.config.MangaFooterSettingDialog
 import io.legado.app.ui.book.manga.entities.BaseMangaPage
@@ -78,7 +79,7 @@ import kotlin.math.ceil
 
 class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewModel>(),
     ReadManga.Callback, ChangeBookSourceDialog.CallBack, MangaMenu.CallBack,
-    MangaColorFilterDialog.Callback, ScrollTimer.ScrollCallback {
+    MangaColorFilterDialog.Callback, ScrollTimer.ScrollCallback, MangaEpaperDialog.Callback {
 
     private val mLayoutManager by lazy {
         MangaLayoutManager(this)
@@ -192,6 +193,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
                 ?: MangaColorFilterConfig()
         mAdapter.run {
             setMangaImageColorFilter(mangaColorFilter)
+            enableEpaper(AppConfig.enableEpaper, AppConfig.epaperValue)
         }
         setHorizontalScroll(AppConfig.enableMangaHorizontalScroll)
         binding.recyclerView.run {
@@ -571,6 +573,17 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
                 AppConfig.hideMangaTitle = item.isChecked
                 ReadManga.loadContent()
             }
+
+            R.id.menu_epaper_manga -> {
+                item.isChecked = !item.isChecked
+                AppConfig.enableEpaper = item.isChecked
+                mMenu?.findItem(R.id.menu_epaper_manga_setting)?.isVisible = item.isChecked
+                mAdapter.enableEpaper(item.isChecked, AppConfig.epaperValue)
+            }
+
+            R.id.menu_epaper_manga_setting -> {
+                showDialogFragment(MangaEpaperDialog())
+            }
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -646,7 +659,8 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
             getString(R.string.manga_auto_page_speed, AppConfig.mangaAutoPageSpeed)
         menu.findItem(R.id.menu_enable_horizontal_scroll).isChecked =
             AppConfig.enableMangaHorizontalScroll
-        menu.findItem(R.id.menu_hide_manga_title).isChecked = AppConfig.hideMangaTitle
+        menu.findItem(R.id.menu_epaper_manga).isChecked = AppConfig.enableEpaper
+        menu.findItem(R.id.menu_epaper_manga_setting).isVisible = AppConfig.enableEpaper
     }
 
     private fun setDisableMangaScale(disable: Boolean) {
@@ -784,5 +798,9 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
             }
         }
         return super.onKeyDown(keyCode, event)
+    }
+
+    override fun updateEepaper(value: Int) {
+        mAdapter.updateThreshold(value)
     }
 }

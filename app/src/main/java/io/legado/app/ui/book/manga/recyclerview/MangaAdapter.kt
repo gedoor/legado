@@ -22,6 +22,7 @@ import io.legado.app.databinding.ItemBookMangaEdgeBinding
 import io.legado.app.databinding.ItemBookMangaPageBinding
 import io.legado.app.help.glide.progress.ProgressManager
 import io.legado.app.model.BookCover
+import io.legado.app.model.EpaperTransformation
 import io.legado.app.model.ReadManga
 import io.legado.app.ui.book.manga.config.MangaColorFilterConfig
 import io.legado.app.ui.book.manga.entities.MangaPage
@@ -34,6 +35,8 @@ class MangaAdapter(private val context: Context) :
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private lateinit var mConfig: MangaColorFilterConfig
+    private var mEpaperTransformation: EpaperTransformation? = null
+    private var currentThreshold = 0
 
     companion object {
         private const val LOADING_VIEW = 0
@@ -91,7 +94,7 @@ class MangaAdapter(private val context: Context) :
                 if (item is MangaPage) {
                     val isLastImage = item.imageCount > 0 && item.index == item.imageCount - 1
                     loadImageWithRetry(
-                        item.mImageUrl, isHorizontal, isLastImage
+                        item.mImageUrl, isHorizontal, isLastImage, mEpaperTransformation
                     )
                 }
             }
@@ -100,7 +103,7 @@ class MangaAdapter(private val context: Context) :
         fun onBind(item: MangaPage) {
             setImageColorFilter()
             val isLastImage = item.imageCount > 0 && item.index == item.imageCount - 1
-            loadImageWithRetry(item.mImageUrl, isHorizontal, isLastImage)
+            loadImageWithRetry(item.mImageUrl, isHorizontal, isLastImage, mEpaperTransformation)
         }
 
         fun setImageColorFilter() {
@@ -242,6 +245,24 @@ class MangaAdapter(private val context: Context) :
     fun setMangaImageColorFilter(config: MangaColorFilterConfig) {
         mConfig = config
         notifyItemRangeChanged(0, itemCount)
+    }
+
+    fun enableEpaper(enable: Boolean, value: Int) {
+        if (enable) {
+            this.currentThreshold = value
+            mEpaperTransformation = EpaperTransformation(true, currentThreshold)
+        } else {
+            mEpaperTransformation = null
+        }
+        notifyItemRangeChanged(0, itemCount)
+    }
+
+    fun updateThreshold(newThreshold: Int) {
+        if (this.currentThreshold != newThreshold) {
+            this.currentThreshold = newThreshold
+            mEpaperTransformation = EpaperTransformation(true, currentThreshold)
+            notifyItemRangeChanged(0, itemCount)
+        }
     }
 
 }

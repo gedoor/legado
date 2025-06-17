@@ -86,7 +86,7 @@ object BookCover {
         path: String?,
         loadOnlyWifi: Boolean = false,
         sourceOrigin: String? = null,
-        onLoadFinish: (() -> Unit)? = null
+        onLoadFinish: (() -> Unit)? = null,
     ): RequestBuilder<Drawable> {
         if (AppConfig.useDefaultCover) {
             return ImageLoader.load(context, defaultDrawable)
@@ -104,7 +104,7 @@ object BookCover {
                     e: GlideException?,
                     model: Any?,
                     target: Target<Drawable?>,
-                    isFirstResource: Boolean
+                    isFirstResource: Boolean,
                 ): Boolean {
                     onLoadFinish.invoke()
                     return false
@@ -115,7 +115,7 @@ object BookCover {
                     model: Any,
                     target: Target<Drawable?>?,
                     dataSource: DataSource,
-                    isFirstResource: Boolean
+                    isFirstResource: Boolean,
                 ): Boolean {
                     onLoadFinish.invoke()
                     return false
@@ -130,11 +130,13 @@ object BookCover {
     /**
      * 加载漫画图片
      */
+    @SuppressLint("CheckResult")
     fun loadManga(
         context: Context,
         path: String?,
         loadOnlyWifi: Boolean = false,
         sourceOrigin: String? = null,
+        transformation: EpaperTransformation? = null,
     ): RequestBuilder<Drawable> {
         var options = RequestOptions().set(OkHttpModelLoader.loadOnlyWifiOption, loadOnlyWifi)
             .set(OkHttpModelLoader.mangaOption, true)
@@ -145,7 +147,12 @@ object BookCover {
             .apply(options)
             .override(context.resources.displayMetrics.widthPixels, SIZE_ORIGINAL)
             .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .skipMemoryCache(true)
+            .skipMemoryCache(true).let {
+                if (transformation != null) {
+                    it.transform(transformation)
+                }
+                it
+            }
     }
 
     fun preloadManga(

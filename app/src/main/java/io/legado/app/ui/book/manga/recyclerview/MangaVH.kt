@@ -22,6 +22,7 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import io.legado.app.help.glide.progress.ProgressManager
 import io.legado.app.model.BookCover
+import io.legado.app.model.EpaperTransformation
 import io.legado.app.model.ReadManga
 import io.legado.app.utils.printOnDebug
 
@@ -51,7 +52,7 @@ open class MangaVH<VB : ViewBinding>(val binding: VB, private val context: Conte
     }
 
     @SuppressLint("CheckResult")
-    fun loadImageWithRetry(imageUrl: String, isHorizontal: Boolean, isLastImage: Boolean) {
+    fun loadImageWithRetry(imageUrl: String, isHorizontal: Boolean, isLastImage: Boolean,transformation: EpaperTransformation?) {
         mFlProgress.isVisible = true
         mLoading.isVisible = true
         mRetry?.isGone = true
@@ -67,6 +68,7 @@ open class MangaVH<VB : ViewBinding>(val binding: VB, private val context: Conte
                 context,
                 imageUrl,
                 sourceOrigin = ReadManga.book?.origin,
+                transformation = transformation
             ).addListener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(
                     e: GlideException?,

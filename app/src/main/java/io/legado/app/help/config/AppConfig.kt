@@ -668,5 +668,18 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
         set(value) {
             appCtx.putPrefBoolean(PreferKey.hideMangaTitle, value)
         }
+
+    //开启墨水屏模式
+    var enableEpaper
+        get() = appCtx.getPrefBoolean(PreferKey.enableEpaper, false)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.enableEpaper, value)
+        }
+
+    var epaperValue
+        get() = appCtx.getPrefInt(PreferKey.epaperValue, 150)
+        set(value) {
+            appCtx.putPrefInt(PreferKey.epaperValue, value)
+        }
 }
 
