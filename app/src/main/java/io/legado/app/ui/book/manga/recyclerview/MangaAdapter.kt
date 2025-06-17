@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import androidx.annotation.IntRange
+import androidx.core.util.size
 import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
@@ -30,7 +31,6 @@ import io.legado.app.ui.book.manga.entities.GrayscaleTransformation
 import io.legado.app.ui.book.manga.entities.MangaPage
 import io.legado.app.ui.book.manga.entities.ReaderLoading
 import io.legado.app.utils.dpToPx
-import androidx.core.util.size
 
 
 class MangaAdapter(private val context: Context) :
@@ -260,8 +260,8 @@ class MangaAdapter(private val context: Context) :
         notifyItemRangeChanged(0, itemCount)
     }
 
-    fun updateThreshold(mangaEInkThreshold : Int) {
-        if (currentMangaEInkThreshold != mangaEInkThreshold ) {
+    fun updateThreshold(mangaEInkThreshold: Int) {
+        if (currentMangaEInkThreshold != mangaEInkThreshold) {
             currentMangaEInkThreshold = mangaEInkThreshold
             mTransformation = EpaperTransformation(currentMangaEInkThreshold)
             notifyItemRangeChanged(0, itemCount)
@@ -273,7 +273,7 @@ class MangaAdapter(private val context: Context) :
         if (enable) {
             mTransformation = GrayscaleTransformation()
         } else {
-            mTransformation == null
+            mTransformation = null
         }
         notifyItemRangeChanged(0, itemCount)
     }
