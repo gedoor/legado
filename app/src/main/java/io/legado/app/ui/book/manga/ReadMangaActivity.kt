@@ -602,11 +602,9 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
             R.id.menu_gray_manga -> {
                 item.isChecked = !item.isChecked
                 AppConfig.enableMangaGray = item.isChecked
-                if (item.isChecked) {
-                    mMenu?.findItem(R.id.menu_epaper_manga)?.isChecked = false
-                    AppConfig.enableEpaper = false
-                    mMenu?.findItem(R.id.menu_epaper_manga_setting)?.isVisible = false
-                }
+                mMenu?.findItem(R.id.menu_epaper_manga)?.isChecked = false
+                AppConfig.enableEpaper = false
+                mMenu?.findItem(R.id.menu_epaper_manga_setting)?.isVisible = false
                 mAdapter.enableGray(item.isChecked)
             }
         }
