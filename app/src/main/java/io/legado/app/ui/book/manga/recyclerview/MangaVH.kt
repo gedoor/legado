@@ -2,6 +2,7 @@ package io.legado.app.ui.book.manga.recyclerview
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.view.Gravity
 import android.view.ViewGroup
@@ -17,12 +18,12 @@ import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.Transformation
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import io.legado.app.help.glide.progress.ProgressManager
 import io.legado.app.model.BookCover
-import io.legado.app.model.EpaperTransformation
 import io.legado.app.model.ReadManga
 import io.legado.app.utils.printOnDebug
 
@@ -52,7 +53,7 @@ open class MangaVH<VB : ViewBinding>(val binding: VB, private val context: Conte
     }
 
     @SuppressLint("CheckResult")
-    fun loadImageWithRetry(imageUrl: String, isHorizontal: Boolean, isLastImage: Boolean,transformation: EpaperTransformation?) {
+    fun loadImageWithRetry(imageUrl: String, isHorizontal: Boolean, isLastImage: Boolean,transformation: Transformation<Bitmap>?) {
         mFlProgress.isVisible = true
         mLoading.isVisible = true
         mRetry?.isGone = true

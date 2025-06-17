@@ -1,8 +1,8 @@
-package io.legado.app.model
-
+package io.legado.app.ui.book.manga.entities
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
 import android.graphics.Paint
@@ -51,9 +51,9 @@ class EpaperTransformation(
 
             for (i in pixels.indices) {
                 val pixel = pixels[i]
-                val gray = android.graphics.Color.red(pixel)
+                val gray = Color.red(pixel)
                 pixels[i] =
-                    if (gray < threshold) android.graphics.Color.BLACK else android.graphics.Color.WHITE
+                    if (gray < threshold) Color.BLACK else Color.WHITE
             }
             resultBitmap.setPixels(pixels, 0, outWidth, 0, 0, outWidth, outHeight)
         }

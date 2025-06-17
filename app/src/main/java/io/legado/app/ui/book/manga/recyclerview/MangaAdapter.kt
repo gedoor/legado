@@ -22,7 +22,7 @@ import io.legado.app.databinding.ItemBookMangaEdgeBinding
 import io.legado.app.databinding.ItemBookMangaPageBinding
 import io.legado.app.help.glide.progress.ProgressManager
 import io.legado.app.model.BookCover
-import io.legado.app.model.EpaperTransformation
+import io.legado.app.ui.book.manga.entities.EpaperTransformation
 import io.legado.app.model.ReadManga
 import io.legado.app.ui.book.manga.config.MangaColorFilterConfig
 import io.legado.app.ui.book.manga.entities.MangaPage
