@@ -214,9 +214,9 @@ class TextChapterLayout(
                     emptyContent = contents.isEmpty(),
                     isVolumeTitle = bookChapter.isVolume
                 )
+                pendingTextPage.lines.last().isParagraphEnd = true
+                stringBuilder.append("\n")
             }
-            pendingTextPage.lines.last().isParagraphEnd = true
-            stringBuilder.append("\n")
             durY += titleBottomSpacing
 
             // 如果是单图模式且当前页有内容，强制分页

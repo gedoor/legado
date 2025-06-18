@@ -3,6 +3,7 @@ package io.legado.app.help.book
 import android.graphics.BitmapFactory
 import android.os.ParcelFileDescriptor
 import androidx.documentfile.provider.DocumentFile
+import com.script.rhino.runScriptWithContext
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern
 import io.legado.app.constant.EventBus
@@ -28,7 +29,6 @@ import io.legado.app.utils.getFile
 import io.legado.app.utils.isContentScheme
 import io.legado.app.utils.onEachParallel
 import io.legado.app.utils.postEvent
-import com.script.rhino.runScriptWithContext
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.ensureActive
@@ -404,7 +404,11 @@ object BookHelp {
             bookChapter.getFileName()
         )
         if (file.exists()) {
-            return file.readText()
+            val string = file.readText()
+            if (string.isEmpty()) {
+                return null
+            }
+            return string
         }
         if (book.isLocal) {
             val string = LocalBook.getContent(book, bookChapter)
