@@ -53,7 +53,12 @@ open class MangaVH<VB : ViewBinding>(val binding: VB, private val context: Conte
     }
 
     @SuppressLint("CheckResult")
-    fun loadImageWithRetry(imageUrl: String, isHorizontal: Boolean, isLastImage: Boolean,transformation: Transformation<Bitmap>?) {
+    fun loadImageWithRetry(
+        imageUrl: String,
+        isHorizontal: Boolean,
+        isLastImage: Boolean,
+        transformation: Transformation<Bitmap>?
+    ) {
         mFlProgress.isVisible = true
         mLoading.isVisible = true
         mRetry?.isGone = true
