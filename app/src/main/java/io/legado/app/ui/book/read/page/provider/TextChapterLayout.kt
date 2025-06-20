@@ -20,7 +20,6 @@ import io.legado.app.ui.book.read.page.entities.TextChapter
 import io.legado.app.ui.book.read.page.entities.TextLine
 import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.ui.book.read.page.entities.column.ImageColumn
-import io.legado.app.ui.book.read.page.entities.column.ReviewColumn
 import io.legado.app.ui.book.read.page.entities.column.TextColumn
 import io.legado.app.utils.dpToPx
 import io.legado.app.utils.fastSum
@@ -708,13 +707,13 @@ class TextChapterLayout(
                 )
             }
 
-            isLineEnd && char == ChapterProvider.reviewChar -> {
-                ReviewColumn(
-                    start = absStartX + xStart,
-                    end = absStartX + xEnd,
-                    count = 100
-                )
-            }
+//            isLineEnd && char == ChapterProvider.reviewChar -> {
+//                ReviewColumn(
+//                    start = absStartX + xStart,
+//                    end = absStartX + xEnd,
+//                    count = 100
+//                )
+//            }
 
             else -> {
                 TextColumn(
