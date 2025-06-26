@@ -1,17 +1,32 @@
-name: Release Build with Underline Feature
+name: Release Build
 
 on:
   workflow_dispatch:
 
 jobs:
-  build:
+  prepare:
     runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master'
+    outputs:
+      version: ${{ steps.set-ver.outputs.version }}
+      sign: ${{ steps.check.outputs.sign }}
     steps:
-      - name: Set Version
-        id: set-ver
+      - id: set-ver
         run: |
           echo "version=$(date -d "8 hour" -u +3.%y.%m%d%H)" >> $GITHUB_OUTPUT
+      - id: check
+        run: |
+          if [ ! -z "${{ secrets.RELEASE_KEY_STORE }}" ]; then
+            echo "sign=yes" >> $GITHUB_OUTPUT
+          fi
 
+  build:
+    needs: prepare
+    if: ${{ needs.prepare.outputs.sign }}
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.prepare.outputs.version }}
+    steps:
       - uses: actions/checkout@v4
 
       - name: Set up JDK 17
@@ -20,42 +35,52 @@ jobs:
           distribution: 'temurin'
           java-version: 17
 
+      - name: Release Apk Sign
+        run: |
+          echo -e "\n" >> gradle.properties
+          echo RELEASE_KEY_ALIAS='${{ secrets.RELEASE_KEY_ALIAS }}' >> gradle.properties
+          echo RELEASE_KEY_PASSWORD='${{ secrets.RELEASE_KEY_PASSWORD }}' >> gradle.properties
+          echo RELEASE_STORE_PASSWORD='${{ secrets.RELEASE_STORE_PASSWORD }}' >> gradle.properties
+          echo RELEASE_STORE_FILE='./key.jks' >> gradle.properties
+          echo ${{ secrets.RELEASE_KEY_STORE }} | base64 --decode > $GITHUB_WORKSPACE/app/key.jks
+
+      - name: Unify Version Name
+        run: |
+          echo "统一版本号"
+          sed "/def version/c def version = \"${{ env.VERSION }}\"" $GITHUB_WORKSPACE/app/build.gradle  -i
+
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
 
       - name: Build With Gradle
         run: |
+          echo "开始进行app构建"
           chmod +x gradlew
           ./gradlew assembleAppRelease --build-cache --parallel --daemon --warning-mode all
 
-      - name: Sign APK
-        id: sign_apk
-        uses: r0adkll/sign-android-release@v1
-        with:
-          releaseDirectory: app/build/outputs/apk/app/release
-          signingKeyBase64: ${{ secrets.RELEASE_KEY_STORE }}
-          alias: ${{ secrets.RELEASE_KEY_ALIAS }}
-          keyStorePassword: ${{ secrets.RELEASE_STORE_PASSWORD }}
-          keyPassword: ${{ secrets.RELEASE_KEY_PASSWORD }}
-
-      - name: Create Release Body
-        id: create_body
+      - name: Organize the Files
         run: |
-          echo "release_body=### 功能更新
-          - 为墨水屏(E-Ink)模式，增加了下划线高亮功能。
-          - 在墨水屏模式下，朗读和搜索结果高亮将自动替换为更清晰的下划线样式，以提升阅读体验。
+          mkdir -p ${{ github.workspace }}/apk/
+          cp -rf ${{ github.workspace }}/app/build/outputs/apk/app/release/*.apk ${{ github.workspace }}/apk/
           
-          *由 ${{ github.actor }} 定制编译*
-          " >> $GITHUB_OUTPUT
+      - name: Upload App To Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: legado_app
+          path: ${{ github.workspace }}/apk/*.apk
 
-      - name: Release to GitHub
+      - name: Release to GitHub Releases
         uses: softprops/action-gh-release@v2
         with:
-          name: Legado E-Ink Enhanced v${{ steps.set-ver.outputs.version }}
-          tag_name: ${{ steps.set-ver.outputs.version }}
-          body: ${{ steps.create_body.outputs.release_body }}
+          name: Legado E-Ink Enhanced v${{ env.VERSION }}
+          tag_name: ${{ env.VERSION }}
+          body: |
+            ## E-Ink Mode Enhancement
+            This release automatically enables underline-style highlights for both TTS reading and search results when in E-Ink mode, providing a better experience on e-paper displays.
+            
+            (此版本为墨水屏模式自动启用下划线高亮，优化朗读和搜索结果的视觉体验。)
           draft: false
           prerelease: false
-          files: ${{ steps.sign_apk.outputs.signedReleaseFile }}
+          files: ${{ github.workspace }}/apk/*.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
