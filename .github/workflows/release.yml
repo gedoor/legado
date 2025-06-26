@@ -1,4 +1,4 @@
-name: Build Signed Release APK
+name: Release Build with Underline Feature
 
 on:
   workflow_dispatch:
@@ -7,6 +7,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Set Version
+        id: set-ver
+        run: |
+          echo "version=$(date -d "8 hour" -u +3.%y.%m%d%H)" >> $GITHUB_OUTPUT
+
       - uses: actions/checkout@v4
 
       - name: Set up JDK 17
@@ -18,27 +23,39 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Configure Keystore for Signing
-        run: |
-          echo -e "\n" >> gradle.properties
-          echo RELEASE_KEY_ALIAS='${{ secrets.RELEASE_KEY_ALIAS }}' >> gradle.properties
-          echo RELEASE_KEY_PASSWORD='${{ secrets.RELEASE_KEY_PASSWORD }}' >> gradle.properties
-          echo RELEASE_STORE_PASSWORD='${{ secrets.RELEASE_STORE_PASSWORD }}' >> gradle.properties
-          echo RELEASE_STORE_FILE='./key.jks' >> gradle.properties
-          echo ${{ secrets.RELEASE_KEY_STORE }} | base64 --decode > $GITHUB_WORKSPACE/app/key.jks
-
       - name: Build With Gradle
         run: |
           chmod +x gradlew
           ./gradlew assembleAppRelease --build-cache --parallel --daemon --warning-mode all
-          
-      - name: Organize the APK file
-        run: |
-          mkdir -p ${{ github.workspace }}/apk/
-          cp -f app/build/outputs/apk/app/release/*.apk ${{ github.workspace }}/apk/
-          
-      - name: Upload Signed APK to Artifact
-        uses: actions/upload-artifact@v4
+
+      - name: Sign APK
+        id: sign_apk
+        uses: r0adkll/sign-android-release@v1
         with:
-          name: legado-release-apk
-          path: ${{ github.workspace }}/apk/*.apk
+          releaseDirectory: app/build/outputs/apk/app/release
+          signingKeyBase64: ${{ secrets.RELEASE_KEY_STORE }}
+          alias: ${{ secrets.RELEASE_KEY_ALIAS }}
+          keyStorePassword: ${{ secrets.RELEASE_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.RELEASE_KEY_PASSWORD }}
+
+      - name: Create Release Body
+        id: create_body
+        run: |
+          echo "release_body=### 功能更新
+          - 为墨水屏(E-Ink)模式，增加了下划线高亮功能。
+          - 在墨水屏模式下，朗读和搜索结果高亮将自动替换为更清晰的下划线样式，以提升阅读体验。
+          
+          *由 ${{ github.actor }} 定制编译*
+          " >> $GITHUB_OUTPUT
+
+      - name: Release to GitHub
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Legado E-Ink Enhanced v${{ steps.set-ver.outputs.version }}
+          tag_name: ${{ steps.set-ver.outputs.version }}
+          body: ${{ steps.create_body.outputs.release_body }}
+          draft: false
+          prerelease: false
+          files: ${{ steps.sign_apk.outputs.signedReleaseFile }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
