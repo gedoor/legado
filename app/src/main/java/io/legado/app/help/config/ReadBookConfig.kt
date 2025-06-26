@@ -496,7 +496,7 @@ object ReadBookConfig {
                 }
             }
             config.bgStrEInk = bgPath
-        } else {
+        } else if (config.bgTypeEInk == 0) {
             config.bgStrEInk.toColorInt()
         }
         config.curTextColor()
