@@ -56,7 +56,7 @@ class OnLineImportViewModel(app: Application) : BaseAssociationViewModel(app) {
 
     fun importReadConfig(bytes: ByteArray, finally: (title: String, msg: String) -> Unit) {
         execute {
-            val config = ReadBookConfig.import(bytes).getOrThrow()
+            val config = ReadBookConfig.import(bytes)
             ReadBookConfig.configList.forEachIndexed { index, c ->
                 if (c.name == config.name) {
                     ReadBookConfig.configList[index] = config

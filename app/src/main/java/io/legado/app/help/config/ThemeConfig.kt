@@ -6,7 +6,9 @@ import android.graphics.Color
 import android.util.DisplayMetrics
 import androidx.annotation.Keep
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.graphics.toColorInt
 import io.legado.app.R
+import io.legado.app.constant.AppLog
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PreferKey
 import io.legado.app.constant.Theme
@@ -115,13 +117,18 @@ object ThemeConfig {
     fun addConfig(json: String): Boolean {
         GSON.fromJsonObject<Config>(json.trim { it < ' ' }).getOrNull()
             ?.let {
-                addConfig(it)
-                return true
+                if (validateConfig(it)) {
+                    addConfig(it)
+                    return true
+                }
             }
         return false
     }
 
     fun addConfig(newConfig: Config) {
+        if (!validateConfig(newConfig)) {
+            return
+        }
         configList.forEachIndexed { index, config ->
             if (newConfig.themeName == config.themeName) {
                 configList[index] = newConfig
@@ -130,6 +137,18 @@ object ThemeConfig {
         }
         configList.add(newConfig)
         save()
+    }
+
+    private fun validateConfig(config: Config): Boolean {
+        try {
+            config.primaryColor.toColorInt()
+            config.accentColor.toColorInt()
+            config.backgroundColor.toColorInt()
+            config.bottomBackground.toColorInt()
+            return true
+        } catch (_: Exception) {
+            return false
+        }
     }
 
     private fun getConfigs(): List<Config>? {
@@ -146,23 +165,27 @@ object ThemeConfig {
     }
 
     fun applyConfig(context: Context, config: Config) {
-        val primary = Color.parseColor(config.primaryColor)
-        val accent = Color.parseColor(config.accentColor)
-        val background = Color.parseColor(config.backgroundColor)
-        val bBackground = Color.parseColor(config.bottomBackground)
-        if (config.isNightTheme) {
-            context.putPrefInt(PreferKey.cNPrimary, primary)
-            context.putPrefInt(PreferKey.cNAccent, accent)
-            context.putPrefInt(PreferKey.cNBackground, background)
-            context.putPrefInt(PreferKey.cNBBackground, bBackground)
-        } else {
-            context.putPrefInt(PreferKey.cPrimary, primary)
-            context.putPrefInt(PreferKey.cAccent, accent)
-            context.putPrefInt(PreferKey.cBackground, background)
-            context.putPrefInt(PreferKey.cBBackground, bBackground)
+        try {
+            val primary = Color.parseColor(config.primaryColor)
+            val accent = Color.parseColor(config.accentColor)
+            val background = Color.parseColor(config.backgroundColor)
+            val bBackground = Color.parseColor(config.bottomBackground)
+            if (config.isNightTheme) {
+                context.putPrefInt(PreferKey.cNPrimary, primary)
+                context.putPrefInt(PreferKey.cNAccent, accent)
+                context.putPrefInt(PreferKey.cNBackground, background)
+                context.putPrefInt(PreferKey.cNBBackground, bBackground)
+            } else {
+                context.putPrefInt(PreferKey.cPrimary, primary)
+                context.putPrefInt(PreferKey.cAccent, accent)
+                context.putPrefInt(PreferKey.cBackground, background)
+                context.putPrefInt(PreferKey.cBBackground, bBackground)
+            }
+            AppConfig.isNightTheme = config.isNightTheme
+            applyDayNight(context)
+        } catch (e: Exception) {
+            AppLog.put("设置主题出错\n$e", e, true)
         }
-        AppConfig.isNightTheme = config.isNightTheme
-        applyDayNight(context)
     }
 
     fun saveDayTheme(context: Context, name: String) {

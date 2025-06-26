@@ -383,7 +383,7 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
 
     private fun importConfig(byteArray: ByteArray) {
         execute {
-            ReadBookConfig.import(byteArray).getOrThrow()
+            ReadBookConfig.import(byteArray)
         }.onSuccess {
             ReadBookConfig.durConfig = it
             postEvent(EventBus.UP_CONFIG, arrayListOf(1, 2, 5))
