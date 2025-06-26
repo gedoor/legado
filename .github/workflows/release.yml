@@ -18,15 +18,19 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Build Signed Release APK with Gradle
+      - name: Configure Keystore for Signing
+        run: |
+          echo -e "\n" >> gradle.properties
+          echo RELEASE_KEY_ALIAS='${{ secrets.RELEASE_KEY_ALIAS }}' >> gradle.properties
+          echo RELEASE_KEY_PASSWORD='${{ secrets.RELEASE_KEY_PASSWORD }}' >> gradle.properties
+          echo RELEASE_STORE_PASSWORD='${{ secrets.RELEASE_STORE_PASSWORD }}' >> gradle.properties
+          echo RELEASE_STORE_FILE='./key.jks' >> gradle.properties
+          echo ${{ secrets.RELEASE_KEY_STORE }} | base64 --decode > $GITHUB_WORKSPACE/app/key.jks
+
+      - name: Build With Gradle
         run: |
           chmod +x gradlew
           ./gradlew assembleAppRelease --build-cache --parallel --daemon --warning-mode all
-        env:
-          SIGNING_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
-          SIGNING_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
-          SIGNING_STORE_PASSWORD: ${{ secrets.RELEASE_STORE_PASSWORD }}
-          SIGNING_KEY_BASE64: ${{ secrets.RELEASE_KEY_STORE }}
           
       - name: Organize the APK file
         run: |
