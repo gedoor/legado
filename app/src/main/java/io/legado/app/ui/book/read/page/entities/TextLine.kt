@@ -166,7 +166,8 @@ data class TextLine(
             val underlinePaint = PaintPool.obtain()
             underlinePaint.set(ChapterProvider.contentPaint)
             underlinePaint.strokeWidth = 1.dpToPx().toFloat()
-            canvas.drawLine(lineStart + indentWidth, height, lineEnd, height, underlinePaint)
+            val lineY = height - 1.dpToPx()
+            canvas.drawLine(lineStart + indentWidth, lineY, lineEnd, lineY, underlinePaint)
             PaintPool.recycle(underlinePaint)
         }
         
