@@ -160,6 +160,17 @@ data class TextLine(
                 columns[i].draw(view, canvas)
             }
         }
+
+        // 墨水屏模式下的朗读和搜索下划线
+        if (AppConfig.isEInkMode && (isReadAloud || searchResultColumnCount > 0)) {
+            val underlinePaint = PaintPool.obtain()
+            underlinePaint.set(ChapterProvider.contentPaint)
+            underlinePaint.strokeWidth = 1.dpToPx().toFloat()
+            val lineY = height - 1.dpToPx()
+            canvas.drawLine(lineStart + indentWidth, lineY, lineEnd, lineY, underlinePaint)
+            PaintPool.recycle(underlinePaint)
+        }
+        
         if (ReadBookConfig.underline && !isImage && ReadBook.book?.isImage != true) {
             drawUnderline(canvas)
         }
