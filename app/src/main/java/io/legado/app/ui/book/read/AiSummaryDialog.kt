@@ -22,6 +22,7 @@ import okhttp3.Request
 import okio.Buffer
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
+import java.util.concurrent.TimeUnit
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -68,7 +69,11 @@ class AiSummaryDialog : DialogFragment() {
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val client = OkHttpClient()
+                val client = OkHttpClient.Builder()
+                    .connectTimeout(30, TimeUnit.SECONDS)
+                    .readTimeout(30, TimeUnit.SECONDS)
+                    .writeTimeout(30, TimeUnit.SECONDS)
+                    .build()
                 val mediaType = "application/json; charset=utf-g".toMediaType()
                 val messages = mutableListOf<Map<String, String>>()
                 messages.add(mapOf("role" to "system", "content" to systemPrompt))

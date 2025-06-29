@@ -512,7 +512,7 @@ class ReadBookActivity : BaseReadBookActivity(),
 
             R.id.menu_download -> showDownloadDialog()
             R.id.menu_add_bookmark -> addBookmark()
-            R.id.menu_simulated_reading -> { /* Removed SimulatedReadingDialog call */ }
+            R.id.menu_simulated_reading -> showSimulatedReading()
             R.id.menu_edit_content -> showDialogFragment(ContentEditDialog())
 
             R.id.menu_ai_summary -> aiSummary()

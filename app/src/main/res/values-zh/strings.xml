@@ -982,6 +982,8 @@
     <string name="ai_summary_save_format_desc">AI摘要结果的保存格式</string>
     <string name="ai_summary_save_mode">保存模式</string>
     <string name="ai_summary_save_mode_desc">AI摘要结果的保存模式</string>
+    <string name="ai_summary_help">AI摘要帮助</string>
+    <string name="ai_summary_help_desc">查看AI摘要功能帮助文档</string>
     <string name="chapter_change_source">单章换源</string>
     <string name="book_change_source">整书换源</string>
     <string name="sort_by_time">时间排序</string>
