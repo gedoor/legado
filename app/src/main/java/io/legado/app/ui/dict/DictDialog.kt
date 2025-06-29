@@ -73,8 +73,19 @@ class DictDialog() : BaseDialogFragment(R.layout.dialog_dict) {
                     tag = it
                 })
             }
+            
+            setupTabLayoutMode(it.size)
         }
-
     }
 
+    //根据已启用词典数动态选取布局
+    private fun setupTabLayoutMode(dictCount: Int) {
+        if (dictCount <= 4) {
+            binding.tabLayout.tabMode = TabLayout.MODE_FIXED
+            binding.tabLayout.tabGravity = TabLayout.GRAVITY_FILL
+        } else {
+            binding.tabLayout.tabMode = TabLayout.MODE_SCROLLABLE
+            binding.tabLayout.tabGravity = TabLayout.GRAVITY_CENTER
+        }
+    }
 }
