@@ -16,3 +16,8 @@ package-lock.json
 .idea/
 # Kotlin 2.0
 .kotlin/
+
+# Log files
+*.log
+projectdocument.txt
+commit_message.txt

@@ -694,5 +694,47 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             appCtx.putPrefBoolean(PreferKey.enableMangaGray, value)
         }
 
+    var aiSummaryApiKey: String?
+        get() = appCtx.getPrefString(PreferKey.aiSummaryApiKey)
+        set(value) {
+            appCtx.putPrefString(PreferKey.aiSummaryApiKey, value)
+        }
+
+    var aiSummaryApiUrl: String?
+        get() = appCtx.getPrefString(PreferKey.aiSummaryApiUrl)
+        set(value) {
+            appCtx.putPrefString(PreferKey.aiSummaryApiUrl, value)
+        }
+
+    var aiSummaryModelId: String?
+        get() = appCtx.getPrefString(PreferKey.aiSummaryModelId, "gpt-3.5-turbo")
+        set(value) {
+            appCtx.putPrefString(PreferKey.aiSummaryModelId, value)
+        }
+
+    var aiSummarySystemPrompt: String?
+        get() = appCtx.getPrefString(PreferKey.aiSummarySystemPrompt, "请总结以下内容：")
+        set(value) {
+            appCtx.putPrefString(PreferKey.aiSummarySystemPrompt, value)
+        }
+
+    var aiSummaryCachePath: String?
+        get() = appCtx.getPrefString(PreferKey.aiSummaryCachePath)
+        set(value) {
+            appCtx.putPrefString(PreferKey.aiSummaryCachePath, value)
+        }
+
+    var aiSummarySaveFormat: String?
+        get() = appCtx.getPrefString(PreferKey.aiSummarySaveFormat, "txt")
+        set(value) {
+            appCtx.putPrefString(PreferKey.aiSummarySaveFormat, value)
+        }
+
+    var aiSummarySaveMode: String?
+        get() = appCtx.getPrefString(PreferKey.aiSummarySaveMode, "overwrite")
+        set(value) {
+            appCtx.putPrefString(PreferKey.aiSummarySaveMode, value)
+        }
+
 }
 

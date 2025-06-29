@@ -307,6 +307,11 @@
             android:name=".ui.file.FileManageActivity"
             android:configChanges="orientation|screenSize"
             android:hardwareAccelerated="true" />
+        <!-- AI 摘要设置 -->
+        <activity
+            android:name=".ui.config.AiSummaryConfigActivity"
+            android:configChanges="orientation|screenSize"
+            android:hardwareAccelerated="true" />
         <!-- 选择文件 -->
         <activity
             android:name=".ui.file.HandleFileActivity"
