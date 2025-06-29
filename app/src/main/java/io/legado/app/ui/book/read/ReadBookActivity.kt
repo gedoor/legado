@@ -138,6 +138,8 @@ import kotlinx.coroutines.withContext
 /**
  * 阅读界面
  */
+
+
 class ReadBookActivity : BaseReadBookActivity(),
     View.OnTouchListener,
     ReadView.CallBack,
@@ -510,8 +512,11 @@ class ReadBookActivity : BaseReadBookActivity(),
 
             R.id.menu_download -> showDownloadDialog()
             R.id.menu_add_bookmark -> addBookmark()
-            R.id.menu_simulated_reading -> showSimulatedReading()
+            R.id.menu_simulated_reading -> { /* Removed SimulatedReadingDialog call */ }
             R.id.menu_edit_content -> showDialogFragment(ContentEditDialog())
+
+            R.id.menu_ai_summary -> aiSummary()
+
             R.id.menu_update_toc -> ReadBook.book?.let {
                 if (it.isEpub) {
                     BookHelp.clearCache(it)
@@ -622,6 +627,21 @@ class ReadBookActivity : BaseReadBookActivity(),
             R.id.menu_help -> showHelp()
         }
         return super.onCompatOptionsItemSelected(item)
+    }
+
+    
+
+    private fun aiSummary() {
+        val content = ReadBook.curTextChapter?.getContent()
+        if (content.isNullOrEmpty()) {
+            toastOnUi("本章无内容")
+            return
+        }
+        val dialog = AiSummaryDialog()
+        val bundle = Bundle()
+        bundle.putString("content", content)
+        dialog.arguments = bundle
+        dialog.show(supportFragmentManager, "aiSummaryDialog")
     }
 
     private fun refreshContentAll(book: Book) {

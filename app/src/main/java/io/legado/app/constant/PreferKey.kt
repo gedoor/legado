@@ -184,4 +184,11 @@ object PreferKey {
     const val showReadTitleAddition = "showReadTitleAddition"
     const val readBarStyleFollowPage = "readBarStyleFollowPage"
     const val contentSelectSpeakMod = "contentReadAloudMod"
+    const val aiSummaryApiKey = "aiSummaryApiKey"
+    const val aiSummaryApiUrl = "aiSummaryApiUrl"
+    const val aiSummaryModelId = "aiSummaryModelId"
+    const val aiSummarySystemPrompt = "aiSummarySystemPrompt"
+    const val aiSummaryCachePath = "aiSummaryCachePath"
+    const val aiSummarySaveFormat = "aiSummarySaveFormat"
+    const val aiSummarySaveMode = "aiSummarySaveMode"
 }

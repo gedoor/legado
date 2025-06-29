@@ -967,6 +967,30 @@
     <string name="menu_refresh_after">Refresh the chapter after</string>
     <string name="menu_refresh_all">Refresh all chapters</string>
     <string name="edit_content">Edit Content</string>
+    <string name="ai_summary">AI Summary</string>
+    <string name="ai_summary_config">AI Summary Settings</string>
+    <string name="ai_summary_api_key">API Key</string>
+    <string name="ai_summary_api_key_desc">Your AI Summary API Key</string>
+    <string name="ai_summary_api_url">API URL</string>
+    <string name="ai_summary_api_url_desc">Your AI Summary API URL</string>
+    <string name="ai_summary_in_progress">AI Summary in progress...</string>
+    <string name="ai_summary_success">AI Summary successful</string>
+    <string name="ai_summary_error">AI Summary error</string>
+    <string name="ai_summary_model_id">Model ID</string>
+    <string name="ai_summary_model_id_desc">AI Summary API Model ID</string>
+    <string name="ai_summary_system_prompt">System Prompt</string>
+    <string name="ai_summary_save_format_txt">TXT</string>
+    <string name="ai_summary_save_format_json">JSON</string>
+    <string name="ai_summary_save_mode_overwrite">Overwrite</string>
+    <string name="ai_summary_save_mode_append">Append</string>
+    <string name="ai_summary_save_mode_new_file">New File</string>
+    <string name="ai_summary_system_prompt_desc">System prompt for AI summary API</string>
+    <string name="ai_summary_cache_path">Cache Path</string>
+    <string name="ai_summary_cache_path_desc">Path to save AI summary cache</string>
+    <string name="ai_summary_save_format">Save Format</string>
+    <string name="ai_summary_save_format_desc">Format to save AI summary</string>
+    <string name="ai_summary_save_mode">Save Mode</string>
+    <string name="ai_summary_save_mode_desc">Mode to save AI summary</string>
     <string name="chapter_change_source">Single chapter source switching</string>
     <string name="book_change_source">Change the source of the whole book</string>
     <string name="sort_by_time">Sort by time</string>
@@ -1227,4 +1251,6 @@
     <string name="manga_epaper_value">阈值</string>
     <string name="disable_horizontal_animation">禁用水平滚动动画</string>
     <string name="enable_manga_gray">开启图片灰色</string>
+    <string name="summary_save_success">AI摘要保存成功</string>
+    <string name="summary_save_failed">AI摘要保存失败：%s</string>
 </resources>

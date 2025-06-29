@@ -185,4 +185,26 @@
 		<item>Customize</item>
 	</string-array>
 
+    <string-array name="ai_summary_save_format_entries">
+        <item>@string/ai_summary_save_format_txt</item>
+        <item>@string/ai_summary_save_format_json</item>
+    </string-array>
+
+    <string-array name="ai_summary_save_format_values">
+        <item>txt</item>
+        <item>json</item>
+    </string-array>
+
+    <string-array name="ai_summary_save_mode_entries">
+        <item>@string/ai_summary_save_mode_overwrite</item>
+        <item>@string/ai_summary_save_mode_append</item>
+        <item>@string/ai_summary_save_mode_new_file</item>
+    </string-array>
+
+    <string-array name="ai_summary_save_mode_values">
+        <item>overwrite</item>
+        <item>append</item>
+        <item>new_file</item>
+    </string-array>
+
 </resources>

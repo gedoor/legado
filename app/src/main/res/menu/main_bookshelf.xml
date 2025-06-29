@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:ignore="AlwaysShowAction">
 
-    <item
+    i<tem
         android:id="@+id/menu_search"
         android:icon="@drawable/ic_search"
         android:title="@string/search"

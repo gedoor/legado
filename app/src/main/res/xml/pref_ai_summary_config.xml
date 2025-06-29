@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:key="aiSummaryApiKey"
+        android:title="@string/ai_summary_api_key"
+        android:summary="@string/ai_summary_api_key_desc"
+        android:persistent="true" />
+
+    <EditTextPreference
+        android:key="aiSummaryApiUrl"
+        android:title="@string/ai_summary_api_url"
+        android:summary="@string/ai_summary_api_url_desc"
+        android:persistent="true" />
+
+    <EditTextPreference
+        android:key="aiSummaryModelId"
+        android:title="@string/ai_summary_model_id"
+        android:summary="@string/ai_summary_model_id_desc"
+        android:persistent="true"
+        android:defaultValue="gpt-3.5-turbo" />
+
+    <EditTextPreference
+        android:key="aiSummarySystemPrompt"
+        android:title="@string/ai_summary_system_prompt"
+        android:summary="@string/ai_summary_system_prompt_desc"
+        android:persistent="true"
+        android:defaultValue="请总结以下内容：" />
+
+    <io.legado.app.lib.prefs.PathPreference
+        android:key="aiSummaryCachePath"
+        android:title="@string/ai_summary_cache_path"
+        android:summary="@string/ai_summary_cache_path_desc" />
+
+    <ListPreference
+        android:key="aiSummarySaveFormat"
+        android:title="@string/ai_summary_save_format"
+        android:summary="@string/ai_summary_save_format_desc"
+        android:defaultValue="txt"
+        android:entries="@array/ai_summary_save_format_entries"
+        android:entryValues="@array/ai_summary_save_format_values" />
+
+    <ListPreference
+        android:key="aiSummarySaveMode"
+        android:title="@string/ai_summary_save_mode"
+        android:summary="@string/ai_summary_save_mode_desc"
+        android:defaultValue="overwrite"
+        android:entries="@array/ai_summary_save_mode_entries"
+        android:entryValues="@array/ai_summary_save_mode_values" />
+
+</PreferenceScreen>

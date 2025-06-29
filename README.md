@@ -8,7 +8,7 @@
 <div align="center">
 <img width="125" height="125" src="https://github.com/gedoor/legado/raw/master/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" alt="legado"/>  
   
-Legado / 开源阅读
+Legado / 开源阅读 ai摘要版
 <br>
 <a href="https://gedoor.github.io" target="_blank">gedoor.github.io</a> / <a href="https://www.legado.top/" target="_blank">legado.top</a>
 <br>
@@ -35,6 +35,7 @@ Legado is a free and open source novel reader for Android.
 7.支持高度自定义阅读界面，切换字体、颜色、背景、行距、段距、加粗、简繁转换等。<br>
 8.支持多种翻页模式，覆盖、仿真、滑动、滚动等。<br>
 9.软件开源，持续优化，无广告。
+10.小说正文区菜单添加ai摘要功能，一键总结本章内容，自定义提示词和api。
 </details>
 
 <a href="#readme">
