@@ -15,7 +15,7 @@ Legado / 开源阅读 ai摘要版
 Legado is a free and open source novel reader for Android.
 </div>
 
-### **AI 摘要功能配置指南 **
+### AI 摘要功能配置指南 
 
 本指南旨在帮助您理解并配置 Legado 的 AI 摘要功能。通过正确设置，您可以将兼容的第三方大语言模型（LLM）服务集成到应用中，实现对章节内容的自动化摘要。
 
