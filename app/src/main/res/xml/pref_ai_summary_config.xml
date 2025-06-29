@@ -44,7 +44,7 @@
         android:key="aiSummarySaveMode"
         android:title="@string/ai_summary_save_mode"
         android:summary="@string/ai_summary_save_mode_desc"
-        android:defaultValue="overwrite"
+        android:defaultValue="append"
         android:entries="@array/ai_summary_save_mode_entries"
         android:entryValues="@array/ai_summary_save_mode_values" />
 
