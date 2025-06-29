@@ -256,53 +256,89 @@ class TextChapterLayout(
                     isSetTypedImage = false
                     prepareNextPageIfNeed()
                 }
-                var start = 0
                 if (content.contains("<img")) {
                     val matcher = AppPattern.imgPattern.matcher(content)
+                    val textSegments = mutableListOf<String>()
+                    val embeddedImages = mutableListOf<String>()
+                    var lastEnd = 0
+                    var hasNonEmbeddedImage = false
+                    var isFirstSegment = true
                     while (matcher.find()) {
                         coroutineContext.ensureActive()
-                        val text = content.substring(start, matcher.start())
-                        if (text.isNotBlank()) {
-                            setTypeText(
-                                book,
-                                text,
-                                contentPaint,
-                                contentPaintTextHeight,
-                                contentPaintFontMetrics,
-                                imageStyle,
-                                isFirstLine = start == 0
-                            )
+                        val src = matcher.group(1)!!
+                        val isTextEmbedded = src.contains("\"style\":\"text\"", true)
+                        val textBefore = content.substring(lastEnd, matcher.start())
+                        if (textBefore.isNotBlank()) {
+                            textSegments.add(textBefore)
                         }
-                        setTypeImage(
-                            book,
-                            matcher.group(1)!!,
-                            contentPaintTextHeight,
-                            imageStyle
-                        )
-                        isSetTypedImage = true
-                        start = matcher.end()
+                        if (isTextEmbedded) {
+                            embeddedImages.add(src)
+                            textSegments.add(ChapterProvider.srcReplaceChar)
+                        } else {
+                            hasNonEmbeddedImage = true
+                            if (textSegments.isNotEmpty()) {
+                                val combinedText = textSegments.joinToString("")
+                                setTypeText(
+                                    book,
+                                    combinedText,
+                                    contentPaint,
+                                    contentPaintTextHeight,
+                                    contentPaintFontMetrics,
+                                    "TEXT",
+                                    isFirstLine = isFirstSegment,
+                                    srcList = LinkedList(embeddedImages)
+                                )
+                                textSegments.clear()
+                                embeddedImages.clear()
+                                isFirstSegment = false
+                            }
+                            setTypeImage(
+                                book,
+                                src,
+                                contentPaintTextHeight,
+                                imageStyle
+                            )
+                            isSetTypedImage = true
+                        }
+                        
+                        lastEnd = matcher.end()
                     }
-                }
-                if (start < content.length) {
-                    if (isSingleImageStyle && isSetTypedImage) {
-                        isSetTypedImage = false
-                        prepareNextPageIfNeed()
+                    if (lastEnd < content.length) {
+                        val remainingText = content.substring(lastEnd)
+                        if (remainingText.isNotBlank()) {
+                            textSegments.add(remainingText)
+                        }
                     }
-                    val text = content.substring(start, content.length)
-                    if (text.isNotBlank()) {
+                    if (textSegments.isNotEmpty()) {
+                        val combinedText = textSegments.joinToString("")
                         setTypeText(
                             book,
-                            if (AppConfig.enableReview) text + ChapterProvider.reviewChar else text,
+                            combinedText,
+                            contentPaint,
+                            contentPaintTextHeight,
+                            contentPaintFontMetrics,
+                            "TEXT",
+                            isFirstLine = !hasNonEmbeddedImage && isFirstSegment,
+                            srcList = LinkedList(embeddedImages)
+                        )
+                    }
+                } else {
+                    if (content.isNotBlank()) {
+                        setTypeText(
+                            book,
+                            if (AppConfig.enableReview) content + ChapterProvider.reviewChar else content,
                             contentPaint,
                             contentPaintTextHeight,
                             contentPaintFontMetrics,
                             imageStyle,
-                            isFirstLine = start == 0
+                            isFirstLine = true
                         )
                     }
                 }
             }
-            pendingTextPage.lines.last().isParagraphEnd = true
+            if (pendingTextPage.lines.isNotEmpty()) {
+                pendingTextPage.lines.last().isParagraphEnd = true
+            }
             stringBuilder.append("\n")
         }
         val textPage = pendingTextPage
