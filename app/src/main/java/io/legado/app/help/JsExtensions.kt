@@ -231,8 +231,12 @@ interface JsExtensions : JsEncodeUtils {
      * @param title 浏览器页面的标题
      */
     fun startBrowser(url: String, title: String) {
+        return startBrowser(url, title, null)
+    }
+
+    fun startBrowser(url: String, title: String, html: String?) {
         rhinoContext.ensureActive()
-        SourceVerificationHelp.startBrowser(getSource(), url, title)
+        SourceVerificationHelp.startBrowser(getSource(), url, title, html=html)
     }
 
     /**
