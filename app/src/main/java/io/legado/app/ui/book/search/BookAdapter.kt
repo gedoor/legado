@@ -2,35 +2,48 @@ package io.legado.app.ui.book.search
 
 import android.content.Context
 import android.view.ViewGroup
+import androidx.core.view.isVisible
+import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.Book
-import io.legado.app.databinding.ItemFilletTextBinding
+import io.legado.app.databinding.ItemSearchBinding
+import io.legado.app.help.config.AppConfig
 
 
 class BookAdapter(context: Context, val callBack: CallBack) :
-    RecyclerAdapter<Book, ItemFilletTextBinding>(context) {
+    RecyclerAdapter<Book, ItemSearchBinding>(context) {
 
     override fun getItemId(position: Int): Long {
         return position.toLong()
     }
 
-    override fun getViewBinding(parent: ViewGroup): ItemFilletTextBinding {
-        return ItemFilletTextBinding.inflate(inflater, parent, false)
+    override fun getViewBinding(parent: ViewGroup): ItemSearchBinding {
+        return ItemSearchBinding.inflate(inflater, parent, false)
     }
 
     override fun convert(
         holder: ItemViewHolder,
-        binding: ItemFilletTextBinding,
+        binding: ItemSearchBinding,
         item: Book,
         payloads: MutableList<Any>
     ) {
         binding.run {
-            textView.text = item.name
+            tvName.text = item.name
+            tvAuthor.text = context.getString(R.string.author_show, item.author)
+            ivInBookshelf.isVisible = false
+            tvIntroduce.text = item.intro
+            ivCover.load(
+                item.coverUrl,
+                item.name,
+                item.author,
+                AppConfig.loadCoverOnlyWifi,
+                item.origin
+            )
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder, binding: ItemFilletTextBinding) {
+    override fun registerListener(holder: ItemViewHolder, binding: ItemSearchBinding) {
         holder.itemView.apply {
             setOnClickListener {
                 getItem(holder.layoutPosition)?.let {
