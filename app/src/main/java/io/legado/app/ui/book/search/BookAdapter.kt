@@ -42,7 +42,8 @@ class BookAdapter(context: Context, val callBack: CallBack) :
                 item.name,
                 item.author,
                 AppConfig.loadCoverOnlyWifi,
-                item.origin
+                item.origin,
+                inBookshelf = true
             )
         }
     }
