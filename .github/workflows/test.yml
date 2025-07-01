@@ -53,7 +53,7 @@ jobs:
     strategy:
       matrix:
         product: [ app ]
-        type: [ release, releaseA ]
+        type: [ release ]
       fail-fast: false
     runs-on: ubuntu-latest
     env:
