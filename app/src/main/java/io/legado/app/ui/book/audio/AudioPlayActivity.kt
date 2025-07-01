@@ -65,6 +65,7 @@ class AudioPlayActivity :
     override val viewModel by viewModels<AudioPlayViewModel>()
     private val timerSliderPopup by lazy { TimerSliderPopup(this) }
     private var adjustProgress = false
+    private var playMode = AudioPlay.PlayMode.LIST_END_STOP
 
     private val progressTimeFormat by lazy {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -140,6 +141,15 @@ class AudioPlayActivity :
     }
 
     private fun initView() {
+        binding.ivPlayMode.setOnClickListener {
+            AudioPlay.changePlayMode()
+        }
+
+        observeEventSticky<AudioPlay.PlayMode>(EventBus.PLAY_MODE_CHANGED) {
+            playMode = it
+            updatePlayModeIcon()
+        }
+
         binding.fabPlayStop.setOnClickListener {
             playButton()
         }
@@ -185,6 +195,10 @@ class AudioPlayActivity :
             timerSliderPopup.showAsDropDown(it, 0, (-100).dpToPx(), Gravity.TOP)
         }
         binding.llPlayMenu.applyNavigationBarPadding()
+    }
+
+    private fun updatePlayModeIcon() {
+        binding.ivPlayMode.setImageResource(playMode.iconRes)
     }
 
     private fun upCover(path: String?) {
