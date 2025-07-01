@@ -35,7 +35,8 @@ object SourceVerificationHelp {
         url: String,
         title: String,
         useBrowser: Boolean,
-        refetchAfterSuccess: Boolean = true
+        refetchAfterSuccess: Boolean = true,
+        html: String? = null
     ): String {
         source
             ?: throw NoStackTraceException("getVerificationResult parameter source cannot be null")
@@ -53,7 +54,7 @@ object SourceVerificationHelp {
                 IntentData.put(getVerificationResultKey(source), Thread.currentThread())
             }
         } else {
-            startBrowser(source, url, title, true, refetchAfterSuccess)
+            startBrowser(source, url, title, true, refetchAfterSuccess, html)
         }
 
         var waitUserInput = false

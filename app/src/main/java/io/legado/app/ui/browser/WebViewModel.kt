@@ -108,12 +108,14 @@ class WebViewModel(application: Application) : BaseViewModel(application) {
             execute {
                 val url = intent!!.getStringExtra("url")!!
                 val source = appDb.bookSourceDao.getBookSource(sourceOrigin)
-                html = AnalyzeUrl(
-                    url,
-                    headerMapF = headerMap,
-                    source = source,
-                    coroutineContext = coroutineContext
-                ).getStrResponseAwait(useWebView = false).body
+                if (html == null) {
+                    html = AnalyzeUrl(
+                        url,
+                        headerMapF = headerMap,
+                        source = source,
+                        coroutineContext = coroutineContext
+                    ).getStrResponseAwait(useWebView = false).body
+                }
                 SourceVerificationHelp.setResult(sourceOrigin, html ?: "")
             }.onSuccess {
                 success.invoke()

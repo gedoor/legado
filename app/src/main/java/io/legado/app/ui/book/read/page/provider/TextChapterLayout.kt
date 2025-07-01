@@ -257,77 +257,54 @@ class TextChapterLayout(
                     prepareNextPageIfNeed()
                 }
                 var start = 0
-                val currentText = StringBuilder()
-                val currentSrcList = LinkedList<String>()
-                val matcher = AppPattern.imgPattern.matcher(content)
-                var text = content.replace(ChapterProvider.srcReplaceChar, "▣")
-                while (matcher.find()) {
-                    coroutineContext.ensureActive()
-                    val textBefore = text.substring(start, matcher.start())
-                    if (textBefore.isNotBlank()) {
-                        currentText.append(textBefore)
-                    }
-                    start = matcher.end()
-                    val imgSrc = matcher.group(1)!!
-                    val imgSize = ImageProvider.getImageSize(book, imgSrc, ReadBook.bookSource)
-                    val isSmallImage = imgSize.width < 80 && imgSize.height < 80
-                    if (isSmallImage) {
-                        // 小图片：添加占位符并记录源
-                        currentText.append(ChapterProvider.srcReplaceChar)
-                        currentSrcList.add(imgSrc)
-                    } else {
-                        // 大图片：先处理累积的文本
-                        if (currentText.isNotEmpty()) {
+                if (content.contains("<img")) {
+                    val matcher = AppPattern.imgPattern.matcher(content)
+                    while (matcher.find()) {
+                        coroutineContext.ensureActive()
+                        val text = content.substring(start, matcher.start())
+                        if (text.isNotBlank()) {
                             setTypeText(
                                 book,
-                                currentText.toString(),
+                                text,
                                 contentPaint,
                                 contentPaintTextHeight,
                                 contentPaintFontMetrics,
                                 imageStyle,
-                                isFirstLine = start == 0,
-                                srcList = currentSrcList
+                                isFirstLine = start == 0
                             )
-                            currentText.clear()
                         }
-                        // 处理大图片（会触发换行）
                         setTypeImage(
                             book,
-                            imgSrc,
+                            matcher.group(1)!!,
                             contentPaintTextHeight,
                             imageStyle
                         )
                         isSetTypedImage = true
+                        start = matcher.end()
                     }
                 }
-                // 处理剩余的文本
-                if (start < text.length) {
+                if (start < content.length) {
                     if (isSingleImageStyle && isSetTypedImage) {
                         isSetTypedImage = false
                         prepareNextPageIfNeed()
                     }
-                    val textAfter = text.substring(start, text.length)
-                    if (textAfter.isNotBlank()) {
-                        currentText.append(textAfter)
+                    val text = content.substring(start, content.length)
+                    if (text.isNotBlank()) {
+                        setTypeText(
+                            book,
+                            if (AppConfig.enableReview) text + ChapterProvider.reviewChar else text,
+                            contentPaint,
+                            contentPaintTextHeight,
+                            contentPaintFontMetrics,
+                            imageStyle,
+                            isFirstLine = start == 0
+                        )
                     }
-                }
-                // 处理剩余的累积文本
-                if (currentText.isNotEmpty()) {
-                    setTypeText(
-                    book,
-                    if (AppConfig.enableReview) currentText.toString() + ChapterProvider.reviewChar else currentText.toString(),
-                    contentPaint,
-                    contentPaintTextHeight,
-                    contentPaintFontMetrics,
-                    imageStyle,
-                    isFirstLine = start == 0,
-                    srcList = if (currentSrcList.isNotEmpty()) currentSrcList else null
-                    )
                 }
             }
             pendingTextPage.lines.last().isParagraphEnd = true
             stringBuilder.append("\n")
-    }
+        }
         val textPage = pendingTextPage
         val endPadding = 20.dpToPx()
         val durYPadding = durY + endPadding
