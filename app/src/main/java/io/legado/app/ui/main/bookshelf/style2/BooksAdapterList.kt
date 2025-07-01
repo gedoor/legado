@@ -52,7 +52,7 @@ class BooksAdapterList(context: Context, callBack: CallBack) :
             tvAuthor.text = item.author
             tvRead.text = item.durChapterTitle
             tvLast.text = item.latestChapterTitle
-            ivCover.load(item.getDisplayCover(), item.name, item.author, false, item.origin)
+            ivCover.load(item.getDisplayCover(), item.name, item.author, false, item.origin, inBookshelf = true)
             flHasNew.visible()
             ivAuthor.visible()
             ivLast.visible()
@@ -77,7 +77,8 @@ class BooksAdapterList(context: Context, callBack: CallBack) :
                                 item.name,
                                 item.author,
                                 false,
-                                item.origin
+                                item.origin,
+                                inBookshelf = true
                             )
 
                             "refresh" -> upRefresh(this, item)
@@ -118,7 +119,7 @@ class BooksAdapterList(context: Context, callBack: CallBack) :
 
         fun onBind(item: BookGroup, position: Int) = binding.run {
             tvName.text = item.groupName
-            ivCover.load(item.cover)
+            ivCover.load(item.cover, inBookshelf = true)
             flHasNew.gone()
             ivAuthor.gone()
             ivLast.gone()
@@ -137,7 +138,7 @@ class BooksAdapterList(context: Context, callBack: CallBack) :
                     bundle.keySet().forEach {
                         when (it) {
                             "groupName" -> tvName.text = item.groupName
-                            "cover" -> ivCover.load(item.cover)
+                            "cover" -> ivCover.load(item.cover, inBookshelf = true)
                         }
                     }
                 }

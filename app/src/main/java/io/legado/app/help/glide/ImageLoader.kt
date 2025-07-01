@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
+import com.bumptech.glide.signature.ObjectKey
 import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.isContentScheme
 import io.legado.app.utils.isDataUrl
@@ -23,7 +24,7 @@ object ImageLoader {
     /**
      * 自动判断path类型
      */
-    fun load(context: Context, path: String?): RequestBuilder<Drawable> {
+    fun load(context: Context, path: String?, type: String = "default"): RequestBuilder<Drawable> {
         return when {
             path.isNullOrEmpty() -> Glide.with(context).load(path)
             path.isDataUrl() -> Glide.with(context).load(path)
@@ -34,10 +35,10 @@ object ImageLoader {
             }.getOrElse {
                 Glide.with(context).load(path)
             }
-        }
+        }.signature(ObjectKey(type))
     }
 
-    fun load(fragment: Fragment, lifecycle: Lifecycle, path: String?): RequestBuilder<Drawable> {
+    fun load(fragment: Fragment, lifecycle: Lifecycle, path: String?, type: String = "default"): RequestBuilder<Drawable> {
         val requestManager = Glide.with(fragment).lifecycle(lifecycle)
         return when {
             path.isNullOrEmpty() -> requestManager.load(path)
@@ -50,7 +51,7 @@ object ImageLoader {
             }.getOrElse {
                 requestManager.load(path)
             }
-        }
+        }.signature(ObjectKey(type))
     }
 
     fun loadBitmap(context: Context, path: String?): RequestBuilder<Bitmap> {

@@ -94,7 +94,8 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
                 searchBook.name,
                 searchBook.author,
                 AppConfig.loadCoverOnlyWifi,
-                searchBook.origin
+                searchBook.origin,
+                inBookshelf = ivInBookshelf.isVisible
             )
         }
     }
@@ -114,7 +115,8 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
                         searchBook.name,
                         searchBook.author,
                         false,
-                        searchBook.origin
+                        searchBook.origin,
+                        inBookshelf = ivInBookshelf.isVisible
                     )
                 }
             }

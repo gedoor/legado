@@ -5,6 +5,8 @@ import android.content.Intent
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppLog
@@ -458,6 +460,9 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         execute {
             bookData.value?.let {
                 it.delete()
+                val future = Glide.with(context).downloadOnly().apply ( RequestOptions().onlyRetrieveFromCache(true) ).load(it.coverUrl).submit()
+                if (future.get().exists())future.get().delete()
+                Glide.with(context).clear(future)
                 inBookshelf = false
                 if (it.isLocal) {
                     LocalBook.deleteBook(it, deleteOriginal)

@@ -63,7 +63,8 @@ class ExploreShowAdapter(context: Context, val callBack: CallBack) :
                 item.name,
                 item.author,
                 AppConfig.loadCoverOnlyWifi,
-                item.origin
+                item.origin,
+                inBookshelf = ivInBookshelf.isVisible
             )
         }
     }
