@@ -9,6 +9,8 @@ import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.Book
 import io.legado.app.databinding.ItemSearchBinding
 import io.legado.app.help.config.AppConfig
+import io.legado.app.utils.gone
+import io.legado.app.utils.visible
 
 
 class BookAdapter(context: Context, val callBack: CallBack) :
@@ -32,7 +34,9 @@ class BookAdapter(context: Context, val callBack: CallBack) :
             tvName.text = item.name
             tvAuthor.text = context.getString(R.string.author_show, item.author)
             ivInBookshelf.isVisible = false
-            tvIntroduce.text = item.intro
+            tvIntroduce.text = context.getString(R.string.intro_show,item.intro )
+            upKind(binding, item.getKindList())
+            upLasted(binding, item.latestChapterTitle)
             ivCover.load(
                 item.coverUrl,
                 item.name,
@@ -50,6 +54,27 @@ class BookAdapter(context: Context, val callBack: CallBack) :
                     callBack.showBookInfo(it)
                 }
             }
+        }
+    }
+
+    private fun upLasted(binding: ItemSearchBinding, latestChapterTitle: String?) {
+        binding.run {
+            if (latestChapterTitle.isNullOrEmpty()) {
+                tvLasted.gone()
+            } else {
+                tvLasted.text =
+                    context.getString(R.string.lasted_show, latestChapterTitle)
+                tvLasted.visible()
+            }
+        }
+    }
+
+    private fun upKind(binding: ItemSearchBinding, kinds: List<String>) = binding.run {
+        if (kinds.isEmpty()) {
+            llKind.gone()
+        } else {
+            llKind.visible()
+            llKind.setLabels(kinds)
         }
     }
 
