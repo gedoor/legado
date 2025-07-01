@@ -182,6 +182,7 @@ object BookCover {
         path: String?,
         loadOnlyWifi: Boolean = false,
         sourceOrigin: String? = null,
+        inBookshelf: Boolean = false
     ): RequestBuilder<Drawable> {
         val loadBlur = ImageLoader.load(context, defaultDrawable)
             .transform(BlurTransformation(25), CenterCrop())
@@ -192,7 +193,8 @@ object BookCover {
         if (sourceOrigin != null) {
             options = options.set(OkHttpModelLoader.sourceOriginOption, sourceOrigin)
         }
-        return ImageLoader.load(context, path)
+        val type = if (inBookshelf) "covers" else "default"
+        return ImageLoader.load(context, path,type)
             .apply(options)
             .transform(BlurTransformation(25), CenterCrop())
             .transition(DrawableTransitionOptions.withCrossFade(1500))
