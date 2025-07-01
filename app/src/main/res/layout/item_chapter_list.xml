@@ -27,8 +27,8 @@
         android:layout_height="wrap_content"
         android:singleLine="true"
         app:layout_constraintBottom_toTopOf="@id/barrier"
-        app:layout_constraintStart_toEndOf="@+id/iv_locked"
-        app:layout_constraintEnd_toStartOf="@+id/iv_checked"
+        app:layout_constraintStart_toEndOf="@id/iv_locked"
+        app:layout_constraintEnd_toStartOf="@id/iv_checked"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -43,7 +43,7 @@
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/iv_locked"
-        app:layout_constraintTop_toBottomOf="@+id/barrier"
+        app:layout_constraintTop_toBottomOf="@id/barrier"
         app:layout_constraintEnd_toStartOf="@id/tv_word_count"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintHorizontal_bias="0" />
@@ -57,7 +57,7 @@
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/tv_tag"
-        app:layout_constraintTop_toBottomOf="@+id/barrier"
+        app:layout_constraintTop_toBottomOf="@id/barrier"
         app:layout_constraintEnd_toStartOf="@id/iv_checked"
         app:layout_constraintHorizontal_bias="0"
         app:layout_goneMarginStart="0dp"

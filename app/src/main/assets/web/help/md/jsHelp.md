@@ -143,12 +143,16 @@ java.webViewGetSource(html: String?, url: String?, js: String?, sourceRegex: Str
 * @param title 浏览器的标题
 * @param html 本地html代码
 java.startBrowser(url: String, title: String)
-java.startBrowser(url: String, title: String, html: String)
+
+java.startBrowser(url: String, title: String, html: String?)
 
 * 使用内置浏览器打开链接，并等待网页结果 .body()获取网页内容
-* @param refetchAfterSuccess 为false时获取最终界面源码
-java.startBrowserAwait(url: String, title: String, refetchAfterSuccess: Boolean? = true): StrResponse
-java.startBrowserAwait(url: String, title: String, refetchAfterSuccess: Boolean? = true, html: String): StrResponse
+* @param refetchAfterSuccess 为false时获取最终展示界面的源码
+java.startBrowserAwait(url: String, title: String): StrResponse
+
+java.startBrowserAwait(url: String, title: String, refetchAfterSuccess: Boolean): StrResponse
+
+java.startBrowserAwait(url: String, title: String, refetchAfterSuccess: Boolean, html: String?): StrResponse
 ```
 * 调试
 ```js
