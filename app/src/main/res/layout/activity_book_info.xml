@@ -117,7 +117,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:includeFontPadding="false"
-                                    android:singleLine="true"
+                                    android:singleLine="false"
                                     android:text="@string/book_name"
                                     android:textColor="@color/primaryText"
                                     android:textSize="18sp"
