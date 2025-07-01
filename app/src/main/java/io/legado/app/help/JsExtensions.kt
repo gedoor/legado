@@ -242,16 +242,20 @@ interface JsExtensions : JsEncodeUtils {
     /**
      * 使用内置浏览器打开链接，并等待网页结果
      */
-    fun startBrowserAwait(url: String, title: String, refetchAfterSuccess: Boolean): StrResponse {
+     fun startBrowserAwait(url: String, title: String, refetchAfterSuccess: Boolean, html: String?): StrResponse {
         rhinoContext.ensureActive()
         val body = SourceVerificationHelp.getVerificationResult(
-            getSource(), url, title, true, refetchAfterSuccess
+            getSource(), url, title, true, refetchAfterSuccess, html
         )
         return StrResponse(url, body)
     }
 
+    fun startBrowserAwait(url: String, title: String, refetchAfterSuccess: Boolean): StrResponse {
+        return startBrowserAwait(url, title, refetchAfterSuccess, null)
+    }
+
     fun startBrowserAwait(url: String, title: String): StrResponse {
-        return startBrowserAwait(url, title, true)
+        return startBrowserAwait(url, title, true, null)
     }
 
     /**
