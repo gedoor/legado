@@ -253,6 +253,17 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
             keepScreenOn(false)
             toggleSystemBar(true)
         }
+
+        override fun onCloseWindow(window: WebView?) {
+            if (viewModel.sourceVerificationEnable) {
+                viewModel.saveVerificationResult(binding.webView) {
+                    finish()
+                }
+            } else {
+                    finish()
+            }
+        }
+
     }
 
     inner class CustomWebViewClient : WebViewClient() {
