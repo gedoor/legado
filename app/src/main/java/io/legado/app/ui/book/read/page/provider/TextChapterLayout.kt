@@ -266,7 +266,7 @@ class TextChapterLayout(
                     while (matcher.find()) {
                         coroutineContext.ensureActive()
                         val src = matcher.group(1)!!
-                        val isTextEmbedded = src.contains("\"style\":\"text\"", true)
+                        val isTextEmbedded = src.contains("[\"']style[\"']\\s*:\\s*[\"']text[\"']", RegexOption.IGNORE_CASE)
                         val textBefore = content.substring(lastEnd, matcher.start())
                         if (textBefore.isNotBlank()) {
                             textSegments.add(textBefore)
