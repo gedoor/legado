@@ -235,9 +235,9 @@ class TextChapterLayout(
                 sb.setLength(0)
                 val matcher = AppPattern.imgPattern.matcher(text)
                 while (matcher.find()) {
+                    val onclick = "onclick=['\"]([^'\">]+)".toRegex().find(matcher.group())
                     matcher.group(1)?.let { src ->
-                        val onclick = "onclick\\s*=\\s*['\"]([^'\">]+)".toRegex().find(matcher.group())
-                        srcList.add(src + {if (onclick==null||onclick.groupValues[1].isBlank()) "" else "\n"+onclick.groupValues[1]})
+                        srcList.add(src+ {if (onclick==null||onclick.groupValues[1].isBlank()) "" else "\n"+onclick.groupValues[1]})
                         matcher.appendReplacement(sb, ChapterProvider.srcReplaceChar)
                     }
                 }
@@ -268,7 +268,7 @@ class TextChapterLayout(
                         coroutineContext.ensureActive()
                         var src = matcher.group(1)!!
                         val isTextEmbedded = src.contains(Regex("""["']type["']\s*:\s*["']text["']""", RegexOption.IGNORE_CASE))
-                        val onclick = "onclick\\s*=\\s*['\"]([^'\">]+)".toRegex().find(matcher.group())
+                        val onclick = "onclick=['\"]([^'\">]+)".toRegex().find(matcher.group())
                         src += {if (onclick==null|| onclick.groupValues[1].isBlank()) "" else "\n"+onclick.groupValues[1]}
                         val textBefore = content.substring(lastEnd, matcher.start())
                         if (textBefore.isNotBlank()) {
@@ -422,7 +422,7 @@ class TextChapterLayout(
                 Pair(0f, width.toFloat())
             }
             textLine.addColumn(
-                ImageColumn(start = absStartX + start, end = absStartX + end, src = src, onClick = srcWithClick[1])
+                ImageColumn(start = absStartX + start, end = absStartX + end, src = src, onClick = srcWithClick[1]?:"")
             )
             calcTextLinePosition(textPages, textLine, stringBuilder.length)
             stringBuilder.append(" ") // 确保翻页时索引计算正确
@@ -746,7 +746,7 @@ class TextChapterLayout(
                     start = absStartX + xStart,
                     end = absStartX + xEnd,
                     src = src,
-                    onClick = srcWithClick[1]
+                    onClick = srcWithClick[1]?:""
                 )
             }
 
