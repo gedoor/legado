@@ -268,8 +268,8 @@ class TextChapterLayout(
                         coroutineContext.ensureActive()
                         var src = matcher.group(1)!!
                         val isTextEmbedded = src.contains(Regex("""["']type["']\s*:\s*["']text["']""", RegexOption.IGNORE_CASE))
-                        val onclick = "onclick=[\"']([^\"']+)".toRegex().find(matcher.group())
-                        src += if (onclick==null||onclick.groupValues[1].isBlank()) "" else "\n"+onclick.groupValues[1]
+                        val onclick = "onclick\\s*=\\s*['\"]([^'\">]+)".toRegex().find(matcher.group())
+                        src += if (onclick==null|| onclick.groupValues[1].isBlank()) "" else "\n"+onclick.groupValues[1]
                         val textBefore = content.substring(lastEnd, matcher.start())
                         if (textBefore.isNotBlank()) {
                             textSegments.add(textBefore)
