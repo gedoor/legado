@@ -18,6 +18,7 @@ import io.legado.app.utils.toRequestBody
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -31,7 +32,6 @@ import java.io.FileOutputStream
 import java.io.InputStream
 import java.net.MalformedURLException
 import java.net.URL
-import java.net.URLEncoder
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
@@ -88,10 +88,7 @@ open class WebDav(
             .replace("davs://", "https://")
             .replace("dav://", "http://")
         return@lazy kotlin.runCatching {
-            URLEncoder.encode(raw, "UTF-8")
-                .replace("+", "%20")
-                .replace("%3A", ":")
-                .replace("%2F", "/")
+            raw.toHttpUrl().toString()
         }.getOrNull()
     }
     private val webDavClient by lazy {
@@ -112,7 +109,14 @@ open class WebDav(
             build()
         }
     }
-    val host: String? get() = url.host
+    private val host: String?
+        get() = url.host?.let {
+            if (it.startsWith("[")) {
+                it.substring(1, it.lastIndex)
+            } else {
+                it
+            }
+        }
 
     /**
      * 获取当前url文件信息

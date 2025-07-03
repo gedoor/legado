@@ -144,6 +144,9 @@ object LocalBook {
         val list = ArrayList(LinkedHashSet(chapters))
         list.forEachIndexed { index, bookChapter ->
             bookChapter.index = index
+            if (bookChapter.title.isEmpty()) {
+                bookChapter.title = "无标题章节"
+            }
         }
         val replaceRules = ContentProcessor.get(book).getTitleReplaceRules()
         book.durChapterTitle = list.getOrElse(book.durChapterIndex) { list.last() }
@@ -191,6 +194,11 @@ object LocalBook {
                 return StringEscapeUtils.unescapeHtml4(content)
             }
         }
+
+        if (content.isNullOrEmpty()) {
+            return null
+        }
+
         return content
     }
 

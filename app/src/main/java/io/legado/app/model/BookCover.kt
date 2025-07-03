@@ -31,7 +31,6 @@ import io.legado.app.help.glide.OkHttpModelLoader
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeRule.Companion.setCoroutineContext
 import io.legado.app.model.analyzeRule.AnalyzeUrl
-import io.legado.app.ui.book.manga.entities.EpaperTransformation
 import io.legado.app.utils.BitmapUtils
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
@@ -133,7 +132,6 @@ object BookCover {
     /**
      * 加载漫画图片
      */
-    @SuppressLint("CheckResult")
     fun loadManga(
         context: Context,
         path: String?,
@@ -153,8 +151,9 @@ object BookCover {
             .skipMemoryCache(true).let {
                 if (transformation != null) {
                     it.transform(transformation)
+                } else {
+                    it
                 }
-                it
             }
     }
 

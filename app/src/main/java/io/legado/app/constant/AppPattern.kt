@@ -9,7 +9,7 @@ object AppPattern {
     val EXP_PATTERN: Pattern = Pattern.compile("\\{\\{([\\w\\W]*?)\\}\\}")
 
     //匹配格式化后的图片格式
-    val imgPattern: Pattern = Pattern.compile("<img[^>]*src=\"([^\"]*(?:\"[^>]+\\})?)\"[^>]*>")
+    val imgPattern: Pattern = Pattern.compile("<img[^>]*src=['\"]([^'\"]*(?:['\"][^>]+\\})?)['\"][^>]*>")
 
     //dataURL图片类型
     val dataUriRegex = Regex("^data:.*?;base64,(.*)")
