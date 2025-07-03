@@ -43,8 +43,8 @@ object HtmlFormatter {
         val matcher = formatImagePattern.matcher(keepImgHtml)
         var appendPos = 0
         val sb = StringBuilder()
-        val onClick = onClickRegex.find(matcher.toString())
         while (matcher.find()) {
+            val onClick = onClickRegex.find(matcher.group())
             var param = ""
             sb.append(
                 keepImgHtml.substring(appendPos, matcher.start()), "<img src=\"${
