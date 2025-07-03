@@ -236,7 +236,8 @@ class TextChapterLayout(
                 val matcher = AppPattern.imgPattern.matcher(text)
                 while (matcher.find()) {
                     matcher.group(1)?.let { src ->
-                        srcList.add(src)
+                        val onclick = "onclick=[\"']([^\"']+)".toRegex().find(matcher.group())
+                        srcList.add(src + if (onclick==null||onclick.groupValues[1].isBlank()) "\n" else "\n"+onclick.groupValues[1])
                         matcher.appendReplacement(sb, ChapterProvider.srcReplaceChar)
                     }
                 }
@@ -265,8 +266,10 @@ class TextChapterLayout(
                     var isFirstSegment = true
                     while (matcher.find()) {
                         coroutineContext.ensureActive()
-                        val src = matcher.group(1)!!
-                        val isTextEmbedded = src.contains(Regex("""["']style["']\s*:\s*["']text["']""", RegexOption.IGNORE_CASE))
+                        var src = matcher.group(1)!!
+                        val isTextEmbedded = src.contains(Regex("""["']type["']\s*:\s*["']text["']""", RegexOption.IGNORE_CASE))
+                        val onclick = "onclick=[\"']([^\"']+)".toRegex().find(matcher.group())
+                        src += if (onclick==null||onclick.groupValues[1].isBlank()) "" else "\n"+onclick.groupValues[1]
                         val textBefore = content.substring(lastEnd, matcher.start())
                         if (textBefore.isNotBlank()) {
                             textSegments.add(textBefore)
@@ -362,9 +365,10 @@ class TextChapterLayout(
         book: Book,
         src: String,
         textHeight: Float,
-        imageStyle: String?,
-        onclick: String = ""
+        imageStyle: String?
     ) {
+        val srcWithClick = src.split("\n")
+        val src = srcWithClick[0]
         val size = ImageProvider.getImageSize(book, src, ReadBook.bookSource)
         if (size.width > 0 && size.height > 0) {
             prepareNextPageIfNeed(durY)
@@ -418,7 +422,7 @@ class TextChapterLayout(
                 Pair(0f, width.toFloat())
             }
             textLine.addColumn(
-                ImageColumn(start = absStartX + start, end = absStartX + end, src = src, onClick = onclick)
+                ImageColumn(start = absStartX + start, end = absStartX + end, src = src, onClick = srcWithClick[1])
             )
             calcTextLinePosition(textPages, textLine, stringBuilder.length)
             stringBuilder.append(" ") // 确保翻页时索引计算正确
@@ -735,12 +739,14 @@ class TextChapterLayout(
     ) {
         val column = when {
             srcList != null && char == ChapterProvider.srcReplaceChar -> {
-                val src = srcList.removeFirst()
+                val srcWithClick = srcList.removeFirst().split("\n")
+                val src = srcWithClick[0]
                 ImageProvider.cacheImage(book, src, ReadBook.bookSource)
                 ImageColumn(
                     start = absStartX + xStart,
                     end = absStartX + xEnd,
-                    src = src
+                    src = src,
+                    onClick = srcWithClick[1]
                 )
             }
 
