@@ -182,7 +182,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
     override fun observeLiveBus() {
         observeEvent<MangaFooterConfig>(EventBus.UP_MANGA_CONFIG) {
             mMangaFooterConfig = it
-            val item = mAdapter.getItem(binding.recyclerView.findCenterViewPosition())
+            val item = mAdapter.getItem(binding.recyclerView.findCenterViewPosition(false,false))
             upInfoBar(item)
         }
     }

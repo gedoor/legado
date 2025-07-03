@@ -2,11 +2,26 @@ package io.legado.app.utils
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlin.math.abs
 
-fun RecyclerView.findCenterViewPosition(): Int {
-    return getChildAdapterPosition(
-        findChildViewUnder(width / 2f, height / 2f) ?: return RecyclerView.NO_POSITION
-    )
+fun RecyclerView.findCenterViewPosition(atFirstPosition: Boolean, atLastPosition: Boolean): Int {
+    val centerView = findChildViewUnder(width / 2f, height / 2f)
+    if (centerView != null) {
+        return getChildAdapterPosition(centerView)
+    }
+    val lm = layoutManager as? LinearLayoutManager ?: return RecyclerView.NO_POSITION
+    return when {
+        atLastPosition -> lm.findLastVisibleItemPosition()
+        atFirstPosition -> lm.findFirstVisibleItemPosition()
+        else -> {
+            val visiblePositions =
+                (lm.findFirstVisibleItemPosition()..lm.findLastVisibleItemPosition())
+            if (visiblePositions.isEmpty()) RecyclerView.NO_POSITION
+            else visiblePositions.minByOrNull {
+                abs(it - (lm.itemCount / 2))
+            } ?: RecyclerView.NO_POSITION
+        }
+    }
 }
 
 fun RecyclerView.findViewPosition(x: Float, y: Float): Int {

@@ -69,10 +69,11 @@ class WebtoonRecyclerView @JvmOverloads constructor(
 
     override fun onScrollStateChanged(state: Int) {
         super.onScrollStateChanged(state)
-        val layoutManager = layoutManager
-        val visibleItemCount = layoutManager?.childCount ?: 0
-        val totalItemCount = layoutManager?.itemCount ?: 0
-        atLastPosition = visibleItemCount > 0 && lastVisibleItemPosition == totalItemCount - 1
+        val lm = layoutManager as? LinearLayoutManager ?: return
+        val visibleItemCount = lm.childCount
+        val totalItemCount = lm.itemCount
+        lastVisibleItemPosition = lm.findLastVisibleItemPosition()
+        atLastPosition = visibleItemCount > 0 && lastVisibleItemPosition >= totalItemCount - 1
         atFirstPosition = firstVisibleItemPosition == 0
     }
 
@@ -81,9 +82,9 @@ class WebtoonRecyclerView @JvmOverloads constructor(
         dy: Int,
         consumed: IntArray?,
         offsetInWindow: IntArray?,
-        type: Int
+        type: Int,
     ): Boolean {
-        val position = findCenterViewPosition()
+        val position = findCenterViewPosition(atFirstPosition, atLastPosition)
         if (position != NO_POSITION && position != mLastCenterViewPosition) {
             mLastCenterViewPosition = position
             mPreScrollListener?.onPreScrollListener(this, dx, dy, position)
