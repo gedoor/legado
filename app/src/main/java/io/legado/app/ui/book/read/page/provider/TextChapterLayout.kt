@@ -236,8 +236,8 @@ class TextChapterLayout(
                 val matcher = AppPattern.imgPattern.matcher(text)
                 while (matcher.find()) {
                     matcher.group(1)?.let { src ->
-                        val onclick = "onclick=[\"']([^\"']+)".toRegex().find(matcher.group())
-                        srcList.add(src + if (onclick==null||onclick.groupValues[1].isBlank()) "\n" else "\n"+onclick.groupValues[1])
+                        val onclick = "onclick\\s*=\\s*['\"]([^'\">]+)".toRegex().find(matcher.group())
+                        srcList.add(src + {if (onclick==null||onclick.groupValues[1].isBlank()) "" else "\n"+onclick.groupValues[1]})
                         matcher.appendReplacement(sb, ChapterProvider.srcReplaceChar)
                     }
                 }
@@ -269,7 +269,7 @@ class TextChapterLayout(
                         var src = matcher.group(1)!!
                         val isTextEmbedded = src.contains(Regex("""["']type["']\s*:\s*["']text["']""", RegexOption.IGNORE_CASE))
                         val onclick = "onclick\\s*=\\s*['\"]([^'\">]+)".toRegex().find(matcher.group())
-                        src += if (onclick==null|| onclick.groupValues[1].isBlank()) "" else "\n"+onclick.groupValues[1]
+                        src += {if (onclick==null|| onclick.groupValues[1].isBlank()) "" else "\n"+onclick.groupValues[1]}
                         val textBefore = content.substring(lastEnd, matcher.start())
                         if (textBefore.isNotBlank()) {
                             textSegments.add(textBefore)
