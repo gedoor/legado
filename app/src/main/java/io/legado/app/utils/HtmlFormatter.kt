@@ -56,7 +56,7 @@ object HtmlFormatter {
                             } else it
                         } ?: matcher.group(2) ?: matcher.group(3)!!
                     ) + param
-                }\" onclick=\"${matcher.group(4)}\">"
+                }\" onclick=\"${matcher.group(matcher.groupCount())}\">"
             )
             appendPos = matcher.end()
         }
