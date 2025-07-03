@@ -267,7 +267,7 @@ class TextChapterLayout(
                     while (matcher.find()) {
                         coroutineContext.ensureActive()
                         var src = matcher.group(1)!!+"\n"
-                        val isTextEmbedded = src.contains(Regex("""["']style["']\s*:\s*["']text["']""", RegexOption.IGNORE_CASE))
+                        val isTextEmbedded = src.contains(Regex("""["']type["']\s*:\s*["']text["']""", RegexOption.IGNORE_CASE))
                         val textBefore = content.substring(lastEnd, matcher.start())
                         val onclick = "onclick=['\"]([^'\">]+)".toRegex().find(matcher.group())
                         if (onclick != null) {
