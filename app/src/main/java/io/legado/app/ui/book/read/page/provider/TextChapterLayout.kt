@@ -262,6 +262,7 @@ class TextChapterLayout(
                     while (matcher.find()) {
                         coroutineContext.ensureActive()
                         val text = content.substring(start, matcher.start())
+                        val onClick = "onclick=['\"]([^'\"]*)".toRegex().find(matcher.group())
                         if (text.isNotBlank()) {
                             setTypeText(
                                 book,
@@ -277,7 +278,9 @@ class TextChapterLayout(
                             book,
                             matcher.group(1)!!,
                             contentPaintTextHeight,
-                            imageStyle
+                            imageStyle,
+                            if(onClick==null||onClick.groupValues[1].isBlank())""
+                            else onClick.groupValues[1]
                         )
                         isSetTypedImage = true
                         start = matcher.end()
@@ -327,6 +330,7 @@ class TextChapterLayout(
         src: String,
         textHeight: Float,
         imageStyle: String?,
+        onclick: String = ""
     ) {
         val size = ImageProvider.getImageSize(book, src, ReadBook.bookSource)
         if (size.width > 0 && size.height > 0) {
@@ -381,7 +385,7 @@ class TextChapterLayout(
                 Pair(0f, width.toFloat())
             }
             textLine.addColumn(
-                ImageColumn(start = absStartX + start, end = absStartX + end, src = src)
+                ImageColumn(start = absStartX + start, end = absStartX + end, src = src, onClick = onclick)
             )
             calcTextLinePosition(textPages, textLine, stringBuilder.length)
             stringBuilder.append(" ") // 确保翻页时索引计算正确
