@@ -31,6 +31,25 @@ import splitties.init.appCtx
 @SuppressLint("StaticFieldLeak")
 @Suppress("unused")
 object AudioPlay : CoroutineScope by MainScope() {
+    /**
+     * 播放模式枚举
+     */
+    enum class PlayMode(val iconRes: Int) {
+        LIST_END_STOP(R.drawable.ic_play_mode_list_end_stop),
+        SINGLE_LOOP(R.drawable.ic_play_mode_single_loop),
+        RANDOM(R.drawable.ic_play_mode_random),
+        LIST_LOOP(R.drawable.ic_play_mode_list_loop);
+
+        fun next(): PlayMode {
+            return when (this) {
+                LIST_END_STOP -> SINGLE_LOOP
+                SINGLE_LOOP -> RANDOM
+                RANDOM -> LIST_LOOP
+                LIST_LOOP -> LIST_END_STOP
+            }
+        }
+    }
+    var playMode = PlayMode.LIST_END_STOP
     var status = Status.STOP
     private var activityContext: Context? = null
     private var serviceContext: Context? = null
@@ -47,6 +66,11 @@ object AudioPlay : CoroutineScope by MainScope() {
     var inBookshelf = false
     var bookSource: BookSource? = null
     val loadingChapters = arrayListOf<Int>()
+
+    fun changePlayMode() {
+        playMode = playMode.next()
+        postEvent(EventBus.PLAY_MODE_CHANGED, playMode)
+    }
 
     fun upData(book: Book) {
         AudioPlay.book = book
@@ -259,12 +283,36 @@ object AudioPlay : CoroutineScope by MainScope() {
 
     fun next() {
         stopPlay()
-        if (durChapterIndex + 1 < simulatedChapterSize) {
-            durChapterIndex += 1
-            durChapterPos = 0
-            durPlayUrl = ""
-            saveRead()
-            loadPlayUrl()
+        when (playMode) {
+            PlayMode.LIST_END_STOP -> {
+                if (durChapterIndex + 1 < simulatedChapterSize) {
+                    durChapterIndex += 1
+                    durChapterPos = 0
+                    durPlayUrl = ""
+                    saveRead()
+                    loadPlayUrl()
+                }
+            }
+            PlayMode.SINGLE_LOOP -> {
+                durChapterPos = 0
+                durPlayUrl = ""
+                saveRead()
+                loadPlayUrl()
+            }
+            PlayMode.RANDOM -> {
+                durChapterIndex = (0 until simulatedChapterSize).random()
+                durChapterPos = 0
+                durPlayUrl = ""
+                saveRead()
+                loadPlayUrl()
+            }
+            PlayMode.LIST_LOOP -> {
+                durChapterIndex = (durChapterIndex + 1) % simulatedChapterSize
+                durChapterPos = 0
+                durPlayUrl = ""
+                saveRead()
+                loadPlayUrl()
+            }
         }
     }
 

@@ -69,6 +69,20 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title_bar" />
 
+    <io.legado.app.ui.widget.image.ImageButton
+            android:id="@+id/iv_play_mode"
+            android:layout_width="46dp"
+            android:layout_height="46dp"
+            android:background="@drawable/selector_circle_btn_bg"
+            android:contentDescription="@string/play_mode"
+            android:padding="5dp"
+            android:src="@drawable/ic_play_mode_list_end_stop"
+            android:layout_marginStart="16dp"
+            app:tint="@color/md_white_1000"
+            app:layout_constraintBottom_toTopOf="@+id/tv_sub_title"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:ignore="ImageContrastCheck" />
+
     <TextView
         android:id="@+id/tv_sub_title"
         android:layout_width="match_parent"
