@@ -231,6 +231,7 @@ object ChapterProvider {
                 var start = 0
                 while (matcher.find()) {
                     val text = content.substring(start, matcher.start())
+                    val onClick = "onclick=['\"]([^'\"]*)".toRegex().find(matcher.group())
                     if (text.isNotBlank()) {
                         setTypeText(
                             book,
@@ -256,7 +257,8 @@ object ChapterProvider {
                         contentPaintTextHeight,
                         stringBuilder,
                         book.getImageStyle(),
-                        matcher.group(2) ?:""
+                        if(onClick==null||onClick.groupValues[1].isBlank())""
+                        else onClick.groupValues[1]
                     ).let {
                         absStartX = it.first
                         durY = it.second
