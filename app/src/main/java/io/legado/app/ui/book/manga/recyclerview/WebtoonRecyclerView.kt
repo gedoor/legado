@@ -85,7 +85,9 @@ class WebtoonRecyclerView @JvmOverloads constructor(
         type: Int,
     ): Boolean {
         val position = findCenterViewPosition(atFirstPosition, atLastPosition)
-        if (position != NO_POSITION && position != mLastCenterViewPosition) {
+        if (position != NO_POSITION &&
+            abs(position - mLastCenterViewPosition) >= 1
+        ) {
             mLastCenterViewPosition = position
             mPreScrollListener?.onPreScrollListener(this, dx, dy, position)
         }
