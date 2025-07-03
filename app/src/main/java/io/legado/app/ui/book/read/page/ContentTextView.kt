@@ -246,6 +246,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
 
                 is ImageColumn -> if(column.onClick.isNotEmpty()){
                     callBack.onImageClick(column.src, column.onClick)
+                    handled = true
                 }else if (AppConfig.previewImageByClick) {
                     activity?.showDialogFragment(PhotoDialog(column.src))
                     handled = true
