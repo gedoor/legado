@@ -18,7 +18,8 @@ import splitties.init.appCtx
 data class ImageColumn(
     override var start: Float,
     override var end: Float,
-    var src: String
+    var src: String,
+    var onClick: String = ""
 ) : BaseColumn {
 
     override var textLine: TextLine = emptyTextLine

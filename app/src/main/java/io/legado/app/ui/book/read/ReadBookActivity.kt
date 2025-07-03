@@ -1355,6 +1355,20 @@ class ReadBookActivity : BaseReadBookActivity(),
         showHelp("readMenuHelp")
     }
 
+    override fun onImageClick(src: String, onClick: String) {
+        val book = ReadBook.book ?: return
+        val chapter = appDb.bookChapterDao.getChapter(book.bookUrl, ReadBook.durChapterIndex)
+        Coroutine.async(lifecycleScope) {
+            val source =
+                ReadBook.bookSource ?: throw NoStackTraceException("no book source")
+            val analyzeRule = AnalyzeRule(book, source)
+            analyzeRule.setCoroutineContext(coroutineContext)
+            analyzeRule.setBaseUrl(chapter!!.url)
+            analyzeRule.setChapter(chapter)
+            analyzeRule.evalJS(onClick).toString()
+        }.start()
+    }
+
     /**
      * 长按图片
      */

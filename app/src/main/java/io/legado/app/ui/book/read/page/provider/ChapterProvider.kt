@@ -255,7 +255,8 @@ object ChapterProvider {
                         textPages,
                         contentPaintTextHeight,
                         stringBuilder,
-                        book.getImageStyle()
+                        book.getImageStyle(),
+                        matcher.group(2) ?:""
                     ).let {
                         absStartX = it.first
                         durY = it.second
@@ -351,6 +352,7 @@ object ChapterProvider {
         textHeight: Float,
         stringBuilder: StringBuilder,
         imageStyle: String?,
+        onclick: String = ""
     ): Pair<Int, Float> {
         var absStartX = x
         var durY = y
@@ -453,7 +455,7 @@ object ChapterProvider {
                 Pair(0f, width.toFloat())
             }
             textLine.addColumn(
-                ImageColumn(start = x + start, end = x + end, src = src)
+                ImageColumn(start = x + start, end = x + end, src = src, onClick = onclick)
             )
             calcTextLinePosition(textPages, textLine, stringBuilder.length)
             stringBuilder.append(" ") // 确保翻页时索引计算正确
