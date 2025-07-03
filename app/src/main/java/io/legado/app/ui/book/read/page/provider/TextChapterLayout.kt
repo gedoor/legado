@@ -237,9 +237,7 @@ class TextChapterLayout(
                 while (matcher.find()) {
                     val onclick = "onclick=['\"]([^'\">]+)".toRegex().find(matcher.group())
                     matcher.group(1)?.let { src ->
-                        srcList.add(if (onclick != null) {
-                            src +"\n"+ onclick.groupValues[1]
-                        }else "\n")
+                        srcList.add(src +"\n"+if (onclick != null) onclick.groupValues[1] else "")
                         matcher.appendReplacement(sb, ChapterProvider.srcReplaceChar)
                     }
                 }
