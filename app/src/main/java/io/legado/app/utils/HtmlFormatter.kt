@@ -14,9 +14,10 @@ object HtmlFormatter {
     private val notImgHtmlRegex = "</?(?!img)[a-zA-Z]+(?=[ >])[^<>]*>".toRegex()
     private val otherHtmlRegex = "</?[a-zA-Z]+(?=[ >])[^<>]*>".toRegex()
     private val formatImagePattern = Pattern.compile(
-        "<img[^>]*\\ssrc\\s*=\\s*['\"]([^'\"{>]*\\{(?:[^{}]|\\{[^}>]+\\})+\\})['\"][^>]*>|<img[^>]*\\s(?:data-src|src)\\s*=\\s*['\"]([^'\">]+)['\"][^>]*>|<img[^>]*\\sdata-[^=>]*=\\s*['\"]([^'\">]*)['\"][^>]*>|<img[^>]*\\sonclick\\s*=\\s*['\"]([^'\">]+)['\"][^>]*>",
+        "<img[^>]*\\ssrc\\s*=\\s*['\"]([^'\"{>]*\\{(?:[^{}]|\\{[^}>]+\\})+\\})['\"][^>]*>|<img[^>]*\\s(?:data-src|src)\\s*=\\s*['\"]([^'\">]+)['\"][^>]*>|<img[^>]*\\sdata-[^=>]*=\\s*['\"]([^'\">]*)['\"][^>]*>",
         Pattern.CASE_INSENSITIVE
     )
+    private val onClickRegex = "onclick\\s*=\\s*['\"]([^'\">]+)".toRegex()
     private val indent1Regex = "\\s*\\n+\\s*".toRegex()
     private val indent2Regex = "^[\\n\\s]+".toRegex()
     private val lastRegex = "[\\n\\s]+$".toRegex()
@@ -42,6 +43,7 @@ object HtmlFormatter {
         val matcher = formatImagePattern.matcher(keepImgHtml)
         var appendPos = 0
         val sb = StringBuilder()
+        val onClick = onClickRegex.find(matcher.toString())
         while (matcher.find()) {
             var param = ""
             sb.append(
@@ -56,7 +58,7 @@ object HtmlFormatter {
                             } else it
                         } ?: matcher.group(2) ?: matcher.group(3)!!
                     ) + param
-                }\""+if(matcher.group(4).isNullOrBlank())">" else " onclick=\"${matcher.group(4)}\">"
+                }\""+if(onClick==null||onClick.groupValues[1].isBlank())">" else " onclick=\"${matcher.group(4)}\">"
             )
             appendPos = matcher.end()
         }
