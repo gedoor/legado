@@ -265,9 +265,11 @@ class TextChapterLayout(
                     var isFirstSegment = true
                     while (matcher.find()) {
                         coroutineContext.ensureActive()
-                        val src = matcher.group(1)!!
+                        var src = matcher.group(1)!!
                         val isTextEmbedded = src.contains(Regex("""["']style["']\s*:\s*["']text["']""", RegexOption.IGNORE_CASE))
                         val textBefore = content.substring(lastEnd, matcher.start())
+                        val onclick = "onclick=['\"]([^'\">]+)".toRegex().find(matcher.group())
+                        src += "\n"+ onclick?.value
                         if (textBefore.isNotBlank()) {
                             textSegments.add(textBefore)
                         }
@@ -362,10 +364,11 @@ class TextChapterLayout(
         book: Book,
         src: String,
         textHeight: Float,
-        imageStyle: String?,
-        onclick: String = ""
+        imageStyle: String?
     ) {
         val size = ImageProvider.getImageSize(book, src, ReadBook.bookSource)
+        val srcWithClick = src.split("\n")
+        val src = srcWithClick[0]
         if (size.width > 0 && size.height > 0) {
             prepareNextPageIfNeed(durY)
             var height = size.height
@@ -418,7 +421,7 @@ class TextChapterLayout(
                 Pair(0f, width.toFloat())
             }
             textLine.addColumn(
-                ImageColumn(start = absStartX + start, end = absStartX + end, src = src, onClick = onclick)
+                ImageColumn(start = absStartX + start, end = absStartX + end, src = src, onClick = srcWithClick[1])
             )
             calcTextLinePosition(textPages, textLine, stringBuilder.length)
             stringBuilder.append(" ") // 确保翻页时索引计算正确
@@ -735,12 +738,14 @@ class TextChapterLayout(
     ) {
         val column = when {
             srcList != null && char == ChapterProvider.srcReplaceChar -> {
-                val src = srcList.removeFirst()
+                val srcWithClick = srcList.removeFirst().split("\n")
+                val src = srcWithClick[0]
                 ImageProvider.cacheImage(book, src, ReadBook.bookSource)
                 ImageColumn(
                     start = absStartX + xStart,
                     end = absStartX + xEnd,
-                    src = src
+                    src = src,
+                    srcWithClick[1]
                 )
             }
 
