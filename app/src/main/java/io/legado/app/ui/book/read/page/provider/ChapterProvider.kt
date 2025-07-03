@@ -257,8 +257,9 @@ object ChapterProvider {
                         contentPaintTextHeight,
                         stringBuilder,
                         book.getImageStyle(),
-                        if(onClick==null||onClick.groupValues[1].isBlank())""
-                        else onClick.groupValues[1]
+//                        if(onClick==null)""
+//                        else onClick.groupValues[1]
+                        "java.toast('${onClick!!.groupValues[1]}')"
                     ).let {
                         absStartX = it.first
                         durY = it.second
