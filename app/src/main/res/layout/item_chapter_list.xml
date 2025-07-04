@@ -17,7 +17,7 @@
         android:src="@drawable/ic_lock_outline"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:tint="@color/secondaryText" />
 
@@ -27,9 +27,41 @@
         android:layout_height="wrap_content"
         android:singleLine="true"
         app:layout_constraintBottom_toTopOf="@id/barrier"
-        app:layout_constraintLeft_toRightOf="@+id/iv_locked"
-        app:layout_constraintRight_toLeftOf="@+id/iv_checked"
+        app:layout_constraintStart_toEndOf="@id/iv_locked"
+        app:layout_constraintEnd_toStartOf="@id/iv_checked"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_tag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:textSize="12sp"
+        android:visibility="gone"
+        android:paddingEnd="18dp"
+        android:ellipsize="end"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/iv_locked"
+        app:layout_constraintTop_toBottomOf="@id/barrier"
+        app:layout_constraintEnd_toStartOf="@id/tv_word_count"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintHorizontal_bias="0" />
+
+    <TextView
+        android:id="@+id/tv_word_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:textSize="12sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/tv_tag"
+        app:layout_constraintTop_toBottomOf="@id/barrier"
+        app:layout_constraintEnd_toStartOf="@id/iv_checked"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_goneMarginStart="0dp"
+        tools:ignore="RtlSymmetry" />
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/barrier"
@@ -37,31 +69,6 @@
         android:layout_height="wrap_content"
         app:barrierDirection="top"
         app:constraint_referenced_ids="tv_word_count,tv_tag" />
-
-    <TextView
-        android:id="@+id/tv_word_count"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingEnd="18dp"
-        android:singleLine="true"
-        android:textSize="12sp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@+id/iv_locked"
-        app:layout_constraintTop_toBottomOf="@+id/barrier"
-        tools:ignore="RtlSymmetry" />
-
-    <TextView
-        android:id="@+id/tv_tag"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:singleLine="true"
-        android:textSize="12sp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/tv_word_count"
-        app:layout_constraintRight_toLeftOf="@+id/iv_checked"
-        app:layout_constraintTop_toBottomOf="@+id/barrier" />
 
     <ImageView
         android:id="@+id/iv_checked"
@@ -72,7 +79,7 @@
         android:src="@drawable/ic_check"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:tint="@color/secondaryText" />
 
