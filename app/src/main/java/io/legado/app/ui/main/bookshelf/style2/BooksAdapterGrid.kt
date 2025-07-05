@@ -50,7 +50,7 @@ class BooksAdapterGrid(context: Context, callBack: CallBack) :
 
         fun onBind(item: Book, position: Int) = binding.run {
             tvName.text = item.name
-            ivCover.load(item.getDisplayCover(), item.name, item.author, false, item.origin)
+            ivCover.load(item.getDisplayCover(), item.name, item.author, false, item.origin, inBookshelf = true)
             upRefresh(this, item)
         }
 
@@ -68,7 +68,8 @@ class BooksAdapterGrid(context: Context, callBack: CallBack) :
                                 item.name,
                                 item.author,
                                 false,
-                                item.origin
+                                item.origin,
+                                inBookshelf = true
                             )
 
                             "refresh" -> upRefresh(this, item)
@@ -109,7 +110,7 @@ class BooksAdapterGrid(context: Context, callBack: CallBack) :
 
         fun onBind(item: BookGroup, position: Int) = binding.run {
             tvName.text = item.groupName
-            ivCover.load(item.cover)
+            ivCover.load(item.cover, inBookshelf = true)
         }
 
         fun onBind(item: BookGroup, position: Int, payloads: MutableList<Any>) = binding.run {
@@ -121,7 +122,7 @@ class BooksAdapterGrid(context: Context, callBack: CallBack) :
                     bundle.keySet().forEach {
                         when (it) {
                             "groupName" -> tvName.text = item.groupName
-                            "cover" -> ivCover.load(item.cover)
+                            "cover" -> ivCover.load(item.cover, inBookshelf = true)
                         }
                     }
                 }
