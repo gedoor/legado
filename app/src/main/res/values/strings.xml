@@ -1227,4 +1227,5 @@
     <string name="manga_epaper_value">阈值</string>
     <string name="disable_horizontal_animation">禁用水平滚动动画</string>
     <string name="enable_manga_gray">开启图片灰色</string>
+    <string name="play_mode">播放模式</string>
 </resources>
