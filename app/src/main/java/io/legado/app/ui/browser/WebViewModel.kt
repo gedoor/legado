@@ -53,7 +53,7 @@ class WebViewModel(application: Application) : BaseViewModel(application) {
             refetchAfterSuccess = intent.getBooleanExtra("refetchAfterSuccess", true)
             val source = SourceHelp.getSource(sourceOrigin, sourceType)
             val analyzeUrl = AnalyzeUrl(url, source = source, coroutineContext = coroutineContext)
-            baseUrl = headerMap.get("Origin")?:analyzeUrl.url
+            baseUrl = analyzeUrl.headerMap.get("Origin")?:analyzeUrl.url
             headerMap.putAll(analyzeUrl.headerMap)
             if (analyzeUrl.isPost()) {
                 html = analyzeUrl.getStrResponseAwait(useWebView = false).body
