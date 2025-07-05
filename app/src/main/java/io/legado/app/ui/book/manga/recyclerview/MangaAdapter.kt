@@ -95,9 +95,8 @@ class MangaAdapter(private val context: Context) :
             binding.retry.setOnClickListener {
                 val item = mDiffer.currentList[layoutPosition]
                 if (item is MangaPage) {
-                    val isLastImage = item.imageCount > 0 && item.index == item.imageCount - 1
                     loadImageWithRetry(
-                        item.mImageUrl, isHorizontal, isLastImage, mTransformation
+                        item.mImageUrl, isHorizontal, mTransformation
                     )
                 }
             }
@@ -105,8 +104,7 @@ class MangaAdapter(private val context: Context) :
 
         fun onBind(item: MangaPage) {
             setImageColorFilter()
-            val isLastImage = item.imageCount > 0 && item.index == item.imageCount - 1
-            loadImageWithRetry(item.mImageUrl, isHorizontal, isLastImage, mTransformation)
+            loadImageWithRetry(item.mImageUrl, isHorizontal, mTransformation)
         }
 
         fun setImageColorFilter() {

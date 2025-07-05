@@ -56,7 +56,6 @@ open class MangaVH<VB : ViewBinding>(val binding: VB, private val context: Conte
     fun loadImageWithRetry(
         imageUrl: String,
         isHorizontal: Boolean,
-        isLastImage: Boolean,
         transformation: Transformation<Bitmap>?
     ) {
         mFlProgress.isVisible = true
@@ -105,30 +104,17 @@ open class MangaVH<VB : ViewBinding>(val binding: VB, private val context: Conte
                             height = ViewGroup.LayoutParams.WRAP_CONTENT
                         }
                         mImage.updateLayoutParams<FrameLayout.LayoutParams> {
-                            gravity = Gravity.NO_GRAVITY
+                            height = ViewGroup.LayoutParams.WRAP_CONTENT
+                            gravity = Gravity.CENTER
                         }
-                        if (isLastImage) {
-                            mImage.updateLayoutParams<FrameLayout.LayoutParams> {
-                                height = ViewGroup.LayoutParams.WRAP_CONTENT
-                            }
-                            itemView.minimumHeight = minHeight
-                        } else {
-                            mImage.updateLayoutParams<FrameLayout.LayoutParams> {
-                                height = ViewGroup.LayoutParams.MATCH_PARENT
-                            }
-                            itemView.minimumHeight = 0
-                        }
-                        mImage.scaleType = ImageView.ScaleType.FIT_XY
                     } else {
                         itemView.updateLayoutParams<ViewGroup.LayoutParams> {
                             height = ViewGroup.LayoutParams.MATCH_PARENT
                         }
-                        itemView.minimumHeight = 0
                         mImage.updateLayoutParams<FrameLayout.LayoutParams> {
                             height = ViewGroup.LayoutParams.MATCH_PARENT
                             gravity = Gravity.CENTER
                         }
-                        mImage.scaleType = ImageView.ScaleType.FIT_CENTER
                     }
                     return false
                 }
