@@ -51,6 +51,8 @@ import io.legado.app.ui.book.manga.entities.MangaPage
 import io.legado.app.ui.book.manga.recyclerview.MangaAdapter
 import io.legado.app.ui.book.manga.recyclerview.MangaLayoutManager
 import io.legado.app.ui.book.manga.recyclerview.ScrollTimer
+import io.legado.app.ui.book.manga.recyclerview.WebtoonRecyclerView
+import io.legado.app.ui.book.manga.recyclerview.WebtoonRecyclerView.OnWebtoonScrollListener
 import io.legado.app.ui.book.read.MangaMenu
 import io.legado.app.ui.book.read.ReadBookActivity.Companion.RESULT_DELETED
 import io.legado.app.ui.book.toc.TocActivityResult
@@ -79,7 +81,8 @@ import kotlin.math.ceil
 
 class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewModel>(),
     ReadManga.Callback, ChangeBookSourceDialog.CallBack, MangaMenu.CallBack,
-    MangaColorFilterDialog.Callback, ScrollTimer.ScrollCallback, MangaEpaperDialog.Callback {
+    MangaColorFilterDialog.Callback, ScrollTimer.ScrollCallback, MangaEpaperDialog.Callback,
+    OnWebtoonScrollListener {
 
     private val mLayoutManager by lazy {
         MangaLayoutManager(this)
@@ -95,6 +98,8 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
     private val mPagerSnapHelper: PagerSnapHelper by lazy {
         PagerSnapHelper()
     }
+
+    private val BOUNDS_PAGE_OFFSET = 2
 
     private lateinit var mMangaFooterConfig: MangaFooterConfig
     private val mLabelBuilder by lazy { StringBuilder() }
@@ -127,6 +132,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
             setLoadingTextColor(R.color.white)
         }
     }
+    private var isChapterSwitching = false
 
     //打开目录返回选择章节返回结果
     private val tocActivity = registerForActivityResult(TocActivityResult()) {
@@ -202,6 +208,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
             itemAnimator = null
             layoutManager = mLayoutManager
             setHasFixedSize(true)
+            addOnPageScrollListener(this@ReadMangaActivity)
             setDisableClickScroll(AppConfig.disableClickScroll)
             setDisableMangaScale(AppConfig.disableMangaScale)
             setRecyclerViewPreloader(AppConfig.mangaPreDownloadNum)
@@ -210,6 +217,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
                     val item = mAdapter.getItem(position)
                     if (item is BaseMangaPage) {
                         if (ReadManga.durChapterIndex < item.chapterIndex) {
+                            isChapterSwitching = true
                             ReadManga.moveToNextChapter()
                         } else if (ReadManga.durChapterIndex > item.chapterIndex) {
                             ReadManga.moveToPrevChapter()
@@ -396,6 +404,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
 
     override fun onDestroy() {
         ReadManga.unregister(this)
+        binding.recyclerView.removeOnPageScrollListener(this@ReadMangaActivity)
         super.onDestroy()
     }
 
@@ -835,5 +844,29 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
 
     override fun updateEepaper(value: Int) {
         mAdapter.updateThreshold(value)
+    }
+
+    override fun onScrollChanged(
+        recyclerView: WebtoonRecyclerView,
+        dy: Int,
+        firstVisiblePosition: Int,
+        lastVisiblePosition: Int,
+    ) {
+
+        if (mAdapter.isNotEmpty()) {
+            val pos = lastVisiblePosition - 1
+            if (pos <= -1) {
+                return
+            }
+            val item = mAdapter.getItem(pos)
+            if (item is MangaPage) {
+                if (lastVisiblePosition >= (item.imageCount.minus(1) - BOUNDS_PAGE_OFFSET)
+                    && !isChapterSwitching && ReadManga.durChapterIndex == item.chapterIndex && dy > 0 && !loadMoreView.isLoading
+                ) {
+                    isChapterSwitching = false
+                    ReadManga.moveToNextChapter()
+                }
+            }
+        }
     }
 }

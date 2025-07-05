@@ -13,6 +13,7 @@ import androidx.core.animation.doOnEnd
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.utils.findCenterViewPosition
+import java.util.LinkedList
 import kotlin.math.abs
 
 
@@ -43,6 +44,24 @@ class WebtoonRecyclerView @JvmOverloads constructor(
     var tapListener: ((MotionEvent) -> Unit)? = null
     var longTapListener: ((MotionEvent) -> Boolean)? = null
     var disableMangaScale = false
+    private var onPageScrollListeners = LinkedList<OnWebtoonScrollListener>()
+    private val scrollDispatcher = WebtoonScrollDispatcher()
+
+    fun addOnPageScrollListener(listener: OnWebtoonScrollListener) {
+        onPageScrollListeners.add(listener)
+    }
+
+    fun removeOnPageScrollListener(listener: OnWebtoonScrollListener) {
+        onPageScrollListeners.remove(listener)
+    }
+
+    private fun notifyScrollChanged(dy: Int) {
+        val listeners = onPageScrollListeners
+        if (listeners.isEmpty()) {
+            return
+        }
+        scrollDispatcher.dispatchScroll(this, dy)
+    }
 
     override fun onMeasure(widthSpec: Int, heightSpec: Int) {
         halfWidth = MeasureSpec.getSize(widthSpec) / 2
@@ -81,13 +100,14 @@ class WebtoonRecyclerView @JvmOverloads constructor(
         dy: Int,
         consumed: IntArray?,
         offsetInWindow: IntArray?,
-        type: Int
+        type: Int,
     ): Boolean {
         val position = findCenterViewPosition()
         if (position != NO_POSITION && position != mLastCenterViewPosition) {
             mLastCenterViewPosition = position
             mPreScrollListener?.onPreScrollListener(this, dx, dy, position)
         }
+        notifyScrollChanged(dy)
         mNestedPreScrollListener?.onPreScrollListener(this, dx, dy, position)
         return super.dispatchNestedPreScroll(dx, dy, consumed, offsetInWindow, type)
     }
@@ -363,6 +383,47 @@ class WebtoonRecyclerView @JvmOverloads constructor(
 
     fun interface IComicPreScroll {
         fun onPreScrollListener(recyclerView: RecyclerView, dx: Int, dy: Int, position: Int)
+    }
+
+    interface OnWebtoonScrollListener {
+
+        fun onScrollChanged(
+            recyclerView: WebtoonRecyclerView,
+            dy: Int,
+            firstVisiblePosition: Int,
+            lastVisiblePosition: Int,
+        )
+    }
+
+    private class WebtoonScrollDispatcher {
+
+        private var firstPos = NO_POSITION
+        private var lastPos = NO_POSITION
+
+        fun dispatchScroll(rv: WebtoonRecyclerView, dy: Int) {
+            val lm = rv.layoutManager as? LinearLayoutManager
+            if (lm == null) {
+                firstPos = NO_POSITION
+                lastPos = NO_POSITION
+                return
+            }
+            val newFirstPos = lm.findFirstVisibleItemPosition()
+            val newLastPos = lm.findLastVisibleItemPosition()
+            if (newFirstPos != firstPos || newLastPos != lastPos) {
+                firstPos = newFirstPos
+                lastPos = newLastPos
+                if (newFirstPos != NO_POSITION && newLastPos != NO_POSITION) {
+                    rv.onPageScrollListeners.forEach {
+                        it.onScrollChanged(
+                            rv,
+                            dy,
+                            newFirstPos,
+                            newLastPos
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 
