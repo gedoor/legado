@@ -1220,5 +1220,5 @@
     <string name="manga_epaper_stting">墨水屏设置</string>
     <string name="manga_epaper_value">阈值</string>
     <string name="disable_horizontal_animation">禁用水平滚动动画</string>
-    <string name="enable_manga_gray">开启图片灰色</string>灰色
+    <string name="enable_manga_gray">开启图片灰色</string>
 </resources>
