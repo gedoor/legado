@@ -72,6 +72,7 @@ import io.legado.app.ui.book.bookmark.BookmarkDialog
 import io.legado.app.ui.book.changesource.ChangeBookSourceDialog
 import io.legado.app.ui.book.changesource.ChangeChapterSourceDialog
 import io.legado.app.ui.book.info.BookInfoActivity
+import io.legado.app.ui.book.read.AiSummaryDialog
 import io.legado.app.ui.book.read.config.AutoReadDialog
 import io.legado.app.ui.book.read.config.BgTextConfigDialog.Companion.BG_COLOR
 import io.legado.app.ui.book.read.config.BgTextConfigDialog.Companion.TEXT_COLOR
@@ -514,6 +515,8 @@ class ReadBookActivity : BaseReadBookActivity(),
             R.id.menu_add_bookmark -> addBookmark()
             R.id.menu_simulated_reading -> showSimulatedReading()
             R.id.menu_edit_content -> showDialogFragment(ContentEditDialog())
+
+            
 
             R.id.menu_ai_summary -> aiSummary()
 
@@ -1493,6 +1496,10 @@ class ReadBookActivity : BaseReadBookActivity(),
 
     override fun onMenuHide() {
         binding.readView.autoPager.resume()
+    }
+
+    override fun onEditContentClick() {
+        showDialogFragment(ZhanweifuContentEditDialog())
     }
 
     override fun onLayoutPageCompleted(index: Int, page: TextPage) {

@@ -967,6 +967,7 @@
     <string name="menu_refresh_after">Refresh the chapter after</string>
     <string name="menu_refresh_all">Refresh all chapters</string>
     <string name="edit_content">Edit Content</string>
+    <string name="zhanweifu_edit_content">Zhanweifu Edit Content</string>
     <string name="ai_summary">AI Summary</string>
     <string name="ai_summary_config">AI Summary Settings</string>
     <string name="ai_summary_api_key">API Key</string>

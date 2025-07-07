@@ -195,6 +195,26 @@
                 android:layout_weight="1" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fabEditContent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:contentDescription="@string/zhanweifu_edit_content"
+                android:src="@drawable/ic_edit_24dp"
+                android:tint="@color/primaryText"
+                android:tooltipText="@string/zhanweifu_edit_content"
+                app:backgroundTint="@color/background_menu"
+                app:elevation="2dp"
+                app:fabSize="mini"
+                app:pressedTranslationZ="2dp"
+                tools:ignore="UnusedAttribute" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fabNightTheme"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

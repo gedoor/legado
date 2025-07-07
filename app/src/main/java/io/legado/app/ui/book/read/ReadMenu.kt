@@ -197,6 +197,8 @@ class ReadMenu @JvmOverloads constructor(
         fabSearch.setColorFilter(textColor)
         fabAutoPage.backgroundTintList = bottomBackgroundList
         fabAutoPage.setColorFilter(textColor)
+        fabEditContent.backgroundTintList = bottomBackgroundList
+        fabEditContent.setColorFilter(textColor)
         fabReplaceRule.backgroundTintList = bottomBackgroundList
         fabReplaceRule.setColorFilter(textColor)
         fabNightTheme.backgroundTintList = bottomBackgroundList
@@ -446,6 +448,13 @@ class ReadMenu @JvmOverloads constructor(
             }
         }
 
+        //编辑内容
+        fabEditContent.setOnClickListener {
+            runMenuOut {
+                callBack.onEditContentClick()
+            }
+        }
+
         //替换
         fabReplaceRule.setOnClickListener { callBack.openReplaceRule() }
 
@@ -585,6 +594,7 @@ class ReadMenu @JvmOverloads constructor(
         fun skipToChapter(index: Int)
         fun onMenuShow()
         fun onMenuHide()
+        fun onEditContentClick()
     }
 
 }
