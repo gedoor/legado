@@ -75,6 +75,8 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.text.DecimalFormat
 import kotlin.math.ceil
@@ -133,6 +135,8 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
         }
     }
     private var isChapterSwitching = false
+    private val moveMutex = Mutex()
+    private var loadingNextChapter = false
 
     //打开目录返回选择章节返回结果
     private val tocActivity = registerForActivityResult(TocActivityResult()) {
@@ -218,7 +222,9 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
                     if (item is BaseMangaPage) {
                         if (ReadManga.durChapterIndex < item.chapterIndex) {
                             isChapterSwitching = true
-                            ReadManga.moveToNextChapter()
+                            lifecycleScope.launch {
+                                safeMoveToNextChapter()
+                            }
                         } else if (ReadManga.durChapterIndex > item.chapterIndex) {
                             ReadManga.moveToPrevChapter()
                         } else {
@@ -864,7 +870,22 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
                     && !isChapterSwitching && ReadManga.durChapterIndex == item.chapterIndex && dy > 0 && !loadMoreView.isLoading
                 ) {
                     isChapterSwitching = false
+                    lifecycleScope.launch {
+                        safeMoveToNextChapter()
+                    }
+                }
+            }
+        }
+    }
+
+    suspend fun safeMoveToNextChapter() {
+        moveMutex.withLock {
+            if (!loadingNextChapter) {
+                loadingNextChapter = true
+                try {
                     ReadManga.moveToNextChapter()
+                } finally {
+                    loadingNextChapter = false
                 }
             }
         }
