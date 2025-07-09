@@ -76,10 +76,15 @@ class AutoPager(private val readView: ReadView) : Runnable {
     }
 
     fun reset() {
-        progress = 0
-        scrollOffsetRemain = 0.0
-        scrollOffset = 0
-        canvasRecorder.invalidate()
+        if (isEInkMode) {
+            readView.removeCallbacks(this)
+            readView.postDelayed(this, ReadBookConfig.autoReadSpeed * 1000L)
+        } else {
+            progress = 0
+            scrollOffsetRemain = 0.0
+            scrollOffset = 0
+            canvasRecorder.invalidate()
+        }
     }
 
     fun upRecorder() {
@@ -148,6 +153,10 @@ class AutoPager(private val readView: ReadView) : Runnable {
     }
 
     override fun run() {
+        if (!isRunning || isPausing) {
+            return
+        }
+
         if (!readView.fillPage(PageDirection.NEXT)) {
             stop()
         } else {
