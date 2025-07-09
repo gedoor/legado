@@ -26,7 +26,7 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
 
     fun initData(intent: Intent) = AudioPlay.apply {
         execute {
-            val bookUrl = intent.getStringExtra("bookUrl") ?: return@execute
+            val bookUrl = intent.getStringExtra("bookUrl") ?: book?.bookUrl ?: return@execute
             val book = appDb.bookDao.getBook(bookUrl) ?: return@execute
             inBookshelf = intent.getBooleanExtra("inBookshelf", true)
             initBook(book)
