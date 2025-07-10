@@ -196,6 +196,7 @@ class CoverImageView @JvmOverloads constructor(
         sourceOrigin: String? = null,
         fragment: Fragment? = null,
         lifecycle: Lifecycle? = null,
+        inBookshelf: Boolean = false,
         onLoadFinish: (() -> Unit)? = null
     ) {
         this.bitmapPath = path
@@ -203,6 +204,9 @@ class CoverImageView @JvmOverloads constructor(
         this.author = author?.replace(AppPattern.bdRegex, "")?.trim()
         defaultCover = true
         invalidate()
+
+        val type = if (inBookshelf)"covers" else "default"
+
         if (AppConfig.useDefaultCover) {
             ImageLoader.load(context, BookCover.defaultDrawable)
                 .centerCrop()
@@ -213,9 +217,9 @@ class CoverImageView @JvmOverloads constructor(
                 options = options.set(OkHttpModelLoader.sourceOriginOption, sourceOrigin)
             }
             var builder = if (fragment != null && lifecycle != null) {
-                ImageLoader.load(fragment, lifecycle, path)
+                ImageLoader.load(fragment, lifecycle, path,type)
             } else {
-                ImageLoader.load(context, path)//Glide自动识别http://,content://和file://
+                ImageLoader.load(context, path,type)//Glide自动识别http://,content://和file://
             }
             builder = builder.apply(options)
                 .placeholder(BookCover.defaultDrawable)
