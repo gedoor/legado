@@ -9,6 +9,7 @@ import android.webkit.WebView
 import androidx.documentfile.provider.DocumentFile
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppConst
+import io.legado.app.constant.AppPattern.dataUriRegex
 import io.legado.app.constant.SourceType
 import io.legado.app.data.appDb
 import io.legado.app.exception.NoStackTraceException
@@ -58,7 +59,7 @@ class WebViewModel(application: Application) : BaseViewModel(application) {
             if (analyzeUrl.isPost()) {
                 html = analyzeUrl.getStrResponseAwait(useWebView = false).body
             }
-            if (analyzeUrl.url.startsWith("data:")) {
+            if (dataUriRegex.matches(analyzeUrl.url)) {
                 html = analyzeUrl.getByteArrayAwait().toString(Charsets.UTF_8)
             }
         }.onSuccess {
