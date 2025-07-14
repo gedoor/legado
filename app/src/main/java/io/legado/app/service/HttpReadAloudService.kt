@@ -343,17 +343,17 @@ class HttpReadAloudService : BaseReadAloudService(),
                     val contentType = contentType.substringBefore(";")
                     val ct = httpTts.contentType
                     if (contentType == "application/json" || contentType.startsWith("text/")) {
-                        throw NoStackTraceException(response.body!!.string())
+                        throw NoStackTraceException(response.body.string())
                     } else if (ct?.isNotBlank() == true) {
                         if (!contentType.matches(ct.toRegex())) {
                             throw NoStackTraceException(
-                                "TTS服务器返回错误：" + response.body!!.string()
+                                "TTS服务器返回错误：" + response.body.string()
                             )
                         }
                     }
                 }
                 coroutineContext.ensureActive()
-                response.body!!.byteStream().let { stream ->
+                response.body.byteStream().let { stream ->
                     downloadErrorNo = 0
                     return stream
                 }

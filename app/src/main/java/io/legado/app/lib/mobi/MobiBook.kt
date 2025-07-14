@@ -16,11 +16,11 @@ import io.legado.app.lib.mobi.entities.Ptagx
 import io.legado.app.lib.mobi.entities.TOC
 import io.legado.app.lib.mobi.entities.TagxHeader
 import io.legado.app.lib.mobi.entities.TagxTag
+import io.legado.app.lib.mobi.utils.and
 import io.legado.app.lib.mobi.utils.readString
 import io.legado.app.lib.mobi.utils.readUInt16Array
 import io.legado.app.lib.mobi.utils.readUInt32
 import io.legado.app.lib.mobi.utils.readUInt8
-import okhttp3.internal.and
 import java.io.ByteArrayInputStream
 import java.io.InputStream
 import java.nio.ByteBuffer

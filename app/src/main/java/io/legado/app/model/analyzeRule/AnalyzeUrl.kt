@@ -457,7 +457,7 @@ class AnalyzeUrl(
                         else -> get(urlNoQuery, encodedQuery)
                     }
                 }.let {
-                    val isXml = it.raw.body?.contentType()?.toString()
+                    val isXml = it.raw.body.contentType()?.toString()
                         ?.matches(AppPattern.xmlContentTypeRegex) == true
                     if (isXml && it.body?.trim()?.startsWith("<?xml", true) == false) {
                         StrResponse(it.raw, "<?xml version=\"1.0\"?>" + it.body)
@@ -552,7 +552,7 @@ class AnalyzeUrl(
         getByteArrayIfDataUri()?.let {
             return it
         }
-        return getResponseAwait().body!!.bytes()
+        return getResponseAwait().body.bytes()
     }
 
     fun getByteArray(): ByteArray {
@@ -568,7 +568,7 @@ class AnalyzeUrl(
         getByteArrayIfDataUri()?.let {
             return ByteArrayInputStream(it)
         }
-        return getResponseAwait().body!!.byteStream()
+        return getResponseAwait().body.byteStream()
     }
 
     fun getInputStream(): InputStream {

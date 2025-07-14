@@ -9,12 +9,19 @@ import io.legado.app.utils.DebugLog
 import io.legado.app.utils.asIOException
 import io.legado.app.utils.splitNotBlank
 import kotlinx.coroutines.delay
-import okhttp3.*
+import okhttp3.Call
+import okhttp3.Callback
 import okhttp3.EventListener
+import okhttp3.Headers
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.Protocol
+import okhttp3.Request
+import okhttp3.Response
+import okhttp3.ResponseBody
 import okhttp3.ResponseBody.Companion.asResponseBody
+import okhttp3.internal.http.HTTP_PERM_REDIRECT
+import okhttp3.internal.http.HTTP_TEMP_REDIRECT
 import okhttp3.internal.http.HttpMethod
-import okhttp3.internal.http.StatusLine
 import okio.Buffer
 import okio.Source
 import okio.Timeout
@@ -25,7 +32,7 @@ import org.chromium.net.UrlResponseInfo
 import java.io.IOException
 import java.net.ProtocolException
 import java.nio.ByteBuffer
-import java.util.*
+import java.util.Locale
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
@@ -98,9 +105,15 @@ abstract class AbsCallBack(
         followCount += 1
         urlResponseInfoChain.add(info)
         val client = okHttpClient
-        if (originalRequest.url.isHttps && newLocationUrl.startsWith("http://") && client.followSslRedirects) {
+        if (originalRequest.url.isHttps
+            && newLocationUrl.startsWith("http://")
+            && client.followSslRedirects
+        ) {
             followRedirect = true
-        } else if (!originalRequest.url.isHttps && newLocationUrl.startsWith("https://") && client.followSslRedirects) {
+        } else if (!originalRequest.url.isHttps
+            && newLocationUrl.startsWith("https://")
+            && client.followSslRedirects
+        ) {
             followRedirect = true
         } else if (okHttpClient.followRedirects) {
             followRedirect = true
@@ -315,7 +328,7 @@ abstract class AbsCallBack(
                     contentLength,
                     bodySource
                 )
-            }
+            } ?: ResponseBody.EMPTY
 
             return Response.Builder()
                 .request(request)
@@ -381,9 +394,12 @@ abstract class AbsCallBack(
             if (HttpMethod.permitsRequestBody(method)) {
                 val responseCode = userResponse.code
                 val maintainBody = HttpMethod.redirectsWithBody(method) ||
-                        responseCode == StatusLine.HTTP_PERM_REDIRECT ||
-                        responseCode == StatusLine.HTTP_TEMP_REDIRECT
-                if (HttpMethod.redirectsToGet(method) && responseCode != StatusLine.HTTP_PERM_REDIRECT && responseCode != StatusLine.HTTP_TEMP_REDIRECT) {
+                        responseCode == HTTP_PERM_REDIRECT ||
+                        responseCode == HTTP_TEMP_REDIRECT
+                if (HttpMethod.redirectsToGet(method)
+                    && responseCode != HTTP_PERM_REDIRECT
+                    && responseCode != HTTP_TEMP_REDIRECT
+                ) {
                     requestBuilder.method("GET", null)
                 } else {
                     val requestBody = if (maintainBody) userResponse.request.body else null
