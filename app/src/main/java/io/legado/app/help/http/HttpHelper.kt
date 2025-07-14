@@ -127,7 +127,7 @@ val okHttpClientManga by lazy {
             val response = chain.proceed(request)
             val url = request.url.toString()
             response.newBuilder()
-                .body(ProgressResponseBody(url, LISTENER, response.body!!))
+                .body(ProgressResponseBody(url, LISTENER, response.body))
                 .build()
         }
         interceptors.add(1) { chain ->

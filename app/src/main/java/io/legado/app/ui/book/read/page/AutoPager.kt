@@ -14,11 +14,12 @@ import io.legado.app.utils.canvasrecorder.recordIfNeeded
 /**
  * 自动翻页
  */
-class AutoPager(private val readView: ReadView) {
+class AutoPager(private val readView: ReadView) : Runnable {
     private var progress = 0
     var isRunning = false
         private set
     private var isPausing = false
+    private var isEInkMode = false
     private var scrollOffsetRemain = 0.0
     private var scrollOffset = 0
     private var lastTimeMillis = 0L
@@ -28,10 +29,15 @@ class AutoPager(private val readView: ReadView) {
 
     fun start() {
         isRunning = true
-        paint.color = ThemeStore.accentColor
-        lastTimeMillis = SystemClock.uptimeMillis()
+        isEInkMode = AppConfig.isEInkMode
         readView.curPage.upSelectAble(false)
-        readView.invalidate()
+        if (isEInkMode) {
+            readView.postDelayed(this, ReadBookConfig.autoReadSpeed * 1000L)
+        } else {
+            paint.color = ThemeStore.accentColor
+            lastTimeMillis = SystemClock.uptimeMillis()
+            readView.invalidate()
+        }
     }
 
     fun stop() {
@@ -40,6 +46,8 @@ class AutoPager(private val readView: ReadView) {
         }
         isRunning = false
         isPausing = false
+        isEInkMode = false
+        readView.removeCallbacks(this)
         readView.curPage.upSelectAble(AppConfig.textSelectAble)
         readView.invalidate()
         reset()
@@ -51,6 +59,7 @@ class AutoPager(private val readView: ReadView) {
             return
         }
         isPausing = true
+        readView.removeCallbacks(this)
     }
 
     fun resume() {
@@ -58,15 +67,24 @@ class AutoPager(private val readView: ReadView) {
             return
         }
         isPausing = false
-        lastTimeMillis = SystemClock.uptimeMillis()
-        readView.invalidate()
+        if (isEInkMode) {
+            readView.postDelayed(this, ReadBookConfig.autoReadSpeed * 1000L)
+        } else {
+            lastTimeMillis = SystemClock.uptimeMillis()
+            readView.invalidate()
+        }
     }
 
     fun reset() {
-        progress = 0
-        scrollOffsetRemain = 0.0
-        scrollOffset = 0
-        canvasRecorder.invalidate()
+        if (isEInkMode) {
+            readView.removeCallbacks(this)
+            readView.postDelayed(this, ReadBookConfig.autoReadSpeed * 1000L)
+        } else {
+            progress = 0
+            scrollOffsetRemain = 0.0
+            scrollOffset = 0
+            canvasRecorder.invalidate()
+        }
     }
 
     fun upRecorder() {
@@ -75,7 +93,7 @@ class AutoPager(private val readView: ReadView) {
     }
 
     fun onDraw(canvas: Canvas) {
-        if (!isRunning) {
+        if (!isRunning || isEInkMode) {
             return
         }
 
@@ -106,7 +124,7 @@ class AutoPager(private val readView: ReadView) {
     }
 
     fun computeOffset() {
-        if (!isRunning || isPausing) {
+        if (!isRunning || isPausing || isEInkMode) {
             return
         }
 
@@ -131,6 +149,18 @@ class AutoPager(private val readView: ReadView) {
                     reset()
                 }
             }
+        }
+    }
+
+    override fun run() {
+        if (!isRunning || isPausing) {
+            return
+        }
+
+        if (!readView.fillPage(PageDirection.NEXT)) {
+            stop()
+        } else {
+            readView.postDelayed(this, ReadBookConfig.autoReadSpeed * 1000L)
         }
     }
 

@@ -343,17 +343,17 @@ class HttpReadAloudService : BaseReadAloudService(),
                     val contentType = contentType.substringBefore(";")
                     val ct = httpTts.contentType
                     if (contentType == "application/json" || contentType.startsWith("text/")) {
-                        throw NoStackTraceException(response.body!!.string())
+                        throw NoStackTraceException(response.body.string())
                     } else if (ct?.isNotBlank() == true) {
                         if (!contentType.matches(ct.toRegex())) {
                             throw NoStackTraceException(
-                                "TTS服务器返回错误：" + response.body!!.string()
+                                "TTS服务器返回错误：" + response.body.string()
                             )
                         }
                     }
                 }
                 coroutineContext.ensureActive()
-                response.body!!.byteStream().let { stream ->
+                response.body.byteStream().let { stream ->
                     downloadErrorNo = 0
                     return stream
                 }
@@ -477,12 +477,12 @@ class HttpReadAloudService : BaseReadAloudService(),
             val sleep = exoPlayer.duration / speakTextLength
             val start = speakTextLength * exoPlayer.currentPosition / exoPlayer.duration
             for (i in start..contentList[nowSpeak].length) {
-                if (readAloudNumber + i > textChapter.getReadLength(pageIndex + 1)) {
+                if (pageIndex + 1 < textChapter.pageSize
+                    && readAloudNumber + i > textChapter.getReadLength(pageIndex + 1)
+                ) {
                     pageIndex++
-                    if (pageIndex < textChapter.pageSize) {
-                        ReadBook.moveToNextPage()
-                        upTtsProgress(readAloudNumber + i.toInt())
-                    }
+                    ReadBook.moveToNextPage()
+                    upTtsProgress(readAloudNumber + i.toInt())
                 }
                 delay(sleep)
             }

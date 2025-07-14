@@ -27,6 +27,7 @@ import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppLog
+import io.legado.app.constant.AppPattern
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.IntentAction
 import io.legado.app.constant.NotificationId
@@ -326,9 +327,11 @@ abstract class BaseReadAloudService : BaseService(),
     private fun prevP() {
         if (nowSpeak > 0) {
             playStop()
-            nowSpeak--
-            readAloudNumber -= contentList[nowSpeak].length + 1 + paragraphStartPos
-            paragraphStartPos = 0
+            do {
+                nowSpeak--
+                readAloudNumber -= contentList[nowSpeak].length + 1 + paragraphStartPos
+                paragraphStartPos = 0
+            } while (contentList[nowSpeak].matches(AppPattern.notReadAloudRegex))
             textChapter?.let {
                 if (readAloudByPage) {
                     val paragraphs = it.getParagraphs(true)
@@ -358,7 +361,9 @@ abstract class BaseReadAloudService : BaseService(),
                     val paragraphs = it.getParagraphs(true)
                     if (!paragraphs[nowSpeak].isParagraphEnd) readAloudNumber--
                 }
-                if (readAloudNumber >= it.getReadLength(pageIndex + 1)) {
+                if (pageIndex + 1 < it.pageSize
+                    && readAloudNumber >= it.getReadLength(pageIndex + 1)
+                ) {
                     pageIndex++
                     ReadBook.moveToNextPage()
                 }
