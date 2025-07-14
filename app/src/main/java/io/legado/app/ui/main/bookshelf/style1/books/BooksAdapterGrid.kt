@@ -26,7 +26,7 @@ class BooksAdapterGrid(context: Context, private val callBack: CallBack) :
     ) = binding.run {
         if (payloads.isEmpty()) {
             tvName.text = item.name
-            ivCover.load(item.getDisplayCover(), item.name, item.author, false, item.origin)
+            ivCover.load(item.getDisplayCover(), item.name, item.author, false, item.origin, inBookshelf = true)
             upRefresh(binding, item)
         } else {
             for (i in payloads.indices) {
@@ -34,7 +34,7 @@ class BooksAdapterGrid(context: Context, private val callBack: CallBack) :
                 bundle.keySet().forEach {
                     when (it) {
                         "name" -> tvName.text = item.name
-                        "cover" -> ivCover.load(item.getDisplayCover(), item.name, item.author, false, item.origin)
+                        "cover" -> ivCover.load(item.getDisplayCover(), item.name, item.author, false, item.origin, inBookshelf = true)
                         "refresh" -> upRefresh(binding, item)
                     }
                 }
