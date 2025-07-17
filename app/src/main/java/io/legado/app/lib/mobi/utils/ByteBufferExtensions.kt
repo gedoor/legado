@@ -1,6 +1,5 @@
 package io.legado.app.lib.mobi.utils
 
-import okhttp3.internal.and
 import java.nio.ByteBuffer
 import java.nio.charset.Charset
 
