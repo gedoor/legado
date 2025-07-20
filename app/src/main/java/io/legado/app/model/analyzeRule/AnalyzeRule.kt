@@ -61,8 +61,8 @@ class AnalyzeRule(
     private var chapter: BookChapter? = null
     private var nextChapterUrl: String? = null
     private var content: Any? = null
-    private var baseUrl: String? = null
-    private var redirectUrl: URL? = null
+    var baseUrl: String? = null
+    var redirectUrl: URL? = null
     private var isJSON: Boolean = false
     private var isRegex: Boolean = false
 
