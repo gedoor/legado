@@ -145,6 +145,9 @@ class App : Application() {
      * @return
      */
     private fun installGmsTlsProvider(context: Context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            return
+        }
         try {
             val gmsPackageName = "com.google.android.gms"
             val appInfo = packageManager.getApplicationInfo(gmsPackageName, 0)
