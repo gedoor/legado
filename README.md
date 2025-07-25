@@ -1,4 +1,4 @@
-# [English](English.md) [中文](README.md) 滴滴滴
+# [English](English.md) [中文](README.md)
 
 [![icon_android](https://github.com/gedoor/gedoor.github.io/blob/master/static/img/legado/icon_android.png)](https://play.google.com/store/apps/details?id=io.legado.play.release)
 <a href="https://jb.gg/OpenSourceSupport" target="_blank">
