@@ -802,7 +802,7 @@ class AnalyzeRule(
                 prototype = topScope
             }
         }
-        val script = compileScriptCache(deJsStr)
+        val script = compileScriptCache(jsStr)
         val result = script.eval(scope, coroutineContext)
         return result
     }
