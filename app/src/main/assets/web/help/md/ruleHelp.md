@@ -242,3 +242,10 @@ function decodeImage(data, key) {
 
 decodeImage(result, key)
 ```
+
+* 音频书籍获取歌词
+> 正文内容第一行作为音频播放链接，其余内容作为歌词显示
+
+```js
+result = "https://example.mp3" + "\n" + "[00:00.00][by:花丸的蜜柑面包]"
+```
