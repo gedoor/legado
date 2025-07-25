@@ -13,8 +13,6 @@ object AppPattern {
 
     //dataURL图片类型
     val dataUriRegex = Regex("^data:.*?;base64,(.*)")
-    //自定义图片样式
-    val imgstyRegex = Regex("style[\"'\\s]*:\\s*[\"']([^\"']*)[\"']")
 
     //匹配章节信息中的字数
     val wordCountRegex = Regex("(?:^|字数[：:、]?|\\s+)([0-9万千百\\.]{1,6}字)")

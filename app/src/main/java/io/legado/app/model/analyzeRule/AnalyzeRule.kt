@@ -43,8 +43,6 @@ import java.util.regex.Pattern
 import kotlin.coroutines.ContinuationInterceptor
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
-import io.legado.app.help.crypto.decryptJS
-import io.legado.app.help.crypto.encryptJS
 
 /**
  * 解析规则获取结果
@@ -768,16 +766,6 @@ class AnalyzeRule(
     }
 
     /**
-     * 加密js代码
-     */
-
-    fun encodeJS(jsStr: String): String {
-        val re = encryptJS(jsStr)
-        source?.put(re.takeLast(9), jsStr)
-        return re
-    }
-
-    /**
      * 设置并发率
      */
     fun setConcurrent(value: String) {
@@ -788,7 +776,6 @@ class AnalyzeRule(
      * 执行JS
      */
     fun evalJS(jsStr: String, result: Any? = null): Any? {
-        val deJsStr = decryptJS(jsStr)
         val bindings = buildScriptBindings { bindings ->
             bindings["java"] = this
             bindings["cookie"] = CookieStore
