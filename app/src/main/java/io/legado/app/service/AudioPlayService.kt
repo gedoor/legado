@@ -75,6 +75,9 @@ class AudioPlayService : BaseService(),
         @JvmStatic
         var timeMinute: Int = 0
 
+        @JvmStatic
+        var playSpeed: Float = 1f
+
         var url: String = ""
             private set
 
@@ -113,7 +116,6 @@ class AudioPlayService : BaseService(),
     private var dsJob: Job? = null
     private var upNotificationJob: Coroutine<*>? = null
     private var upPlayProgressJob: Job? = null
-    private var playSpeed: Float = 1f
     private var cover: Bitmap =
         BitmapFactory.decodeResource(appCtx.resources, R.drawable.icon_read_book)
 
@@ -172,7 +174,7 @@ class AudioPlayService : BaseService(),
                 IntentAction.resume -> resume()
                 IntentAction.prev -> AudioPlay.prev()
                 IntentAction.next -> AudioPlay.next()
-                IntentAction.adjustSpeed -> upSpeed(intent.getFloatExtra("adjust", 1f))
+                IntentAction.setSpeed -> upSpeed(intent.getFloatExtra("speed", 1f))
                 IntentAction.addTimer -> addTimer()
                 IntentAction.setTimer -> setTimer(intent.getIntExtra("minute", 0))
                 IntentAction.adjustProgress -> {
@@ -306,11 +308,10 @@ class AudioPlayService : BaseService(),
      * 调节速度
      */
     @SuppressLint(value = ["ObsoleteSdkInt"])
-    private fun upSpeed(adjust: Float) {
+    private fun upSpeed(speed: Float) {
         kotlin.runCatching {
-
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                playSpeed += adjust
+                playSpeed = speed
                 exoPlayer.setPlaybackSpeed(playSpeed)
                 postEvent(EventBus.AUDIO_SPEED, playSpeed)
             }

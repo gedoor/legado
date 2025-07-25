@@ -237,14 +237,17 @@ object AudioPlay : CoroutineScope by MainScope() {
         }
     }
 
-    fun adjustSpeed(adjust: Float) {
+    fun setSpeed(speed: Float) {
         if (AudioPlayService.isRun) {
+            val clampedSpeed = speed.coerceIn(0.5f, 2.0f)
             context.startService<AudioPlayService> {
-                action = IntentAction.adjustSpeed
-                putExtra("adjust", adjust)
+                action = IntentAction.setSpeed
+                putExtra("speed", clampedSpeed)
             }
         }
     }
+
+     
 
     fun adjustProgress(position: Int) {
         durChapterPos = position

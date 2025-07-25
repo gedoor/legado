@@ -64,6 +64,7 @@ class AudioPlayActivity :
     override val binding by viewBinding(ActivityAudioPlayBinding::inflate)
     override val viewModel by viewModels<AudioPlayViewModel>()
     private val timerSliderPopup by lazy { TimerSliderPopup(this) }
+    private val speedControlPopup by lazy { SpeedControlPopup(this) }
     private var adjustProgress = false
     private var playMode = AudioPlay.PlayMode.LIST_END_STOP
 
@@ -181,16 +182,16 @@ class AudioPlayActivity :
                 tocActivityResult.launch(it.bookUrl)
             }
         }
+
+        /* 低于安卓6不显示调速按钮 */
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            binding.ivFastRewind.invisible()
-            binding.ivFastForward.invisible()
+            binding.ivSpeedControl.invisible()
         }
-        binding.ivFastForward.setOnClickListener {
-            AudioPlay.adjustSpeed(0.1f)
+        
+        binding.ivSpeedControl.setOnClickListener {
+            speedControlPopup.showAsDropDown(it, 0, (-100).dpToPx(), Gravity.TOP)
         }
-        binding.ivFastRewind.setOnClickListener {
-            AudioPlay.adjustSpeed(-0.1f)
-        }
+
         binding.ivTimer.setOnClickListener {
             timerSliderPopup.showAsDropDown(it, 0, (-100).dpToPx(), Gravity.TOP)
         }
