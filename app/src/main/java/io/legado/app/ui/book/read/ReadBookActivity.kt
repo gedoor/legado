@@ -62,10 +62,6 @@ import io.legado.app.model.ReadBook
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeRule.Companion.setChapter
 import io.legado.app.model.analyzeRule.AnalyzeRule.Companion.setCoroutineContext
-import java.util.regex.Pattern
-import io.legado.app.utils.GSON
-import io.legado.app.utils.fromJsonObject
-import io.legado.app.utils.isJsonObject
 import io.legado.app.model.localBook.EpubFile
 import io.legado.app.model.localBook.MobiFile
 import io.legado.app.receiver.NetworkChangedListener
@@ -1322,45 +1318,6 @@ class ReadBookActivity : BaseReadBookActivity(),
             noButton()
         }
     }
-
-    /**
-     * 点击图片
-     */
-    override fun clickImg(clickjs: String) {
-        val braceIndex = clickjs.indexOf('{')
-        if (braceIndex != -1) {
-            val book = ReadBook.book ?: return
-            val chapter = appDb.bookChapterDao.getChapter(book.bookUrl, ReadBook.durChapterIndex)
-            if (chapter == null) {
-                toastOnUi("章节不存在")
-                return
-            }
-            val urlOptionStr = clickjs.substring(braceIndex)
-            if (urlOptionStr.isJsonObject()) {
-                val urlOptionMap = GSON.fromJsonObject<Map<String, String>>(urlOptionStr).getOrThrow()
-                val jsStr = urlOptionMap["js"] as? String
-                jsStr?.let {
-                    Coroutine.async(lifecycleScope) {
-                        val source = ReadBook.bookSource ?: throw Exception("书源不存在")
-                        AnalyzeRule(book, source).apply {
-                            setCoroutineContext(coroutineContext)
-                            setBaseUrl(chapter.url)
-                            setChapter(chapter)
-                            evalJS(jsStr).toString()
-                        }
-                    }.onError {
-                        AppLog.put("图片点击执行出错\n${it.localizedMessage}", it, true)
-                    }
-                }
-            }
-            else {
-                toastOnUi("链接格式错误")
-                return
-            }
-        }
-    }
-
-
 
     /**
      * 朗读按钮
