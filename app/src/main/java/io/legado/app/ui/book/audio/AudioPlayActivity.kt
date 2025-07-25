@@ -51,6 +51,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import splitties.views.onLongClick
 import java.util.Locale
+import io.legado.app.ui.book.audio.config.AudioSkipCredits
+import io.legado.app.model.ReadBook
 
 /**
  * 音频播放
@@ -134,6 +136,11 @@ class AudioPlayActivity :
                 sourceEditResult.launch {
                     putExtra("sourceUrl", it.bookSourceUrl)
                 }
+            }
+
+            /* 跳过片头片尾设定按钮 */
+            R.id.menu_skip_credits -> AudioPlay.book?.let {
+                showDialogFragment(AudioSkipCredits.newInstance(it))
             }
 
             R.id.menu_log -> showDialogFragment<AppLogDialog>()

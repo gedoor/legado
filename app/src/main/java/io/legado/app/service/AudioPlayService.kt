@@ -220,6 +220,7 @@ class AudioPlayService : BaseService(),
         if (!requestFocus()) {
             return
         }
+        val book = AudioPlay.book
         execute(context = Main) {
             AudioPlay.status = Status.STOP
             postEvent(EventBus.AUDIO_STATE, Status.STOP)
@@ -227,13 +228,15 @@ class AudioPlayService : BaseService(),
             val analyzeUrl = AnalyzeUrl(
                 url,
                 source = AudioPlay.bookSource,
-                ruleData = AudioPlay.book,
+                ruleData = book,
                 chapter = AudioPlay.durChapter,
                 coroutineContext = coroutineContext
             )
             exoPlayer.setMediaItem(analyzeUrl.getMediaItem())
             exoPlayer.playWhenReady = true
-            exoPlayer.seekTo(position.toLong())
+            //获取片头设定
+            val skipStartMs = (book?.getopencredits() ?: 0) * 1000L
+            exoPlayer.seekTo(position.toLong() + skipStartMs)
             exoPlayer.prepare()
         }.onError {
             AppLog.put("播放出错\n${it.localizedMessage}", it)
@@ -429,6 +432,7 @@ class AudioPlayService : BaseService(),
     private fun upPlayProgress() {
         upPlayProgressJob?.cancel()
         upPlayProgressJob = lifecycleScope.launch {
+            val skipEnds = AudioPlay.book?.getclosecredits() ?: 0
             while (isActive) {
                 //更新buffer位置
                 AudioPlay.playPositionChanged(exoPlayer.currentPosition.toInt())
@@ -436,6 +440,19 @@ class AudioPlayService : BaseService(),
                 postEvent(EventBus.AUDIO_PROGRESS, AudioPlay.durChapterPos)
                 postEvent(EventBus.AUDIO_SIZE, exoPlayer.duration.toInt())
                 upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
+                // === 添加片尾跳过检查 ===
+                if (skipEnds > 0) {
+                    val duration = exoPlayer.duration
+                    if (duration > 0) {
+                        val skipThreshold = duration - (skipEnds * 1000L)
+                        if (exoPlayer.currentPosition >= skipThreshold) {
+                            //同Player.STATE_ENDED
+                            upPlayProgressJob?.cancel()
+                            AudioPlay.playPositionChanged(exoPlayer.duration.toInt())
+                            AudioPlay.next()
+                        }
+                    }
+                }
                 delay(1000)
             }
         }

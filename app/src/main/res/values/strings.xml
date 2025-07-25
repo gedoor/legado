@@ -902,6 +902,7 @@
     <string name="direct_link_upload_rule_summary">Used to generate direct link url when exporting book source, book list</string>
     <string name="direct_link_upload_config">Direct link upload configuration</string>
     <string name="copy_play_url">Copy Play Url</string>
+    <string name="skip_book_credits">Skip opening and closing</string>
     <string name="set_source_variable">Set source variable</string>
     <string name="set_book_variable">Set book variable</string>
     <string name="summary">summary</string>

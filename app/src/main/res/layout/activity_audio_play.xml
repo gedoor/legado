@@ -147,7 +147,7 @@
             android:layout_width="46dp"
             android:layout_height="46dp"
             android:background="@drawable/selector_circle_btn_bg"
-            android:contentDescription="@string/skip_previous"
+            android:contentDescription="语速控制"
             android:padding="5dp"
             android:src="@drawable/ic_speed_control"
             app:tint="@color/md_white_1000"
