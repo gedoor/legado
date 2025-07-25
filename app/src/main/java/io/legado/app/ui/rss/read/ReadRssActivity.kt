@@ -68,13 +68,18 @@ import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.toggleSystemBar
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
-import kotlinx.coroutines.launch
 import org.apache.commons.text.StringEscapeUtils
 import org.jsoup.Jsoup
 import splitties.views.bottomPadding
 import java.io.ByteArrayInputStream
 import java.net.URLDecoder
 import java.util.regex.PatternSyntaxException
+import android.webkit.JsPromptResult
+import io.legado.app.model.analyzeRule.AnalyzeRule
+import io.legado.app.model.analyzeRule.AnalyzeRule.Companion.setCoroutineContext
+import kotlinx.coroutines.Dispatchers
+import io.legado.app.utils.GSONStrict
+import io.legado.app.utils.fromJsonObject
 
 /**
  * rss阅读界面
@@ -225,6 +230,8 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
     private fun initWebView() {
         binding.progressBar.fontColor = accentColor
         binding.webView.webChromeClient = CustomWebChromeClient()
+        //添加屏幕方向控制接口
+        binding.webView.addJavascriptInterface(OrientationJSInterface(), "AndroidOrientation")
         binding.webView.webViewClient = CustomWebViewClient()
         binding.webView.settings.apply {
             mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
@@ -236,8 +243,6 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             setDarkeningAllowed(AppConfig.isNightTheme)
         }
         binding.webView.addJavascriptInterface(this, "thisActivity")
-        //处理屏幕方向控制
-        binding.webView.addJavascriptInterface(OrientationJSInterface(), "AndroidOrientation")
         binding.webView.setOnLongClickListener {
             val hitTestResult = binding.webView.hitTestResult
             if (hitTestResult.type == WebView.HitTestResult.IMAGE_TYPE ||
@@ -294,37 +299,65 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                 if (screen.orientation && !screen.orientation.__patched) {
                     screen.orientation.lock = function(orientation) {
                         return new Promise((resolve, reject) => {
-                            if (window.AndroidOrientation) {
-                                try {
-                                    window.AndroidOrientation.lockOrientation(orientation);
-                                    resolve();
-                                } catch (err) {
-                                    reject(err);
-                                }
-                            } else {
-                                reject(new Error('Orientation lock not supported'));
-                            }
+                            window.AndroidOrientation?.lockOrientation(orientation) 
+                            resolve()
                         });
                     };
                     screen.orientation.unlock = function() {
                         return new Promise((resolve, reject) => {
-                            if (window.AndroidOrientation) {
-                                try {
-                                    window.AndroidOrientation.lockOrientation('unlock');
-                                    resolve();
-                                } catch (err) {
-                                    reject(err);
-                                }
-                            } else {
-                                reject(new Error('Orientation unlock not supported'));
-                            }
+                            window.AndroidOrientation?.lockOrientation('unlock') 
+                            resolve()
                         });
                     };
                     screen.orientation.__patched = true;
-                }
+                };
+                window.run = function(jsCode) {
+                    return new Promise((resolve, reject) => {
+                        const response = prompt('JSBRIDGE:' + JSON.stringify({
+                            action: 'runJS',
+                            code: String(jsCode)
+                        }));
+                        if (response && response.startsWith('SUCCESS:')) {
+                            resolve(response.substring(8));
+                        } else {
+                            reject(response || 'Unknown error');
+                        }
+                    });
+                };
             })();
         """.trimIndent()
         binding.webView.evaluateJavascript(js, null)
+    }
+
+    private fun handleJsRequest(message: String, result: JsPromptResult?) {
+        try {
+            val json = message.substring(9)
+            val request = GSONStrict.fromJsonObject<Map<String, String>>(json).getOrThrow()
+            
+            when (request["action"]) {
+                "runJS" -> {
+                    val jsCode = request["code"] ?: ""   
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        try {
+                            val jsResult = AnalyzeRule(null, viewModel.rssSource).run {
+                                setCoroutineContext(coroutineContext)
+                                evalJS(jsCode).toString()
+                            }
+                            
+                            binding.webView.post {
+                                result?.confirm("SUCCESS:${jsResult}")
+                            }
+                        } catch (e: Exception) {
+                            binding.webView.post {
+                                result?.confirm("ERROR:${e.message}")
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            result?.confirm("ERROR:Invalid request format")
+        }
     }
 
     private fun saveImage(webPic: String) {
@@ -467,6 +500,23 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         /* 覆盖window.close() */
         override fun onCloseWindow(window: WebView?) {
             finish()
+        }
+
+        /* 监听请求，处理js代码 */
+        override fun onJsPrompt(
+            view: WebView?,
+            url: String?,
+            message: String?,
+            defaultValue: String?,
+            result: JsPromptResult?
+        ): Boolean {
+            message?.let {
+                if (it.startsWith("JSBRIDGE:")) {
+                    handleJsRequest(it, result)
+                    return true
+                }
+            }
+            return super.onJsPrompt(view, url, message, defaultValue, result)
         }
     }
 

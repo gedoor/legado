@@ -47,10 +47,17 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
 import java.net.URLDecoder
 import android.webkit.JavascriptInterface
+import android.webkit.JsPromptResult
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
+import io.legado.app.model.analyzeRule.AnalyzeRule
+import io.legado.app.model.analyzeRule.AnalyzeRule.Companion.setCoroutineContext
 import io.legado.app.help.http.CookieManager as AppCookieManager
+import kotlinx.coroutines.Dispatchers
+import io.legado.app.utils.GSONStrict
+import io.legado.app.utils.fromJsonObject
+import io.legado.app.model.ReadBook
 
 class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
 
@@ -62,6 +69,7 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
     private var isCloudflareChallenge = false
     private var isFullScreen = false
     private var isfullscreen = false
+    private var localhtml = false
     private val saveImage = registerForActivityResult(HandleFileContract()) {
         it.uri?.let { uri ->
             ACache.get().put(imagePathKey, uri.toString())
@@ -80,6 +88,7 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
             if (html.isNullOrEmpty()) {
                 binding.webView.loadUrl(url, headerMap)
             } else {
+                localhtml = true
                 binding.webView.loadDataWithBaseURL(url, html, "text/html", "utf-8", url)
             }
         }
@@ -167,6 +176,8 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
     private fun initWebView(url: String, headerMap: HashMap<String, String>) {
         binding.progressBar.fontColor = accentColor
         binding.webView.webChromeClient = CustomWebChromeClient()
+        // 添加 JavaScript 接口
+        binding.webView.addJavascriptInterface(OrientationJSInterface(), "AndroidOrientation")
         binding.webView.webViewClient = CustomWebViewClient()
         binding.webView.settings.apply {
             setDarkeningAllowed(AppConfig.isNightTheme)
@@ -203,8 +214,6 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
                 Download.start(this, downloadUrl, fileName)
             }
         }
-        // 添加 JavaScript 接口
-        binding.webView.addJavascriptInterface(OrientationJSInterface(), "AndroidOrientation")
     }
 
     inner class OrientationJSInterface {
@@ -227,41 +236,71 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
 
     private fun injectOrientationSupport() {
         val js = """
-            (function() {
-                if (screen.orientation && !screen.orientation.__patched) {
-                    screen.orientation.lock = function(orientation) {
-                        return new Promise((resolve, reject) => {
-                            if (window.AndroidOrientation) {
-                                try {
-                                    window.AndroidOrientation.lockOrientation(orientation);
-                                    resolve();
-                                } catch (err) {
-                                    reject(err);
-                                }
-                            } else {
-                                reject(new Error('Orientation lock not supported'));
-                            }
-                        });
-                    };
-                    screen.orientation.unlock = function() {
-                        return new Promise((resolve, reject) => {
-                            if (window.AndroidOrientation) {
-                                try {
-                                    window.AndroidOrientation.lockOrientation('unlock');
-                                    resolve();
-                                } catch (err) {
-                                    reject(err);
-                                }
-                            } else {
-                                reject(new Error('Orientation unlock not supported'));
-                            }
-                        });
-                    };
-                    screen.orientation.__patched = true;
-                }
-            })();
+        (function() {
+            if (screen.orientation && !screen.orientation.__patched) {
+                screen.orientation.lock = function(orientation) {
+                    return new Promise((resolve, reject) => {
+                        window.AndroidOrientation?.lockOrientation(orientation) 
+                        resolve()
+                    });
+                };
+                screen.orientation.unlock = function() {
+                    return new Promise((resolve, reject) => {
+                        window.AndroidOrientation?.lockOrientation('unlock') 
+                        resolve()
+                    });
+                };
+                screen.orientation.__patched = true;
+            }
+            ${if (localhtml) """
+            window.run = function(jsCode) {
+                return new Promise((resolve, reject) => {
+                    const response = prompt('JSBRIDGE:' + JSON.stringify({
+                        action: 'runJS',
+                        code: String(jsCode)
+                    }));
+                    if (response && response.startsWith('SUCCESS:')) {
+                        resolve(response.substring(8));
+                    } else {
+                        reject(response || 'Unknown error');
+                    }
+                });
+            };
+            """ else ""}
+        })();
         """.trimIndent()
         binding.webView.evaluateJavascript(js, null)
+    }
+
+    private fun handleJsRequest(message: String, result: JsPromptResult?) {
+        try {
+            val json = message.substring(9)
+            val request = GSONStrict.fromJsonObject<Map<String, String>>(json).getOrThrow()
+            
+            when (request["action"]) {
+                "runJS" -> {
+                    val jsCode = request["code"] ?: ""   
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        try {
+                            val jsResult = AnalyzeRule(ReadBook.book, viewModel.source).run {
+                                setCoroutineContext(coroutineContext)
+                                evalJS(jsCode).toString()
+                            }
+                            
+                            binding.webView.post {
+                                result?.confirm("SUCCESS:${jsResult}")
+                            }
+                        } catch (e: Exception) {
+                            binding.webView.post {
+                                result?.confirm("ERROR:${e.message}")
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            result?.confirm("ERROR:Invalid request format")
+        }
     }
 
     private fun saveImage(webPic: String) {
@@ -342,6 +381,24 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
                 }
             }
         }
+
+        /* 监听请求，处理js代码 */
+        override fun onJsPrompt(
+            view: WebView?,
+            url: String?,
+            message: String?,
+            defaultValue: String?,
+            result: JsPromptResult?
+        ): Boolean {
+            message?.let {
+                if (it.startsWith("JSBRIDGE:") && localhtml) {
+                    handleJsRequest(it, result)
+                    return true
+                }
+            }
+            return super.onJsPrompt(view, url, message, defaultValue, result)
+        }
+        
     }
 
     inner class CustomWebViewClient : WebViewClient() {
