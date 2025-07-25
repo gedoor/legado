@@ -2,6 +2,7 @@ package io.legado.app.ui.browser
 
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
+import android.graphics.Bitmap
 import android.net.Uri
 import android.net.http.SslError
 import android.os.Bundle
@@ -45,6 +46,10 @@ import io.legado.app.utils.toggleSystemBar
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
 import java.net.URLDecoder
+import android.webkit.JavascriptInterface
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 import io.legado.app.help.http.CookieManager as AppCookieManager
 
 class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
@@ -56,6 +61,7 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
     private var webPic: String? = null
     private var isCloudflareChallenge = false
     private var isFullScreen = false
+    private var isfullscreen = false
     private val saveImage = registerForActivityResult(HandleFileContract()) {
         it.uri?.let { uri ->
             ACache.get().put(imagePathKey, uri.toString())
@@ -166,6 +172,7 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
             setDarkeningAllowed(AppConfig.isNightTheme)
             mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
             domStorageEnabled = true
+            mediaPlaybackRequiresUserGesture = false
             allowContentAccess = true
             useWideViewPort = true
             loadWithOverviewMode = true
@@ -196,6 +203,65 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
                 Download.start(this, downloadUrl, fileName)
             }
         }
+        // 添加 JavaScript 接口
+        binding.webView.addJavascriptInterface(OrientationJSInterface(), "AndroidOrientation")
+    }
+
+    inner class OrientationJSInterface {
+        @JavascriptInterface
+        fun lockOrientation(orientation: String) {
+            runOnUiThread {
+                if (isfullscreen) {
+                    requestedOrientation = when (orientation) {
+                        "portrait", "portrait-primary" -> ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                        "portrait-secondary" -> ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT
+                        "landscape", "landscape-primary" -> ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                        "landscape-secondary" -> ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
+                        "any", "unspecified" -> ActivityInfo.SCREEN_ORIENTATION_SENSOR
+                        else -> ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+                    }
+                }
+            }
+        }
+    }
+
+    private fun injectOrientationSupport() {
+        val js = """
+            (function() {
+                if (screen.orientation && !screen.orientation.__patched) {
+                    screen.orientation.lock = function(orientation) {
+                        return new Promise((resolve, reject) => {
+                            if (window.AndroidOrientation) {
+                                try {
+                                    window.AndroidOrientation.lockOrientation(orientation);
+                                    resolve();
+                                } catch (err) {
+                                    reject(err);
+                                }
+                            } else {
+                                reject(new Error('Orientation lock not supported'));
+                            }
+                        });
+                    };
+                    screen.orientation.unlock = function() {
+                        return new Promise((resolve, reject) => {
+                            if (window.AndroidOrientation) {
+                                try {
+                                    window.AndroidOrientation.lockOrientation('unlock');
+                                    resolve();
+                                } catch (err) {
+                                    reject(err);
+                                }
+                            } else {
+                                reject(new Error('Orientation unlock not supported'));
+                            }
+                        });
+                    };
+                    screen.orientation.__patched = true;
+                }
+            })();
+        """.trimIndent()
+        binding.webView.evaluateJavascript(js, null)
     }
 
     private fun saveImage(webPic: String) {
@@ -238,20 +304,43 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
         }
 
         override fun onShowCustomView(view: View?, callback: CustomViewCallback?) {
-            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR
+            isfullscreen = true
             binding.llView.invisible()
             binding.customWebView.addView(view)
             customWebViewCallback = callback
             keepScreenOn(true)
             toggleSystemBar(false)
+            lifecycleScope.launch {
+                delay(100)
+                if (!isFinishing && !isDestroyed) {
+                    if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED) {
+                        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR
+                    }
+                }
+            }
         }
 
         override fun onHideCustomView() {
+            isfullscreen = false
             binding.customWebView.removeAllViews()
             binding.llView.visible()
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
             keepScreenOn(false)
             toggleSystemBar(true)
+        }
+
+        /* 覆盖window.close() */
+        override fun onCloseWindow(window: WebView?) {
+            if (!isCloudflareChallenge) {
+                if (viewModel.sourceVerificationEnable) {
+                    viewModel.saveVerificationResult(binding.webView) {
+                        finish()
+                    }
+                }
+                else {
+                    finish()
+                }
+            }
         }
     }
 
@@ -274,6 +363,11 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
             return true
         }
 
+        override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+            super.onPageStarted(view, url, favicon)
+            injectOrientationSupport()
+        }
+        
         override fun onPageFinished(view: WebView?, url: String?) {
             super.onPageFinished(view, url)
             val cookieManager = CookieManager.getInstance()
