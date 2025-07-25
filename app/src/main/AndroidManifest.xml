@@ -482,6 +482,9 @@
             android:name=".service.HttpReadAloudService"
             android:foregroundServiceType="mediaPlayback" />
         <service
+            android:name=".service.TTSEdgeReadAloudService"
+            android:foregroundServiceType="mediaPlayback" />
+        <service
             android:name=".service.AudioPlayService"
             android:foregroundServiceType="mediaPlayback" />
         <service

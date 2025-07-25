@@ -12,29 +12,45 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.HttpReadAloudService
 import io.legado.app.service.TTSReadAloudService
+import io.legado.app.service.TTSEdgeReadAloudService
 import io.legado.app.utils.LogUtils
 import io.legado.app.utils.StringUtils
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.startForegroundServiceCompat
 import io.legado.app.utils.toastOnUi
 import splitties.init.appCtx
+import kotlin.reflect.typeOf
 
 object ReadAloud {
     private var aloudClass: Class<*> = getReadAloudClass()
     val ttsEngine get() = ReadBook.book?.getTtsEngine() ?: AppConfig.ttsEngine
     var httpTTS: HttpTTS? = null
-
     private fun getReadAloudClass(): Class<*> {
         val ttsEngine = ttsEngine
+
+        System.out.println("ReadAloud" + ttsEngine)
         if (ttsEngine.isNullOrBlank()) {
             return TTSReadAloudService::class.java
         }
+
+        if (ttsEngine.contains("edgeinner")) {
+            LogUtils.d("ReadAloud", "使用内置 Edge")
+            ReadAloud.httpTTS =  HttpTTS(
+                id = 1111,
+                name ="edgeinner",
+                url = "",
+            )
+            return TTSEdgeReadAloudService::class.java
+        }
+
         if (StringUtils.isNumeric(ttsEngine)) {
             httpTTS = appDb.httpTTSDao.get(ttsEngine.toLong())
             if (httpTTS != null) {
+                LogUtils.d("ReadAloud", "使用网络朗读引擎")
                 return HttpReadAloudService::class.java
             }
         }
+        LogUtils.d("ReadAloud", "使用默认朗读")
         return TTSReadAloudService::class.java
     }
 
