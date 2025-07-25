@@ -23,13 +23,17 @@ import io.legado.app.utils.toastOnUi
 class AudioPlayViewModel(application: Application) : BaseViewModel(application) {
     val titleData = MutableLiveData<String>()
     val coverData = MutableLiveData<String>()
+    val bookUrl = MutableLiveData<String>()
 
     fun initData(intent: Intent) = AudioPlay.apply {
         execute {
-            val bookUrl = intent.getStringExtra("bookUrl") ?: book?.bookUrl ?: return@execute
-            val book = appDb.bookDao.getBook(bookUrl) ?: return@execute
             inBookshelf = intent.getBooleanExtra("inBookshelf", true)
-            initBook(book)
+            val bookUrl = intent.getStringExtra("bookUrl") ?: book?.bookUrl ?: return@execute
+            val targetBook = appDb.bookDao.getBook(bookUrl) ?: run {
+                inBookshelf = false
+                book?.also { appDb.bookDao.insert(it) } ?: return@execute
+            }
+            initBook(targetBook)
         }.onFinally {
             saveRead()
         }
@@ -44,6 +48,7 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
         }
         titleData.postValue(book.name)
         coverData.postValue(book.getDisplayCover())
+        bookUrl.postValue(book.bookUrl)
         if (book.tocUrl.isEmpty() && !loadBookInfo(book)) {
             return
         }
@@ -66,9 +71,9 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
     private suspend fun loadChapterList(book: Book): Boolean {
         val bookSource = AudioPlay.bookSource ?: return true
         try {
-            val oldBook = book.copy()
+            val oldBookUrl = book.bookUrl
             val cList = WebBook.getChapterListAwait(bookSource, book).getOrThrow()
-            if (oldBook.bookUrl == book.bookUrl) {
+            if (oldBookUrl == book.bookUrl) {
                 appDb.bookDao.update(book)
             } else {
                 appDb.bookDao.insert(book)

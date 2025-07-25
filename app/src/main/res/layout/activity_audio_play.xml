@@ -19,7 +19,7 @@
         android:id="@+id/vw_bg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#50000000" />
+        android:background="#90000000" />
 
     <io.legado.app.ui.widget.TitleBar
         android:id="@+id/title_bar"
@@ -64,10 +64,19 @@
         android:scaleType="centerCrop"
         app:civ_border_color="@color/accent"
         app:civ_border_width="2dp"
-        app:layout_constraintBottom_toTopOf="@+id/ll_player_progress"
+        app:layout_constraintBottom_toTopOf="@+id/lyricViewX"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title_bar" />
+        app:layout_constraintTop_toBottomOf="@+id/title_bar"/>
+
+    <com.dirror.lyricviewx.LyricViewX
+        android:id="@+id/lyricViewX"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/tv_sub_title"
+        app:layout_constraintTop_toBottomOf="@+id/iv_cover"
+        app:lrcPadding="16dp" />
 
     <TextView
         android:id="@+id/tv_sub_title"
@@ -147,7 +156,7 @@
             android:layout_width="46dp"
             android:layout_height="46dp"
             android:background="@drawable/selector_circle_btn_bg"
-            android:contentDescription="语速控制"
+            android:contentDescription="@string/speed_control"
             android:padding="5dp"
             android:src="@drawable/ic_speed_control"
             app:tint="@color/md_white_1000"

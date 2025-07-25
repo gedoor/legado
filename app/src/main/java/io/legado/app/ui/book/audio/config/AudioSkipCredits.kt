@@ -44,8 +44,8 @@ class AudioSkipCredits : BaseDialogFragment(R.layout.dialog_audio_skip_credits) 
     private fun initData() {
         binding.run {
             // 初始设置片头片尾（单位：秒）
-            openCredits.progress = book.getopencredits() ?: 0
-            closeCredits.progress = book.getclosecredits() ?: 0
+            openCredits.progress = book.getopencredits()
+            closeCredits.progress = book.getclosecredits()
         }
     }
 
@@ -54,11 +54,9 @@ class AudioSkipCredits : BaseDialogFragment(R.layout.dialog_audio_skip_credits) 
             // 设定值
             openCredits.onChanged = {
                 book.setopencredits(it)
-                book.save()
             }
             closeCredits.onChanged = {
                 book.setclosecredits(it)
-                book.save()
             }
         }
     }

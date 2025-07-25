@@ -1,6 +1,7 @@
 package io.legado.app.ui.book.audio
 
 import android.content.Context
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -67,7 +68,9 @@ class SpeedControlPopup(private val context: Context) :
         isFocusable = true
 
         // 设置速度范围 (50%-200%)
-        binding.seekBar.min = 50
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            binding.seekBar.min = 50
+        }
         binding.seekBar.max = 200
         binding.seekBar.progress = (AudioPlayService.playSpeed * 100).toInt()
         

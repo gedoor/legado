@@ -52,7 +52,9 @@ import kotlinx.coroutines.withContext
 import splitties.views.onLongClick
 import java.util.Locale
 import io.legado.app.ui.book.audio.config.AudioSkipCredits
-import io.legado.app.model.ReadBook
+import android.graphics.Color
+import android.view.View
+import com.dirror.lyricviewx.OnPlayClickListener
 
 /**
  * 音频播放
@@ -69,6 +71,8 @@ class AudioPlayActivity :
     private val speedControlPopup by lazy { SpeedControlPopup(this) }
     private var adjustProgress = false
     private var playMode = AudioPlay.PlayMode.LIST_END_STOP
+    private val lyricViewX by lazy { binding.lyricViewX }
+    private var lyricOn = false
 
     private val progressTimeFormat by lazy {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -101,6 +105,10 @@ class AudioPlayActivity :
         }
         viewModel.coverData.observe(this) {
             upCover(it)
+        }
+        viewModel.bookUrl.observe(this) {
+            val targetChapter = appDb.bookChapterDao.getChapter(it, AudioPlay.durChapterIndex)
+            upLyric(it, targetChapter?.lyric?:AudioPlay.durLyric)
         }
         viewModel.initData(intent)
         initView()
@@ -216,11 +224,56 @@ class AudioPlayActivity :
         }.into(binding.ivCover)
     }
 
-    private fun playButton() {
-        when (AudioPlay.status) {
-            Status.PLAY -> AudioPlay.pause(this)
-            Status.PAUSE -> AudioPlay.resume(this)
-            else -> AudioPlay.loadOrUpPlayUrl()
+    override fun upLyric(bookUrl: String, lyric: String?) {
+        if (lyric != null) {
+            if (lyricOn) {
+                appDb.bookDao.getBook(bookUrl)?.let {
+                    upLyricP(it.durChapterPos)
+                }
+            }
+            else {
+                lyricOn = true
+                binding.lyricViewX.visibility = View.VISIBLE
+                if (lyric.startsWith("http")) {
+                    lyricViewX.loadLyricByUrl(lyric)
+                } else {
+                    lyricViewX.loadLyric(lyric)
+                }
+                lyricViewX.apply {
+                    setNormalTextSize(50F)
+                    setCurrentTextSize(60F)
+                    setCurrentColor(Color.rgb(255, 255, 255))
+                    setTimelineTextColor(Color.rgb(255, 100, 100))
+                    setDraggable(true, object : OnPlayClickListener {
+                        override fun onPlayClick(time: Long): Boolean {
+                            AudioPlay.adjustProgress(time.toInt())
+                            playButton(false)
+                            return true
+                        }
+                    })
+                }
+                lyricViewX.postDelayed({
+                    appDb.bookDao.getBook(bookUrl)?.let {
+                        upLyricP(it.durChapterPos)
+                    }
+                }, 100)
+            }
+        }
+    }
+    override fun upLyricP(position: Int) {
+        lyricViewX.updateTime(position.toLong(),false)
+    }
+
+    private fun playButton(noLyr: Boolean = true) {
+        val status = AudioPlay.status
+        if (status == Status.PLAY && noLyr) {
+            AudioPlay.pause(this)
+        }
+        else if(status == Status.PAUSE){
+            AudioPlay.resume(this)
+        }
+        else {
+            AudioPlay.loadOrUpPlayUrl()
         }
     }
 
@@ -307,7 +360,6 @@ class AudioPlayActivity :
         }
         observeEventSticky<Int>(EventBus.AUDIO_BUFFER_PROGRESS) {
             binding.playerProgress.secondaryProgress = it
-
         }
         observeEventSticky<Float>(EventBus.AUDIO_SPEED) {
             binding.tvSpeed.text = String.format(Locale.ROOT, "%.1fX", it)
@@ -324,5 +376,4 @@ class AudioPlayActivity :
             binding.progressLoading.visible(loading)
         }
     }
-
 }

@@ -55,7 +55,9 @@ data class BookChapter(
     var end: Long? = null,              // 章节终止位置
     var startFragmentId: String? = null,  //EPUB书籍当前章节的fragmentId
     var endFragmentId: String? = null,    //EPUB书籍下一章节的fragmentId
-    var variable: String? = null        //变量
+    var variable: String? = null,        //变量
+    var reviewImg: String? = null,        //段评图标
+    var lyric: String? = null        //歌词链接或文本
 ) : Parcelable, RuleDataInterface {
 
     @delegate:Transient

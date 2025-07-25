@@ -17,6 +17,7 @@ hutool = "5.8.22"
 
 libarchive = "1.1.6"
 lifecycle = "2.9.0"
+lyricViewx = "1.3.2"
 glide = "4.16.0"
 gson = "2.13.1"
 jsonPath = "2.9.0"
@@ -88,6 +89,8 @@ hutool-crypto = { module = "cn.hutool:hutool-crypto", version.ref = "hutool" }
 libarchive = { module = "me.zhanghai.android.libarchive:library", version.ref = "libarchive" }
 lifecycle-common-java8 = { module = "androidx.lifecycle:lifecycle-common-java8", version.ref = "lifecycle" }
 lifecycle-service = { module = "androidx.lifecycle:lifecycle-service", version.ref = "lifecycle" }
+
+lyricViewx = { module = "com.github.Moriafly:LyricViewX", version.ref = "lyricViewx" }
 
 media-media = { module = "androidx.media:media", version.ref = "media" }
 media3-datasource-okhttp = { module = "androidx.media3:media3-datasource-okhttp", version.ref = "media3" }

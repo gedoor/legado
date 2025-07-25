@@ -67,6 +67,16 @@ android {
                 ]
             }
         }
+        externalNativeBuild {
+            cmake {
+                cppFlags "-std=c++17"
+            }
+        }
+    }
+    externalNativeBuild {
+        cmake {
+            path "src/main/cpp/CMakeLists.txt"
+        }
     }
     buildFeatures {
         buildConfig true
@@ -288,4 +298,7 @@ dependencies {
 
     //com.github.AmrDeveloper:CodeView代码编辑已集成到应用内
     //epubLib集成到应用内
+    // 椒盐歌词
+    implementation(libs.lyricViewx)
+
 }
