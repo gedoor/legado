@@ -35,6 +35,7 @@ import kotlinx.coroutines.launch
 import java.util.LinkedList
 import kotlin.coroutines.coroutineContext
 import kotlin.math.roundToInt
+import android.util.Size
 
 class TextChapterLayout(
     scope: CoroutineScope,
@@ -202,9 +203,20 @@ class TextChapterLayout(
         if (titleMode != 2 || bookChapter.isVolume || contents.isEmpty()) {
             //标题非隐藏
             displayTitle.splitNotBlank("\n").forEach { text ->
+                val srcList = LinkedList<String>()
+                val reviewImg = bookChapter.reviewImg
+                var reviewTxt = ""
+                if (reviewImg != null) {
+                    srcList.add(reviewImg)
+                    reviewTxt = if (reviewImg.contains("TEXT")) {
+                        ChapterProvider.reviewChar
+                    } else {
+                        ChapterProvider.srcReplaceChar
+                    }
+                }
                 setTypeText(
                     book,
-                    if (AppConfig.enableReview) text + ChapterProvider.reviewChar else text,
+                    text + reviewTxt,
                     titlePaint,
                     titlePaintTextHeight,
                     titlePaintFontMetrics,
@@ -230,7 +242,7 @@ class TextChapterLayout(
             coroutineContext.ensureActive()
             if (isTextImageStyle) {
                 //图片样式为文字嵌入类型
-                var text = content.replace(ChapterProvider.srcReplaceChar, "▣")
+                var text = content.replace(ChapterProvider.srcReplaceChar, "丨") //▣
                 val srcList = LinkedList<String>()
                 sb.setLength(0)
                 val matcher = AppPattern.imgPattern.matcher(text)
@@ -257,29 +269,77 @@ class TextChapterLayout(
                     prepareNextPageIfNeed()
                 }
                 var start = 0
+                val srcList = LinkedList<String>()
+                sb.setLength(0)
+                var isFirstLine = true
                 if (content.contains("<img")) {
-                    val matcher = AppPattern.imgPattern.matcher(content)
+                    val text = content.replace(ChapterProvider.srcReplaceChar, "丨")
+                    val matcher = AppPattern.imgPattern.matcher(text)
                     while (matcher.find()) {
                         coroutineContext.ensureActive()
-                        val text = content.substring(start, matcher.start())
-                        if (text.isNotBlank()) {
-                            setTypeText(
-                                book,
-                                text,
-                                contentPaint,
-                                contentPaintTextHeight,
-                                contentPaintFontMetrics,
-                                imageStyle,
-                                isFirstLine = start == 0
-                            )
+                        val imgSrc = matcher.group(1)!!
+                        var iStyle = imageStyle
+                        var isSmallImage = true
+                        val matchResult = AppPattern.imgStyRegex.find(imgSrc)
+                        var imgSize: Size? = null
+                        if (matchResult != null) {
+                            val styleValue = matchResult.groupValues[1].trim()
+                            if (styleValue == "TEXT" && matcher.end() == text.length) {
+                                iStyle == "TEXT"
+                            }
+                            else if (styleValue.equals("text", true)) {
+                                iStyle == "text"
+                            }
+                            else {
+                                imgSize = ImageProvider.getImageSize(book, imgSrc, ReadBook.bookSource)
+                                iStyle = styleValue
+                                isSmallImage = false
+                            }
                         }
-                        setTypeImage(
-                            book,
-                            matcher.group(1)!!,
-                            contentPaintTextHeight,
-                            imageStyle
-                        )
-                        isSetTypedImage = true
+                        else {
+                            imgSize = ImageProvider.getImageSize(book, imgSrc, ReadBook.bookSource)
+                            if (imgSize.width < 80 && imgSize.height < 80) {
+                                iStyle == "text"
+                            }
+                            else {
+                                isSmallImage = false
+                            }
+                        }
+                        if (start < matcher.start()) {
+                            sb.append(text.substring(start, matcher.start()))
+                        }
+                        if (isSmallImage) {
+                            sb.append(
+                                if (iStyle == "TEXT")
+                                    ChapterProvider.reviewChar
+                                else
+                                    ChapterProvider.srcReplaceChar
+                            )
+                            srcList.add(imgSrc)
+                        } else {
+                            if (sb.toString().isNotBlank()) {
+                                setTypeText(
+                                    book,
+                                    sb.toString(),
+                                    contentPaint,
+                                    contentPaintTextHeight,
+                                    contentPaintFontMetrics,
+                                    "TEXT",
+                                    isFirstLine = isFirstLine,
+                                    srcList = srcList
+                                )
+                                sb.setLength(0)
+                                isFirstLine=false
+                            }
+                            setTypeImage(
+                                book,
+                                imgSrc,
+                                contentPaintTextHeight,
+                                iStyle,
+                                imgSize!!
+                            )
+                            isSetTypedImage = true
+                        }
                         start = matcher.end()
                     }
                 }
@@ -288,18 +348,20 @@ class TextChapterLayout(
                         isSetTypedImage = false
                         prepareNextPageIfNeed()
                     }
-                    val text = content.substring(start, content.length)
-                    if (text.isNotBlank()) {
-                        setTypeText(
-                            book,
-                            if (AppConfig.enableReview) text + ChapterProvider.reviewChar else text,
-                            contentPaint,
-                            contentPaintTextHeight,
-                            contentPaintFontMetrics,
-                            imageStyle,
-                            isFirstLine = start == 0
-                        )
-                    }
+                    val textAfter = content.substring(start, content.length)
+                    sb.append(textAfter)
+                }
+                if (sb.toString().isNotBlank()) {
+                    setTypeText(
+                        book,
+                        if (AppConfig.enableReview) sb.toString() + ChapterProvider.reviewChar else sb.toString(),
+                        contentPaint,
+                        contentPaintTextHeight,
+                        contentPaintFontMetrics,
+                        "TEXT",
+                        isFirstLine = start == 0,
+                        srcList = srcList.ifEmpty { null }
+                    )
                 }
             }
             pendingTextPage.lines.last().isParagraphEnd = true
@@ -327,8 +389,8 @@ class TextChapterLayout(
         src: String,
         textHeight: Float,
         imageStyle: String?,
+        size: Size
     ) {
-        val size = ImageProvider.getImageSize(book, src, ReadBook.bookSource)
         if (size.width > 0 && size.height > 0) {
             prepareNextPageIfNeed(durY)
             var height = size.height
@@ -375,13 +437,19 @@ class TextChapterLayout(
             durY += height
             textLine.lineBottom = durY + paddingTop
             val (start, end) = if (visibleWidth > width) {
-                val adjustWidth = (visibleWidth - width) / 2f
-                Pair(adjustWidth, adjustWidth + width)
+                when (imageStyle?.uppercase()) {
+                    "RIGHT" -> Pair(visibleWidth - width, visibleWidth)
+                    "LEFT" -> Pair(0f, width)
+                    else -> {
+                        val adjustWidth = (visibleWidth - width) / 2f
+                        Pair(adjustWidth, adjustWidth + width)
+                    }
+                }
             } else {
-                Pair(0f, width.toFloat())
+                Pair(0f, width)
             }
             textLine.addColumn(
-                ImageColumn(start = absStartX + start, end = absStartX + end, src = src)
+                ImageColumn(start = absStartX + start.toFloat(), end = absStartX + end.toFloat(), src = src)
             )
             calcTextLinePosition(textPages, textLine, stringBuilder.length)
             stringBuilder.append(" ") // 确保翻页时索引计算正确
@@ -697,7 +765,7 @@ class TextChapterLayout(
         srcList: LinkedList<String>?
     ) {
         val column = when {
-            srcList != null && char == ChapterProvider.srcReplaceChar -> {
+            !srcList.isNullOrEmpty() && (char == ChapterProvider.srcReplaceChar || char == ChapterProvider.reviewChar && isLineEnd) -> {
                 val src = srcList.removeFirst()
                 ImageProvider.cacheImage(book, src, ReadBook.bookSource)
                 ImageColumn(
@@ -706,14 +774,13 @@ class TextChapterLayout(
                     src = src
                 )
             }
-
-//            isLineEnd && char == ChapterProvider.reviewChar -> {
-//                ReviewColumn(
-//                    start = absStartX + xStart,
-//                    end = absStartX + xEnd,
-//                    count = 100
-//                )
-//            }
+            /*isLineEnd && char == ChapterProvider.reviewChar -> {
+                ReviewColumn(
+                    start = absStartX + xStart,
+                    end = absStartX + xEnd,
+                    count = 10
+                )
+            }*/
 
             else -> {
                 TextColumn(

@@ -46,11 +46,10 @@ import java.util.Locale
 @Suppress("DEPRECATION", "ConstPropertyName")
 object ChapterProvider {
     //用于图片字的替换
-    const val srcReplaceChar = "▩"
+    const val srcReplaceChar = "⼁"//▩ 丨
 
     //用于评论按钮的替换
-    const val reviewChar = "▨"
-
+    const val reviewChar = "꧁"
     const val indentChar = "　"
 
     @JvmStatic

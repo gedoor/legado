@@ -62,6 +62,9 @@ import io.legado.app.model.ReadBook
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeRule.Companion.setChapter
 import io.legado.app.model.analyzeRule.AnalyzeRule.Companion.setCoroutineContext
+import io.legado.app.utils.GSON
+import io.legado.app.utils.fromJsonObject
+import io.legado.app.utils.isJsonObject
 import io.legado.app.model.localBook.EpubFile
 import io.legado.app.model.localBook.MobiFile
 import io.legado.app.receiver.NetworkChangedListener
@@ -1318,6 +1321,53 @@ class ReadBookActivity : BaseReadBookActivity(),
             noButton()
         }
     }
+
+    /**
+     * 点击图片
+     */
+    override fun clickImg(clickjs: String) {
+        val braceIndex = clickjs.indexOf(",{")
+        val braceIndex2 = if (braceIndex == -1) clickjs.indexOf(", {") else -1
+        if (braceIndex != -1 || braceIndex2 != -1) {
+            val book = ReadBook.book ?: return
+            val chapter = appDb.bookChapterDao.getChapter(book.bookUrl, ReadBook.durChapterIndex)
+            if (chapter == null) {
+                toastOnUi("章节不存在")
+                return
+            }
+            val (result, urlOptionStr) = when {
+                braceIndex != -1 -> {
+                    clickjs.substring(0, braceIndex) to clickjs.substring(braceIndex + 1)
+                }
+                else -> {
+                    clickjs.substring(0, braceIndex2) to clickjs.substring(braceIndex2 + 2)
+                }
+            }
+            if (urlOptionStr.isJsonObject()) {
+                val urlOptionMap = GSON.fromJsonObject<Map<String, String>>(urlOptionStr).getOrThrow()
+                val jsStr = urlOptionMap["js"]
+                jsStr?.let {
+                    Coroutine.async(lifecycleScope) {
+                        val source = ReadBook.bookSource ?: throw Exception("书源不存在")
+                        AnalyzeRule(book, source).apply {
+                            setCoroutineContext(coroutineContext)
+                            setBaseUrl(chapter.url)
+                            setChapter(chapter)
+                            evalJS(jsStr, result).toString()
+                        }
+                    }.onError {
+                        AppLog.put("图片点击执行出错\n${it.localizedMessage}", it, true)
+                    }
+                }
+            }
+            else {
+                toastOnUi("链接格式错误")
+                return
+            }
+        }
+    }
+
+
 
     /**
      * 朗读按钮

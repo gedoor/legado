@@ -64,19 +64,6 @@ object BookContent {
         analyzeRule.setChapter(bookChapter)
         analyzeRule.setNextChapterUrl(mNextChapterUrl)
         coroutineContext.ensureActive()
-        val titleRule = contentRule.title
-        if (!titleRule.isNullOrBlank()) {
-            val title = analyzeRule.runCatching {
-                getString(titleRule)
-            }.onFailure {
-                Debug.log(bookSource.bookSourceUrl, "获取标题出错, ${it.localizedMessage}")
-            }.getOrNull()
-            if (!title.isNullOrBlank()) {
-                bookChapter.title = title
-                bookChapter.titleMD5 = null
-                appDb.bookChapterDao.update(bookChapter)
-            }
-        }
         var contentData = analyzeContent(
             book, baseUrl, redirectUrl, body, contentRule, bookChapter, bookSource, mNextChapterUrl
         )
@@ -136,6 +123,30 @@ object BookContent {
             }
         }
         var contentStr = contentList.joinToString("\n")
+        val titleRule = contentRule.title //先正文再章节名称
+        if (!titleRule.isNullOrBlank()) {
+            var title = analyzeRule.runCatching {
+                getString(titleRule)
+            }.onFailure {
+                Debug.log(bookSource.bookSourceUrl, "获取标题出错, ${it.localizedMessage}")
+            }.getOrNull()
+            if (!title.isNullOrBlank()) {
+                val matchResult = AppPattern.imgRegex.find(title)
+                if (matchResult != null) {
+                    matchResult.groupValues[1]
+                    val (group1,group2) = matchResult.destructured
+                    title = if (group1 != "") {
+                        group1
+                    } else {
+                        bookChapter.title
+                    }
+                    bookChapter.reviewImg = group2
+                }
+                bookChapter.title = title
+                bookChapter.titleMD5 = null
+                appDb.bookChapterDao.update(bookChapter)
+            }
+        }
         //全文替换
         val replaceRegex = contentRule.replaceRegex
         if (!replaceRegex.isNullOrEmpty()) {

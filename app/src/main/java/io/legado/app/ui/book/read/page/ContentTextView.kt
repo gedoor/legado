@@ -247,6 +247,12 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 is ImageColumn -> if (AppConfig.previewImageByClick) {
                     activity?.showDialogFragment(PhotoDialog(column.src))
                     handled = true
+                } else {
+                    val src = column.src
+                    if (src.contains("\"js\"") || src.contains("'js'")) {
+                        callBack.clickImg(src)
+                        handled = true
+                    }
                 }
             }
         }
@@ -713,5 +719,6 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         fun onImageLongPress(x: Float, y: Float, src: String)
         fun onCancelSelect()
         fun onLongScreenshotTouchEvent(event: MotionEvent): Boolean
+        fun clickImg(clickjs: String)
     }
 }
