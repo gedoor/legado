@@ -26,6 +26,7 @@ import kotlinx.coroutines.flow.flow
 import org.mozilla.javascript.Context
 import splitties.init.appCtx
 import kotlin.coroutines.coroutineContext
+import io.legado.app.constant.AppPattern
 
 /**
  * 获取目录
@@ -221,11 +222,27 @@ object BookChapterList {
                 analyzeRule.setChapter(bookChapter)
                 bookChapter.title = analyzeRule.getString(nameRule)
                 bookChapter.url = analyzeRule.getString(urlRule)
-                bookChapter.tag = analyzeRule.getString(upTimeRule)
+                val info = analyzeRule.getString(upTimeRule)
                 val isVolume = analyzeRule.getString(isVolumeRule)
                 bookChapter.isVolume = false
                 if (isVolume.isTrue()) {
                     bookChapter.isVolume = true
+                    bookChapter.tag = info
+                }
+                else {
+                    val match = AppPattern.wordCountRegex.find(info)
+                    if (match != null) {
+                        val wordCountStr = match.value
+                        if (AppConfig.tocCountWords) {
+                            val cleanWordCount = match.groupValues[1].trim()
+                            bookChapter.wordCount = cleanWordCount
+                        }
+                        val tagWithoutWordCount = info.replaceFirst(wordCountStr, "")
+                        bookChapter.tag = tagWithoutWordCount
+                    }
+                    else {
+                        bookChapter.tag = info
+                    }
                 }
                 if (bookChapter.url.isEmpty()) {
                     if (bookChapter.isVolume) {
