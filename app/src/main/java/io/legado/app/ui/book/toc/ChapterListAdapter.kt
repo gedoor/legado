@@ -143,8 +143,8 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
                         ThemeUtils.resolveDrawable(context, android.R.attr.selectableItemBackground)
                 }
 
-                //卷名不显示
-                if (!item.tag.isNullOrEmpty() && !item.isVolume) {
+                //卷名不显示 去掉了 !item.isVolume，让卷名也显示
+                if (!item.tag.isNullOrEmpty()) {
                     //更新时间规则
                     tvTag.text = item.tag
                     tvTag.visible()
