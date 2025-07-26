@@ -545,7 +545,7 @@ class AnalyzeUrl(
     }
 
     private fun parseCustomHosts(host: String?):  List<InetAddress>? {
-        if (host == null) return null
+        if (customHosts == "" || host == null) return null
         CacheManager.getFromMemory("host_$host")?.let {
             return it as? List<InetAddress>
         }
