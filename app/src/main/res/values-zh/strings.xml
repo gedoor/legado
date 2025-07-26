@@ -1226,4 +1226,6 @@
     <string name="manga_epaper_value">阈值</string>
     <string name="disable_horizontal_animation">禁用水平滚动动画</string>
     <string name="enable_manga_gray">开启图片灰色</string>
+    <string name="custom_hosts">自定义Hosts</string>
+    <string name="custom_hosts_summary">域名到IP的映射</string>
 </resources>

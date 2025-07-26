@@ -1228,4 +1228,6 @@
     <string name="disable_horizontal_animation">禁用水平滚动动画</string>
     <string name="enable_manga_gray">开启图片灰色</string>
     <string name="play_mode">播放模式</string>
+    <string name="custom_hosts">Custom Hosts</string>
+    <string name="custom_hosts_summary">Domain name to IP mapping</string>
 </resources>
