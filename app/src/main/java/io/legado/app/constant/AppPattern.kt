@@ -13,16 +13,9 @@ object AppPattern {
 
     //dataURL图片类型
     val dataUriRegex = Regex("^data:.*?;base64,(.*)")
-    //提取标题中的段评
-    val imgRegex = Regex("(.*)((?:data|https?):[\\s\\S]+)$")
-    //自定义图片样式
-    val imgStyRegex = Regex("style[\"'\\s]*:\\s*[\"']([^\"']*)[\"']")
 
-    //匹配章节信息中的字数
-    val wordCountRegex = Regex("(?:^|字数[：:、]?|\\s+)([0-9万千百\\.]{1,6}字)")
-
-    //匹配加密js代码段
-    val jsEnCodeRegex = Regex("ᝰ꧁([^꧂]+)꧂꧂")
+    //提取链接中的域名
+    val domainRegex = Regex("^https?://([^:/]+)",RegexOption.IGNORE_CASE)
 
     val nameRegex = Regex("\\s+作\\s*者.*|\\s+\\S+\\s+著")
     val authorRegex = Regex("^\\s*作\\s*者[:：\\s]+|\\s+著")
