@@ -101,7 +101,7 @@ object DirectLinkUpload {
 
     @Keep
     data class Rule(
-        var uploadUrl: String, //上传url
+        var uploadUrl: String, //创建分享链接
         var downloadUrlRule: String, //下载链接规则
         var summary: String, //注释
         var compress: Boolean = false, //是否压缩
