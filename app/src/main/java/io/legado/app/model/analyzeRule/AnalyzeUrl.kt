@@ -513,18 +513,14 @@ class AnalyzeUrl(
     private fun getClient(): OkHttpClient {
         val client = getProxyClient(proxy)
         val host = extractHostFromUrl(urlNoQuery)
+        if (host.isNullOrEmpty()) return client
         val ipAddress = parseCustomHosts(host)
         if (readTimeout == null && callTimeout == null && ipAddress == null) {
             return client
         }
-
-        val dns = ipAddress?.let { ip -> host?.let { h ->
-            Dns { hostname ->
-                if (hostname == h) ip
-                else Dns.SYSTEM.lookup(hostname)
-            }
-        }}
-
+        val dns = ipAddress?.let { ip ->
+            getCachedDns(host, ip)
+        }
         return client.newBuilder().run {
             if (readTimeout != null) {
                 readTimeout(readTimeout, TimeUnit.MILLISECONDS)
@@ -544,8 +540,8 @@ class AnalyzeUrl(
         return AppPattern.domainRegex.find(url)?.groupValues?.getOrNull(1)
     }
 
-    private fun parseCustomHosts(host: String?):  List<InetAddress>? {
-        if (customHosts == "" || host == null) return null
+    private fun parseCustomHosts(host: String):  List<InetAddress>? {
+        if (customHosts == "") return null
         CacheManager.getFromMemory("host_$host")?.let {
             return it as? List<InetAddress>
         }
@@ -584,11 +580,19 @@ class AnalyzeUrl(
                 }
                 null
             }
-        }?.also {
-            CacheManager.putMemory("host_$host",it)
+        }.also {
+            CacheManager.putMemory("host_$host", it?:"")
         }
-
         return readiness
+    }
+
+    private fun getCachedDns(host: String, ipAddress: List<InetAddress>): Dns {
+        return dnsCache.getOrPut(host) {
+            Dns { hostname ->
+                if (hostname == host) ipAddress
+                else Dns.SYSTEM.lookup(hostname)
+            }
+        }
     }
 
     fun getResponse(): Response {
@@ -731,7 +735,7 @@ class AnalyzeUrl(
         private val pagePattern = Pattern.compile("<(.*?)>")
         private val queryEncoder =
             RFC3986.UNRESERVED.orNew(PercentCodec.of("!$%&()*+,/:;=?@[\\]^`{|}"))
-
+        private val dnsCache = mutableMapOf<String, Dns>()
         fun AnalyzeUrl.getMediaItem(): MediaItem {
             setCookie()
             return ExoPlayerHelper.createMediaItem(url, headerMap)
