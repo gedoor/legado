@@ -177,7 +177,7 @@ interface BaseSource : JsExtensions {
     }
 
     fun getLoginInfoMap(): Map<String, String>? {
-        return GSON.fromJsonObject<Map<String, String>>(getLoginInfo()).getOrNull()
+        return GSON.fromJsonObject<Map<String, String>>(getLoginInfo()?: "{}").getOrNull()
     }
 
     /**
