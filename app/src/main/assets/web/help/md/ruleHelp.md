@@ -24,6 +24,7 @@
 
 > `1000` 访问间隔1s  
 > `20/60000` 60s内访问次数20  
+> `java.setConcurrent(str: String)` 设置并发率
 
 * 书源类型: 文件
 > 对于类似知轩藏书提供文件整合下载的网站，可以在书源详情的下载URL规则获取文件链接
@@ -248,4 +249,18 @@ decodeImage(result, key)
 
 ```js
 result = "https://example.mp3" + "\n" + "[00:00.00][by:花丸的蜜柑面包]"
+```
+
+* 网页JS
+> 本地html中的额外支持的js函数
+
+> `window.close()` 关闭浏览器界面  
+> `screen.orientation.lock()` 全屏后可控制屏幕方向  
+
+> 异步执行阅读函数，并返回字符串结果
+
+```js
+window.run("java.toast('执行成功');'成功'")
+.then(r=>alert(r))
+.catch(e=>alert("执行出错:"+e));
 ```

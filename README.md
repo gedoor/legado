@@ -19,6 +19,7 @@ Legado is a free and open source novel reader for Android.
 - 新增功能
     - 音频播放支持跳过片头片尾
     - 音频支持显示歌词
+    - 自定义本地dns
 - 功能完善
     - 订阅源支持显示识别更新状态
     - 字数显示能智能识别在线字数

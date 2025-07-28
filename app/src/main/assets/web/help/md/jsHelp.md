@@ -141,10 +141,18 @@ java.webViewGetSource(html: String?, url: String?, js: String?, sourceRegex: Str
 * 使用内置浏览器打开链接，可用于获取验证码 手动验证网站防爬
 * @param url 要打开的链接
 * @param title 浏览器的标题
+* @param html 本地html代码
 java.startBrowser(url: String, title: String)
 
+java.startBrowser(url: String, title: String, html: String?)
+
 * 使用内置浏览器打开链接，并等待网页结果 .body()获取网页内容
-java.startBrowserAwait(url: String, title: String, refetchAfterSuccess: Boolean? = true): StrResponse
+* @param refetchAfterSuccess 为false时获取最终展示界面的源码
+java.startBrowserAwait(url: String, title: String): StrResponse
+
+java.startBrowserAwait(url: String, title: String, refetchAfterSuccess: Boolean): StrResponse
+
+java.startBrowserAwait(url: String, title: String, refetchAfterSuccess: Boolean, html: String?): StrResponse
 ```
 * 调试
 ```js
