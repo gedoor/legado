@@ -2,6 +2,7 @@ package io.legado.app.ui.rss.read
 
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
+import android.graphics.Bitmap
 import android.content.res.Configuration
 import android.net.Uri
 import android.net.http.SslError
@@ -12,6 +13,9 @@ import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.webkit.JavascriptInterface
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 import android.webkit.SslErrorHandler
 import android.webkit.URLUtil
 import android.webkit.WebChromeClient
@@ -64,13 +68,18 @@ import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.toggleSystemBar
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
-import kotlinx.coroutines.launch
 import org.apache.commons.text.StringEscapeUtils
 import org.jsoup.Jsoup
 import splitties.views.bottomPadding
 import java.io.ByteArrayInputStream
 import java.net.URLDecoder
 import java.util.regex.PatternSyntaxException
+import android.webkit.JsPromptResult
+import io.legado.app.model.analyzeRule.AnalyzeRule
+import io.legado.app.model.analyzeRule.AnalyzeRule.Companion.setCoroutineContext
+import kotlinx.coroutines.Dispatchers
+import io.legado.app.utils.GSONStrict
+import io.legado.app.utils.fromJsonObject
 
 /**
  * rss阅读界面
@@ -83,6 +92,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
 
     private var starMenuItem: MenuItem? = null
     private var ttsMenuItem: MenuItem? = null
+    private var isfullscreen = false
     private var customWebViewCallback: WebChromeClient.CustomViewCallback? = null
     private val selectImageDir = registerForActivityResult(HandleFileContract()) {
         it.uri?.let { uri ->
@@ -220,10 +230,13 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
     private fun initWebView() {
         binding.progressBar.fontColor = accentColor
         binding.webView.webChromeClient = CustomWebChromeClient()
+        //添加屏幕方向控制接口
+        binding.webView.addJavascriptInterface(OrientationJSInterface(), "AndroidOrientation")
         binding.webView.webViewClient = CustomWebViewClient()
         binding.webView.settings.apply {
             mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
             domStorageEnabled = true
+            mediaPlaybackRequiresUserGesture = false
             allowContentAccess = true
             builtInZoomControls = true
             displayZoomControls = false
@@ -260,6 +273,91 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             }
         }
 
+    }
+
+    inner class OrientationJSInterface {
+        @JavascriptInterface
+        fun lockOrientation(orientation: String) {
+            runOnUiThread {
+                if (isfullscreen) {
+                    requestedOrientation = when (orientation) {
+                        "portrait", "portrait-primary" -> ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                        "portrait-secondary" -> ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT
+                        "landscape", "landscape-primary" -> ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                        "landscape-secondary" -> ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
+                        "any", "unspecified" -> ActivityInfo.SCREEN_ORIENTATION_SENSOR
+                        else -> ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+                    }
+                }
+            }
+        }
+    }
+
+    private fun injectOrientationSupport() {
+        val js = """
+            (function() {
+                if (screen.orientation && !screen.orientation.__patched) {
+                    screen.orientation.lock = function(orientation) {
+                        return new Promise((resolve, reject) => {
+                            window.AndroidOrientation?.lockOrientation(orientation) 
+                            resolve()
+                        });
+                    };
+                    screen.orientation.unlock = function() {
+                        return new Promise((resolve, reject) => {
+                            window.AndroidOrientation?.lockOrientation('unlock') 
+                            resolve()
+                        });
+                    };
+                    screen.orientation.__patched = true;
+                };
+                window.run = function(jsCode) {
+                    return new Promise((resolve, reject) => {
+                        const response = prompt('JSBRIDGE:' + JSON.stringify({
+                            action: 'runJS',
+                            code: String(jsCode)
+                        }));
+                        if (response && response.startsWith('SUCCESS:')) {
+                            resolve(response.substring(8));
+                        } else {
+                            reject(response || 'Unknown error');
+                        }
+                    });
+                };
+            })();
+        """.trimIndent()
+        binding.webView.evaluateJavascript(js, null)
+    }
+
+    private fun handleJsRequest(message: String, result: JsPromptResult?) {
+        try {
+            val json = message.substring(9)
+            val request = GSONStrict.fromJsonObject<Map<String, String>>(json).getOrThrow()
+            
+            when (request["action"]) {
+                "runJS" -> {
+                    val jsCode = request["code"] ?: ""   
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        try {
+                            val jsResult = AnalyzeRule(null, viewModel.rssSource).run {
+                                setCoroutineContext(coroutineContext)
+                                evalJS(jsCode).toString()
+                            }
+                            
+                            binding.webView.post {
+                                result?.confirm("SUCCESS:${jsResult}")
+                            }
+                        } catch (e: Exception) {
+                            binding.webView.post {
+                                result?.confirm("ERROR:${e.message}")
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            result?.confirm("ERROR:Invalid request format")
+        }
     }
 
     private fun saveImage(webPic: String) {
@@ -374,20 +472,51 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         }
 
         override fun onShowCustomView(view: View?, callback: CustomViewCallback?) {
-            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR
+            isfullscreen = true
             binding.llView.invisible()
             binding.customWebView.addView(view)
             customWebViewCallback = callback
             keepScreenOn(true)
             toggleSystemBar(false)
+            lifecycleScope.launch {
+                delay(100)
+                if (!isFinishing && !isDestroyed) {
+                    if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED) {
+                        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR
+                    }
+                }
+            }
         }
 
         override fun onHideCustomView() {
+            isfullscreen = false
             binding.customWebView.removeAllViews()
             binding.llView.visible()
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
             keepScreenOn(false)
             toggleSystemBar(true)
+        }
+
+        /* 覆盖window.close() */
+        override fun onCloseWindow(window: WebView?) {
+            finish()
+        }
+
+        /* 监听请求，处理js代码 */
+        override fun onJsPrompt(
+            view: WebView?,
+            url: String?,
+            message: String?,
+            defaultValue: String?,
+            result: JsPromptResult?
+        ): Boolean {
+            message?.let {
+                if (it.startsWith("JSBRIDGE:")) {
+                    handleJsRequest(it, result)
+                    return true
+                }
+            }
+            return super.onJsPrompt(view, url, message, defaultValue, result)
         }
     }
 
@@ -444,6 +573,11 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                 }
             }
             return super.shouldInterceptRequest(view, request)
+        }
+
+        override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+            super.onPageStarted(view, url, favicon)
+            injectOrientationSupport()
         }
 
         override fun onPageFinished(view: WebView, url: String?) {

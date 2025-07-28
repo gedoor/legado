@@ -26,8 +26,10 @@ import io.legado.app.utils.writeBytes
 import org.apache.commons.text.StringEscapeUtils
 import java.io.File
 import java.util.Date
+import io.legado.app.data.entities.BaseSource
 
 class WebViewModel(application: Application) : BaseViewModel(application) {
+    var source: BaseSource? = null
     var intent: Intent? = null
     var baseUrl: String = ""
     var html: String? = null
@@ -51,7 +53,8 @@ class WebViewModel(application: Application) : BaseViewModel(application) {
             sourceType = intent.getIntExtra("sourceType", SourceType.book)
             sourceVerificationEnable = intent.getBooleanExtra("sourceVerificationEnable", false)
             refetchAfterSuccess = intent.getBooleanExtra("refetchAfterSuccess", true)
-            val source = SourceHelp.getSource(sourceOrigin, sourceType)
+            html = intent.getStringExtra("html")
+            source = SourceHelp.getSource(sourceOrigin, sourceType)
             val analyzeUrl = AnalyzeUrl(url, source = source, coroutineContext = coroutineContext)
             baseUrl = analyzeUrl.url
             headerMap.putAll(analyzeUrl.headerMap)
@@ -107,12 +110,14 @@ class WebViewModel(application: Application) : BaseViewModel(application) {
             execute {
                 val url = intent!!.getStringExtra("url")!!
                 val source = appDb.bookSourceDao.getBookSource(sourceOrigin)
-                html = AnalyzeUrl(
-                    url,
-                    headerMapF = headerMap,
-                    source = source,
-                    coroutineContext = coroutineContext
-                ).getStrResponseAwait(useWebView = false).body
+                if (html == null) {
+                    html = AnalyzeUrl(
+                        url,
+                        headerMapF = headerMap,
+                        source = source,
+                        coroutineContext = coroutineContext
+                    ).getStrResponseAwait(useWebView = false).body
+                }
                 SourceVerificationHelp.setResult(sourceOrigin, html ?: "")
             }.onSuccess {
                 success.invoke()
