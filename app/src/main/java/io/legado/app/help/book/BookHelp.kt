@@ -187,7 +187,9 @@ object BookHelp {
             bookChapter.getFileName(),
         ).writeText(content)
         if (book.isOnLineTxt && AppConfig.tocCountWords) {
-            val wordCount = StringUtils.wordCountFormat(content.length)
+            //不统计图片标签
+            val length = AppPattern.imgPattern.matcher(content).replaceAll("").length
+            val wordCount = StringUtils.wordCountFormat(length)
             bookChapter.wordCount = wordCount
             appDb.bookChapterDao.upWordCount(bookChapter.bookUrl, bookChapter.url, wordCount)
         }

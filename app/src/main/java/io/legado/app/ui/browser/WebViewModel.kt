@@ -118,7 +118,7 @@ class WebViewModel(application: Application) : BaseViewModel(application) {
                         coroutineContext = coroutineContext
                     ).getStrResponseAwait(useWebView = false).body
                 }
-                SourceVerificationHelp.setResult(sourceOrigin, html ?: "")
+                SourceVerificationHelp.setResult(sourceOrigin, html ?: "", baseUrl)
             }.onSuccess {
                 success.invoke()
             }
@@ -126,8 +126,8 @@ class WebViewModel(application: Application) : BaseViewModel(application) {
             webView.evaluateJavascript("document.documentElement.outerHTML") {
                 execute {
                     html = StringEscapeUtils.unescapeJson(it).trim('"')
-                    SourceVerificationHelp.setResult(sourceOrigin, html ?: "")
                 }.onSuccess {
+                    SourceVerificationHelp.setResult(sourceOrigin, html ?: "",  webView.url?:"")
                     success.invoke()
                 }
             }

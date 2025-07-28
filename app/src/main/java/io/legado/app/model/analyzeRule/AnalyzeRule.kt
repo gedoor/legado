@@ -766,6 +766,13 @@ class AnalyzeRule(
     }
 
     /**
+     * 设置并发率
+     */
+    fun setConcurrent(value: String) {
+        source?.let { it.concurrentRate = value }
+    }
+
+    /**
      * 执行JS
      */
     fun evalJS(jsStr: String, result: Any? = null): Any? {

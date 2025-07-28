@@ -252,10 +252,11 @@ interface JsExtensions : JsEncodeUtils {
 
     fun startBrowserAwait(url: String, title: String, refetchAfterSuccess: Boolean, html: String?): StrResponse {
         rhinoContext.ensureActive()
-        val body = SourceVerificationHelp.getVerificationResult(
+        val pair = SourceVerificationHelp.getVerificationResult(
             getSource(), url, title, true, refetchAfterSuccess, html
         )
-        return StrResponse(url, body)
+        val (url2, body) = pair
+        return StrResponse(url2.ifEmpty { url }, body)
     }
 
     /**
@@ -263,7 +264,7 @@ interface JsExtensions : JsEncodeUtils {
      */
     fun getVerificationCode(imageUrl: String): String {
         rhinoContext.ensureActive()
-        return SourceVerificationHelp.getVerificationResult(getSource(), imageUrl, "", false)
+        return SourceVerificationHelp.getVerificationResult(getSource(), imageUrl, "", false).second
     }
 
     /**
