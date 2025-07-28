@@ -15,32 +15,6 @@ Legado / 开源阅读
 Legado is a free and open source novel reader for Android.
 </div>
 
-# 复刻仓库的所有改动
-- 新增功能
-    - 音频播放支持跳过片头片尾
-    - 音频支持显示歌词
-    - 自定义本地dns
-- 功能完善
-    - 订阅源支持显示识别更新状态
-    - 字数显示能智能识别在线字数
-    - 图片链接不计入本地字数统计
-    - 状态栏音频控制支持上一首下一首
-- 内置浏览器变动
-    - 支持screen.orientation.lock在全屏时控制屏幕方向
-    - 支持window.close()关闭网页
-    - 支持window.run(jscode)异步执行阅读的java函数
-    - 支持不静音自动播放视频
-- 函数变动
-    - startBrowser、startBrowserAwait支持html参数
-    - startBrowserAwait返回的响应的url为网页实际地址
-    - source.getLoginInfoMap()在用户信息未初始化时，返回空对象而不是null
-- 函数新增
-    - java.setConcurrent(concurrent:Sring)实时改变并发率
-- 其余杂项
-    - 目录卷章会显示获取的章节信息
-    - 合并两个调速按钮
-    - 优化源正文图片地址智能提取
-
 [![](https://img.shields.io/badge/-Contents:-696969.svg)](#contents) [![](https://img.shields.io/badge/-Function-F5F5F5.svg)](#Function-主要功能-) [![](https://img.shields.io/badge/-Community-F5F5F5.svg)](#Community-交流社区-) [![](https://img.shields.io/badge/-API-F5F5F5.svg)](#API-) [![](https://img.shields.io/badge/-Other-F5F5F5.svg)](#Other-其他-) [![](https://img.shields.io/badge/-Grateful-F5F5F5.svg)](#Grateful-感谢-) [![](https://img.shields.io/badge/-Interface-F5F5F5.svg)](#Interface-界面-)
 
 >新用户？
