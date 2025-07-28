@@ -15,6 +15,17 @@ Legado / 开源阅读
 Legado is a free and open source novel reader for Android.
 </div>
 
+# 复刻仓库的所有改动
+- 内置浏览器变动
+    - 支持screen.orientation.lock在全屏时控制屏幕方向
+    - 支持window.close()关闭网页
+    - 支持window.run(jscode)异步执行阅读的java函数
+- 函数变动
+    - startBrowser、startBrowserAwait支持html参数
+    - startBrowserAwait返回的响应的url为网页实际地址
+- 函数新增
+    - java.setConcurrent(Sring: concurrent)实时改变并发率
+
 [![](https://img.shields.io/badge/-Contents:-696969.svg)](#contents) [![](https://img.shields.io/badge/-Function-F5F5F5.svg)](#Function-主要功能-) [![](https://img.shields.io/badge/-Community-F5F5F5.svg)](#Community-交流社区-) [![](https://img.shields.io/badge/-API-F5F5F5.svg)](#API-) [![](https://img.shields.io/badge/-Other-F5F5F5.svg)](#Other-其他-) [![](https://img.shields.io/badge/-Grateful-F5F5F5.svg)](#Grateful-感谢-) [![](https://img.shields.io/badge/-Interface-F5F5F5.svg)](#Interface-界面-)
 
 >新用户？
