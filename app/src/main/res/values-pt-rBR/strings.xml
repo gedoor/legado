@@ -887,7 +887,7 @@
     <string name="pref_cronet_summary">Usando componentes de rede Cronet</string>
     <string name="anti_alias">Anti-Aliasing</string>
     <string name="pref_anti_alias_summary">Anti-Aliasing when draw picture</string>
-    <string name="upload_url">上传URL</string>
+    <string name="upload_url">创建分享链接</string>
     <string name="download_url_rule">downloadUrlRule(downloadUrls)</string>
     <string name="sort_by_respondTime">Classificar por tempo de resposta</string>
     <string name="respondTime">tempo de resposta: %1$d ms</string>
