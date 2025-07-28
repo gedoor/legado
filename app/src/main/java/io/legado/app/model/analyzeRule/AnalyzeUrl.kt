@@ -59,6 +59,7 @@ import java.io.InputStream
 import java.net.InetAddress
 import java.net.URLEncoder
 import java.nio.charset.Charset
+import java.util.Collections
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
 import kotlin.coroutines.ContinuationInterceptor
@@ -111,7 +112,6 @@ class AnalyzeUrl(
     private val domain: String
     private var webViewDelayTime: Long = 0
     private val concurrentRateLimiter = ConcurrentRateLimiter(source)
-    private val customHosts = AppConfig.customHosts
 
     // 服务器ID
     var serverID: Long? = null
@@ -541,49 +541,42 @@ class AnalyzeUrl(
     }
 
     private fun parseCustomHosts(host: String):  List<InetAddress>? {
-        if (customHosts == "") return null
-        CacheManager.getFromMemory("host_$host")?.let {
-            return it as? List<InetAddress>
-        }
-        val hostMap = GSON.fromJsonObject<Map<String, Any?>>(customHosts).getOrThrow()
-        val ips = hostMap[host]
-        val readiness = when (ips) {
-            is String -> try {
-                ips.split(",")
-                    .map { it.trim() }
-                    .filter { it.isNotEmpty() }
-                    .map { InetAddress.getByName(it) }
-            } catch (e: Exception) {
-                log(e)
-                null
-            }
-
-            is List<*> -> ips.mapNotNull { element ->
-                val ipStr = when (element) {
-                    is String -> element.trim().takeIf { it.isNotEmpty() }
-                    else -> null
-                }
-
-                ipStr?.let {
-                    try {
-                        InetAddress.getByName(it)
+        val configMap = hostMap ?: return null
+        val configIps = configMap[host] ?: return null
+        return addressCache.getOrPut(host) {
+                when (configIps) {
+                    is String -> try {
+                        configIps.split(",")
+                            .map { it.trim() }
+                            .filter { it.isNotEmpty() }
+                            .map { InetAddress.getByName(it) }
                     } catch (e: Exception) {
                         log(e)
                         null
                     }
-                }
-            }
 
-            else -> {
-                if (ips != null) {
-                    log("Unsupported IP format for $host: ${ips::class.java.simpleName}")
+                    is List<*> -> configIps.mapNotNull { element ->
+                        val ipStr = when (element) {
+                            is String -> element.trim().takeIf { it.isNotEmpty() }
+                            else -> null
+                        }
+                        ipStr?.let {
+                            try {
+                                InetAddress.getByName(it)
+                            } catch (e: Exception) {
+                                log(e)
+                                null
+                            }
+                        }
+                    }
+
+                    else -> {
+                        log("Unsupported IP format for $host: ${configIps::class.java.simpleName}")
+                        null
+                    }
                 }
-                null
-            }
-        }.also {
-            CacheManager.putMemory("host_$host", it?:"")
+
         }
-        return readiness
     }
 
     private fun getCachedDns(host: String, ipAddress: List<InetAddress>): Dns {
@@ -735,7 +728,15 @@ class AnalyzeUrl(
         private val pagePattern = Pattern.compile("<(.*?)>")
         private val queryEncoder =
             RFC3986.UNRESERVED.orNew(PercentCodec.of("!$%&()*+,/:;=?@[\\]^`{|}"))
-        private val dnsCache = mutableMapOf<String, Dns>()
+        private val dnsCache = Collections.synchronizedMap(mutableMapOf<String, Dns>())
+        private val addressCache = Collections.synchronizedMap(mutableMapOf<String, List<InetAddress>?>())
+        private val hostMap: Map<String, Any?>? by lazy {
+            when {
+                AppConfig.customHosts.isBlank() -> null
+                else -> GSON.fromJsonObject<Map<String, Any?>>(AppConfig.customHosts).getOrNull()
+            }
+        }
+
         fun AnalyzeUrl.getMediaItem(): MediaItem {
             setCookie()
             return ExoPlayerHelper.createMediaItem(url, headerMap)
