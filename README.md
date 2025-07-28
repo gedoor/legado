@@ -23,16 +23,17 @@ Legado is a free and open source novel reader for Android.
 - 功能完善
     - 订阅源支持显示识别更新状态
     - 字数显示能智能识别在线字数
-    - 本地字数统计不计入图片
+    - 图片链接不计入本地字数统计
     - 状态栏音频控制支持上一首下一首
 - 内置浏览器变动
     - 支持screen.orientation.lock在全屏时控制屏幕方向
     - 支持window.close()关闭网页
     - 支持window.run(jscode)异步执行阅读的java函数
-    - 支持静音自动播放视频
+    - 支持不静音自动播放视频
 - 函数变动
     - startBrowser、startBrowserAwait支持html参数
     - startBrowserAwait返回的响应的url为网页实际地址
+    - source.getLoginInfoMap()在用户信息未初始化时，返回空对象而不是null
 - 函数新增
     - java.setConcurrent(concurrent:Sring)实时改变并发率
 - 其余杂项
