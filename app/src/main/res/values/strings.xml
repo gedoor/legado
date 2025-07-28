@@ -1232,4 +1232,6 @@
     <string name="speed_control">语速控制</string>
     <string name="next">下一首</string>
     <string name="previous">上一首</string>
+    <string name="custom_hosts">Custom Hosts</string>
+    <string name="custom_hosts_summary">Domain name to IP mapping</string>
 </resources>

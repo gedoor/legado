@@ -17,6 +17,9 @@ object AppPattern {
     //匹配章节信息中的字数
     val wordCountRegex = Regex("(?:^|字数[：:、]?|\\s+)([0-9万千百\\.]{1,6}字)")
 
+    //提取链接中的域名
+    val domainRegex = Regex("^https?://([^:/]+)",RegexOption.IGNORE_CASE)
+
     val nameRegex = Regex("\\s+作\\s*者.*|\\s+\\S+\\s+著")
     val authorRegex = Regex("^\\s*作\\s*者[:：\\s]+|\\s+著")
     val fileNameRegex = Regex("[\\\\/:*?\"<>|.]")
