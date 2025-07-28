@@ -1,5 +1,11 @@
 [
   {
+  "uploadUrl": "https://sy.ycoo.net/shuyuan,{\"method\":\"POST\",\"body\": {\"file\": \"fileRequest\"},\"type\": \"multipart/form-data\"}",
+  "downloadUrlRule": "$.data@js:if (result == '') \n '' \n else \n 'https://sy.ycoo.net/shuyuan/' + result",
+  "summary": "源社区直链(永久有效)",
+  "compress": false
+  },    
+  {
     "uploadUrl": "https://sy.nyasama.net/shuyuan,{\"method\":\"POST\",\"body\": {\"file\": \"fileRequest\"},\"type\": \"multipart/form-data\"}",
     "downloadUrlRule": "$.data@js:if (result == '') \n '' \n else \n 'https://shuyuan.nyasama.net/shuyuan/' + result",
     "summary": "喵公子网盘①(有效期30天·香港G口)",
@@ -18,3 +24,4 @@
     "compress": false
   }
 ]
+
