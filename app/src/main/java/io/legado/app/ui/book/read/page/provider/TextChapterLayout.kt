@@ -285,10 +285,10 @@ class TextChapterLayout(
                         if (matchResult != null) {
                             val styleValue = matchResult.groupValues[1].trim()
                             if (styleValue == "TEXT" && matcher.end() == text.length) {
-                                iStyle == "TEXT"
+                                iStyle = "TEXT"
                             }
                             else if (styleValue.equals("text", true)) {
-                                iStyle == "text"
+                                iStyle = "text"
                             }
                             else {
                                 imgSize = ImageProvider.getImageSize(book, imgSrc, ReadBook.bookSource)
@@ -299,7 +299,7 @@ class TextChapterLayout(
                         else {
                             imgSize = ImageProvider.getImageSize(book, imgSrc, ReadBook.bookSource)
                             if (imgSize.width < 80 && imgSize.height < 80) {
-                                iStyle == "text"
+                                iStyle = "text"
                             }
                             else {
                                 isSmallImage = false
