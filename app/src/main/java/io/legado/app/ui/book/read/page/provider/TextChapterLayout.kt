@@ -225,6 +225,7 @@ class TextChapterLayout(
                     titlePaintTextHeight,
                     titlePaintFontMetrics,
                     imageStyle,
+                    srcList = srcList.ifEmpty { null },
                     isTitle = true,
                     emptyContent = contents.isEmpty(),
                     isVolumeTitle = bookChapter.isVolume
