@@ -26,25 +26,18 @@ object ReadAloud {
     var httpTTS: HttpTTS? = null
     private fun getReadAloudClass(): Class<*> {
         val ttsEngine = ttsEngine
-
-        System.out.println("ReadAloud" + ttsEngine)
         if (ttsEngine.isNullOrBlank()) {
             return TTSReadAloudService::class.java
         }
-
         if (ttsEngine.contains("edgeinner")) {
-            LogUtils.d("ReadAloud", "使用内置 Edge")
             return TTSEdgeAloudService::class.java
         }
-
         if (StringUtils.isNumeric(ttsEngine)) {
             httpTTS = appDb.httpTTSDao.get(ttsEngine.toLong())
             if (httpTTS != null) {
-                LogUtils.d("ReadAloud", "使用网络朗读引擎")
                 return HttpReadAloudService::class.java
             }
         }
-        LogUtils.d("ReadAloud", "使用默认朗读")
         return TTSReadAloudService::class.java
     }
 
