@@ -79,13 +79,9 @@ class EdgeSpeakFetch {
         }
     }
 
-    private var onFailure = false
     private var lastTime: Long = 0
     private lateinit var lastWss: WebSocket
-
-    // 在类中定义作用域（与组件生命周期绑定）
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
-
     private var audioOutputStream = PipedOutputStream()
     private var audioInputStream = PipedInputStream(audioOutputStream, 8192)
     private var client = OkHttpClient.Builder()
@@ -96,7 +92,7 @@ class EdgeSpeakFetch {
 
 
     private fun getWssConnect(): Deferred<WebSocket> {
-        Log.i(TAG, "重新生成 WssConnect")
+        Log.i(TAG, "重新生成 WebsocketConnect")
         val deferred = CompletableDeferred<WebSocket>()
         val clockSkewSeconds = 0.0
         val secMsGec = generateSecMsGec(clockSkewSeconds)
@@ -122,8 +118,7 @@ class EdgeSpeakFetch {
                     }
 
                     override fun onMessage(webSocket: WebSocket, text: String) {
-                        Log.i(TAG, "WebSocket onMessage " + text.length)
-                        // 检测turn.end并关闭连接（与Golang逻辑一致）
+                        // 检测turn.end并关闭流
                         if (text.contains("turn.end")) {
                             Log.i(TAG, "收到turn.end 关闭流")
                             audioOutputStream.close()
@@ -131,7 +126,6 @@ class EdgeSpeakFetch {
                             lastWss = webSocket
 
                         }
-                        Log.i(TAG, "继续")
                     }
 
                     override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
@@ -165,12 +159,9 @@ class EdgeSpeakFetch {
                                 try {
                                     audioOutputStream.write(audioData)
                                     audioOutputStream.flush()
-                                    Log.i(TAG, "写入 Steam" + audioData.size)
                                 } catch (e: IOException) {
                                     Log.e(TAG, "缓存音频失败", e)
                                 }
-                            } else {
-                                Log.i(TAG, "onMessage 空音频数据，跳过缓存")
                             }
 
                         } catch (e: Exception) {
@@ -187,15 +178,13 @@ class EdgeSpeakFetch {
                         t: Throwable,
                         response: Response?
                     ) {
-                        Log.i(TAG, "WebSocket onFailure" + t.printStackTrace())
-                        onFailure = true
+                        Log.i(TAG, "WebSocket onFailure: $t $response")
                     }
 
                 }
                 client.newWebSocket(request, listener)
 
             } catch (e: Exception) {
-                // 失败：类似 reject()
                 Log.i(TAG, "WebSocket coroutineScope.launch Err$e")
                 deferred.completeExceptionally(e)
             }
@@ -214,7 +203,6 @@ class EdgeSpeakFetch {
         try {
             audioOutputStream = PipedOutputStream()
             audioInputStream = PipedInputStream(audioOutputStream, 8192) // 缓冲区8KB
-            Log.i(TAG, "初始化管道流成功")
         } catch (e: Exception) {
             Log.i(TAG, "初始化管道流失败")
         }
@@ -227,6 +215,7 @@ class EdgeSpeakFetch {
         voice: String = DEFAULT_VOICE
     ): InputStream {
         initStream()
+        Log.i(TAG, speakText)
         try {
             val speakTextStr = removeSpecialCharacters(speakText)
             val wss: WebSocket
@@ -249,7 +238,7 @@ class EdgeSpeakFetch {
         return audioInputStream
     }
 
-    // 构造SSML文本（与Golang格式完全一致）
+    // 构造SSML文本
     private fun mkSSML(
         text: String,
         voice: String,
@@ -267,7 +256,7 @@ class EdgeSpeakFetch {
         )
     }
 
-    // 发送speech.config消息（格式与Golang完全一致）
+    // 发送speech.config消息
     private fun sendSpeechConfig(wss: WebSocket) {
         val speechConfig =
             "{\"context\":{\"synthesis\":{\"audio\":{\"metadataoptions\":{\"sentenceBoundaryEnabled\":\"false\",\"wordBoundaryEnabled\":\"true\"},\"outputFormat\":\"audio-24khz-48kbitrate-mono-mp3\"}}}}"
@@ -285,10 +274,9 @@ class EdgeSpeakFetch {
         wss.send(speechConfigMsg)
     }
 
-    // 发送SSML消息（格式与Golang完全一致）
+    // 发送SSML消息
     private fun sendSSMLMessage(wss: WebSocket, ssml: String) {
         val requestId = connectID()
-        // 时间格式严格匹配Golang的"Mon Jan 2 2006 15:04:05 GMT-0700 (MST)"
         val sdf = SimpleDateFormat("EEE MMM d yyyy HH:mm:ss zzz", Locale.US)
         sdf.timeZone = TimeZone.getTimeZone("UTC")
         val timestamp = sdf.format(Date())
@@ -301,14 +289,14 @@ class EdgeSpeakFetch {
         wss.send(ssmlMsg)
     }
 
-    // 生成无破折号的UUID（与Golang一致）
+    // 生成无破折号的UUID
     private fun connectID(): String {
         return UUID.randomUUID().toString().replace("-".toRegex(), "")
     }
 
+    // 生成带符号的百分比字符串
     private fun processRate(rate: Int): String {
         val rateOffset = rate - 12
-        // 生成带符号的百分比字符串
         val customRate = if (rateOffset > 0) {
             "+$rateOffset%"
         } else {
@@ -318,7 +306,7 @@ class EdgeSpeakFetch {
     }
 
     fun release() {
-        coroutineScope.cancel() // 取消所有未完成的协程
+        coroutineScope.cancel()
         if (::lastWss.isInitialized) lastWss.cancel()
         try {
             audioOutputStream.close()
@@ -327,6 +315,4 @@ class EdgeSpeakFetch {
             Log.e(TAG, "关闭管道流失败", e)
         }
     }
-
-
 }
