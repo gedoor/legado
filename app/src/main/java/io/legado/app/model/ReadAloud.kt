@@ -12,14 +12,13 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.HttpReadAloudService
 import io.legado.app.service.TTSReadAloudService
-import io.legado.app.service.TTSEdgeReadAloudService
+import io.legado.app.service.TTSEdgeAloudService
 import io.legado.app.utils.LogUtils
 import io.legado.app.utils.StringUtils
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.startForegroundServiceCompat
 import io.legado.app.utils.toastOnUi
 import splitties.init.appCtx
-import kotlin.reflect.typeOf
 
 object ReadAloud {
     private var aloudClass: Class<*> = getReadAloudClass()
@@ -35,12 +34,7 @@ object ReadAloud {
 
         if (ttsEngine.contains("edgeinner")) {
             LogUtils.d("ReadAloud", "使用内置 Edge")
-            ReadAloud.httpTTS =  HttpTTS(
-                id = 1111,
-                name ="edgeinner",
-                url = "",
-            )
-            return TTSEdgeReadAloudService::class.java
+            return TTSEdgeAloudService::class.java
         }
 
         if (StringUtils.isNumeric(ttsEngine)) {
