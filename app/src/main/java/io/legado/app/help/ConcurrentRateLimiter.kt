@@ -4,11 +4,28 @@ import io.legado.app.data.entities.BaseSource
 import io.legado.app.exception.ConcurrentException
 import io.legado.app.model.analyzeRule.AnalyzeUrl.ConcurrentRecord
 import kotlinx.coroutines.delay
+import java.util.concurrent.ConcurrentHashMap
 
 class ConcurrentRateLimiter(val source: BaseSource?) {
 
     companion object {
-        private val concurrentRecordMap = hashMapOf<String, ConcurrentRecord>()
+        private val concurrentRecordMap = ConcurrentHashMap<String, ConcurrentRecord>()
+        /**
+         * 更新并发率
+         */
+        fun updateConcurrentRate(key: String, concurrentRate: String) {
+            concurrentRecordMap.compute(key) { _, record ->
+                val rateIndex = concurrentRate.indexOf("/")
+                if (rateIndex > 0) {
+                    val accessLimit = concurrentRate.substring(0, rateIndex).toInt()
+                    val interval = concurrentRate.substring(rateIndex + 1).toInt()
+                    ConcurrentRecord(true, record?.time?: System.currentTimeMillis(), accessLimit, interval, record?.frequency?: 0)
+                }
+                else {
+                    ConcurrentRecord(false, record?.time?: System.currentTimeMillis(),0,concurrentRate.toInt(), record?.frequency?: 0)
+                }
+            }
+        }
     }
 
     /**
@@ -21,28 +38,30 @@ class ConcurrentRateLimiter(val source: BaseSource?) {
         if (concurrentRate.isNullOrEmpty() || concurrentRate == "0") {
             return null
         }
-        val rateIndex = concurrentRate.indexOf("/")
-        var fetchRecord = concurrentRecordMap[source.getKey()]
-        if (fetchRecord == null) {
-            synchronized(concurrentRecordMap) {
-                fetchRecord = concurrentRecordMap[source.getKey()]
-                if (fetchRecord == null) {
-                    fetchRecord = ConcurrentRecord(rateIndex > 0, System.currentTimeMillis(), 1)
-                    concurrentRecordMap[source.getKey()] = fetchRecord
-                    return fetchRecord
-                }
+        var isNewRecord = false
+        val fetchRecord = concurrentRecordMap.computeIfAbsent(source.getKey()) {
+            isNewRecord = true
+            val rateIndex = concurrentRate.indexOf("/")
+            if (rateIndex > 0) {
+                val accessLimit = concurrentRate.substring(0, rateIndex).toInt()
+                val interval = concurrentRate.substring(rateIndex + 1).toInt()
+                ConcurrentRecord(true, System.currentTimeMillis(), accessLimit, interval, 1)
+            }
+            else {
+                ConcurrentRecord(false, System.currentTimeMillis(),0,concurrentRate.toInt(), 1)
             }
         }
-        val waitTime: Int = synchronized(fetchRecord!!) {
+        if (isNewRecord) return fetchRecord
+        val waitTime: Int = synchronized(fetchRecord) {
             try {
                 if (!fetchRecord.isConcurrent) {
                     //并发控制非 次数/毫秒
                     if (fetchRecord.frequency > 0) {
                         //已经有访问线程,直接等待
-                        return@synchronized concurrentRate.toInt()
+                        return@synchronized fetchRecord.interval
                     }
                     //没有线程访问,判断还剩多少时间可以访问
-                    val nextTime = fetchRecord.time + concurrentRate.toInt()
+                    val nextTime = fetchRecord.time + fetchRecord.interval
                     if (System.currentTimeMillis() >= nextTime) {
                         fetchRecord.time = System.currentTimeMillis()
                         fetchRecord.frequency = 1
@@ -51,16 +70,14 @@ class ConcurrentRateLimiter(val source: BaseSource?) {
                     return@synchronized (nextTime - System.currentTimeMillis()).toInt()
                 } else {
                     //并发控制为 次数/毫秒
-                    val sj = concurrentRate.substring(rateIndex + 1)
-                    val nextTime = fetchRecord.time + sj.toInt()
+                    val nextTime = fetchRecord.time + fetchRecord.interval
                     if (System.currentTimeMillis() >= nextTime) {
                         //已经过了限制时间,重置开始时间
                         fetchRecord.time = System.currentTimeMillis()
                         fetchRecord.frequency = 1
                         return@synchronized 0
                     }
-                    val cs = concurrentRate.substring(0, rateIndex)
-                    if (fetchRecord.frequency > cs.toInt()) {
+                    if (fetchRecord.frequency > fetchRecord.accessLimit) {
                         return@synchronized (nextTime - System.currentTimeMillis()).toInt()
                     } else {
                         fetchRecord.frequency += 1

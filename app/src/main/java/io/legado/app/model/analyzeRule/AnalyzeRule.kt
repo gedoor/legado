@@ -14,6 +14,7 @@ import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.CacheManager
+import io.legado.app.help.ConcurrentRateLimiter.Companion.updateConcurrentRate
 import io.legado.app.help.JsExtensions
 import io.legado.app.help.http.CookieStore
 import io.legado.app.help.source.getShareScope
@@ -763,6 +764,13 @@ class AnalyzeRule(
             ?: ruleData?.getVariable(key)?.takeIf { it.isNotEmpty() }
             ?: source?.get(key)?.takeIf { it.isNotEmpty() }
             ?: ""
+    }
+
+    /**
+     * 设置并发率
+     */
+    fun setConcurrent(value: String) {
+        source?.let { it.concurrentRate = value }
     }
 
     /**
