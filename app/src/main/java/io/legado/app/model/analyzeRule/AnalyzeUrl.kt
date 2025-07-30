@@ -514,6 +514,7 @@ class AnalyzeUrl(
         val client = getProxyClient(proxy)
         val host = extractHostFromUrl(urlNoQuery)
         if (host.isNullOrEmpty()) return client
+        //val ipAddress = if (isCronet) null else parseCustomHosts(host)//cronet的dns依旧需要这里进行设置
         val ipAddress = parseCustomHosts(host)
         if (readTimeout == null && callTimeout == null && ipAddress == null) {
             return client
@@ -736,6 +737,7 @@ class AnalyzeUrl(
                 else -> GSON.fromJsonObject<Map<String, Any?>>(AppConfig.customHosts).getOrNull()
             }
         }
+        private val isCronet: Boolean by lazy {AppConfig.isCronet}
 
         fun AnalyzeUrl.getMediaItem(): MediaItem {
             setCookie()

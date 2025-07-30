@@ -9,6 +9,7 @@ import io.legado.app.help.http.CookieManager.cookieJarHeader
 import io.legado.app.help.http.SSLHelper
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.utils.DebugLog
+import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.externalCache
 import okhttp3.Headers
 import okhttp3.MediaType
@@ -72,10 +73,16 @@ val options by lazy {
 
 fun buildRequest(request: Request, callback: UrlRequest.Callback): UrlRequest? {
     val url = request.url.toString()
+    val host = NetworkUtils.getSubDomain(url)
+    val resolvedUrl = NetworkUtils.resolveCustomHost(host)?.let { ip ->
+        url.replace(host, ip).also {
+            DebugLog.d("Cronet DNS", "Resolved $host to $ip")
+        }
+    } ?: url
     val headers: Headers = request.headers
     val requestBody = request.body
     return cronetEngine?.newUrlRequestBuilder(
-        url,
+        resolvedUrl,
         callback,
         okHttpClient.dispatcher.executorService
     )?.apply {

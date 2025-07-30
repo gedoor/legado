@@ -61,7 +61,7 @@ class ConcurrentRateLimiter(val source: BaseSource?) {
                         return@synchronized fetchRecord.interval
                     }
                     //没有线程访问,判断还剩多少时间可以访问
-                    val nextTime = fetchRecord.time + fetchRecord.interval
+                    val nextTime = fetchRecord.time + fetchRecord.interval.toLong()
                     if (System.currentTimeMillis() >= nextTime) {
                         fetchRecord.time = System.currentTimeMillis()
                         fetchRecord.frequency = 1
@@ -70,7 +70,7 @@ class ConcurrentRateLimiter(val source: BaseSource?) {
                     return@synchronized (nextTime - System.currentTimeMillis()).toInt()
                 } else {
                     //并发控制为 次数/毫秒
-                    val nextTime = fetchRecord.time + fetchRecord.interval
+                    val nextTime = fetchRecord.time + fetchRecord.interval.toLong()
                     if (System.currentTimeMillis() >= nextTime) {
                         //已经过了限制时间,重置开始时间
                         fetchRecord.time = System.currentTimeMillis()
