@@ -3,15 +3,20 @@ package io.legado.app.service
 import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.lifecycleScope
+import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.Timeline
-import androidx.media3.database.StandaloneDatabaseProvider
-import androidx.media3.datasource.cache.LeastRecentlyUsedCacheEvictor
-import androidx.media3.datasource.cache.SimpleCache
+import androidx.media3.common.util.Assertions
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DataSource
+import androidx.media3.datasource.DataSpec
+import androidx.media3.datasource.TransferListener
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import io.legado.app.R
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern
@@ -19,7 +24,6 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook
-import io.legado.app.utils.FileUtils
 import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.servicePendingIntent
 import io.legado.app.utils.toastOnUi
@@ -31,35 +35,39 @@ import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import splitties.init.appCtx
-import java.io.File
+import java.io.ByteArrayOutputStream
+import java.io.IOException
 import java.io.InputStream
+import kotlin.collections.set
 import kotlin.coroutines.coroutineContext
+import androidx.core.net.toUri
 
 /**
  * Edge大声朗读
  */
 @SuppressLint("UnsafeOptInUsageError")
 class TTSEdgeAloudService : BaseReadAloudService(), Player.Listener {
+
     private val exoPlayer: ExoPlayer by lazy {
-        ExoPlayer.Builder(this).build()
+        val dataSourceFactory = ByteArrayDataSourceFactory(audioCache)
+        val mediaSourceFactory = ProgressiveMediaSource.Factory(dataSourceFactory)
+        ExoPlayer.Builder(this)
+            .setMediaSourceFactory(mediaSourceFactory)
+            .build()
     }
-    private val ttsFolderPath: String by lazy {
-        cacheDir.absolutePath + File.separator + "httpTTS" + File.separator
-    }
-    private val cache by lazy {
-        SimpleCache(
-            File(cacheDir, "httpTTS_cache"),
-            LeastRecentlyUsedCacheEvictor(128 * 1024 * 1024),
-            StandaloneDatabaseProvider(appCtx)
-        )
-    }
+    private val tag = "TTSEdgeAloudService"
     private var speechRate: Int = AppConfig.speechRatePlay + 5
     private var downloadTask: Coroutine<*>? = null
     private var playIndexJob: Job? = null
     private var playErrorNo = 0
     private val downloadTaskActiveLock = Mutex()
-    private var edgeSpeakFetch = EdgeSpeakFetch()
+    private val edgeSpeakFetch = EdgeSpeakFetch()
+    private val audioCache = HashMap<String, ByteArray>()
+    private val audioCacheList = arrayListOf<String>()
+    private var previousMediaId = ""
+    private val silentBytes: ByteArray by lazy {
+        resources.openRawResource(R.raw.silent_sound).readBytes()
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -70,11 +78,8 @@ class TTSEdgeAloudService : BaseReadAloudService(), Player.Listener {
         super.onDestroy()
         downloadTask?.cancel()
         exoPlayer.release()
-        cache.release()
         edgeSpeakFetch.release()
-        Coroutine.async {
-            removeCacheFile()
-        }
+        removeAllCache()
     }
 
     override fun play() {
@@ -106,7 +111,9 @@ class TTSEdgeAloudService : BaseReadAloudService(), Player.Listener {
     }
 
     private fun downloadAndPlayAudios() {
+        removeUnUseCache()
         exoPlayer.clearMediaItems()
+        Log.d(tag, "clearMediaItems audioCache Size= ${audioCache.size}")
         downloadTask?.cancel()
         downloadTask = execute {
             downloadTaskActiveLock.withLock {
@@ -120,19 +127,11 @@ class TTSEdgeAloudService : BaseReadAloudService(), Player.Listener {
                     }
                     val fileName = md5SpeakFileName(text)
                     val speakText = text.replace(AppPattern.notReadAloudRegex, "")
-                    if (speakText.isEmpty()) {
-                        AppLog.put("阅读段落内容为空，使用无声音频代替。\n朗读文本：$text")
-                        createSilentSound(fileName)
-                    } else if (!hasSpeakFile(fileName)) {
+                    if (!isCached(fileName)) {
                         runCatching {
-                            val inputStream = getSpeakStream(speakText)
-                            if (inputStream != null) {
-                                createSpeakFile(fileName, inputStream)
-                            } else {
-                                createSilentSound(fileName)
-                            }
+                            getSpeakStream(speakText, fileName)
                         }.onFailure {
-                            println("downloadAndPlayAudios runCatch onFailure")
+                            Log.e(tag, "downloadAndPlayAudios runCatch onFailure")
                             when (it) {
                                 is CancellationException -> Unit
                                 else -> pauseReadAloud()
@@ -140,8 +139,10 @@ class TTSEdgeAloudService : BaseReadAloudService(), Player.Listener {
                             return@execute
                         }
                     }
-                    val file = getSpeakFileAsMd5(fileName)
-                    val mediaItem = MediaItem.fromUri(Uri.fromFile(file))
+                    val mediaItem = MediaItem.Builder()
+                        .setUri("memory://media/$fileName".toUri())
+                        .setMediaId(fileName)
+                        .build()
                     launch(Main) {
                         exoPlayer.addMediaItem(mediaItem)
                     }
@@ -162,31 +163,30 @@ class TTSEdgeAloudService : BaseReadAloudService(), Player.Listener {
             coroutineContext.ensureActive()
             val fileName = md5SpeakFileName(content)
             val speakText = content.replace(AppPattern.notReadAloudRegex, "")
-            if (speakText.isEmpty()) {
-                createSilentSound(fileName)
-            } else if (!hasSpeakFile(fileName)) {
+            if (!isCached(fileName)) {
                 runCatching {
-                    val inputStream = getSpeakStream(speakText)
-                    if (inputStream != null) {
-                        createSpeakFile(fileName, inputStream)
-                    } else {
-                        createSilentSound(fileName)
-                    }
+                    getSpeakStream(speakText, fileName)
                 }.onFailure {
-                    println("preDownloadAudios runCatch onFailure")
+                    Log.e(tag, "preDownloadAudios runCatch onFailure")
                 }
             }
         }
     }
 
-    private suspend fun getSpeakStream(speakText: String): InputStream? {
-        try {
-            var inputStream = edgeSpeakFetch.synthesizeText(speakText, speechRate)
-            return inputStream
-        } catch (e: Exception) {
-            println("speak失败: $e")
+    private suspend fun getSpeakStream(speakText: String, fileName: String): String {
+        if (speakText.isEmpty()) {
+            cacheAudio(fileName, silentBytes)
+            return "fail"
         }
-        return null
+        try {
+            val inputStream = edgeSpeakFetch.synthesizeText(speakText, speechRate)
+            cacheAudio(fileName, inputStream)
+            return "success"
+        } catch (e: Exception) {
+            Log.i(tag, "edgeSpeakFetch失败: $e")
+            cacheAudio(fileName, silentBytes)
+        }
+        return "fail"
     }
 
     private fun md5SpeakFileName(content: String): String {
@@ -194,45 +194,6 @@ class TTSEdgeAloudService : BaseReadAloudService(), Player.Listener {
             textChapter?.title ?: ""
         ) + "_" + MD5Utils.md5Encode16("${ReadAloud.httpTTS?.url}-|-$speechRate-|-$content")
     }
-
-    private fun createSilentSound(fileName: String) {
-        val file = createSpeakFile(fileName)
-        file.writeBytes(resources.openRawResource(R.raw.silent_sound).readBytes())
-    }
-
-    private fun hasSpeakFile(name: String): Boolean {
-        return FileUtils.exist("${ttsFolderPath}$name.mp3")
-    }
-
-    private fun getSpeakFileAsMd5(name: String): File {
-        return File("${ttsFolderPath}$name.mp3")
-    }
-
-    private fun createSpeakFile(name: String): File {
-        return FileUtils.createFileIfNotExist("${ttsFolderPath}$name.mp3")
-    }
-
-    private fun createSpeakFile(name: String, inputStream: InputStream) {
-        FileUtils.createFileIfNotExist("${ttsFolderPath}$name.mp3").outputStream().use { out ->
-            inputStream.use {
-                it.copyTo(out)
-            }
-        }
-    }
-
-    /**
-     * 移除缓存文件
-     */
-    private fun removeCacheFile() {
-        val titleMd5 = MD5Utils.md5Encode16(textChapter?.title ?: "")
-        FileUtils.listDirsAndFiles(ttsFolderPath)?.forEach {
-            val isSilentSound = it.length() == 2160L
-            if ((!it.name.startsWith(titleMd5) && System.currentTimeMillis() - it.lastModified() > 600000) || isSilentSound) {
-                FileUtils.delete(it.absolutePath)
-            }
-        }
-    }
-
 
     override fun pauseReadAloud(abandonFocus: Boolean) {
         super.pauseReadAloud(abandonFocus)
@@ -334,6 +295,14 @@ class TTSEdgeAloudService : BaseReadAloudService(), Player.Listener {
     }
 
     override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+        Log.d(tag, "onMediaItemTransition")
+        if (previousMediaId.isNotEmpty()) {
+            Log.d(tag, "移除 上一个文件: $previousMediaId}")
+            removeCache(previousMediaId)
+        }
+        if (mediaItem?.mediaId.toString().isNotEmpty()) {
+            previousMediaId = mediaItem?.mediaId.toString()
+        }
         if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_PLAYLIST_CHANGED) return
         if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_AUTO) {
             playErrorNo = 0
@@ -344,9 +313,15 @@ class TTSEdgeAloudService : BaseReadAloudService(), Player.Listener {
 
     override fun onPlayerError(error: PlaybackException) {
         super.onPlayerError(error)
+        // 打印详细错误信息（日志中搜索 "Source error detail"）
+        Log.e(tag, "Source error detail: ${error.cause?.message}", error)
+        // 错误类型判断（如格式不支持、IO 错误等）
+        Log.e(tag, "${error.errorCode}")
+        Log.e(tag, "playErrorNo: $playErrorNo")
+
         AppLog.put("朗读错误\n${contentList[nowSpeak]}", error)
-        deleteCurrentSpeakFile()
         playErrorNo++
+        removeAllCache()
         if (playErrorNo >= 5) {
             toastOnUi("朗读连续5次错误, 最后一次错误代码(${error.localizedMessage})")
             AppLog.put("朗读连续5次错误, 最后一次错误代码(${error.localizedMessage})", error)
@@ -362,14 +337,134 @@ class TTSEdgeAloudService : BaseReadAloudService(), Player.Listener {
         }
     }
 
-    private fun deleteCurrentSpeakFile() {
-        val mediaItem = exoPlayer.currentMediaItem ?: return
-        val filePath = mediaItem.localConfiguration!!.uri.path!!
-        File(filePath).delete()
-    }
-
     override fun aloudServicePendingIntent(actionStr: String): PendingIntent? {
         return servicePendingIntent<HttpReadAloudService>(actionStr)
     }
 
+    private fun cacheAudio(key: String, inputStream: InputStream): Boolean {
+        return try {
+            audioCache[key] = inputStream.toByteArray()
+            audioCacheList.add(key)
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
+
+    private fun cacheAudio(key: String, byteArray: ByteArray): Boolean {
+        audioCache[key] = byteArray
+        audioCacheList.add(key)
+        return true
+    }
+
+    private fun removeCache(key: String) {
+        audioCache.remove(key)
+    }
+
+    // 移除不会再使用的缓存, 0 ~ 上次朗读的文件下标
+    private fun removeUnUseCache() {
+        Log.d(tag, "removeUnUseCache previousMediaId: $previousMediaId")
+        if(previousMediaId.isEmpty())return
+        val targetIndex = audioCacheList.indexOf(previousMediaId)
+        if (targetIndex <= 0) return // 索引为0或-1时无需处理（-1：未找到；0：无前置元素）
+
+        Log.d(tag, "removeUnUseCache targetIndex: $targetIndex")
+
+        val itemsToRemove = audioCacheList.subList(0, targetIndex)
+        itemsToRemove.forEach {
+            Log.d(tag, "批量移除: $it")
+            removeCache(it)
+        }
+        itemsToRemove.clear()
+        Log.d(tag, "removeUnUseCache: ${audioCacheList.size}")
+
+    }
+
+    private fun removeAllCache() {
+        audioCache.clear()
+        audioCacheList.clear()
+    }
+
+    private fun isCached(key: String) = audioCache.containsKey(key)
+
+    private fun InputStream.toByteArray(): ByteArray {
+        val output = ByteArrayOutputStream()
+        // 使用use自动关闭流
+        this.use { input ->
+            output.use { out ->
+                input.copyTo(out) // 复制数据到输出流
+            }
+        }
+        return output.toByteArray()
+    }
+
+}
+
+
+@UnstableApi
+class ByteArrayDataSource(private val mediaMap: HashMap<String, ByteArray>) : DataSource {
+
+    private var readPosition = 0
+    private var opened = false
+    private var currByteArray = ByteArray(0)
+
+
+    override fun addTransferListener(transferListener: TransferListener) {
+        // 不需要实现
+    }
+
+    override fun open(dataSpec: DataSpec): Long {
+        val mediaId = getMediaIdFromUri(dataSpec.uri)
+        if (!mediaMap.containsKey(mediaId)) return 0
+
+
+        currByteArray = mediaMap[mediaId] as ByteArray
+        readPosition = dataSpec.position.toInt()
+        val length =
+            if (dataSpec.length == C.LENGTH_UNSET.toLong()) currByteArray.size - readPosition else dataSpec.length.toInt()
+        if (readPosition + length > currByteArray.size) {
+            throw IOException("Unsatisfiable range: $readPosition + $length > ${currByteArray.size}")
+        }
+        opened = true
+        return length.toLong()
+    }
+
+    override fun read(buffer: ByteArray, offset: Int, readLength: Int): Int {
+        if (!opened) {
+            throw IOException("DataSource not opened")
+        }
+        val remaining = currByteArray.size - readPosition
+        if (remaining == 0) {
+            return C.RESULT_END_OF_INPUT
+        }
+        val bytesToRead = minOf(readLength, remaining)
+        System.arraycopy(currByteArray, readPosition, buffer, offset, bytesToRead)
+        readPosition += bytesToRead
+        return bytesToRead
+    }
+
+    override fun getUri(): Uri? = null
+
+    override fun close() {
+        opened = false
+    }
+
+    /**
+     * 从自定义URI中提取媒体ID
+     * URI格式应为: memory://media/$mediaId
+     */
+    private fun getMediaIdFromUri(uri: Uri?): String {
+        Assertions.checkNotNull(uri)
+        return uri!!.lastPathSegment ?: throw IllegalArgumentException("Invalid media URI: $uri")
+    }
+}
+
+
+@UnstableApi
+class ByteArrayDataSourceFactory(private val mediaMap: HashMap<String, ByteArray>) :
+    DataSource.Factory {
+    override fun createDataSource(): DataSource {
+        return ByteArrayDataSource(mediaMap)
+    }
 }
