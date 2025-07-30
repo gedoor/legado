@@ -1,12 +1,6 @@
 package io.legado.app.service
 
 import android.util.Log
-import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
@@ -27,6 +21,8 @@ import java.util.TimeZone
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
+
+private lateinit var wss: WebSocket
 
 class EdgeSpeakFetch {
     // 常量定义
@@ -81,7 +77,6 @@ class EdgeSpeakFetch {
 
     private var lastTime: Long = 0
     private lateinit var lastWss: WebSocket
-    private val coroutineScope = CoroutineScope(Dispatchers.IO)
     private var audioOutputStream = PipedOutputStream()
     private var audioInputStream = PipedInputStream(audioOutputStream, 8192)
     private var client = OkHttpClient.Builder()
@@ -91,9 +86,18 @@ class EdgeSpeakFetch {
         .build()
 
 
-    private fun getWssConnect(): Deferred<WebSocket> {
+    private fun getWssConnect(ssml: String) {
+        if (::wss.isInitialized) {
+            try {
+                wss.close(1000, "正常关闭")
+                wss.cancel()
+                Log.i(TAG, "关闭 WebsocketConnect")
+            } catch (e: Exception) {
+                Log.i(TAG, "关闭 WebsocketConnect Exception: $e")
+                e.printStackTrace()
+            }
+        }
         Log.i(TAG, "重新生成 WebsocketConnect")
-        val deferred = CompletableDeferred<WebSocket>()
         val clockSkewSeconds = 0.0
         val secMsGec = generateSecMsGec(clockSkewSeconds)
         val connectionId = connectID()
@@ -108,88 +112,80 @@ class EdgeSpeakFetch {
         val wsUrl = String.format("wss://%s%s?%s", BASE_URL, WSS_PATH, queryParams)
         val request = Request.Builder().url(wsUrl).build()
 
-        coroutineScope.launch {
-            try {
-                val listener = object : WebSocketListener() {
-                    override fun onOpen(webSocket: WebSocket, response: Response) {
-                        Log.i(TAG, "WebSocket onOpen")
-                        sendSpeechConfig(webSocket)
-                        deferred.complete(webSocket)
-                    }
+        val listener = object : WebSocketListener() {
+            override fun onOpen(webSocket: WebSocket, response: Response) {
+                Log.i(TAG, "WebSocket onOpen")
+                wss = webSocket
+                sendSpeechConfig(wss)
+                sendSSMLMessage(wss, ssml)
+            }
 
-                    override fun onMessage(webSocket: WebSocket, text: String) {
-                        // 检测turn.end并关闭流
-                        if (text.contains("turn.end")) {
-                            Log.i(TAG, "收到turn.end 关闭流")
-                            audioOutputStream.close()
-                            lastTime = System.currentTimeMillis()
-                            lastWss = webSocket
-
-                        }
-                    }
-
-                    override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
-                        try {
-                            // 处理二进制音频数据（与Golang解析逻辑一致）
-                            val message = bytes.toByteArray()
-                            if (message.size < 2) {
-                                Log.i(TAG, "WebSocket onMessage binary message too short")
-                                return
-                            }
-
-                            // 解析头部长度（前2字节big endian，与Golang一致）
-                            val headerLength =
-                                ((message[0].toInt() and 0xFF) shl 8) or (message[1].toInt() and 0xFF)
-                            if (headerLength > message.size) {
-                                Log.i(TAG, "WebSocket onMessage invalid header length")
-                                return
-                            }
-
-                            // 提取音频数据（跳过头部，与Golang一致）
-                            val audioData = ByteArray(message.size - headerLength - 2)
-                            System.arraycopy(
-                                message,
-                                headerLength + 2,
-                                audioData,
-                                0,
-                                audioData.size
-                            )
-                            // 音频数据
-                            if (audioData.isNotEmpty()) {
-                                try {
-                                    audioOutputStream.write(audioData)
-                                    audioOutputStream.flush()
-                                } catch (e: IOException) {
-                                    Log.e(TAG, "缓存音频失败", e)
-                                }
-                            }
-
-                        } catch (e: Exception) {
-                            Log.i(TAG, "WebSocket onMessage Catch" + e.printStackTrace())
-                        }
-                    }
-
-                    override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
-                        Log.i(TAG, "WebSocket onClosed$code$reason")
-                    }
-
-                    override fun onFailure(
-                        webSocket: WebSocket,
-                        t: Throwable,
-                        response: Response?
-                    ) {
-                        Log.i(TAG, "WebSocket onFailure: $t $response")
-                    }
+            override fun onMessage(webSocket: WebSocket, text: String) {
+                // 检测turn.end并关闭流
+                if (text.contains("turn.end")) {
+                    Log.i(TAG, "收到turn.end 关闭流")
+                    audioOutputStream.close()
+                    lastTime = System.currentTimeMillis()
+                    lastWss = webSocket
 
                 }
-                client.newWebSocket(request, listener)
-
-            } catch (e: Exception) {
-                Log.i(TAG, "WebSocket coroutineScope.launch Err$e")
-                deferred.completeExceptionally(e)
             }
+
+            override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
+                try {
+                    // 处理二进制音频数据（与Golang解析逻辑一致）
+                    val message = bytes.toByteArray()
+                    if (message.size < 2) {
+                        Log.i(TAG, "WebSocket onMessage binary message too short")
+                        return
+                    }
+
+                    // 解析头部长度（前2字节big endian，与Golang一致）
+                    val headerLength =
+                        ((message[0].toInt() and 0xFF) shl 8) or (message[1].toInt() and 0xFF)
+                    if (headerLength > message.size) {
+                        Log.i(TAG, "WebSocket onMessage invalid header length")
+                        return
+                    }
+
+                    // 提取音频数据（跳过头部，与Golang一致）
+                    val audioData = ByteArray(message.size - headerLength - 2)
+                    System.arraycopy(
+                        message,
+                        headerLength + 2,
+                        audioData,
+                        0,
+                        audioData.size
+                    )
+                    // 音频数据
+                    if (audioData.isNotEmpty()) {
+                        try {
+                            audioOutputStream.write(audioData)
+                            audioOutputStream.flush()
+                        } catch (e: IOException) {
+                            Log.e(TAG, "缓存音频失败", e)
+                        }
+                    }
+
+                } catch (e: Exception) {
+                    Log.i(TAG, "WebSocket onMessage Catch" + e.printStackTrace())
+                }
+            }
+
+            override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
+                Log.i(TAG, "WebSocket onClosed$code$reason")
+            }
+
+            override fun onFailure(
+                webSocket: WebSocket,
+                t: Throwable,
+                response: Response?
+            ) {
+                Log.i(TAG, "WebSocket onFailure: $t $response")
+            }
+
         }
-        return deferred
+        client.newWebSocket(request, listener)
     }
 
     // 移除文本中的特殊字符和表情，保留常用文章标点符号
@@ -209,29 +205,27 @@ class EdgeSpeakFetch {
     }
 
 
-    suspend fun synthesizeText(
+    fun synthesizeText(
         speakText: String,
         rate: Int,
         voice: String = DEFAULT_VOICE
     ): InputStream {
         initStream()
-        Log.i(TAG, speakText)
+        Log.i(TAG, "speakText: $speakText")
         try {
             val speakTextStr = removeSpecialCharacters(speakText)
-            val wss: WebSocket
             val currentTime = System.currentTimeMillis()
             val timeDiff = currentTime - lastTime
             // 判断是否超过毫秒
-            if (timeDiff < 500) {
-                wss = lastWss
-                Log.i(TAG, "复用使用上次lastWss")
-            } else {
-                val dataDeferred = getWssConnect()
-                wss = dataDeferred.await()
-                Log.i(TAG, "重新生成websocket, 写入SSML")
-            }
             val ssml = mkSSML(speakTextStr, voice, processRate(rate))
-            sendSSMLMessage(wss, ssml)
+            if (timeDiff < 500) {
+                Log.i(TAG, "复用使用上次lastWss")
+                wss = lastWss
+                sendSSMLMessage(wss, ssml)
+            } else {
+                getWssConnect(ssml)
+                Log.i(TAG, "重新生成websocket, sendSpeechConfig")
+            }
         } catch (e: Exception) {
             Log.i(TAG, "sendSSMLMessage:$e")
         }
@@ -258,6 +252,7 @@ class EdgeSpeakFetch {
 
     // 发送speech.config消息
     private fun sendSpeechConfig(wss: WebSocket) {
+        Log.i(TAG, "准备写入sendSpeechConfig")
         val speechConfig =
             "{\"context\":{\"synthesis\":{\"audio\":{\"metadataoptions\":{\"sentenceBoundaryEnabled\":\"false\",\"wordBoundaryEnabled\":\"true\"},\"outputFormat\":\"audio-24khz-48kbitrate-mono-mp3\"}}}}"
 
@@ -270,12 +265,12 @@ class EdgeSpeakFetch {
             "X-Timestamp:%s\r\nContent-Type:application/json; charset=utf-8\r\nPath:speech.config\r\n\r\n%s\r\n",
             timestamp, speechConfig
         )
-        Log.i(TAG, "WebSocket sendSpeechConfig")
         wss.send(speechConfigMsg)
     }
 
     // 发送SSML消息
     private fun sendSSMLMessage(wss: WebSocket, ssml: String) {
+        Log.i(TAG, "准备写入SSML")
         val requestId = connectID()
         val sdf = SimpleDateFormat("EEE MMM d yyyy HH:mm:ss zzz", Locale.US)
         sdf.timeZone = TimeZone.getTimeZone("UTC")
@@ -306,7 +301,6 @@ class EdgeSpeakFetch {
     }
 
     fun release() {
-        coroutineScope.cancel()
         if (::lastWss.isInitialized) lastWss.cancel()
         try {
             audioOutputStream.close()

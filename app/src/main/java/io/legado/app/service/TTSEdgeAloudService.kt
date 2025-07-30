@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.net.Uri
 import android.util.Log
+import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
@@ -40,7 +41,6 @@ import java.io.IOException
 import java.io.InputStream
 import kotlin.collections.set
 import kotlin.coroutines.coroutineContext
-import androidx.core.net.toUri
 
 /**
  * Edge大声朗读
@@ -173,7 +173,7 @@ class TTSEdgeAloudService : BaseReadAloudService(), Player.Listener {
         }
     }
 
-    private suspend fun getSpeakStream(speakText: String, fileName: String): String {
+    private  fun getSpeakStream(speakText: String, fileName: String): String {
         if (speakText.isEmpty()) {
             cacheAudio(fileName, silentBytes)
             return "fail"
