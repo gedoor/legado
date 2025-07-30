@@ -197,10 +197,12 @@ class TTSEdgeAloudService : BaseReadAloudService(), Player.Listener {
 
     override fun pauseReadAloud(abandonFocus: Boolean) {
         super.pauseReadAloud(abandonFocus)
+        Log.i(tag, "pauseReadAloud")
         kotlin.runCatching {
             playIndexJob?.cancel()
             exoPlayer.pause()
         }
+
     }
 
     override fun resumeReadAloud() {
@@ -338,7 +340,7 @@ class TTSEdgeAloudService : BaseReadAloudService(), Player.Listener {
     }
 
     override fun aloudServicePendingIntent(actionStr: String): PendingIntent? {
-        return servicePendingIntent<HttpReadAloudService>(actionStr)
+        return servicePendingIntent<TTSEdgeAloudService>(actionStr)
     }
 
     private fun cacheAudio(key: String, inputStream: InputStream): Boolean {
