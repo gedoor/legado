@@ -296,14 +296,22 @@ object NetworkUtils {
         return isIPv4Address(input) || isIPv6Address(input)
     }
 
+   private val customHostsCache: Map<String, Any?>? by lazy {
+       val customHosts = AppConfig.customHosts
+       if (customHosts.isBlank()) null
+       else GSON.fromJsonObject<Map<String, Any?>>(customHosts).getOrNull()
+   }
     fun resolveCustomHost(host: String): String? {
-        val customHosts = AppConfig.customHosts
-        if (customHosts.isBlank()) return null
-        val configMap = GSON.fromJsonObject<Map<String, Any?>>(customHosts).getOrNull() ?: return null
-        val configIps = configMap[host] ?: return null
+        val configIps = customHostsCache?.get(host) ?: return null
+
         return when (configIps) {
-            is String -> configIps.split(",").firstOrNull()?.trim()
-            is List<*> -> configIps.firstOrNull()?.toString()?.trim()
+            is String -> configIps.splitToSequence(',')
+                .firstOrNull { it.isNotBlank() }
+                ?.trim()
+            is List<*> -> configIps.firstOrNull()
+                ?.toString()
+                ?.takeIf { it.isNotBlank() }
+                ?.trim()
             else -> null
         }
     }
