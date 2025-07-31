@@ -20,6 +20,9 @@ object AppPattern {
     //匹配章节信息中的字数
     val wordCountRegex = Regex("(?:^|字数[：:、]?|\\s+)([0-9万千百\\.]{1,6}字)")
 
+    //正文不计入字数的字符
+    val noWordCountRegex = Regex("[\\s\\u200B-\\u200F\\uFEFF]")
+
     //提取链接中的域名
     val domainRegex = Regex("^https?://([^:/]+)",RegexOption.IGNORE_CASE)
 

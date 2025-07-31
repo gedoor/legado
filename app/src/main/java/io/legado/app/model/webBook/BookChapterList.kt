@@ -235,17 +235,14 @@ object BookChapterList {
                     bookChapter.tag = info
                 }
                 else {
-                    val match = AppPattern.wordCountRegex.find(info)
-                    if (match != null) {
-                        val wordCountStr = match.value
-                        if (AppConfig.tocCountWords) {
-                            val cleanWordCount = match.groupValues[1].trim()
-                            bookChapter.wordCount = cleanWordCount
-                        }
-                        val tagWithoutWordCount = info.replaceFirst(wordCountStr, "")
-                        bookChapter.tag = tagWithoutWordCount
-                    }
-                    else {
+                    if (AppConfig.tocCountWords) {
+                        AppPattern.wordCountRegex.find(info)?.let { match ->
+                            bookChapter.apply {
+                                wordCount = match.groupValues[1].trim()
+                                tag = info.replaceFirst(match.value, "")
+                            }
+                        } ?: run { bookChapter.tag = info }
+                    } else {
                         bookChapter.tag = info
                     }
                 }

@@ -36,6 +36,10 @@ import java.util.LinkedList
 import kotlin.coroutines.coroutineContext
 import kotlin.math.roundToInt
 import android.util.Size
+import io.legado.app.constant.AppPattern.noWordCountRegex
+import io.legado.app.data.appDb
+import io.legado.app.help.book.isOnLineTxt
+import io.legado.app.utils.StringUtils
 
 class TextChapterLayout(
     scope: CoroutineScope,
@@ -238,6 +242,7 @@ class TextChapterLayout(
 
         val sb = StringBuffer()
         var isSetTypedImage = false
+        var wordCount = 0
         contents.forEach { content ->
             coroutineContext.ensureActive()
             if (isTextImageStyle) {
@@ -254,6 +259,7 @@ class TextChapterLayout(
                 }
                 matcher.appendTail(sb)
                 text = sb.toString()
+                wordCount += text.replace(noWordCountRegex,"").length
                 setTypeText(
                     book,
                     text,
@@ -286,6 +292,7 @@ class TextChapterLayout(
                             val styleValue = matchResult.groupValues[1].trim()
                             if (styleValue == "TEXT" && matcher.end() == text.length) {
                                 iStyle = "TEXT"
+                                wordCount--
                             }
                             else if (styleValue.equals("text", true)) {
                                 iStyle = "text"
@@ -317,7 +324,9 @@ class TextChapterLayout(
                             )
                             srcList.add(imgSrc)
                         } else {
-                            if (sb.toString().isNotBlank()) {
+                            val textBefore = sb.toString()
+                            if (textBefore.isNotBlank()) {
+                                wordCount += textBefore.replace(noWordCountRegex,"").length
                                 setTypeText(
                                     book,
                                     sb.toString(),
@@ -351,10 +360,12 @@ class TextChapterLayout(
                     val textAfter = content.substring(start, content.length)
                     sb.append(textAfter)
                 }
-                if (sb.toString().isNotBlank()) {
+                val text = sb.toString()
+                if (text.isNotBlank()) {
+                    wordCount += text.replace(noWordCountRegex,"").length
                     setTypeText(
                         book,
-                        if (AppConfig.enableReview) sb.toString() + ChapterProvider.reviewChar else sb.toString(),
+                        if (AppConfig.enableReview) text + ChapterProvider.reviewChar else text,
                         contentPaint,
                         contentPaintTextHeight,
                         contentPaintFontMetrics,
@@ -367,6 +378,9 @@ class TextChapterLayout(
             pendingTextPage.lines.last().isParagraphEnd = true
             stringBuilder.append("\n")
         }
+        val chapterWordCount = StringUtils.wordCountFormat(wordCount.toString())
+        bookChapter.wordCount = chapterWordCount
+        appDb.bookChapterDao.upWordCount(bookChapter.bookUrl, bookChapter.url, chapterWordCount)
         val textPage = pendingTextPage
         val endPadding = 20.dpToPx()
         val durYPadding = durY + endPadding
