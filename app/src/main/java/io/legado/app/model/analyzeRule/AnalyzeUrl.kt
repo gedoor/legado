@@ -903,10 +903,6 @@ class AnalyzeUrl(
 
     data class ConcurrentRecord(
         /**
-         * 是否按频率
-         */
-        val isConcurrent: Boolean,
-        /**
          * 开始访问时间
          */
         var time: Long,
