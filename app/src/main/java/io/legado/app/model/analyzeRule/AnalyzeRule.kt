@@ -770,7 +770,9 @@ class AnalyzeRule(
      * 设置并发率
      */
     fun setConcurrent(value: String) {
-        source?.let { it.concurrentRate = value }
+        source?.let {
+            updateConcurrentRate(it.getKey(),value)
+        }
     }
 
     /**
