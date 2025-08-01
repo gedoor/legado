@@ -34,7 +34,6 @@ class EdgeSpeakFetch {
         private const val SEC_MS_GEC_VERSION = "1-130.0.2849.68"
         private const val DEFAULT_VOICE = "zh-CN-XiaoxiaoNeural"
 
-
         // DRM 相关参数
         private const val WIN_EPOCH_SECONDS = 11644473600L
         private const val S_TO_NS = 1e9
@@ -76,13 +75,14 @@ class EdgeSpeakFetch {
     }
 
     private var lastTime: Long = 0
+    private var isReconnect = false
     private lateinit var lastWss: WebSocket
     private var audioOutputStream = PipedOutputStream()
     private var audioInputStream = PipedInputStream(audioOutputStream, 8192)
     private var client = OkHttpClient.Builder()
-        .connectTimeout(20, TimeUnit.SECONDS)
-        .readTimeout(15, TimeUnit.SECONDS)
-        .writeTimeout(15, TimeUnit.SECONDS)
+        .connectTimeout(50, TimeUnit.SECONDS)
+        .readTimeout(80, TimeUnit.SECONDS)
+        .writeTimeout(50, TimeUnit.SECONDS)
         .build()
 
 
@@ -116,6 +116,7 @@ class EdgeSpeakFetch {
             override fun onOpen(webSocket: WebSocket, response: Response) {
                 Log.i(TAG, "WebSocket onOpen")
                 wss = webSocket
+                isReconnect = false;
                 sendSpeechConfig(wss)
                 sendSSMLMessage(wss, ssml)
             }
@@ -174,6 +175,7 @@ class EdgeSpeakFetch {
 
             override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
                 Log.i(TAG, "WebSocket onClosed$code$reason")
+                isReconnect = true
             }
 
             override fun onFailure(
@@ -181,7 +183,9 @@ class EdgeSpeakFetch {
                 t: Throwable,
                 response: Response?
             ) {
+                isReconnect = true
                 Log.i(TAG, "WebSocket onFailure: $t $response")
+
             }
 
         }
@@ -218,7 +222,8 @@ class EdgeSpeakFetch {
             val timeDiff = currentTime - lastTime
             // 判断是否超过毫秒
             val ssml = mkSSML(speakTextStr, voice, processRate(rate))
-            if (timeDiff < 500) {
+
+            if (timeDiff < 500 && !isReconnect) {
                 Log.i(TAG, "复用使用上次lastWss")
                 wss = lastWss
                 sendSSMLMessage(wss, ssml)

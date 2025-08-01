@@ -29,6 +29,7 @@ import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.servicePendingIntent
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -36,10 +37,13 @@ import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream
+import java.util.Timer
 import kotlin.collections.set
+import kotlin.concurrent.schedule
 import kotlin.coroutines.coroutineContext
 
 /**
@@ -60,6 +64,7 @@ class TTSEdgeAloudService : BaseReadAloudService(), Player.Listener {
     private var downloadTask: Coroutine<*>? = null
     private var playIndexJob: Job? = null
     private var playErrorNo = 0
+    private var isReloadAudio = 0
     private val downloadTaskActiveLock = Mutex()
     private val edgeSpeakFetch = EdgeSpeakFetch()
     private val audioCache = HashMap<String, ByteArray>()
@@ -173,15 +178,17 @@ class TTSEdgeAloudService : BaseReadAloudService(), Player.Listener {
         }
     }
 
-    private  fun getSpeakStream(speakText: String, fileName: String): String {
+    private suspend fun getSpeakStream(speakText: String, fileName: String): String {
         if (speakText.isEmpty()) {
             cacheAudio(fileName, silentBytes)
             return "fail"
         }
         try {
-            val inputStream = edgeSpeakFetch.synthesizeText(speakText, speechRate)
-            cacheAudio(fileName, inputStream)
-            return "success"
+            return withContext(Dispatchers.IO) {
+                val inputStream = edgeSpeakFetch.synthesizeText(speakText, speechRate)
+                cacheAudio(fileName, inputStream)
+                "success"
+            }
         } catch (e: Exception) {
             Log.i(tag, "edgeSpeakFetch失败: $e")
             cacheAudio(fileName, silentBytes)
@@ -256,6 +263,17 @@ class TTSEdgeAloudService : BaseReadAloudService(), Player.Listener {
 
     }
 
+    /**
+     * 重新下载本章节
+     */
+    private fun reloadAudio() {
+        removeAllCache();
+        previousMediaId = ""
+        downloadTask?.cancel()
+        exoPlayer.stop()
+        downloadAndPlayAudios()
+    }
+
     override fun onPlaybackStateChanged(playbackState: Int) {
         super.onPlaybackStateChanged(playbackState)
         when (playbackState) {
@@ -277,6 +295,7 @@ class TTSEdgeAloudService : BaseReadAloudService(), Player.Listener {
             Player.STATE_ENDED -> {
                 // 结束
                 playErrorNo = 0
+                isReloadAudio = 0
                 updateNextPos()
                 exoPlayer.stop()
                 exoPlayer.clearMediaItems()
@@ -298,16 +317,13 @@ class TTSEdgeAloudService : BaseReadAloudService(), Player.Listener {
 
     override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
         Log.d(tag, "onMediaItemTransition")
-        if (previousMediaId.isNotEmpty()) {
-            Log.d(tag, "移除 上一个文件: $previousMediaId}")
-            removeCache(previousMediaId)
-        }
         if (mediaItem?.mediaId.toString().isNotEmpty()) {
             previousMediaId = mediaItem?.mediaId.toString()
         }
         if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_PLAYLIST_CHANGED) return
         if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_AUTO) {
             playErrorNo = 0
+            isReloadAudio = 0
         }
         updateNextPos()
         upPlayPos()
@@ -318,16 +334,24 @@ class TTSEdgeAloudService : BaseReadAloudService(), Player.Listener {
         // 打印详细错误信息（日志中搜索 "Source error detail"）
         Log.e(tag, "Source error detail: ${error.cause?.message}", error)
         // 错误类型判断（如格式不支持、IO 错误等）
-        Log.e(tag, "${error.errorCode}")
+        Log.e(tag, "playErrorNo errorCode ${error.errorCode}")
         Log.e(tag, "playErrorNo: $playErrorNo")
-
         AppLog.put("朗读错误\n${contentList[nowSpeak]}", error)
         playErrorNo++
-        removeAllCache()
         if (playErrorNo >= 5) {
             toastOnUi("朗读连续5次错误, 最后一次错误代码(${error.localizedMessage})")
             AppLog.put("朗读连续5次错误, 最后一次错误代码(${error.localizedMessage})", error)
-            pauseReadAloud()
+            // 把这一章节的音频重新加载
+            if (isReloadAudio == 0) {
+                playErrorNo = 0;
+                isReloadAudio++
+                Timer().schedule(2000) {
+                    reloadAudio()
+                    Log.e(tag, "重试本章节")
+                }
+            } else {
+                pauseReadAloud()
+            }
         } else {
             if (exoPlayer.hasNextMediaItem()) {
                 exoPlayer.seekToNextMediaItem()
@@ -367,7 +391,7 @@ class TTSEdgeAloudService : BaseReadAloudService(), Player.Listener {
     // 移除不会再使用的缓存, 0 ~ 上次朗读的文件下标
     private fun removeUnUseCache() {
         Log.d(tag, "removeUnUseCache previousMediaId: $previousMediaId")
-        if(previousMediaId.isEmpty())return
+        if (previousMediaId.isEmpty()) return
         val targetIndex = audioCacheList.indexOf(previousMediaId)
         if (targetIndex <= 0) return // 索引为0或-1时无需处理（-1：未找到；0：无前置元素）
 
