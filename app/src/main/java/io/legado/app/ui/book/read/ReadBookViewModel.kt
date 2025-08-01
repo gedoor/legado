@@ -214,6 +214,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
                         if (oldBook.bookUrl == book.bookUrl) {
                             appDb.bookDao.update(book)
                         } else {
+                            appDb.bookDao.delete(oldBook)
                             appDb.bookDao.insert(book)
                             BookHelp.updateCacheFolder(oldBook, book)
                         }

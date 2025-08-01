@@ -71,6 +71,7 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
             if (oldBook.bookUrl == book.bookUrl) {
                 appDb.bookDao.update(book)
             } else {
+                appDb.bookDao.delete(oldBook)
                 appDb.bookDao.insert(book)
             }
             appDb.bookChapterDao.delByBook(book.bookUrl)
