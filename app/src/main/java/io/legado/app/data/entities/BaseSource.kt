@@ -65,7 +65,25 @@ interface BaseSource : JsExtensions {
     }
 
     fun loginUi(): List<RowUi>? {
-        return GSON.fromJsonArray<RowUi>(loginUi).onFailure {
+        val json = loginUi?.let {
+            val loginJS = getLoginJs() ?: ""
+            try {
+                when {
+                    it.startsWith("@js:") -> evalJS(loginJS + it.substring(4)){
+                        put("result", getLoginInfoMap())
+                    }.toString()
+                    it.startsWith("<js>") -> evalJS(loginJS + it.substring(4,it.lastIndexOf("<"))){
+                        put("result", getLoginInfoMap())
+                    }.toString()
+                    else -> it
+                }
+            } catch (e: Throwable) {
+                log(e)
+                e.printOnDebug()
+                null
+            }
+        }
+        return GSON.fromJsonArray<RowUi>(json).onFailure {
             it.printOnDebug()
         }.getOrNull()
     }
@@ -176,8 +194,9 @@ interface BaseSource : JsExtensions {
         }
     }
 
-    fun getLoginInfoMap(): Map<String, String>? {
-        return GSON.fromJsonObject<Map<String, String>>(getLoginInfo()?: "{}").getOrNull()
+    fun getLoginInfoMap(): Map<String, String> {
+        val json = getLoginInfo() ?: return emptyMap()
+        return GSON.fromJsonObject<Map<String, String>>(json).getOrNull() ?: emptyMap()
     }
 
     /**
