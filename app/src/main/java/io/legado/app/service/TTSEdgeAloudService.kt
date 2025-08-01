@@ -267,7 +267,7 @@ class TTSEdgeAloudService : BaseReadAloudService(), Player.Listener {
      * 重新下载本章节
      */
     private fun reloadAudio() {
-        removeAllCache();
+        removeAllCache()
         previousMediaId = ""
         downloadTask?.cancel()
         exoPlayer.stop()
@@ -343,7 +343,7 @@ class TTSEdgeAloudService : BaseReadAloudService(), Player.Listener {
             AppLog.put("朗读连续5次错误, 最后一次错误代码(${error.localizedMessage})", error)
             // 把这一章节的音频重新加载
             if (isReloadAudio == 0) {
-                playErrorNo = 0;
+                playErrorNo = 0
                 isReloadAudio++
                 Timer().schedule(2000) {
                     reloadAudio()

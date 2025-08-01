@@ -116,7 +116,7 @@ class EdgeSpeakFetch {
             override fun onOpen(webSocket: WebSocket, response: Response) {
                 Log.i(TAG, "WebSocket onOpen")
                 wss = webSocket
-                isReconnect = false;
+                isReconnect = false
                 sendSpeechConfig(wss)
                 sendSSMLMessage(wss, ssml)
             }
