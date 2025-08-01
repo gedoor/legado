@@ -38,7 +38,8 @@ object BookChapterList {
         book: Book,
         baseUrl: String,
         redirectUrl: String,
-        body: String?
+        body: String?,
+        isFromBookInfo: Boolean = false
     ): List<BookChapter> {
         body ?: throw NoStackTraceException(
             appCtx.getString(R.string.error_get_web_content, baseUrl)
@@ -60,7 +61,8 @@ object BookChapterList {
         var chapterData =
             analyzeChapterList(
                 book, baseUrl, redirectUrl, body,
-                tocRule, listRule, bookSource, log = true
+                tocRule, listRule, bookSource, log = true,
+                isFromBookInfo = isFromBookInfo
             )
         chapterList.addAll(chapterData.first)
         when (chapterData.second.size) {
@@ -79,7 +81,8 @@ object BookChapterList {
                     res.body?.let { nextBody ->
                         chapterData = analyzeChapterList(
                             book, nextUrl, nextUrl,
-                            nextBody, tocRule, listRule, bookSource
+                            nextBody, tocRule, listRule, bookSource,
+                            isFromBookInfo = isFromBookInfo
                         )
                         nextUrl = chapterData.second.firstOrNull() ?: ""
                         chapterList.addAll(chapterData.first)
@@ -107,7 +110,8 @@ object BookChapterList {
                     val res = analyzeUrl.getStrResponseAwait() //控制并发访问
                     analyzeChapterList(
                         book, urlStr, res.url,
-                        res.body!!, tocRule, listRule, bookSource, false
+                        res.body!!, tocRule, listRule, bookSource, false,
+                        isFromBookInfo = isFromBookInfo
                     ).first
                 }.collect {
                     chapterList.addAll(it)
@@ -177,9 +181,10 @@ object BookChapterList {
         listRule: String,
         bookSource: BookSource,
         getNextUrl: Boolean = true,
-        log: Boolean = false
+        log: Boolean = false,
+        isFromBookInfo:Boolean
     ): Pair<List<BookChapter>, List<String>> {
-        val analyzeRule = AnalyzeRule(book, bookSource)
+        val analyzeRule = AnalyzeRule(book, bookSource, false, isFromBookInfo)
         analyzeRule.setContent(body).setBaseUrl(baseUrl)
         analyzeRule.setRedirectUrl(redirectUrl)
         analyzeRule.setCoroutineContext(coroutineContext)

@@ -198,7 +198,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                     if (it.isWebFile) {
                         loadWebFile(it)
                     } else {
-                        loadChapter(it, runPreUpdateJs)
+                        loadChapter(it, runPreUpdateJs, isFromBookInfo = true)
                     }
                 }.onError {
                     AppLog.put("获取书籍信息失败\n${it.localizedMessage}", it)
@@ -210,7 +210,8 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     private fun loadChapter(
         book: Book,
         runPreUpdateJs: Boolean = true,
-        scope: CoroutineScope = viewModelScope
+        scope: CoroutineScope = viewModelScope,
+        isFromBookInfo: Boolean = false
     ) {
         if (book.isLocal) {
             execute(scope) {
@@ -232,7 +233,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                 return
             }
             val oldBook = book.copy()
-            WebBook.getChapterList(scope, bookSource, book, runPreUpdateJs)
+            WebBook.getChapterList(scope, bookSource, book, runPreUpdateJs, isFromBookInfo = isFromBookInfo)
                 .onSuccess(IO) {
                     if (inBookshelf) {
                         book.save()
