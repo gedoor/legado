@@ -18,6 +18,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.CacheManager
 import io.legado.app.help.ConcurrentRateLimiter
+import io.legado.app.help.ConcurrentRateLimiter.Companion.updateConcurrentRate
 import io.legado.app.help.JsExtensions
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.exoplayer.ExoPlayerHelper
@@ -339,6 +340,15 @@ class AnalyzeUrl(
             append(EncoderUtils.escape(value))
         } else {
             append(URLEncoder.encode(value, charset))
+        }
+    }
+
+    /**
+     * 设置并发率
+     */
+    fun setConcurrent(value: String) {
+        source?.let {
+            updateConcurrentRate(it.getKey(),value)
         }
     }
 
