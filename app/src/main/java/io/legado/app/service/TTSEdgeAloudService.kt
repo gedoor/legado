@@ -23,7 +23,6 @@ import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
-import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook
 import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.servicePendingIntent
