@@ -133,6 +133,7 @@ class TTSEdgeAloudService : BaseReadAloudService(), Player.Listener {
                     val fileName = md5SpeakFileName(text)
                     val speakText = text.replace(AppPattern.notReadAloudRegex, "")
                     if (!isCached(fileName)) {
+                        Log.e(tag, "无缓存down===> $speakText  MD5:$fileName")
                         runCatching {
                             getSpeakStream(speakText, fileName)
                         }.onFailure {
@@ -143,6 +144,8 @@ class TTSEdgeAloudService : BaseReadAloudService(), Player.Listener {
                             }
                             return@execute
                         }
+                    }else{
+                        Log.e(tag, "有缓存跳过===> $speakText  MD5:$fileName")
                     }
                     val mediaItem = MediaItem.Builder()
                         .setUri("memory://media/$fileName".toUri())
@@ -160,6 +163,7 @@ class TTSEdgeAloudService : BaseReadAloudService(), Player.Listener {
     }
 
     private suspend fun preDownloadAudios() {
+        Log.i(tag, "准备预下载音频===> ${ReadBook.nextTextChapter}")
         val textChapter = ReadBook.nextTextChapter ?: return
         val contentList =
             textChapter.getNeedReadAloud(0, readAloudByPage, 0, 1).splitToSequence("\n")
@@ -171,6 +175,7 @@ class TTSEdgeAloudService : BaseReadAloudService(), Player.Listener {
             if (!isCached(fileName)) {
                 runCatching {
                     getSpeakStream(speakText, fileName)
+                    Log.e(tag, "pre预下载音频===> $speakText MD5:$fileName")
                 }.onFailure {
                     Log.e(tag, "preDownloadAudios runCatch onFailure")
                 }
@@ -197,9 +202,7 @@ class TTSEdgeAloudService : BaseReadAloudService(), Player.Listener {
     }
 
     private fun md5SpeakFileName(content: String): String {
-        return MD5Utils.md5Encode16(
-            textChapter?.title ?: ""
-        ) + "_" + MD5Utils.md5Encode16("${ReadAloud.httpTTS?.url}-|-$speechRate-|-$content")
+        return MD5Utils.md5Encode16(MD5Utils.md5Encode16("$speechRate|$content"))
     }
 
     override fun pauseReadAloud(abandonFocus: Boolean) {
@@ -371,8 +374,10 @@ class TTSEdgeAloudService : BaseReadAloudService(), Player.Listener {
         return try {
             audioCache[key] = inputStream.toByteArray()
             audioCacheList.add(key)
+            Log.d(tag, "成功缓存 cacheAudio: $key")
             true
         } catch (e: Exception) {
+            Log.d(tag, "缓存失败 cacheAudio: $key")
             e.printStackTrace()
             false
         }
