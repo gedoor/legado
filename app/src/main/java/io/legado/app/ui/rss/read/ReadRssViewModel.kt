@@ -65,9 +65,10 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
                 }
             } else {
                 val ruleContent = rssSource?.ruleContent
-                if (ruleContent.isNullOrBlank()) {
+                if (ruleContent.isNullOrBlank() || rssSource!!.singleUrl) {
                     loadUrl(origin, origin)
-                } else {
+                }
+                else {
                     val rssArticle = RssArticle()
                     rssArticle.origin = origin
                     rssArticle.link = origin

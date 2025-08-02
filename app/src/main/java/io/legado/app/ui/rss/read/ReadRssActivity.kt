@@ -399,11 +399,25 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                 }
             }
         }
-        viewModel.urlLiveData.observe(this) {
-            upJavaScriptEnable()
-            CookieManager.applyToWebView(it.url)
-            binding.webView.settings.userAgentString = it.getUserAgent()
-            binding.webView.loadUrl(it.url, it.headerMap)
+        viewModel.urlLiveData.observe(this) { urlState ->
+            with(binding.webView) {
+                upJavaScriptEnable()
+                CookieManager.applyToWebView(urlState.url)
+                settings.userAgentString = urlState.getUserAgent()
+                val processedHtml = getSource()?.ruleContent?.let(viewModel::clHtml)
+                if (processedHtml != null) {
+                    val baseUrl = if (viewModel.rssSource?.loadWithBaseUrl == true) urlState.url else null
+                    loadDataWithBaseURL(
+                        baseUrl,
+                        processedHtml,
+                        "text/html;charset=utf-8",
+                        "utf-8",
+                        urlState.url
+                    )
+                } else {
+                    loadUrl(urlState.url, urlState.headerMap)
+                }
+            }
         }
     }
 
