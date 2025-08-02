@@ -12,6 +12,7 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.service.HttpReadAloudService
 import io.legado.app.service.TTSReadAloudService
+import io.legado.app.service.TTSEdgeAloudService
 import io.legado.app.utils.LogUtils
 import io.legado.app.utils.StringUtils
 import io.legado.app.utils.postEvent
@@ -23,11 +24,13 @@ object ReadAloud {
     private var aloudClass: Class<*> = getReadAloudClass()
     val ttsEngine get() = ReadBook.book?.getTtsEngine() ?: AppConfig.ttsEngine
     var httpTTS: HttpTTS? = null
-
     private fun getReadAloudClass(): Class<*> {
         val ttsEngine = ttsEngine
         if (ttsEngine.isNullOrBlank()) {
             return TTSReadAloudService::class.java
+        }
+        if (ttsEngine.contains("edgeinner")) {
+            return TTSEdgeAloudService::class.java
         }
         if (StringUtils.isNumeric(ttsEngine)) {
             httpTTS = appDb.httpTTSDao.get(ttsEngine.toLong())
