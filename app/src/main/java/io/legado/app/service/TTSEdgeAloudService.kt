@@ -133,7 +133,7 @@ class TTSEdgeAloudService : BaseReadAloudService(), Player.Listener {
                     val fileName = md5SpeakFileName(text)
                     val speakText = text.replace(AppPattern.notReadAloudRegex, "")
                     if (!isCached(fileName)) {
-                        Log.e(tag, "无缓存down===> $speakText  MD5:$fileName")
+                        Log.i(tag, "无缓存down===> $speakText  MD5:$fileName")
                         runCatching {
                             getSpeakStream(speakText, fileName)
                         }.onFailure {
@@ -145,7 +145,7 @@ class TTSEdgeAloudService : BaseReadAloudService(), Player.Listener {
                             return@execute
                         }
                     }else{
-                        Log.e(tag, "有缓存跳过===> $speakText  MD5:$fileName")
+                        Log.i(tag, "有缓存跳过===> $speakText  MD5:$fileName")
                     }
                     val mediaItem = MediaItem.Builder()
                         .setUri("memory://media/$fileName".toUri())
@@ -175,7 +175,7 @@ class TTSEdgeAloudService : BaseReadAloudService(), Player.Listener {
             if (!isCached(fileName)) {
                 runCatching {
                     getSpeakStream(speakText, fileName)
-                    Log.e(tag, "pre预下载音频===> $speakText MD5:$fileName")
+                    Log.i(tag, "pre预下载音频===> $speakText MD5:$fileName")
                 }.onFailure {
                     Log.e(tag, "preDownloadAudios runCatch onFailure")
                 }
@@ -235,7 +235,12 @@ class TTSEdgeAloudService : BaseReadAloudService(), Player.Listener {
             if (exoPlayer.duration <= 0) {
                 return@launch
             }
-            val speakTextLength = contentList[nowSpeak].length
+            val speakTextLength = if (nowSpeak in contentList.indices) {
+                contentList[nowSpeak].length
+            } else {
+                Log.e(tag, "nowSpeak 越界: nowSpeak=$nowSpeak, contentList.size=${contentList.size}")
+                contentList.size-1
+            }
             if (speakTextLength <= 0) {
                 return@launch
             }
