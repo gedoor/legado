@@ -104,7 +104,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                 if (chapterList.isNotEmpty()) {
                     chapterListData.postValue(chapterList)
                 } else {
-                    loadChapter(book)
+                    loadChapter(book, isFromBookInfo = true)
                 }
             }
         }
