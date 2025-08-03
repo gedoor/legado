@@ -16,7 +16,6 @@ import android.widget.HorizontalScrollView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.viewModels
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.lifecycleScope
@@ -116,7 +115,7 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
             background = createTabBackground(accentColor, context)
             setPadding(12.dpToPx(), 6.dpToPx(), 12.dpToPx(), 6.dpToPx())
             tag = position
-            setTextColor(ContextCompat.getColor(context, R.color.primaryText))
+            setTextColor(context.getCompatColor( R.color.primaryText))
             // 宽度自适应内容
             layoutParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -125,7 +124,7 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
                 marginEnd = 6.dpToPx()
             }
             setOnClickListener {
-                setTextColor(ContextCompat.getColor(context, R.color.secondaryText)) //点击变色
+                setTextColor(context.getCompatColor(R.color.secondaryText)) //点击变色
                 binding.viewPager.currentItem = position
                 updateTabSelection(position)
             }
