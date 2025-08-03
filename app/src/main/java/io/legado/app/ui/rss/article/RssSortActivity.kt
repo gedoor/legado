@@ -2,11 +2,21 @@
 
 package io.legado.app.ui.rss.article
 
+import android.content.Context
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.StateListDrawable
 import android.os.Bundle
+import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.view.ViewGroup
+import android.widget.HorizontalScrollView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.activity.viewModels
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.lifecycleScope
@@ -23,6 +33,7 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import androidx.viewpager.widget.ViewPager
 
 class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewModel>(),
     VariableDialog.Callback {
@@ -42,16 +53,178 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
         }
     }
 
+    // 添加类属性
+    private val tabRows = mutableListOf<LinearLayout>()
+    var maxTagsPerRow = 10 // 每行10标签
+    private val tabScrollViews = mutableListOf<HorizontalScrollView>() // 添加滚动视图列表
+
+    private fun setupMultiLineTabs() {
+        val tabsContainer = binding.tabsContainer
+        tabsContainer.removeAllViews()
+        tabRows.clear()
+        tabScrollViews.clear()
+        // 动态计算每行标签数量,最多3行
+        val rowCount = when {
+            sortList.size <= 10 -> 1
+            sortList.size <= 20 -> 2
+            else -> 3
+        }
+        maxTagsPerRow = (sortList.size + rowCount - 1) / rowCount
+        sortList.chunked(maxTagsPerRow).forEachIndexed { rowIndex, rowItems ->
+            // 创建横向滚动容器
+            val scrollView = HorizontalScrollView(this).apply {
+                overScrollMode = View.OVER_SCROLL_NEVER
+                isHorizontalScrollBarEnabled = false
+                layoutParams = LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    bottomMargin = 6.dpToPx()
+                }
+                tabScrollViews.add(this)
+            }
+            // 创建行容器
+            val rowLayout = LinearLayout(this).apply {
+                layoutParams = LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                )
+                orientation = LinearLayout.HORIZONTAL
+                gravity = Gravity.CENTER
+            }
+            // 添加标签到行
+            rowItems.forEachIndexed { indexInRow, sort ->
+                val globalIndex = rowIndex * maxTagsPerRow + indexInRow
+                val tabView = createTabView(sort.first, globalIndex)
+                rowLayout.addView(tabView)
+            }
+            scrollView.addView(rowLayout)
+            tabsContainer.addView(scrollView)
+            tabRows.add(rowLayout)
+        }
+        // 初始选中状态
+        if (sortList.isNotEmpty()) {
+            updateTabSelection(binding.viewPager.currentItem)
+        }
+    }
+
+    private fun createTabView(title: String, position: Int): TextView {
+        return TextView(this).apply {
+            text = title
+            gravity = Gravity.CENTER
+            textSize = 14f
+            background = createTabBackground(accentColor, context)
+            setPadding(12.dpToPx(), 6.dpToPx(), 12.dpToPx(), 6.dpToPx())
+            tag = position
+            setTextColor(ContextCompat.getColor(context, R.color.primaryText))
+            // 宽度自适应内容
+            layoutParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            ).apply {
+                marginEnd = 6.dpToPx()
+            }
+            setOnClickListener {
+                setTextColor(ContextCompat.getColor(context, R.color.secondaryText)) //点击变色
+                binding.viewPager.currentItem = position
+                updateTabSelection(position)
+            }
+        }
+    }
+
+    private fun createTabBackground(accentColor: Int, context: Context): Drawable {
+        val radius = 16f.dpToPx()
+        val strokeWidth = 1f.dpToPx()
+
+        val selectedDrawable = GradientDrawable().apply {
+            shape = GradientDrawable.RECTANGLE
+            cornerRadius = radius
+            setStroke(strokeWidth.toInt(), accentColor)
+        }
+
+        val defaultDrawable = GradientDrawable().apply {
+            shape = GradientDrawable.RECTANGLE
+            cornerRadius = radius
+        }
+
+        return StateListDrawable().apply {
+            addState(intArrayOf(android.R.attr.state_selected), selectedDrawable)
+            addState(intArrayOf(), defaultDrawable)
+        }
+    }
+
+    //更新选中状态
+    private fun updateTabSelection(position: Int) {
+        tabRows.forEachIndexed { rowIndex, row ->
+            for (i in 0 until row.childCount) {
+                val tabIndex = rowIndex * maxTagsPerRow + i
+                val tabView = row.getChildAt(i) as? TextView
+                tabView?.isSelected = tabIndex == position
+            }
+        }
+        // 确保选中标签在视图内
+        ensureTabVisible(position)
+    }
+
+    private fun ensureTabVisible(position: Int) {
+        if (position < 0 || position >= sortList.size) return
+        val rowIndex = position / maxTagsPerRow
+        if (rowIndex >= tabScrollViews.size) return
+        val scrollView = tabScrollViews[rowIndex]
+        val rowLayout = tabRows[rowIndex]
+        val indexInRow = position % maxTagsPerRow
+        if (indexInRow >= rowLayout.childCount) return
+
+        val tabView = rowLayout.getChildAt(indexInRow)
+        scrollView.post {
+            val tabLeft = tabView.left
+            val tabRight = tabView.right
+            val scrollViewWidth = scrollView.width
+            val padding = 12.dpToPx()
+            when {
+                tabLeft - padding < scrollView.scrollX ->
+                    scrollView.smoothScrollTo(tabLeft - padding, 0)
+                tabRight + padding > scrollView.scrollX + scrollViewWidth ->
+                    scrollView.smoothScrollTo(tabRight - scrollViewWidth + padding, 0)
+            }
+        }
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.viewPager.adapter = adapter
-        binding.tabLayout.setupWithViewPager(binding.viewPager)
-        binding.tabLayout.setSelectedTabIndicatorColor(accentColor)
+        binding.viewPager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
+            override fun onPageSelected(position: Int) {
+                updateTabSelection(position)
+            }
+        })
         viewModel.titleLiveData.observe(this) {
             binding.titleBar.title = it
         }
         viewModel.initData(intent) {
             upFragments()
         }
+    }
+
+    // 保存当前选中位置
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt("CURRENT_POSITION", binding.viewPager.currentItem)
+    }
+
+    // 恢复状态
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        val position = savedInstanceState.getInt("CURRENT_POSITION", 0)
+        binding.viewPager.currentItem = position
+        updateTabSelection(position)
+    }
+
+    // 在onDestroy中释放资源
+    override fun onDestroy() {
+        super.onDestroy()
+        fragmentMap.clear()
+        tabScrollViews.clear()
+        tabRows.clear()
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
@@ -105,11 +278,15 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
                 sortList.addAll(it)
             }
             if (sortList.size == 1) {
-                binding.tabLayout.gone()
+                binding.tabsContainer.gone()
             } else {
-                binding.tabLayout.visible()
+                binding.tabsContainer.visible()
+                setupMultiLineTabs()
             }
             adapter.notifyDataSetChanged()
+            if (sortList.isNotEmpty()) {
+                updateTabSelection(binding.viewPager.currentItem)
+            }
         }
     }
 
