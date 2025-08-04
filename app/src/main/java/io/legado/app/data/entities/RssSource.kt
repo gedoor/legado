@@ -90,6 +90,9 @@ data class RssSource(
     var startHtml: String? = null,
     var startStyle: String? = null,
     var startJs: String? = null,
+    /**是否输出web网页日志**/
+    @ColumnInfo(defaultValue = "0")
+    var showWebLog: Boolean = false,
     /*其它规则*/
     /**最后更新时间，用于排序**/
     @ColumnInfo(defaultValue = "0")
@@ -147,6 +150,7 @@ data class RssSource(
                 && equal(startHtml, source.startHtml)
                 && equal(startStyle, source.startStyle)
                 && equal(startJs, source.startJs)
+                && showWebLog == source.showWebLog
     }
 
     private fun equal(a: String?, b: String?): Boolean {

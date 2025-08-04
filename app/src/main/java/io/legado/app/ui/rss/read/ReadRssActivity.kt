@@ -12,6 +12,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
+import android.webkit.ConsoleMessage
 import android.webkit.JavascriptInterface
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
@@ -300,7 +301,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         fun openUI(name: String, url: String) {
             when (name) {
                 "sort" -> {
-                    RssSortActivity.start(this@ReadRssActivity,url,getSource()?.sourceUrl)
+                    RssSortActivity.start(this@ReadRssActivity,url,viewModel.rssSource?.sourceUrl)
                 }
             }
         }
@@ -423,7 +424,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                 upJavaScriptEnable()
                 CookieManager.applyToWebView(urlState.url)
                 settings.userAgentString = urlState.getUserAgent()
-                val processedHtml = getSource()?.ruleContent?.let(viewModel::clHtml)
+                val processedHtml = viewModel.rssSource?.ruleContent?.let(viewModel::clHtml)
                 if (processedHtml != null) {
                     val baseUrl = if (viewModel.rssSource?.loadWithBaseUrl == true) urlState.url else null
                     loadDataWithBaseURL(
@@ -558,6 +559,25 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                 }
             }
             return super.onJsPrompt(view, url, message, defaultValue, result)
+        }
+
+        /* 监听网页日志 */
+        override fun onConsoleMessage(consoleMessage: ConsoleMessage): Boolean {
+            viewModel.rssSource?.let{
+                if (it.showWebLog) {
+                    val message = it.sourceName + ": ${consoleMessage.message()}"
+                    when (consoleMessage.messageLevel()) {
+                        ConsoleMessage.MessageLevel.LOG -> AppLog.put(message)
+                        ConsoleMessage.MessageLevel.DEBUG -> AppLog.put(message + "\n-${consoleMessage.lineNumber()}")
+                        ConsoleMessage.MessageLevel.WARNING -> AppLog.put(message + "\n-${consoleMessage.sourceId()}")
+                        ConsoleMessage.MessageLevel.ERROR -> AppLog.put(message + "\n-Line ${consoleMessage.lineNumber()} of ${consoleMessage.sourceId()}", null, true)
+                        ConsoleMessage.MessageLevel.TIP -> AppLog.put(message)
+                        else -> AppLog.put(message)
+                    }
+                    return true
+                }
+            }
+            return false
         }
     }
 

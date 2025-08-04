@@ -269,6 +269,14 @@ class RssSourceEditActivity :
                     EditEntity.ViewType.checkBox
                 )
             )
+             add(
+                 EditEntity(
+                     "showWebLog",
+                     rs.showWebLog.toString(),
+                     R.string.load_with_web_log,
+                     EditEntity.ViewType.checkBox
+                 )
+             )
             add(EditEntity("ruleContent", rs.ruleContent, R.string.r_content))
             add(EditEntity("style", rs.style, R.string.r_style))
             add(EditEntity("injectJs", rs.injectJs, R.string.r_inject_js))
@@ -346,6 +354,7 @@ class RssSourceEditActivity :
             when (it.key) {
                 "enableJs" -> source.enableJs = it.value.isTrue()
                 "loadWithBaseUrl" -> source.loadWithBaseUrl = it.value.isTrue()
+                "showWebLog" -> source.showWebLog = it.value.isTrue()
                 "ruleContent" -> source.ruleContent =
                     viewModel.ruleComplete(it.value, source.ruleArticles)
 
