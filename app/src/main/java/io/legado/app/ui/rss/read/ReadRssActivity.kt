@@ -28,7 +28,6 @@ import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.size
-import androidx.lifecycle.lifecycleScope
 import com.script.rhino.runScriptWithContext
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -75,11 +74,17 @@ import java.io.ByteArrayInputStream
 import java.net.URLDecoder
 import java.util.regex.PatternSyntaxException
 import android.webkit.JsPromptResult
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.GlideException
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeRule.Companion.setCoroutineContext
+import io.legado.app.ui.rss.article.RssSortActivity
 import kotlinx.coroutines.Dispatchers
 import io.legado.app.utils.GSONStrict
 import io.legado.app.utils.fromJsonObject
+import java.io.FileInputStream
+import java.net.URLConnection
+import java.util.concurrent.ExecutionException
 
 /**
  * rss阅读界面
@@ -100,7 +105,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             viewModel.saveImage(it.value, uri)
         }
     }
-    private val rssJsExtensions by lazy { RssJsExtensions(this) }
+    private val rssJsExtensions by lazy { RssJsExtensions(this, viewModel.rssSource) }
 
     fun getSource(): RssSource? {
         return viewModel.rssSource
@@ -291,6 +296,14 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                 }
             }
         }
+        @JavascriptInterface
+        fun openUI(name: String, url: String) {
+            when (name) {
+                "sort" -> {
+                    RssSortActivity.start(this@ReadRssActivity,url,getSource()?.sourceUrl)
+                }
+            }
+        }
     }
 
     private fun injectOrientationSupport() {
@@ -322,6 +335,12 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                         } else {
                             reject(response || 'Unknown error');
                         }
+                    });
+                };
+                window.openui = function(name,object) {
+                    return new Promise((resolve, reject) => {
+                        window.AndroidOrientation?.openUI(name, JSON.stringify(object))
+                        resolve()
                     });
                 };
             })();
@@ -417,6 +436,14 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                 } else {
                     loadUrl(urlState.url, urlState.headerMap)
                 }
+            }
+        }
+        viewModel.htmlLiveData.observe(this) { html ->
+            viewModel.rssSource?.let {
+                upJavaScriptEnable()
+                binding.webView.settings.userAgentString = viewModel.headerMap[AppConst.UA_NAME] ?: AppConfig.userAgent
+                binding.webView
+                    .loadDataWithBaseURL(it.sourceUrl, viewModel.hbHtml(html), "text/html", "utf-8", it.sourceUrl)
             }
         }
     }
@@ -586,7 +613,53 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                     return createEmptyResource()
                 }
             }
+            if (isImageUrl(url)) {
+                return getGlideCachedImage(url)
+            }
             return super.shouldInterceptRequest(view, request)
+        }
+        private fun isImageUrl(url: String): Boolean {
+            val imageExtensions = listOf("jpg", "jpeg", "png", "gif", "webp")
+            return imageExtensions.any { url.contains(it, ignoreCase = true) }
+        }
+        private fun getMimeType(url: String): String? {
+            return try {
+                URLConnection.guessContentTypeFromName(url)?.takeIf { it.startsWith("image/") }
+            } catch (e: Exception) {
+                null
+            }
+        }
+        private fun getGlideCachedImage(url: String): WebResourceResponse? {
+            if (url.isBlank()) return null
+            return try {
+                // 同步获取Glide缓存
+                val future = Glide.with(this@ReadRssActivity)
+                    .downloadOnly()
+                    .load(url)
+                    .onlyRetrieveFromCache(true) // 只查缓存
+                    .submit()
+                val cacheFile = future.get() // 阻塞式获取
+                if (cacheFile.exists() && cacheFile.length() > 0) {
+                    val inputStream = FileInputStream(cacheFile)
+                    val mimeType = getMimeType(url) ?: "image/*"
+                    return WebResourceResponse(mimeType, "UTF-8", inputStream)
+                }
+                null
+            } catch (e: ExecutionException) {
+                when (e.cause) {
+                    is GlideException -> {
+                        // 未命中缓存
+                        null
+                    }
+                    else -> {
+                        AppLog.put("Glide加载失败: ${e.message} URL:$url")
+                        null
+                    }
+                }
+            } catch (e: Exception) {
+                AppLog.put("Glide加载异常: ${e.message} URL:$url")
+                null
+            }
         }
 
         override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
@@ -620,6 +693,10 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
 
         private fun shouldOverrideUrlLoading(url: Uri): Boolean {
             val source = viewModel.rssSource
+            if (url.scheme == "opensorturl") {
+                RssSortActivity.start(this@ReadRssActivity,URLDecoder.decode(url.toString().substringAfter("sorturl://"), "UTF-8"),source?.sourceUrl)
+                return true
+            }
             val js = source?.shouldOverrideUrlLoading
             if (!js.isNullOrBlank()) {
                 val t = SystemClock.uptimeMillis()

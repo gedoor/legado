@@ -1234,4 +1234,8 @@
     <string name="previous">上一首</string>
     <string name="custom_hosts">Custom Hosts</string>
     <string name="custom_hosts_summary">Domain name to IP mapping</string>
+    <string name="source_tab_start">启动</string>
+    <string name="r_startHtml">启动页html文本（startHtml）</string>
+    <string name="r_startStyle">启动页style文本（startStyle）</string>
+    <string name="r_startJs">启动页Js（startJs）</string>
 </resources>

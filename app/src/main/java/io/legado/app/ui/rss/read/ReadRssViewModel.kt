@@ -34,6 +34,7 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
     var tts: TTS? = null
     val contentLiveData = MutableLiveData<String>()
     val urlLiveData = MutableLiveData<AnalyzeUrl>()
+    val htmlLiveData = MutableLiveData<String>()
     var rssStar: RssStar? = null
     val upTtsMenuData = MutableLiveData<Boolean>()
     val upStarMenuData = MutableLiveData<Boolean>()
@@ -65,8 +66,15 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
                 }
             } else {
                 val ruleContent = rssSource?.ruleContent
-                if (ruleContent.isNullOrBlank() || rssSource!!.singleUrl) {
+                val startHtml = intent.getStringExtra("startHtml")
+                if (!startHtml.isNullOrEmpty()) {
+                    htmlLiveData.postValue(startHtml)
+                }
+                else if (ruleContent.isNullOrBlank()) {
                     loadUrl(origin, origin)
+                }
+                else if (rssSource!!.singleUrl) {
+                    htmlLiveData.postValue(ruleContent)
                 }
                 else {
                     val rssArticle = RssArticle()
@@ -220,6 +228,27 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
                 """.trimIndent()
             }
         }
+    }
+
+    fun hbHtml(html: String): String {
+        val style = rssSource?.run { startStyle ?: style } ?: """"img{max-width:100% !important; width:auto; height:auto;}video{object-fit:fill; max-width:100% !important; width:auto; height:auto;}body{word-wrap:break-word; height:auto;max-width: 100%; width:auto;}"""
+        val javascript = rssSource?.run { startJs ?: injectJs } ?: ""
+
+        var processedHtml = html
+
+        processedHtml = if (processedHtml.contains("</body>")) {
+            processedHtml.replaceFirst("</body>", "<script>$javascript</script></body>")
+        } else {
+            "<body>$processedHtml<script>$javascript</script></body>"
+        }
+
+        processedHtml = if (processedHtml.contains("<head>")) {
+            processedHtml.replaceFirst("<head>", "<head><style>$style</style>")
+        } else {
+            "<head><style>$style</style></head>$processedHtml"
+        }
+
+        return processedHtml
     }
 
     @Synchronized

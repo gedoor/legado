@@ -60,6 +60,7 @@ class RssSourceEditActivity :
     private val sourceEntities: ArrayList<EditEntity> = ArrayList()
     private val listEntities: ArrayList<EditEntity> = ArrayList()
     private val webViewEntities: ArrayList<EditEntity> = ArrayList()
+    private val startEntities: ArrayList<EditEntity> = ArrayList()
     private val selectDoc = registerForActivityResult(HandleFileContract()) {
         it.uri?.let { uri ->
             if (uri.isContentScheme()) {
@@ -166,6 +167,9 @@ class RssSourceEditActivity :
             setText(R.string.source_tab_base)
         })
         binding.tabLayout.addTab(binding.tabLayout.newTab().apply {
+            setText(R.string.source_tab_start)
+        })
+        binding.tabLayout.addTab(binding.tabLayout.newTab().apply {
             setText(R.string.source_tab_list)
         })
         binding.tabLayout.addTab(binding.tabLayout.newTab().apply {
@@ -199,8 +203,9 @@ class RssSourceEditActivity :
 
     private fun setEditEntities(tabPosition: Int?) {
         when (tabPosition) {
-            1 -> adapter.editEntities = listEntities
-            2 -> adapter.editEntities = webViewEntities
+            1 -> adapter.editEntities = startEntities
+            2 -> adapter.editEntities = listEntities
+            3 -> adapter.editEntities = webViewEntities
             else -> adapter.editEntities = sourceEntities
         }
         binding.recyclerView.scrollToPosition(0)
@@ -229,6 +234,12 @@ class RssSourceEditActivity :
             add(EditEntity("variableComment", rs.variableComment, R.string.variable_comment))
             add(EditEntity("concurrentRate", rs.concurrentRate, R.string.concurrent_rate))
             add(EditEntity("jsLib", rs.jsLib, "jsLib"))
+        }
+        startEntities.clear()
+        startEntities.apply {
+            add(EditEntity("startHtml", rs.startHtml, R.string.r_startHtml))
+            add(EditEntity("startStyle", rs.startStyle, R.string.r_startStyle))
+            add(EditEntity("startJs", rs.startJs, R.string.r_startJs))
         }
         listEntities.clear()
         listEntities.apply {
@@ -297,6 +308,14 @@ class RssSourceEditActivity :
                 "concurrentRate" -> source.concurrentRate = it.value
                 "sortUrl" -> source.sortUrl = it.value
                 "jsLib" -> source.jsLib = it.value
+            }
+        }
+        startEntities.forEach {
+            it.value = it.value?.takeIf { s -> s.isNotBlank() }
+            when (it.key) {
+                "startHtml" -> source.startHtml = it.value
+                "startStyle" -> source.startStyle = it.value
+                "startJs" -> source.startJs = it.value
             }
         }
         listEntities.forEach {

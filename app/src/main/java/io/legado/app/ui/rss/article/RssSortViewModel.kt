@@ -13,6 +13,7 @@ import io.legado.app.help.source.removeSortCache
 
 class RssSortViewModel(application: Application) : BaseViewModel(application) {
     var url: String? = null
+    var sortUrl: String? = null
     var rssSource: RssSource? = null
     val titleLiveData = MutableLiveData<String>()
     var order = System.currentTimeMillis()
@@ -29,6 +30,7 @@ class RssSortViewModel(application: Application) : BaseViewModel(application) {
                     rssSource = RssSource(sourceUrl = url)
                 }
             }
+            sortUrl = intent.getStringExtra("sortUrl")
         }.onFinally {
             finally()
         }

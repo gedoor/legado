@@ -86,6 +86,10 @@ data class RssSource(
     var loadWithBaseUrl: Boolean = true,
     /**注入js**/
     var injectJs: String? = null,
+    /**web形式起始页**/
+    var startHtml: String? = null,
+    var startStyle: String? = null,
+    var startJs: String? = null,
     /*其它规则*/
     /**最后更新时间，用于排序**/
     @ColumnInfo(defaultValue = "0")
@@ -140,6 +144,9 @@ data class RssSource(
                 && equal(variableComment, source.variableComment)
                 && equal(style, source.style)
                 && equal(injectJs, source.injectJs)
+                && equal(startHtml, source.startHtml)
+                && equal(startStyle, source.startStyle)
+                && equal(startJs, source.startJs)
     }
 
     private fun equal(a: String?, b: String?): Boolean {

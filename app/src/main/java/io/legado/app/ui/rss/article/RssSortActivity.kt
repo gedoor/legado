@@ -33,6 +33,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import androidx.viewpager.widget.ViewPager
+import io.legado.app.utils.startActivity
 
 class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewModel>(),
     VariableDialog.Callback {
@@ -272,11 +273,32 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
 
     private fun upFragments() {
         lifecycleScope.launch {
-            viewModel.rssSource?.sortUrls()?.let {
-                sortList.clear()
-                sortList.addAll(it)
+            viewModel.sortUrl?.let { url ->
+                val urls: List<Pair<String, String>> = try {
+                    if (url.isJsonObject()) {
+                        GSONStrict.fromJsonObject<Map<String, String>>(url)
+                            .getOrThrow()
+                            .map { Pair(it.key, it.value) }
+                    } else {
+                        listOf(Pair("", url))
+                    }
+                } catch (e: Exception) {
+                    listOf(Pair("", url))
+                }
+                sortList.apply {
+                    clear()
+                    addAll(urls)
+                }
+            } ?: viewModel.rssSource?.sortUrls()?.let { urls ->
+                sortList.apply {
+                    clear()
+                    addAll(urls)
+                }
             }
             if (sortList.size == 1) {
+                sortList.first().first.takeIf { it.isNotEmpty() }?.let {
+                    binding.titleBar.title = it
+                }
                 binding.tabsContainer.gone()
             } else {
                 binding.tabsContainer.visible()
@@ -338,6 +360,15 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
             val fragment = super.instantiateItem(container, position) as Fragment
             fragmentMap[sortList[position].first] = fragment
             return fragment
+        }
+    }
+
+    companion object {
+        fun start(context: Context, sortUrl: String, sourceUrl: String?) {
+            context.startActivity<RssSortActivity> {
+                putExtra("url", sourceUrl)
+                putExtra("sortUrl", sortUrl)
+            }
         }
     }
 
