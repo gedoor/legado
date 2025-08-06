@@ -364,7 +364,7 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
     }
 
     companion object {
-        fun start(context: Context, sortUrl: String, sourceUrl: String?) {
+        fun start(context: Context, sortUrl: String, sourceUrl: String) {
             context.startActivity<RssSortActivity> {
                 putExtra("url", sourceUrl)
                 putExtra("sortUrl", sortUrl)

@@ -47,16 +47,13 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
 import java.net.URLDecoder
 import android.webkit.JavascriptInterface
-import android.webkit.JsPromptResult
 import androidx.lifecycle.lifecycleScope
+import io.legado.app.help.coroutine.Coroutine
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeRule.Companion.setCoroutineContext
 import io.legado.app.help.http.CookieManager as AppCookieManager
-import kotlinx.coroutines.Dispatchers
-import io.legado.app.utils.GSONStrict
-import io.legado.app.utils.fromJsonObject
 import io.legado.app.model.ReadBook
 
 class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
@@ -177,7 +174,7 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
         binding.progressBar.fontColor = accentColor
         binding.webView.webChromeClient = CustomWebChromeClient()
         // 添加 JavaScript 接口
-        binding.webView.addJavascriptInterface(OrientationJSInterface(), "AndroidOrientation")
+        binding.webView.addJavascriptInterface(JSInterface(), "AndroidComm")
         binding.webView.webViewClient = CustomWebViewClient()
         binding.webView.settings.apply {
             setDarkeningAllowed(AppConfig.isNightTheme)
@@ -216,7 +213,7 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
         }
     }
 
-    inner class OrientationJSInterface {
+    inner class JSInterface {
         @JavascriptInterface
         fun lockOrientation(orientation: String) {
             runOnUiThread {
@@ -232,6 +229,28 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
                 }
             }
         }
+        @JavascriptInterface
+        fun request(jsCode:String, id: String) {
+            Coroutine.async(lifecycleScope) {
+                AnalyzeRule(ReadBook.book, viewModel.source).run {
+                    setCoroutineContext(coroutineContext)
+                    evalJS(jsCode).toString()
+                }
+            }.onSuccess { data ->
+                binding.webView.evaluateJavascript("window.JSBridgeResult('$id', '${data.escapeForJs()}', null);", null)
+            }.onError {
+                binding.webView.evaluateJavascript("window.JSBridgeResult('$id', null, '${it.localizedMessage}');", null)
+            }
+        }
+    }
+    fun String.escapeForJs(): String {
+        return this
+            .replace("\\", "\\\\")  // 先处理反斜杠
+            .replace("'", "\\'")
+            .replace("\n", "\\n")
+            .replace("\r", "\\r")
+            .replace("\u2028", "\\u2028") // Unicode 行分隔符
+            .replace("\u2029", "\\u2029") // Unicode 段分隔符
     }
 
     private fun injectOrientationSupport() {
@@ -240,13 +259,13 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
             if (screen.orientation && !screen.orientation.__patched) {
                 screen.orientation.lock = function(orientation) {
                     return new Promise((resolve, reject) => {
-                        window.AndroidOrientation?.lockOrientation(orientation) 
+                        window.AndroidComm?.lockOrientation(orientation) 
                         resolve()
                     });
                 };
                 screen.orientation.unlock = function() {
                     return new Promise((resolve, reject) => {
-                        window.AndroidOrientation?.lockOrientation('unlock') 
+                        window.AndroidComm?.lockOrientation('unlock') 
                         resolve()
                     });
                 };
@@ -255,52 +274,26 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
             ${if (localhtml) """
             window.run = function(jsCode) {
                 return new Promise((resolve, reject) => {
-                    const response = prompt('JSBRIDGE:' + JSON.stringify({
-                        action: 'runJS',
-                        code: String(jsCode)
-                    }));
-                    if (response && response.startsWith('SUCCESS:')) {
-                        resolve(response.substring(8));
-                    } else {
-                        reject(response || 'Unknown error');
-                    }
+                const requestId = 'req_' + Date.now() + '_' + Math.random().toString(36).substring(2, 5);
+                window.JSBridgeCallbacks = window.JSBridgeCallbacks || {};
+                window.JSBridgeCallbacks[requestId] = { resolve, reject };
+                window.AndroidComm?.request(String(jsCode), requestId);
                 });
+            };
+            window.JSBridgeResult = function(requestId, result, error) {
+                if (window.JSBridgeCallbacks?.[requestId]) {
+                    if (error) {
+                        window.JSBridgeCallbacks[requestId].reject(error);
+                    } else {
+                        window.JSBridgeCallbacks[requestId].resolve(result);
+                    }
+                    delete window.JSBridgeCallbacks[requestId];
+                }
             };
             """ else ""}
         })();
         """.trimIndent()
         binding.webView.evaluateJavascript(js, null)
-    }
-
-    private fun handleJsRequest(message: String, result: JsPromptResult?) {
-        try {
-            val json = message.substring(9)
-            val request = GSONStrict.fromJsonObject<Map<String, String>>(json).getOrThrow()
-            
-            when (request["action"]) {
-                "runJS" -> {
-                    val jsCode = request["code"] ?: ""   
-                    lifecycleScope.launch(Dispatchers.IO) {
-                        try {
-                            val jsResult = AnalyzeRule(ReadBook.book, viewModel.source).run {
-                                setCoroutineContext(coroutineContext)
-                                evalJS(jsCode).toString()
-                            }
-                            
-                            binding.webView.post {
-                                result?.confirm("SUCCESS:${jsResult}")
-                            }
-                        } catch (e: Exception) {
-                            binding.webView.post {
-                                result?.confirm("ERROR:${e.message}")
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            result?.confirm("ERROR:Invalid request format")
-        }
     }
 
     private fun saveImage(webPic: String) {
@@ -380,23 +373,6 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
                     finish()
                 }
             }
-        }
-
-        /* 监听请求，处理js代码 */
-        override fun onJsPrompt(
-            view: WebView?,
-            url: String?,
-            message: String?,
-            defaultValue: String?,
-            result: JsPromptResult?
-        ): Boolean {
-            message?.let {
-                if (it.startsWith("JSBRIDGE:") && localhtml) {
-                    handleJsRequest(it, result)
-                    return true
-                }
-            }
-            return super.onJsPrompt(view, url, message, defaultValue, result)
         }
         
     }

@@ -67,20 +67,23 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
             } else {
                 val ruleContent = rssSource?.ruleContent
                 val startHtml = intent.getStringExtra("startHtml")
+                val openUrl = intent.getStringExtra("openUrl")
                 if (!startHtml.isNullOrEmpty()) {
                     htmlLiveData.postValue(startHtml)
                 }
                 else if (ruleContent.isNullOrBlank()) {
-                    loadUrl(origin, origin)
+                    loadUrl(openUrl ?: origin, origin)
                 }
                 else if (rssSource!!.singleUrl) {
                     htmlLiveData.postValue(ruleContent)
                 }
                 else {
+                    val title = intent.getStringExtra("title") ?: rssSource!!.sourceName
                     val rssArticle = RssArticle()
                     rssArticle.origin = origin
-                    rssArticle.link = origin
-                    rssArticle.title = rssSource!!.sourceName
+                    rssArticle.link = openUrl ?: origin
+                    rssArticle.sort = title
+                    rssArticle.title = title
                     loadContent(rssArticle, ruleContent)
                 }
             }
@@ -232,22 +235,20 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
 
     fun hbHtml(html: String): String {
         val style = rssSource?.run { startStyle ?: style } ?: """"img{max-width:100% !important; width:auto; height:auto;}video{object-fit:fill; max-width:100% !important; width:auto; height:auto;}body{word-wrap:break-word; height:auto;max-width: 100%; width:auto;}"""
-        val javascript = rssSource?.run { startJs ?: injectJs } ?: ""
-
+        val javascript = rssSource?.startJs
         var processedHtml = html
-
-        processedHtml = if (processedHtml.contains("</body>")) {
-            processedHtml.replaceFirst("</body>", "<script>$javascript</script></body>")
-        } else {
-            "<body>$processedHtml<script>$javascript</script></body>"
+        if (javascript.isNullOrBlank()) {
+            processedHtml = if (processedHtml.contains("</body>")) {
+                processedHtml.replaceFirst("</body>", "<script>$javascript</script></body>")
+            } else {
+                "<body>$processedHtml<script>$javascript</script></body>"
+            }
         }
-
         processedHtml = if (processedHtml.contains("<head>")) {
             processedHtml.replaceFirst("<head>", "<head><style>$style</style>")
         } else {
             "<head><style>$style</style></head>$processedHtml"
         }
-
         return processedHtml
     }
 

@@ -7,7 +7,7 @@ import io.legado.app.ui.association.AddToBookshelfDialog
 import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.rss.article.RssSortActivity
 import io.legado.app.utils.showDialogFragment
-
+import org.json.JSONObject
 
 
 @Suppress("unused")
@@ -25,9 +25,27 @@ class RssJsExtensions(private val activity: ReadRssActivity, private val rssSour
         activity.showDialogFragment(AddToBookshelfDialog(bookUrl))
     }
 
-    fun open(name: String,url: String) {
+    fun open(name: String, url: String) {
+        return open(name,url,null)
+    }
+    fun open(name: String, url: String, title: String?) {
+        val source = rssSource ?: return
+        val sourceUrl = source.sourceUrl
         when (name) {
-            "sort" -> RssSortActivity.start(activity,url,rssSource?.sourceUrl)
+            "sort" -> {
+                val sortSourceUrl = if (title != null) {
+                    JSONObject().apply {
+                        put(title, sourceUrl)
+                    }.toString()
+                }
+                else {
+                    sourceUrl
+                }
+                RssSortActivity.start(activity, url, sortSourceUrl)
+            }
+            "rss" -> {
+                ReadRssActivity.start(activity, title ?: source.sourceName, url, sourceUrl)
+            }
         }
     }
 

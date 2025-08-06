@@ -1,6 +1,8 @@
 package io.legado.app.ui.rss.read
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
 import android.content.res.Configuration
@@ -74,13 +76,12 @@ import splitties.views.bottomPadding
 import java.io.ByteArrayInputStream
 import java.net.URLDecoder
 import java.util.regex.PatternSyntaxException
-import android.webkit.JsPromptResult
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.GlideException
+import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeRule.Companion.setCoroutineContext
 import io.legado.app.ui.rss.article.RssSortActivity
-import kotlinx.coroutines.Dispatchers
 import io.legado.app.utils.GSONStrict
 import io.legado.app.utils.fromJsonObject
 import java.io.FileInputStream
@@ -131,6 +132,15 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                 return@addCallback
             }
             finish()
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        viewModel.initData(intent)
+        viewModel.refresh {
+            binding.webView.reload()
         }
     }
 
@@ -237,7 +247,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         binding.progressBar.fontColor = accentColor
         binding.webView.webChromeClient = CustomWebChromeClient()
         //添加屏幕方向控制接口
-        binding.webView.addJavascriptInterface(OrientationJSInterface(), "AndroidOrientation")
+        binding.webView.addJavascriptInterface(JSInterface(), "AndroidComm")
         binding.webView.webViewClient = CustomWebViewClient()
         binding.webView.settings.apply {
             mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
@@ -281,7 +291,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
 
     }
 
-    inner class OrientationJSInterface {
+    inner class JSInterface {
         @JavascriptInterface
         fun lockOrientation(orientation: String) {
             runOnUiThread {
@@ -299,12 +309,41 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         }
         @JavascriptInterface
         fun openUI(name: String, url: String) {
+            val source = viewModel.rssSource ?: return
+            val sourceUrl = source.sourceUrl
             when (name) {
                 "sort" -> {
-                    RssSortActivity.start(this@ReadRssActivity,url,viewModel.rssSource?.sourceUrl)
+                    RssSortActivity.start(this@ReadRssActivity, url, sourceUrl)
+                }
+                "rss" -> {
+                    GSONStrict.fromJsonObject<Map<String, String>>(url).getOrThrow().entries.firstOrNull()?.let {
+                        start(this@ReadRssActivity, it.key, it.value, sourceUrl)
+                    }
                 }
             }
         }
+        @JavascriptInterface
+        fun request(jsCode:String, id: String) {
+            Coroutine.async(lifecycleScope) {
+                AnalyzeRule(null, viewModel.rssSource).run {
+                    setCoroutineContext(coroutineContext)
+                    evalJS(jsCode).toString()
+                }
+            }.onSuccess { data ->
+                binding.webView.evaluateJavascript("window.JSBridgeResult('$id', '${data.escapeForJs()}', null);", null)
+            }.onError {
+                binding.webView.evaluateJavascript("window.JSBridgeResult('$id', null, '${it.localizedMessage}');", null)
+            }
+        }
+    }
+    fun String.escapeForJs(): String {
+        return this
+            .replace("\\", "\\\\")  // 先处理反斜杠
+            .replace("'", "\\'")
+            .replace("\n", "\\n")
+            .replace("\r", "\\r")
+            .replace("\u2028", "\\u2028") // Unicode 行分隔符
+            .replace("\u2029", "\\u2029") // Unicode 段分隔符
     }
 
     private fun injectOrientationSupport() {
@@ -313,13 +352,13 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                 if (screen.orientation && !screen.orientation.__patched) {
                     screen.orientation.lock = function(orientation) {
                         return new Promise((resolve, reject) => {
-                            window.AndroidOrientation?.lockOrientation(orientation) 
+                            window.AndroidComm?.lockOrientation(orientation) 
                             resolve()
                         });
                     };
                     screen.orientation.unlock = function() {
                         return new Promise((resolve, reject) => {
-                            window.AndroidOrientation?.lockOrientation('unlock') 
+                            window.AndroidComm?.lockOrientation('unlock') 
                             resolve()
                         });
                     };
@@ -327,57 +366,31 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                 };
                 window.run = function(jsCode) {
                     return new Promise((resolve, reject) => {
-                        const response = prompt('JSBRIDGE:' + JSON.stringify({
-                            action: 'runJS',
-                            code: String(jsCode)
-                        }));
-                        if (response && response.startsWith('SUCCESS:')) {
-                            resolve(response.substring(8));
-                        } else {
-                            reject(response || 'Unknown error');
-                        }
+                        const requestId = 'req_' + Date.now() + '_' + Math.random().toString(36).substring(2, 5);
+                        window.JSBridgeCallbacks = window.JSBridgeCallbacks || {};
+                        window.JSBridgeCallbacks[requestId] = { resolve, reject };
+                        window.AndroidComm?.request(String(jsCode), requestId);
                     });
+                };
+                window.JSBridgeResult = function(requestId, result, error) {
+                    if (window.JSBridgeCallbacks?.[requestId]) {
+                        if (error) {
+                            window.JSBridgeCallbacks[requestId].reject(error);
+                        } else {
+                            window.JSBridgeCallbacks[requestId].resolve(result);
+                        }
+                        delete window.JSBridgeCallbacks[requestId];
+                    }
                 };
                 window.openui = function(name,object) {
                     return new Promise((resolve, reject) => {
-                        window.AndroidOrientation?.openUI(name, JSON.stringify(object))
+                        window.AndroidComm?.openUI(name, JSON.stringify(object))
                         resolve()
                     });
                 };
             })();
         """.trimIndent()
         binding.webView.evaluateJavascript(js, null)
-    }
-
-    private fun handleJsRequest(message: String, result: JsPromptResult?) {
-        try {
-            val json = message.substring(9)
-            val request = GSONStrict.fromJsonObject<Map<String, String>>(json).getOrThrow()
-            
-            when (request["action"]) {
-                "runJS" -> {
-                    val jsCode = request["code"] ?: ""   
-                    lifecycleScope.launch(Dispatchers.IO) {
-                        try {
-                            val jsResult = AnalyzeRule(null, viewModel.rssSource).run {
-                                setCoroutineContext(coroutineContext)
-                                evalJS(jsCode).toString()
-                            }
-                            
-                            binding.webView.post {
-                                result?.confirm("SUCCESS:${jsResult}")
-                            }
-                        } catch (e: Exception) {
-                            binding.webView.post {
-                                result?.confirm("ERROR:${e.message}")
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            result?.confirm("ERROR:Invalid request format")
-        }
     }
 
     private fun saveImage(webPic: String) {
@@ -544,23 +557,6 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             finish()
         }
 
-        /* 监听请求，处理js代码 */
-        override fun onJsPrompt(
-            view: WebView?,
-            url: String?,
-            message: String?,
-            defaultValue: String?,
-            result: JsPromptResult?
-        ): Boolean {
-            message?.let {
-                if (it.startsWith("JSBRIDGE:")) {
-                    handleJsRequest(it, result)
-                    return true
-                }
-            }
-            return super.onJsPrompt(view, url, message, defaultValue, result)
-        }
-
         /* 监听网页日志 */
         override fun onConsoleMessage(consoleMessage: ConsoleMessage): Boolean {
             viewModel.rssSource?.let{
@@ -712,50 +708,63 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         }
 
         private fun shouldOverrideUrlLoading(url: Uri): Boolean {
-            val source = viewModel.rssSource
-            if (url.scheme == "opensorturl") {
-                RssSortActivity.start(this@ReadRssActivity,URLDecoder.decode(url.toString().substringAfter("sorturl://"), "UTF-8"),source?.sourceUrl)
-                return true
-            }
-            val js = source?.shouldOverrideUrlLoading
-            if (!js.isNullOrBlank()) {
-                val t = SystemClock.uptimeMillis()
-                val result = kotlin.runCatching {
-                    runScriptWithContext(lifecycleScope.coroutineContext) {
-                        source.evalJS(js) {
-                            put("java", rssJsExtensions)
-                            put("url", url.toString())
-                        }.toString()
+            viewModel.rssSource?.let { source ->
+                handleSpecialSchemes(source, url)?.let { return it }
+                source.shouldOverrideUrlLoading?.takeUnless(String::isNullOrBlank)?.let { js ->
+                    val startTime = SystemClock.uptimeMillis()
+                    val result = runJsInterception(source, js, url)
+                    if (SystemClock.uptimeMillis() - startTime > 30) {
+                        AppLog.put("${source.getTag()}: url跳转拦截js执行耗时过长")
                     }
-                }.onFailure {
-                    AppLog.put("${source.getTag()}: url跳转拦截js出错", it)
-                }.getOrNull()
-                if (SystemClock.uptimeMillis() - t > 30) {
-                    AppLog.put("${source.getTag()}: url跳转拦截js执行耗时过长")
-                }
-                if (result.isTrue()) {
-                    return true
+                    if (result.isTrue()) return true
                 }
             }
-            when (url.scheme) {
-                "http", "https", "jsbridge" -> {
-                    return false
+            return handleCommonSchemes(url)
+        }
+        private fun handleSpecialSchemes(source: RssSource, url: Uri): Boolean? {
+            return when (url.scheme) {
+                "opensorturl" -> {
+                    val decodedUrl = decodeUrl(url, "sorturl://")
+                    RssSortActivity.start(this@ReadRssActivity, decodedUrl, source.sourceUrl)
+                    true
                 }
-
+                "openrssurl" -> {
+                    val decodedUrl = decodeUrl(url, "rssurl://")
+                    start(this@ReadRssActivity, source.sourceName, decodedUrl, source.sourceUrl)
+                    true
+                }
+                else -> null
+            }
+        }
+        private fun runJsInterception(source: RssSource, js: String, url: Uri): String? {
+            return kotlin.runCatching {
+                runScriptWithContext(lifecycleScope.coroutineContext) {
+                    source.evalJS(js) {
+                        put("java", rssJsExtensions)
+                        put("url", url.toString())
+                    }.toString()
+                }
+            }.onFailure {
+                AppLog.put("${source.getTag()}: url跳转拦截js出错", it)
+            }.getOrNull()
+        }
+        private fun handleCommonSchemes(url: Uri): Boolean {
+            return when (url.scheme) {
+                "http", "https", "jsbridge" -> false
                 "legado", "yuedu" -> {
-                    startActivity<OnLineImportActivity> {
-                        data = url
-                    }
-                    return true
+                    startActivity<OnLineImportActivity> { data = url }
+                    true
                 }
-
                 else -> {
                     binding.root.longSnackbar(R.string.jump_to_another_app, R.string.confirm) {
                         openUrl(url)
                     }
-                    return true
+                    true
                 }
             }
+        }
+        private fun decodeUrl(url: Uri, prefix: String): String {
+            return URLDecoder.decode(url.toString().substringAfter(prefix), "UTF-8")
         }
 
         @SuppressLint("WebViewClientOnReceivedSslError")
@@ -767,6 +776,17 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             handler?.proceed()
         }
 
+    }
+
+    companion object {
+        fun start(context: Context, title: String, url: String, origin: String) {
+            context.startActivity<ReadRssActivity> {
+                putExtra("title", title)
+                putExtra("origin", origin)
+                putExtra("openUrl", url)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+        }
     }
 
 }
