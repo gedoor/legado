@@ -113,6 +113,7 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
                     it.description = body
                     appDb.rssStarDao.insert(it)
                 }
+                this@ReadRssViewModel.rssArticle = rssArticle
                 contentLiveData.postValue(body)
             }.onError {
                 contentLiveData.postValue("加载正文失败\n${it.stackTraceToString()}")

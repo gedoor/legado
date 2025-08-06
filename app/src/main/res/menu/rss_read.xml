@@ -35,4 +35,9 @@
         android:title="@string/open_in_browser"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/menu_log"
+        android:title="@string/log"
+        app:showAsAction="never" />
+
 </menu>

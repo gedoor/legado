@@ -87,6 +87,7 @@ import io.legado.app.utils.fromJsonObject
 import java.io.FileInputStream
 import java.net.URLConnection
 import java.util.concurrent.ExecutionException
+import io.legado.app.ui.about.AppLogDialog
 
 /**
  * rss阅读界面
@@ -136,12 +137,11 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
     }
 
     override fun onNewIntent(intent: Intent) {
+        binding.progressBar.visible()
+        binding.progressBar.setDurProgress(30)
         super.onNewIntent(intent)
         setIntent(intent)
         viewModel.initData(intent)
-        viewModel.refresh {
-            binding.webView.reload()
-        }
     }
 
     @Suppress("DEPRECATION")
@@ -180,8 +180,11 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_rss_refresh -> viewModel.refresh {
-                binding.webView.reload()
+            R.id.menu_rss_refresh -> {
+                //viewModel.refresh
+                viewModel.rssArticle?.let {
+                    start(this@ReadRssActivity, it.title, it.link, it.origin)
+                }
             }
 
             R.id.menu_rss_star -> {
@@ -208,6 +211,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             R.id.menu_browser_open -> binding.webView.url?.let {
                 openUrl(it)
             } ?: toastOnUi("url null")
+            R.id.menu_log -> showDialogFragment<AppLogDialog>()
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -784,7 +788,6 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                 putExtra("title", title)
                 putExtra("origin", origin)
                 putExtra("openUrl", url)
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
         }
     }
