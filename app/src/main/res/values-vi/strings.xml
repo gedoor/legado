@@ -889,7 +889,6 @@
     <string name="pref_anti_alias_summary">Chống răng cưa khi vẽ ảnh</string>
     <string name="upload_url">tải lên url</string>
     <string name="download_url_rule">Quy tắc URL tải xuống(downloadUrls)</string>
-    <string name="sort_by_respondTime">Sắp xếp theo thời gian phản hồi</string>
     <string name="respondTime">Thời gian phản hồi: %1$d ms</string>
     <string name="export_success">xuất thành công</string>
     <string name="path">đường dẫn</string>
