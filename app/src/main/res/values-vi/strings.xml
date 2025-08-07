@@ -1140,11 +1140,9 @@
     <string name="change_source_progress">Kết quả %1$d, Tiến độ %2$d / %3$d: %4$s</string>
     <string name="open_book_info_by_click_title">Nhấn vào tên sách để mở chi tiết</string>
     <string name="export_wait">Đang chờ xuất</string>
-    <string name="sync_book_progress_success">Đồng bộ tiến độ thành công</string>
     <string name="default_home_page">Trang chủ mặc định</string>
     <string name="show_bookshelf_fast_scroller">Hiển thị thanh cuộn nhanh</string>
     <string name="export_all_use_book_source">Xuất nguồn sách cho tất cả các sách</string>
-    <string name="cloud_progress_exceeds_current">Tiến độ trên đám mây vượt quá tiến độ hiện tại. Bạn có muốn đồng bộ không?</string>
     <string name="keep_enable">Giữ trạng thái kích hoạt</string>
     <string name="preview_image_by_click">Nhấn để xem trước ảnh</string>
     <string name="screen_portrait_reversed">Dọc đảo ngược</string>
