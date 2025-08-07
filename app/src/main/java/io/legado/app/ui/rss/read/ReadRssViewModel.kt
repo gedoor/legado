@@ -20,6 +20,7 @@ import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.rss.Rss
+import io.legado.app.utils.printOnDebug
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.writeBytes
 import kotlinx.coroutines.Dispatchers.IO
@@ -237,8 +238,20 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
     fun hbHtml(html: String): String {
         val style = rssSource?.run { startStyle ?: style } ?: """"img{max-width:100% !important; width:auto; height:auto;}video{object-fit:fill; max-width:100% !important; width:auto; height:auto;}body{word-wrap:break-word; height:auto;max-width: 100%; width:auto;}"""
         val javascript = rssSource?.startJs
-        var processedHtml = html
-        if (javascript.isNullOrBlank()) {
+        var processedHtml = html.let{
+            rssSource ?: return@let it
+            try {
+                when {
+                    it.startsWith("@js:") -> rssSource!!.evalJS( it.substring(4)).toString()
+                    it.startsWith("<js>") -> rssSource!!.evalJS(it.substring(4,it.lastIndexOf("<"))).toString()
+                    else -> it
+                }
+            } catch (e: Throwable) {
+                e.printOnDebug()
+                it
+            }
+        }
+        if (!javascript.isNullOrBlank()) {
             processedHtml = if (processedHtml.contains("</body>")) {
                 processedHtml.replaceFirst("</body>", "<script>$javascript</script></body>")
             } else {
