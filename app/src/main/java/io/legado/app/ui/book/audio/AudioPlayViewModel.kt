@@ -71,9 +71,9 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
     private suspend fun loadChapterList(book: Book): Boolean {
         val bookSource = AudioPlay.bookSource ?: return true
         try {
-            val oldBookUrl = book.bookUrl
+            val oldBook = book.copy()
             val cList = WebBook.getChapterListAwait(bookSource, book).getOrThrow()
-            if (oldBookUrl == book.bookUrl) {
+            if (oldBook.bookUrl == book.bookUrl) {
                 appDb.bookDao.update(book)
             } else {
                 appDb.bookDao.replace(oldBook, book)
