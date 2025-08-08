@@ -20,6 +20,9 @@ Legado is a free and open source novel reader for Android.
     - 音频播放支持跳过片头片尾
     - 音频支持显示歌词
     - 自定义本地dns
+    - 支持书源通过图片链接控制样式
+    - 点击图片执行链接js函数
+    - 支持标题显示图片(在标题规则获取)
 - 功能完善
     - 订阅源支持显示识别更新状态
     - 字数显示能智能识别在线字数
@@ -27,23 +30,42 @@ Legado is a free and open source novel reader for Android.
     - 状态栏音频控制支持上一首下一首
     - 优化书籍详情页平板布局
     - 优化并发率控制实现
+    - 登录UI支持js构建
+    - 详情页执行java.refreshTocUrl()不会再连续刷新两次详情页
+    - 高亮代码限制提高到2万字符，支持let、const关键字高亮
+    - 支持epub统计每章字数
+    - 优化字数统计，使其更加准确
 - 内置浏览器变动
     - 支持screen.orientation.lock在全屏时控制屏幕方向
     - 支持window.close()关闭网页
     - 支持window.run(jscode)异步执行阅读的java函数
     - 支持不静音自动播放视频
+- 订阅源变动
+    - 单url订阅源支持加载内容规则
+    - 订阅源分类自动分多行显示
+    - 点击过的订阅源分类自动变暗
+    - 支持为订阅源设定起始页
+    - 单个分类时标题显示为分类名
+    - 浏览器会优先读取已有的Glide图片缓存
+    - 新增网页日志开关，console.log会输出到阅读日志
+    - 支持函数直接打开分类界面和正文界面
+    - 优化刷新按钮效果为重新访问链接再刷新
 - 函数变动
     - startBrowser、startBrowserAwait支持html参数
     - startBrowserAwait返回的响应的url为网页实际地址
     - source.getLoginInfoMap()在用户信息未初始化时，返回空对象而不是null
-- 函数新增
+- 函数、变量新增
     - java.setConcurrent(concurrent:Sring)实时改变并发率
+    - cookie.setWebCookie(url,cookie)为内置浏览器设置cookie
+    - 目录规则新增isFromBookInfo变量，判断执行规则时是否来着详情页刷新
 - 其余杂项
     - 目录卷章会显示获取的章节信息
     - 目录页，字数显示在章节信息右侧
     - 合并音频界面两个调速按钮，界面布局调整
     - 优化源正文图片格式化规则
     - 规则编辑界面"章节更新时间"规则中文名改名为"章节信息"
+    - 先执行正文规则再执行标题规则
+    - 保持text图片大小与字体汉字相同
 <br><br>
 
 [![](https://img.shields.io/badge/-Contents:-696969.svg)](#contents) [![](https://img.shields.io/badge/-Function-F5F5F5.svg)](#Function-主要功能-) [![](https://img.shields.io/badge/-Community-F5F5F5.svg)](#Community-交流社区-) [![](https://img.shields.io/badge/-API-F5F5F5.svg)](#API-) [![](https://img.shields.io/badge/-Other-F5F5F5.svg)](#Other-其他-) [![](https://img.shields.io/badge/-Grateful-F5F5F5.svg)](#Grateful-感谢-) [![](https://img.shields.io/badge/-Interface-F5F5F5.svg)](#Interface-界面-)

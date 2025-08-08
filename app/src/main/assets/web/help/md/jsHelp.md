@@ -33,6 +33,7 @@
 |title|章节当前标题 String|
 |src| 请求返回的源码|
 |nextChapterUrl|下一章节url|
+|isFromBookInfo|是否为详情页刷新|
 
 ## 当前类对象的可使用的部分方法
 
@@ -52,6 +53,14 @@ java.searchBook(bookName: String)
 
 ```js
 java.addBook(bookUrl: String)
+```
+
+* 打开订阅源界面
+
+```js
+java.open(name: String, url: String)
+java.open(name: String, url: String, title: String)
+name为"sort"打开分类界面、为"rss"打开正文界面
 ```
 
 ### [AnalyzeUrl](https://github.com/gedoor/legado/blob/master/app/src/main/java/io/legado/app/model/analyzeRule/AnalyzeUrl.kt) 部分函数
@@ -437,6 +446,8 @@ cookie.setCookie(url,cookie)
 cookie.replaceCookie(url,cookie)
 删除cookie
 cookie.removeCookie(url)
+设置内置浏览器cookie
+cookie.setWebCookie(url,cookie)
 ```
 
 ## cache对象的部分可用函数

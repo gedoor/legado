@@ -270,11 +270,22 @@ window.run("java.toast('执行成功');'成功'")
 > 加载图片时，执行结果作为图片链接  
 
 > "style"键值控制单个图片的样式  
-> 目前支持"text"、"full"、"single"、"left"、"right"
+> 目前支持"text"、"full"、"single"、"left"、"right"  
+> "TEXT"且处于段尾时，占1.5个字符位  
 
 ```
 https://www.baidu.com/img/flexible/logo/pc/result.png,{
   "js": "if (book) java.toast('这是'+book.name+'的图');result",
   "style": "right"
 }
+```
+
+* 订阅源
+> 内置浏览器额外支持的函数和超链  
+
+```js
+`opensorturl://${encodeURIComponent("https://example.com")}` //超链接打开分类界面
+`openrssurl://${encodeURIComponent("https://example.com")}` //超链接打开正文界面
+window.openui("sort", {"分类":"https://example.com"}) //函数打开分类界面
+window.openui("rss", {"正文":"https://example.com"}) //函数打开正文界面
 ```
