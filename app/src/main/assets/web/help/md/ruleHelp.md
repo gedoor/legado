@@ -24,6 +24,7 @@
 
 > `1000` 访问间隔1s  
 > `20/60000` 60s内访问次数20  
+> `java.setConcurrent(str: String)` 设置并发率
 
 * 书源类型: 文件
 > 对于类似知轩藏书提供文件整合下载的网站，可以在书源详情的下载URL规则获取文件链接
@@ -262,4 +263,18 @@ result = "https://example.mp3" + "\n" + "[00:00.00][by:花丸的蜜柑面包]"
 window.run("java.toast('执行成功');'成功'")
 .then(r=>alert(r))
 .catch(e=>alert("执行出错:"+e));
+```
+
+* 图片控制
+> 在线书籍的图片链接中含有"js"键时，点击图片会执行一次键值的函数  
+> 加载图片时，执行结果作为图片链接  
+
+> "style"键值控制单个图片的样式  
+> 目前支持"text"、"full"、"single"、"left"、"right"
+
+```
+https://www.baidu.com/img/flexible/logo/pc/result.png,{
+  "js": "if (book) java.toast('这是'+book.name+'的图');result",
+  "style": "right"
+}
 ```

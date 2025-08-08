@@ -3,7 +3,7 @@ name: Test Build
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - '**'
       # - '!**/assets/**'
