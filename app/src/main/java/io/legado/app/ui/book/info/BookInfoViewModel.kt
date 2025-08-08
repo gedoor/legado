@@ -236,7 +236,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             WebBook.getChapterList(scope, bookSource, book, runPreUpdateJs, isFromBookInfo = isFromBookInfo)
                 .onSuccess(IO) {
                     if (inBookshelf) {
-                        book.save()
+                        appDb.bookDao.replace(oldBook, book)
                         /**
                          * runPreUpdateJs 有可能会修改 book 的 bookUrl
                          */
