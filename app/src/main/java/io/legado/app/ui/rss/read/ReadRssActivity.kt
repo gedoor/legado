@@ -441,7 +441,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                 upJavaScriptEnable()
                 CookieManager.applyToWebView(urlState.url)
                 settings.userAgentString = urlState.getUserAgent()
-                val processedHtml = viewModel.rssSource?.ruleContent?.let(viewModel::clHtml)
+                val processedHtml = viewModel.rssSource?.ruleContent?.takeIf { it.isNotEmpty() }?.let(viewModel::clHtml)
                 if (processedHtml != null) {
                     val baseUrl = if (viewModel.rssSource?.loadWithBaseUrl == true) urlState.url else null
                     loadDataWithBaseURL(
