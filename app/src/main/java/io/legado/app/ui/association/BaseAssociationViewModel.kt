@@ -36,6 +36,8 @@ abstract class BaseAssociationViewModel(application: Application) : BaseViewMode
                 successLive.postValue(Pair("txtRule", json))
             json.contains("name") && json.contains("url") ->
                 successLive.postValue(Pair("httpTts", json))
+            json.contains("title") ->
+                successLive.postValue(Pair("toc", json))
             else -> errorLive.postValue("格式不对")
         }
     }
