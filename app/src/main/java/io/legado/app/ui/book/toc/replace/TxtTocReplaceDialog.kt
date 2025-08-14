@@ -15,9 +15,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.databinding.DialogTocReplaceBinding
 import io.legado.app.help.book.BookHelp
 import io.legado.app.help.book.ContentProcessor
-import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.theme.primaryColor
-import io.legado.app.model.ReadBook
 import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.book.toc.TocViewModel
 import io.legado.app.ui.file.HandleFileContract
@@ -96,7 +94,7 @@ class TxtTocReplaceDialog() : BaseDialogFragment(R.layout.dialog_toc_replace),
         bookUrl?.let { url ->
             execute {
                 val originalChapters = appDb.bookChapterDao.getChapterList(url)
-                    .filter { it.index != 0 }
+                    .filter { it.index != 0  && !it.isVolume }
 
                 withContext(Dispatchers.Main) {
                     if (importedChapters.isEmpty()) {
@@ -122,13 +120,16 @@ class TxtTocReplaceDialog() : BaseDialogFragment(R.layout.dialog_toc_replace),
         return false
     }
 
+    //导入目录
     private fun importToc(uri: Uri) {
         execute {
             val originalChapters = appDb.bookChapterDao.getChapterList(bookUrl?:"")
-                .filter { it.index != 0 }
+                .filter { it.index != 0  && !it.isVolume }
 
             val text = uri.readText(requireContext())
-            importedChapters = Gson().fromJson(text, Array<BookChapter>::class.java).toList()
+            importedChapters = Gson().fromJson(text, Array<BookChapter>::class.java)
+                .toList()
+                .filter { !it.isVolume }//过滤卷名
 
             val pairedList = mutableListOf<Pair<BookChapter, BookChapter>>()
             val maxSize = maxOf(originalChapters.size, importedChapters.size)
@@ -151,27 +152,33 @@ class TxtTocReplaceDialog() : BaseDialogFragment(R.layout.dialog_toc_replace),
     private fun replaceToc() {
         execute {
             val bookUrl = bookUrl ?: throw Exception("bookUrl为空")
-            val book = ReadBook.book ?: throw Exception("未找到书籍")
+            val book = appDb.bookDao.getBook(bookUrl) ?: throw Exception("书籍不存在")
             val chapters = appDb.bookChapterDao.getChapterList(bookUrl)
                 .sortedBy { it.index }
-             var volumeCount = 0
-            
+            var volumeCount = 0
+
             chapters.forEachIndexed { i, chapter ->
                 if (chapter.index == 0) return@forEachIndexed
 
-                val importedIndex = i - 1
+                if (chapter.isVolume){
+                    volumeCount++
+                    return@forEachIndexed
+                }
+
+                var importedIndex = i - 1 - volumeCount
+
                 if (importedIndex in importedChapters.indices) {
                     val contentProcessor = ContentProcessor.get(book.name, book.origin)
-                    var content = BookHelp.getContent(book, chapter) ?: return@forEachIndexed
-                    content = contentProcessor.getContent(book, chapter, content, includeTitle = false)
+                    val content = BookHelp.getContent(book, chapter) ?: return@forEachIndexed
+                    val processedContent = contentProcessor.getContent(book, chapter, content, includeTitle = false)
                         .toString()
                     val importedChapter = importedChapters[importedIndex]
 
-                    Coroutine.async {
-                        chapter.title = importedChapter.title
-                        appDb.bookChapterDao.update(chapter)
-                        BookHelp.saveText(book, chapter, content)
-                    }
+                    chapter.title = importedChapter.title
+                    appDb.bookChapterDao.update(chapter)
+
+                    val updatedChapter = appDb.bookChapterDao.getChapter(book.bookUrl, i) ?: throw Exception("未找到章节")
+                    BookHelp.saveText(book, updatedChapter, processedContent)
                 }
             }
         }.onStart {
