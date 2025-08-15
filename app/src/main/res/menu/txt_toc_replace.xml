@@ -22,14 +22,14 @@
 <!--        app:showAsAction="never" />-->
 
     <item
-        android:id="@+id/menu_log"
-        android:title="@string/log"
-        app:showAsAction="never" />
-
-    <item
         android:id="@+id/menu_help"
         android:icon="@drawable/ic_help"
         android:title="@string/help"
         app:showAsAction="never" />
+
+<!--    <item-->
+<!--        android:id="@+id/menu_log"-->
+<!--        android:title="@string/log"-->
+<!--        app:showAsAction="never" />-->
 
 </menu>

@@ -8,6 +8,7 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.databinding.ItemTxtTocReplaceBinding
+import io.legado.app.lib.theme.accentColor
 
 class TxtTocReplaceAdapter(context: Context) :
     RecyclerAdapter<Pair<BookChapter, BookChapter>, ItemTxtTocReplaceBinding>(context) {
@@ -54,6 +55,8 @@ class TxtTocReplaceAdapter(context: Context) :
         payloads: MutableList<Any>
     ) {
         binding.apply {
+            replacementText.setTextColor(context.accentColor)
+
             if (payloads.isEmpty()) {
                 originalText.text = item.first.title
                 replacementText.text = item.second.title

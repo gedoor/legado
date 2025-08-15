@@ -16,6 +16,7 @@ import io.legado.app.databinding.DialogTocReplaceBinding
 import io.legado.app.help.book.BookHelp
 import io.legado.app.help.book.ContentProcessor
 import io.legado.app.lib.theme.primaryColor
+import io.legado.app.model.ReadBook.loadContent
 import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.book.toc.TocViewModel
 import io.legado.app.ui.file.HandleFileContract
@@ -115,7 +116,7 @@ class TxtTocReplaceDialog() : BaseDialogFragment(R.layout.dialog_toc_replace),
             //R.id.menu_import_onLine -> showImportDialog()
             //R.id.menu_import_qr -> qrCodeResult.launch()
             R.id.menu_help -> showHelp("txtTocReplaceHelp")
-            R.id.menu_log -> showDialogFragment<AppLogDialog>()
+            //R.id.menu_log -> showDialogFragment<AppLogDialog>()
         }
         return false
     }
@@ -181,6 +182,9 @@ class TxtTocReplaceDialog() : BaseDialogFragment(R.layout.dialog_toc_replace),
                     BookHelp.saveText(book, updatedChapter, processedContent)
                 }
             }
+
+            loadContent(resetPageOffset = false)
+
         }.onStart {
             binding.rlLoading.visible()
         }.onSuccess {
