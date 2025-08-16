@@ -123,6 +123,13 @@ object BookContent {
             }
         }
         var contentStr = contentList.joinToString("\n")
+        //全文替换
+        val replaceRegex = contentRule.replaceRegex
+        if (!replaceRegex.isNullOrEmpty()) {
+            contentStr = contentStr.split(AppPattern.LFRegex).joinToString("\n") { it.trim() }
+            contentStr = analyzeRule.getString(replaceRegex, contentStr)
+            contentStr = contentStr.split(AppPattern.LFRegex).joinToString("\n") { "　　$it" }
+        }
         val titleRule = contentRule.title //先正文再章节名称
         if (!titleRule.isNullOrBlank()) {
             var title = analyzeRule.runCatching {
@@ -146,13 +153,6 @@ object BookContent {
                 bookChapter.titleMD5 = null
                 appDb.bookChapterDao.update(bookChapter)
             }
-        }
-        //全文替换
-        val replaceRegex = contentRule.replaceRegex
-        if (!replaceRegex.isNullOrEmpty()) {
-            contentStr = contentStr.split(AppPattern.LFRegex).joinToString("\n") { it.trim() }
-            contentStr = analyzeRule.getString(replaceRegex, contentStr)
-            contentStr = contentStr.split(AppPattern.LFRegex).joinToString("\n") { "　　$it" }
         }
         Debug.log(bookSource.bookSourceUrl, "┌获取章节名称")
         Debug.log(bookSource.bookSourceUrl, "└${bookChapter.title}")
