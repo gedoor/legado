@@ -47,6 +47,7 @@ class ZhanweifuContentEditDialog : BaseDialogFragment(R.layout.zhanweifu_dialog_
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+        LogUtils.d("AiSummary", "ZhanweifuContentEditDialog::onFragmentCreated")
         binding.zhanweifuToolBar.setBackgroundColor(primaryColor)
         binding.zhanweifuToolBar.title = ReadBook.curTextChapter?.title
         zhanweifuInitMenu()
@@ -147,6 +148,7 @@ class ZhanweifuContentEditDialog : BaseDialogFragment(R.layout.zhanweifu_dialog_
         val contentStream = MutableLiveData<String>()
 
         fun zhanweifuInitContent(reset: Boolean = false, success: (String) -> Unit) {
+            LogUtils.d("AiSummary", "ViewModel::zhanweifuInitContent start")
             execute {
                 val book = ReadBook.book ?: return@execute
                 val chapter = appDb.bookChapterDao
@@ -154,112 +156,49 @@ class ZhanweifuContentEditDialog : BaseDialogFragment(R.layout.zhanweifu_dialog_
                     ?: return@execute
 
                 if (reset) {
+                    LogUtils.d("AiSummary", "ViewModel::zhanweifuInitContent - reset content")
                     ZhanweifuBookHelp.zhanweifuDelContent(book, chapter)
                 }
 
-                // 1. 检查对话框自身缓存
                 val dialogContent = ZhanweifuBookHelp.zhanweifuGetContent(book, chapter)
                 if (!dialogContent.isNullOrEmpty()) {
                     withContext(Dispatchers.Main) { success.invoke(dialogContent) }
                     return@execute
                 }
 
-                // 2. 检查AI摘要缓存
                 val cachedSummary = ZhanweifuBookHelp.getAiSummaryFromCache(book, chapter)
                 if (!cachedSummary.isNullOrEmpty()) {
                     withContext(Dispatchers.Main) { success.invoke(cachedSummary) }
                     return@execute
                 }
 
-                // 3. 流式API请求
                 val chapterContent = ReadBook.curTextChapter?.getContent() ?: ""
                 if (chapterContent.isEmpty()) {
                     withContext(Dispatchers.Main) { success.invoke("本章无内容") }
                     return@execute
                 }
-
-                val apiKey = AppConfig.aiSummaryApiKey
-                val apiUrl = AppConfig.aiSummaryApiUrl
-                if (apiKey.isNullOrEmpty() || apiUrl.isNullOrEmpty()) {
-                    withContext(Dispatchers.Main) { success.invoke("请先设置AI摘要的API Key和URL") }
-                    return@execute
-                }
-
-                streamRequest(apiUrl, apiKey, chapterContent)
-
-            }.onStart {
+                
                 loadStateLiveData.postValue(true)
-            }.onFinally {
-                loadStateLiveData.postValue(false)
-            }
-        }
-
-        private suspend fun streamRequest(apiUrl: String, apiKey: String, content: String) {
-            val client = OkHttpClient.Builder()
-                .connectTimeout(60, TimeUnit.SECONDS)
-                .readTimeout(60, TimeUnit.SECONDS)
-                .writeTimeout(60, TimeUnit.SECONDS)
-                .build()
-            val mediaType = "application/json; charset=utf-8".toMediaType()
-            val messages = mutableListOf<Map<String, String>>()
-            messages.add(mapOf("role" to "system", "content" to (AppConfig.aiSummarySystemPrompt ?: "请总结以下内容：")))
-            messages.add(mapOf("role" to "user", "content" to content))
-            val requestBody = GSON.toJson(mapOf(
-                "model" to (AppConfig.aiSummaryModelId ?: "gpt-3.5-turbo"),
-                "messages" to messages,
-                "stream" to true
-            )).toRequestBody(mediaType)
-
-            val request = Request.Builder()
-                .url(apiUrl)
-                .post(requestBody)
-                .addHeader("Authorization", "Bearer $apiKey")
-                .addHeader("Accept", "text/event-stream")
-                .build()
-
-            try {
-                client.newCall(request).execute().use { response ->
-                    if (!response.isSuccessful) throw IOException("Unexpected code $response")
-                    handleStreamResponse(response)
-                }
-            } catch (e: IOException) {
-                withContext(Dispatchers.Main) {
-                    contentStream.postValue("\n\n[请求失败: ${e.message}]")
-                }
-            }
-        }
-
-        private suspend fun handleStreamResponse(response: Response) {
-            val source = response.body?.source() ?: return
-            try {
-                while (!source.exhausted()) {
-                    val line = source.readUtf8Line() ?: continue
-                    if (line.startsWith("data:")) {
-                        val data = line.substring(5).trim()
-                        if (data == "[DONE]") {
-                            break
+                val summaryBuilder = StringBuilder()
+                ZhanweifuBookHelp.getAiSummary(
+                    content = chapterContent,
+                    onResponse = { 
+                        contentStream.postValue(it)
+                        summaryBuilder.append(it)
+                    },
+                    onFinish = { 
+                        loadStateLiveData.postValue(false)
+                        val finalSummary = summaryBuilder.toString()
+                        if (finalSummary.isNotEmpty()) {
+                            ZhanweifuBookHelp.saveAiSummaryToCache(book, chapter, finalSummary)
                         }
-                        try {
-                            val reader = JsonReader(data.reader())
-                            val chunk = GSON.fromJson<Map<String, Any>>(reader, object : com.google.gson.reflect.TypeToken<Map<String, Any>>() {}.type)
-                            val choices = chunk["choices"] as? List<*>
-                            val delta = choices?.firstOrNull() as? Map<*, *>
-                            val content = delta?.get("delta") as? Map<*, *>
-                            val text = content?.get("content") as? String
-                            if (!text.isNullOrEmpty()) {
-                                withContext(Dispatchers.Main) {
-                                    contentStream.postValue(text)
-                                }
-                            }
-                        } catch (e: Exception) {
-                            // Ignore parsing errors for now
-                        }
+                    },
+                    onError = { 
+                        loadStateLiveData.postValue(false)
+                        contentStream.postValue("\n\n[请求失败: $it]") 
                     }
-                }
-            } catch (e: IOException) {
-                 withContext(Dispatchers.Main) {
-                    contentStream.postValue("\n\n[读取数据流失败: ${e.message}]")
-                }
+                )
+
             }
         }
 

@@ -12,6 +12,8 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.config.AppConfig
+import io.legado.app.model.AiSummaryState
+import io.legado.app.ui.book.read.content.ZhanweifuBookHelp
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.ArchiveUtils
@@ -397,7 +399,13 @@ object BookHelp {
     /**
      * 读取章节内容
      */
-    fun getContent(book: Book, bookChapter: BookChapter): String? {
+        fun getContent(book: Book, bookChapter: BookChapter): String? {
+        if (AppConfig.aiSummaryModeEnabled) {
+            val summary = ZhanweifuBookHelp.getAiSummaryFromCache(book, bookChapter)
+            if (summary != null) {
+                return summary
+            }
+        }
         val file = downloadDir.getFile(
             cacheFolderName,
             book.getFolderName(),
@@ -606,6 +614,33 @@ object BookHelp {
             .replace(regexB, "")
             .replace(regexC, "")
             .replace(regexOther, "")
+    }
+
+    fun getOriginalContent(book: Book, bookChapter: BookChapter): String? {
+        // For local books, always go to the source file, which is the ground truth.
+        if (book.isLocal) {
+            return LocalBook.getContent(book, bookChapter)
+        }
+        val file = downloadDir.getFile(
+            cacheFolderName,
+            book.getFolderName(),
+            bookChapter.getFileName()
+        )
+        if (file.exists()) {
+            val string = file.readText()
+            if (string.isEmpty()) {
+                return null
+            }
+            // Heuristic: If cached content is very short, it's likely a polluted summary.
+            // Delete it and return null to force a re-download by the app's main logic.
+            // 250 is a magic number, but a real chapter is rarely shorter than this.
+            if (!book.isLocal && string.length < 250) {
+                file.delete()
+                return null
+            }
+            return string
+        }
+        return null
     }
 
 }

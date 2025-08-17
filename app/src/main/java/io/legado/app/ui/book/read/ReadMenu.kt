@@ -455,6 +455,10 @@ class ReadMenu @JvmOverloads constructor(
             }
         }
 
+        fabAiCoarse.setOnClickListener {
+            callBack.onAiCoarseClick()
+        }
+
         //替换
         fabReplaceRule.setOnClickListener { callBack.openReplaceRule() }
 
@@ -561,6 +565,14 @@ class ReadMenu @JvmOverloads constructor(
         fabAutoPage.setColorFilter(textColor)
     }
 
+    fun setAiCoarseState(isSelected: Boolean) = binding.run {
+        if (isSelected) {
+            fabAiCoarse.setColorFilter(context.accentColor)
+        } else {
+            fabAiCoarse.setColorFilter(textColor)
+        }
+    }
+
     private fun upBrightnessVwPos() {
         if (AppConfig.brightnessVwPos) {
             binding.root.modifyBegin()
@@ -595,6 +607,7 @@ class ReadMenu @JvmOverloads constructor(
         fun onMenuShow()
         fun onMenuHide()
         fun onEditContentClick()
+        fun onAiCoarseClick()
     }
 
 }

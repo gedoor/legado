@@ -32,4 +32,6 @@ object EventBus {
     const val READ_ALOUD_PLAY = "readAloudPlay"
     const val EXPORT_BOOK = "exportBook"
     const val UP_MANGA_CONFIG = "upMangaConfig"
+    const val AI_COARSE_STATE_CHANGED = "aiCoarseStateChanged"
+    const val AI_SUMMARY_PRECACHE_FINISHED = "aiSummaryPrecacheFinished"
 }

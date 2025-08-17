@@ -736,5 +736,7 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             appCtx.putPrefString(PreferKey.aiSummarySaveMode, value)
         }
 
+    var aiSummaryModeEnabled: Boolean = false
+
 }
 
