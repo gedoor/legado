@@ -35,6 +35,7 @@ Legado is a free and open source novel reader for Android.
     - 高亮代码限制提高到2万字符，支持let、const关键字高亮
     - 支持epub统计每章字数
     - 优化字数统计，使其更加准确
+    - 允许jslib密封对象的修改，禁止未用var声明的隐性创建全局变量
 - 内置浏览器变动
     - 支持screen.orientation.lock在全屏时控制屏幕方向
     - 支持window.close()关闭网页
@@ -56,7 +57,9 @@ Legado is a free and open source novel reader for Android.
     - source.getLoginInfoMap()在用户信息未初始化时，返回空对象而不是null
 - 函数、变量新增
     - java.setConcurrent(concurrent:Sring)实时改变并发率
-    - cookie.setWebCookie(url,cookie)为内置浏览器设置cookie
+    - cookie.setWebCookie(url,cookie)单独给内置浏览器设置cookie
+    - source.refreshExplore()刷新发现
+    - source.refreshJSLib()刷新jslib
     - 目录规则新增isFromBookInfo变量，判断执行规则时是否来着详情页刷新
 - 其余杂项
     - 目录卷章会显示获取的章节信息
@@ -64,7 +67,7 @@ Legado is a free and open source novel reader for Android.
     - 合并音频界面两个调速按钮，界面布局调整
     - 优化源正文图片格式化规则
     - 规则编辑界面"章节更新时间"规则中文名改名为"章节信息"
-    - 先执行正文规则再执行标题规则
+    - 先执行正文规则最后执行标题规则
     - 保持text图片大小与字体汉字相同
 <br><br>
 

@@ -412,7 +412,6 @@ source.getKey()
 source.setVariable(variable: String?)
 source.getVariable()
 ```
-
 * 登录头操作
 ```js
 获取登录头
@@ -433,6 +432,13 @@ login函数获取登录信息键值
 source.getLoginInfoMap().get(key: String)
 清除登录信息
 source.removeLoginInfo()
+```
+* 书源缓存刷新
+```js
+刷新发现
+source.refreshExplore()
+刷新jslib
+source.refreshJSLib()
 ```
 ## cookie对象的部分可用函数
 ```js

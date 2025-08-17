@@ -20,6 +20,10 @@ import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.has
 import io.legado.app.utils.printOnDebug
 import org.intellij.lang.annotations.Language
+import io.legado.app.help.source.clearExploreKindsCache
+import io.legado.app.model.SharedJsScope.remove
+import io.legado.app.utils.isMainThread
+import kotlinx.coroutines.runBlocking
 
 /**
  * 可在js里调用,source.xxx()
@@ -250,6 +254,32 @@ interface BaseSource : JsExtensions {
      */
     fun get(key: String): String {
         return CacheManager.get("v_${getKey()}_${key}") ?: ""
+    }
+
+    /**
+     * 刷新发现
+     */
+    fun refreshExplore() {
+        if (isMainThread) {
+            error("refreshExplore must be called on a background thread")
+        }
+        runBlocking {
+            if (this@BaseSource is BookSource) {
+                this@BaseSource.clearExploreKindsCache()
+            }
+        }
+    }
+
+    /**
+     * 刷新JSLib
+     */
+    fun refreshJSLib() {
+        if (isMainThread) {
+            error("refreshJSLib must be called on a background thread")
+        }
+        runBlocking {
+            remove(jsLib)
+        }
     }
 
     /**
