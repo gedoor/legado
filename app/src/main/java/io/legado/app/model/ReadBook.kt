@@ -19,6 +19,7 @@ import io.legado.app.help.book.isSameNameAuthor
 import io.legado.app.help.book.readSimulating
 import io.legado.app.help.book.simulatedTotalChapterNum
 import io.legado.app.help.book.update
+import io.legado.app.ui.book.read.content.ZhanweifuBookHelp
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.help.coroutine.Coroutine
@@ -34,6 +35,7 @@ import io.legado.app.utils.postEvent
 import io.legado.app.utils.stackTraceStr
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.CoroutineScope
+import android.util.Log
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
@@ -321,12 +323,16 @@ object ReadBook : CoroutineScope by MainScope() {
     }
 
     fun moveToNextChapter(upContent: Boolean, upContentInPlace: Boolean = true): Boolean {
+        Log.d("AiSummary", "[GEMINI] moveToNextChapter called, upContent: $upContent, upContentInPlace: $upContentInPlace")
         if (durChapterIndex < simulatedChapterSize - 1) {
             durChapterPos = 0
             durChapterIndex++
             prevTextChapter?.cancelLayout()
             prevTextChapter = curTextChapter
             curTextChapter = nextTextChapter
+            if (AppConfig.aiSummaryModeEnabled) {
+                curTextChapter = null
+            }
             nextTextChapter = null
             if (curTextChapter == null) {
                 AppLog.putDebug("moveToNextChapter-章节未加载,开始加载")
@@ -553,11 +559,14 @@ object ReadBook : CoroutineScope by MainScope() {
         resetPageOffset: Boolean = false,
         success: (() -> Unit)? = null
     ) {
+        Log.d("AiSummary", "[GEMINI] loadContent called, index: $index")
+        AppLog.put("AiSummary: ReadBook.loadContent for index: $index")
         Coroutine.async {
             val book = book!!
             val chapter = appDb.bookChapterDao.getChapter(book.bookUrl, index) ?: return@async
             if (addLoading(index)) {
                 BookHelp.getContent(book, chapter)?.let {
+                    AppLog.put("AiSummary: ReadBook.loadContent - getContent returned something, calling contentLoadFinish.")
                     contentLoadFinish(
                         book,
                         chapter,
@@ -566,11 +575,14 @@ object ReadBook : CoroutineScope by MainScope() {
                         resetPageOffset,
                         success = success
                     )
-                } ?: download(
-                    downloadScope,
-                    chapter,
-                    resetPageOffset
-                )
+                } ?: run {
+                    AppLog.put("AiSummary: ReadBook.loadContent - getContent returned null, calling download.")
+                    download(
+                        downloadScope,
+                        chapter,
+                        resetPageOffset
+                    )
+                }
             }
         }.onError {
             AppLog.put("加载正文出错\n${it.localizedMessage}")

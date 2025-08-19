@@ -6,6 +6,7 @@ import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.os.Looper
+import android.util.Log
 import android.view.Gravity
 import android.view.InputDevice
 import android.view.KeyEvent
@@ -13,10 +14,12 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
+import android.view.animation.AnimationUtils
 import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.content.ContextCompat
 import androidx.core.view.get
 import androidx.core.view.size
 import androidx.lifecycle.lifecycleScope
@@ -252,6 +255,9 @@ class ReadBookActivity : BaseReadBookActivity(),
             upSeekBarProgress()
             binding.readMenu.upSeekBar()
         }
+    }
+    private val blinkAnim by lazy {
+        AnimationUtils.loadAnimation(this, R.anim.blink)
     }
 
     //恢复跳转前进度对话框的交互结果
@@ -1031,6 +1037,86 @@ class ReadBookActivity : BaseReadBookActivity(),
             ReadBook.readAloud()
         }
         loadStates = true
+        upAiWordCount()
+    }
+
+    private fun upAiWordCount() {
+        lifecycleScope.launch(Dispatchers.Main) {
+            val indicator = binding.tvNextCachedIndicator
+            indicator.clearAnimation()
+
+            if (!AppConfig.aiSummaryModeEnabled) {
+                binding.tvAiWordCount.visible(false)
+                binding.aiIcon.visible(false)
+                indicator.visible(false)
+                return@launch
+            }
+
+            ReadBook.book?.let { book ->
+                // Update current chapter's summary UI
+                ReadBook.curTextChapter?.chapter?.let { chapter ->
+                    val summary = withContext(Dispatchers.IO) {
+                        ZhanweifuBookHelp.getAiSummaryFromCache(book, chapter)
+                    }
+                    val summaryLength = summary?.length ?: 0
+                    val originalLength = withContext(Dispatchers.IO) {
+                        BookHelp.getOriginalContent(book, chapter)?.length ?: 0
+                    }
+                    if (summaryLength > 0) {
+                        binding.tvAiWordCount.text = "(${originalLength}->${summaryLength})"
+                        binding.tvAiWordCount.visible(true)
+                        binding.aiIcon.visible(true)
+                    } else {
+                        binding.tvAiWordCount.visible(false)
+                        binding.aiIcon.visible(false)
+                    }
+                } ?: run {
+                    binding.tvAiWordCount.visible(false)
+                    binding.aiIcon.visible(false)
+                }
+
+                // Update next chapter cached indicator
+                val nextChapterIndex = ReadBook.durChapterIndex + 1
+                if (nextChapterIndex < ReadBook.chapterSize) {
+                    val isNextInProgress = AiSummaryState.inProgress.contains(nextChapterIndex)
+                    val isNextCached = withContext(Dispatchers.IO) {
+                        val nextChapter = appDb.bookChapterDao.getChapter(book.bookUrl, nextChapterIndex)
+                        if (nextChapter != null) {
+                            ZhanweifuBookHelp.getAiSummaryFromCache(book, nextChapter) != null
+                        } else {
+                            false
+                        }
+                    }
+                    val isAnyOtherInProgress = AiSummaryState.inProgress.any { it != nextChapterIndex }
+
+                    when {
+                        isNextInProgress -> {
+                            indicator.setTextColor(ContextCompat.getColor(this@ReadBookActivity, R.color.indicator_blue))
+                            indicator.startAnimation(blinkAnim)
+                            indicator.visible(true)
+                        }
+                        !isNextCached -> {
+                            indicator.setTextColor(ContextCompat.getColor(this@ReadBookActivity, R.color.indicator_red))
+                            indicator.visible(true)
+                        }
+                        isNextCached -> {
+                            indicator.setTextColor(ContextCompat.getColor(this@ReadBookActivity, R.color.indicator_green))
+                            if (isAnyOtherInProgress) {
+                                indicator.startAnimation(blinkAnim)
+                            }
+                            indicator.visible(true)
+                        }
+                    }
+                } else {
+                    indicator.visible(false)
+                }
+
+            } ?: run {
+                binding.tvAiWordCount.visible(false)
+                binding.aiIcon.visible(false)
+                indicator.visible(false)
+            }
+        }
     }
 
     /**
@@ -1086,6 +1172,8 @@ class ReadBookActivity : BaseReadBookActivity(),
      * 页面改变
      */
     override fun pageChanged() {
+        upAiWordCount()
+        Log.d("AiSummary", "[GEMINI] pageChanged called")
         inProgressSnackbar?.dismiss()
         if (AppConfig.aiSummaryModeEnabled) {
             if (AiSummaryState.inProgress.contains(ReadBook.durChapterIndex)) {
@@ -1528,13 +1616,15 @@ class ReadBookActivity : BaseReadBookActivity(),
     }
 
     override fun onAiCoarseClick() {
+        Log.d("AiSummary", "[GEMINI] onAiCoarseClick called")
         binding.readMenu.runMenuOut()
         AppConfig.aiSummaryModeEnabled = !AppConfig.aiSummaryModeEnabled
         binding.readMenu.setAiCoarseState(AppConfig.aiSummaryModeEnabled)
 
         if (AppConfig.aiSummaryModeEnabled) {
-            if (AiSummaryState.inProgress.isNotEmpty()) {
-                toastOnUi("已有AI摘要任务在运行，请稍候")
+            val chapterIndex = ReadBook.curTextChapter!!.chapter.index
+            if (AiSummaryState.inProgress.contains(chapterIndex)) {
+                toastOnUi("本章AI摘要正在生成中，请稍候")
                 AppConfig.aiSummaryModeEnabled = false
                 binding.readMenu.setAiCoarseState(false)
                 return
@@ -1542,7 +1632,6 @@ class ReadBookActivity : BaseReadBookActivity(),
 
             val book = ReadBook.book!!
             val chapter = ReadBook.curTextChapter!!.chapter
-            val chapterIndex = chapter.index
             lastPreCacheChapterIndex = chapterIndex
 
             val cachedSummary = ZhanweifuBookHelp.getAiSummaryFromCache(book, chapter)
@@ -1598,54 +1687,81 @@ class ReadBookActivity : BaseReadBookActivity(),
     }
 
     private fun preCacheNextChapterSummary() {
+        val lookaheadCount = getPrefString(PreferKey.aiSummaryChapterCount, "3")?.toIntOrNull() ?: 3
+        if (lookaheadCount == 0) return
+
+        val book = ReadBook.book ?: return
+        val chaptersToCache = mutableListOf<BookChapter>()
+
         lifecycleScope.launch(Dispatchers.IO) {
-            if (AiSummaryState.inProgress.isNotEmpty()) {
-                return@launch
+            for (i in 1..lookaheadCount) {
+                val targetIndex = ReadBook.durChapterIndex + i
+                if (targetIndex >= ReadBook.chapterSize) break
+
+                if (AiSummaryState.inProgress.contains(targetIndex)) continue
+
+                val chapter = appDb.bookChapterDao.getChapter(book.bookUrl, targetIndex) ?: continue
+                val isNotCached = ZhanweifuBookHelp.getAiSummaryFromCache(book, chapter) == null
+                if (isNotCached) {
+                    AiSummaryState.inProgress.add(targetIndex)
+                    chaptersToCache.add(chapter)
+                }
             }
 
-            val book = ReadBook.book ?: return@launch
-            val nextChapterIndex = ReadBook.durChapterIndex + 1
-
-            if (nextChapterIndex >= ReadBook.chapterSize) {
-                return@launch //已经是最后一章
+            for ((i, chapter) in chaptersToCache.withIndex()) {
+                val delayMillis = i * 10000L
+                launch {
+                    runPreCacheTask(chapter, delayMillis)
+                }
             }
+        }
+    }
 
-            val nextChapter = appDb.bookChapterDao.getChapter(book.bookUrl, nextChapterIndex) ?: return@launch
+    private suspend fun runPreCacheTask(chapter: BookChapter, delay: Long) {
+        delay(delay)
 
-            val cachedSummary = ZhanweifuBookHelp.getAiSummaryFromCache(book, nextChapter)
-            if (cachedSummary != null) {
-                return@launch //已有缓存
-            }
+        val concurrencyLimit = getPrefString(PreferKey.aiSummaryChapterCount, "3")?.toIntOrNull() ?: 3
+        if (concurrencyLimit == 0) return
 
-            val nextChapterContent = BookHelp.getOriginalContent(book, nextChapter)
-            if (nextChapterContent.isNullOrEmpty()) {
-                return@launch
+        while (AiSummaryState.inProgress.size >= concurrencyLimit) {
+            LogUtils.d("AiSummary", "Concurrency limit reached. Task for chapter ${chapter.title} is waiting.")
+            delay(2000)
+        }
+
+        val book = ReadBook.book ?: return
+        val chapterIndex = chapter.index
+        try {
+            LogUtils.d("AiSummary", "runPreCacheTask: Starting generation for '${chapter.title}'.")
+
+            val chapterContent = BookHelp.getOriginalContent(book, chapter)
+            if (chapterContent.isNullOrEmpty()) {
+                LogUtils.d("AiSummary", "runPreCacheTask: Original content for '${chapter.title}' is null or empty. Cannot generate summary.")
+                return
             }
 
             withContext(Dispatchers.Main) {
-                toastOnUi("开始缓存下一章: ${nextChapter.title}")
+                toastOnUi("开始缓存: ${chapter.title}")
             }
             val startTime = System.currentTimeMillis()
-            AiSummaryState.inProgress.add(nextChapterIndex)
-
             val summaryBuilder = StringBuilder()
             ZhanweifuBookHelp.getAiSummary(
-                content = nextChapterContent,
+                content = chapterContent,
                 onResponse = { summaryBuilder.append(it) },
                 onFinish = {
-                    AiSummaryState.inProgress.remove(nextChapterIndex)
                     val finalSummary = summaryBuilder.toString()
                     if (finalSummary.isNotEmpty()) {
-                        ZhanweifuBookHelp.saveAiSummaryToCache(book, nextChapter, finalSummary)
+                        ZhanweifuBookHelp.saveAiSummaryToCache(book, chapter, finalSummary)
                         val duration = (System.currentTimeMillis() - startTime) / 1000
-                        toastOnUi("下一章 (${nextChapter.title}) 已缓存, 耗时 ${duration} 秒")
+                        val message = "(${chapter.title}) 已缓存, 耗时 ${duration} 秒"
+                        toastOnUi(message)
                     }
                 },
-                onError = { 
-                    AiSummaryState.inProgress.remove(nextChapterIndex)
-                    LogUtils.e("preCacheNextChapterSummary", it)
+                onError = {
+                    LogUtils.e("runPreCacheTask for ${chapter.title}", it)
                 }
             )
+        } finally {
+            AiSummaryState.inProgress.remove(chapterIndex)
         }
     }
 

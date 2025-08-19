@@ -34,4 +34,5 @@ object EventBus {
     const val UP_MANGA_CONFIG = "upMangaConfig"
     const val AI_COARSE_STATE_CHANGED = "aiCoarseStateChanged"
     const val AI_SUMMARY_PRECACHE_FINISHED = "aiSummaryPrecacheFinished"
+    const val GENERATE_AI_SUMMARY = "generate_ai_summary"
 }

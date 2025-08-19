@@ -1,16 +1,16 @@
 package io.legado.app.ui.book.read
 
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
+import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.DialogFragment
 import io.legado.app.R
 import io.legado.app.help.config.AppConfig
-import io.legado.app.ui.config.AiSummaryConfigFragment
+import io.legado.app.ui.book.read.content.ZhanweifuBookHelp
 import io.legado.app.utils.GSON
-import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -19,17 +19,14 @@ import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okio.Buffer
 import okhttp3.RequestBody.Companion.toRequestBody
-import java.io.File
-import java.util.concurrent.TimeUnit
+import okio.Buffer
 import java.io.IOException
-import java.text.SimpleDateFormat
-import java.util.Date
-import androidx.documentfile.provider.DocumentFile
-import android.net.Uri
-import splitties.init.appCtx
 import java.io.OutputStream
+import java.text.SimpleDateFormat
+import java.util.*
+import java.util.concurrent.TimeUnit
+
 
 class AiSummaryDialog : DialogFragment() {
 
@@ -51,6 +48,21 @@ class AiSummaryDialog : DialogFragment() {
             toastOnUi("本章无内容")
             dismiss()
             return
+        }
+
+        // First, try to load from the internal cache
+        val book = io.legado.app.model.ReadBook.book
+        val chapter = io.legado.app.model.ReadBook.curTextChapter?.chapter
+        if (book != null && chapter != null) {
+            val cachedSummary = ZhanweifuBookHelp.getAiSummaryFromCache(book, chapter)
+            if (cachedSummary != null) {
+                binding.progressBar.visibility = View.GONE
+                binding.tvSummary.visibility = View.VISIBLE
+                binding.tvSummary.text = cachedSummary
+                // We don't save here because it's already cached internally.
+                // The external save is a separate action.
+                return
+            }
         }
 
         binding.progressBar.visibility = View.VISIBLE
@@ -113,6 +125,10 @@ class AiSummaryDialog : DialogFragment() {
                             binding.progressBar.visibility = View.GONE
                             binding.tvSummary.visibility = View.VISIBLE
                             binding.tvSummary.text = summary
+                            // Also save to internal cache for consistency
+                            if (book != null && chapter != null) {
+                                ZhanweifuBookHelp.saveAiSummaryToCache(book, chapter, summary)
+                            }
                             saveSummaryToFile(summary)
                         }
                     } else {

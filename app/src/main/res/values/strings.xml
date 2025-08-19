@@ -994,6 +994,12 @@
     <string name="ai_summary_save_mode_desc">Mode to save AI summary</string>
     <string name="ai_summary_help">AI Summary Help</string>
     <string name="ai_summary_help_desc">View help documentation for AI Summary feature</string>
+    <string name="ai_summary_clear_cache">Clear AI Summary Cache</string>
+    <string name="ai_summary_clear_cache_desc">Deletes all locally cached AI summary content</string>
+    <string name="ai_summary_clear_cache_confirm">Are you sure you want to delete all AI summary caches? This action cannot be undone.</string>
+    <string name="ai_summary_clear_cache_success">AI summary cache cleared</string>
+    <string name="ai_summary_chapter_count">Concurrent Chapters</string>
+    <string name="ai_summary_chapter_count_desc">Number of subsequent chapters to pre-generate AI summaries for</string>
     <string name="ai_coarse">AI Coarse</string>
     <string name="chapter_change_source">Single chapter source switching</string>
     <string name="book_change_source">Change the source of the whole book</string>

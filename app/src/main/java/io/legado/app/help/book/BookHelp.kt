@@ -39,6 +39,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.withContext
+import android.util.Log
 import org.apache.commons.text.similarity.JaccardSimilarity
 import splitties.init.appCtx
 import java.io.ByteArrayInputStream
@@ -400,12 +401,39 @@ object BookHelp {
      * 读取章节内容
      */
         fun getContent(book: Book, bookChapter: BookChapter): String? {
+        Log.d("AiSummary", "[GEMINI] BookHelp.getContent for chapter: ${bookChapter.title}")
+        Log.d("AiSummary", "[GEMINI] BookHelp.getContent - AI Mode Enabled: ${AppConfig.aiSummaryModeEnabled}")
         if (AppConfig.aiSummaryModeEnabled) {
             val summary = ZhanweifuBookHelp.getAiSummaryFromCache(book, bookChapter)
             if (summary != null) {
+                Log.d("AiSummary", "[GEMINI] BookHelp.getContent - Found AI summary cache. Returning summary.")
                 return summary
             }
+            Log.d("AiSummary", "[GEMINI] BookHelp.getContent - AI summary cache NOT found.")
         }
+        Log.d("AiSummary", "[GEMINI] BookHelp.getContent - Falling back to original content.")
+        Log.d("AiSummary", "[GEMINI] BookHelp.getContent for chapter: ${bookChapter.title}")
+        Log.d("AiSummary", "[GEMINI] BookHelp.getContent - AI Mode Enabled: ${AppConfig.aiSummaryModeEnabled}")
+        if (AppConfig.aiSummaryModeEnabled) {
+            val summary = ZhanweifuBookHelp.getAiSummaryFromCache(book, bookChapter)
+            if (summary != null) {
+                Log.d("AiSummary", "[GEMINI] BookHelp.getContent - Found AI summary cache. Returning summary.")
+                return summary
+            }
+            Log.d("AiSummary", "[GEMINI] BookHelp.getContent - AI summary cache NOT found.")
+        }
+        Log.d("AiSummary", "[GEMINI] BookHelp.getContent - Falling back to original content.")
+        io.legado.app.utils.LogUtils.d("AiSummary", "BookHelp.getContent for chapter: ${bookChapter.title}")
+        io.legado.app.utils.LogUtils.d("AiSummary", "BookHelp.getContent - AI Mode Enabled: ${AppConfig.aiSummaryModeEnabled}")
+        if (AppConfig.aiSummaryModeEnabled) {
+            val summary = ZhanweifuBookHelp.getAiSummaryFromCache(book, bookChapter)
+            if (summary != null) {
+                io.legado.app.utils.LogUtils.d("AiSummary", "BookHelp.getContent - Found AI summary cache. Returning summary.")
+                return summary
+            }
+            io.legado.app.utils.LogUtils.d("AiSummary", "BookHelp.getContent - AI summary cache NOT found.")
+        }
+        io.legado.app.utils.LogUtils.d("AiSummary", "BookHelp.getContent - Falling back to original content.")
         val file = downloadDir.getFile(
             cacheFolderName,
             book.getFolderName(),
@@ -627,18 +655,23 @@ object BookHelp {
             bookChapter.getFileName()
         )
         if (file.exists()) {
-            val string = file.readText()
-            if (string.isEmpty()) {
-                return null
+            return try {
+                val string = file.readText()
+                if (string.isEmpty()) {
+                    null
+                } else if (!book.isLocal && string.length < 250) {
+                    // Heuristic: If cached content is very short, it's likely a polluted summary.
+                    // Delete it and return null to force a re-download by the app's main logic.
+                    // 250 is a magic number, but a real chapter is rarely shorter than this.
+                    file.delete()
+                    null
+                } else {
+                    string
+                }
+            } catch (e: FileNotFoundException) {
+                // Race condition: file might be deleted between exists() and readText()
+                null
             }
-            // Heuristic: If cached content is very short, it's likely a polluted summary.
-            // Delete it and return null to force a re-download by the app's main logic.
-            // 250 is a magic number, but a real chapter is rarely shorter than this.
-            if (!book.isLocal && string.length < 250) {
-                file.delete()
-                return null
-            }
-            return string
         }
         return null
     }

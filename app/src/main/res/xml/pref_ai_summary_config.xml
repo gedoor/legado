@@ -27,6 +27,14 @@
         android:persistent="true"
         android:defaultValue="请总结以下内容：" />
 
+    <EditTextPreference
+        android:key="pref_ai_summary_chapter_count"
+        android:title="@string/ai_summary_chapter_count"
+        android:summary="@string/ai_summary_chapter_count_desc"
+        android:persistent="true"
+        android:defaultValue="3"
+        android:inputType="number" />
+
     <io.legado.app.lib.prefs.PathPreference
         android:key="aiSummaryCachePath"
         android:title="@string/ai_summary_cache_path"
@@ -52,5 +60,10 @@
         android:key="aiSummaryHelp"
         android:title="@string/ai_summary_help"
         android:summary="@string/ai_summary_help_desc" />
+
+    <Preference
+        android:key="aiSummaryClearCache"
+        android:title="@string/ai_summary_clear_cache"
+        android:summary="@string/ai_summary_clear_cache_desc" />
 
 </PreferenceScreen>

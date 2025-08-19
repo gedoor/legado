@@ -191,4 +191,5 @@ object PreferKey {
     const val aiSummaryCachePath = "aiSummaryCachePath"
     const val aiSummarySaveFormat = "aiSummarySaveFormat"
     const val aiSummarySaveMode = "aiSummarySaveMode"
+    const val aiSummaryChapterCount = "pref_ai_summary_chapter_count"
 }

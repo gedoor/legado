@@ -44,12 +44,27 @@ object ZhanweifuBookHelp {
 
     fun getAiSummaryFromCache(book: Book, chapter: BookChapter): String? {
         val file = cacheDir.getFile(book.getFolderName(), chapter.getFileName() + "_ai_summary")
-        return if (file.exists()) file.readText() else null
+        LogUtils.d("AiSummary", "getAiSummaryFromCache for chapter '${chapter.title}', path: ${file.absolutePath}")
+        return if (file.exists()) {
+            LogUtils.d("AiSummary", "Cache exists, returning content.")
+            file.readText()
+        } else {
+            LogUtils.d("AiSummary", "Cache does not exist.")
+            null
+        }
     }
 
     fun saveAiSummaryToCache(book: Book, chapter: BookChapter, summary: String) {
         val file = cacheDir.getFile(book.getFolderName(), chapter.getFileName() + "_ai_summary")
+        LogUtils.d("AiSummary", "saveAiSummaryToCache for chapter '${chapter.title}', path: ${file.absolutePath}")
         file.createFileIfNotExist().writeText(summary)
+    }
+
+    fun delAiSummaryCache(book: Book, chapter: BookChapter) {
+        val file = cacheDir.getFile(book.getFolderName(), chapter.getFileName() + "_ai_summary")
+        if (file.exists()) {
+            file.delete()
+        }
     }
 
     suspend fun getAiSummary(
@@ -69,18 +84,9 @@ object ZhanweifuBookHelp {
         
         val wordCount = content.length
         LogUtils.d("AiSummary", "开始生成AI摘要，请求字数：${wordCount}")
-        // Log the full content in chunks to avoid truncation
-        val chunkSize = 3000
-        for (i in 0..content.length / chunkSize) {
-            val start = i * chunkSize
-            var end = (i + 1) * chunkSize
-            if (end > content.length) {
-                end = content.length
-            }
-            LogUtils.d("AiSummary_Content", content.substring(start, end))
-        }
-        val newContent = "本章${wordCount}字，下面是正文内容：\n\n${content}"
-
+   
+        val newContent = "${content}\n\n本章${wordCount}字左右"
+        
         val client = OkHttpClient.Builder()
             .connectTimeout(60, TimeUnit.SECONDS)
             .readTimeout(60, TimeUnit.SECONDS)
@@ -89,7 +95,6 @@ object ZhanweifuBookHelp {
         val mediaType = "application/json; charset=utf-8".toMediaType()
         val messages = mutableListOf<Map<String, String>>()
         messages.add(mapOf("role" to "system", "content" to (AppConfig.aiSummarySystemPrompt ?: "请总结以下内容：")))
-        LogUtils.d("AiSummary", (AppConfig.aiSummarySystemPrompt ?: "请总结以下内容："))
         messages.add(mapOf("role" to "user", "content" to newContent))
         val requestBody = GSON.toJson(mapOf(
             "model" to (AppConfig.aiSummaryModelId ?: "gpt-3.5-turbo"),
@@ -163,6 +168,12 @@ object ZhanweifuBookHelp {
             withContext(Dispatchers.Main) {
                 onFinish.invoke()
             }
+        }
+    }
+
+    fun clearAllAiSummaryCache() {
+        if (cacheDir.exists()) {
+            cacheDir.deleteRecursively()
         }
     }
 }

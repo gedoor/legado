@@ -158,6 +158,7 @@ class ZhanweifuContentEditDialog : BaseDialogFragment(R.layout.zhanweifu_dialog_
                 if (reset) {
                     LogUtils.d("AiSummary", "ViewModel::zhanweifuInitContent - reset content")
                     ZhanweifuBookHelp.zhanweifuDelContent(book, chapter)
+                    ZhanweifuBookHelp.delAiSummaryCache(book, chapter)
                 }
 
                 val dialogContent = ZhanweifuBookHelp.zhanweifuGetContent(book, chapter)
