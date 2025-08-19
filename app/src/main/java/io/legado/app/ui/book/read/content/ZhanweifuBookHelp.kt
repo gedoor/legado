@@ -4,6 +4,7 @@ import com.google.gson.stream.JsonReader
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.config.AppConfig
+import io.legado.app.model.AiSummaryState
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -175,5 +176,6 @@ object ZhanweifuBookHelp {
         if (cacheDir.exists()) {
             cacheDir.deleteRecursively()
         }
+        AiSummaryState.inProgress.clear()
     }
 }
