@@ -32,7 +32,9 @@ class SourceLoginViewModel(application: Application) : BaseViewModel(application
             headerMap = runScriptWithContext {
                 source?.getHeaderMap(true) ?: emptyMap()
             }
-            book = bookUrl?.let { appDb.bookDao.getBook(it) }
+            book = bookUrl?.let {
+                appDb.bookDao.getBook(it) ?: appDb.searchBookDao.getSearchBook(it)?.toBook()
+            }
             chapter = book?.let { appDb.bookChapterDao.getChapter(it.bookUrl, it.durChapterIndex) }
             source
         }.onSuccess {
