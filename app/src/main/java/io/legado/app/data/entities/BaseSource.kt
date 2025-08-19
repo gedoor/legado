@@ -6,7 +6,6 @@ import com.script.buildScriptBindings
 import com.script.rhino.RhinoScriptEngine
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppLog
-import io.legado.app.data.entities.rule.RowUi
 import io.legado.app.help.CacheManager
 import io.legado.app.help.JsExtensions
 import io.legado.app.help.config.AppConfig
@@ -15,10 +14,8 @@ import io.legado.app.help.http.CookieStore
 import io.legado.app.help.source.getShareScope
 import io.legado.app.utils.GSON
 import io.legado.app.utils.GSONStrict
-import io.legado.app.utils.fromJsonArray
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.has
-import io.legado.app.utils.printOnDebug
 import org.intellij.lang.annotations.Language
 import io.legado.app.help.source.clearExploreKindsCache
 import io.legado.app.model.SharedJsScope.remove
@@ -66,30 +63,6 @@ interface BaseSource : JsExtensions {
 
     override fun getSource(): BaseSource? {
         return this
-    }
-
-    fun loginUi(): List<RowUi>? {
-        val json = loginUi?.let {
-            val loginJS = getLoginJs() ?: ""
-            try {
-                when {
-                    it.startsWith("@js:") -> evalJS(loginJS + it.substring(4)){
-                        put("result", getLoginInfoMap())
-                    }.toString()
-                    it.startsWith("<js>") -> evalJS(loginJS + it.substring(4,it.lastIndexOf("<"))){
-                        put("result", getLoginInfoMap())
-                    }.toString()
-                    else -> it
-                }
-            } catch (e: Throwable) {
-                log(e)
-                e.printOnDebug()
-                null
-            }
-        }
-        return GSON.fromJsonArray<RowUi>(json).onFailure {
-            it.printOnDebug()
-        }.getOrNull()
     }
 
     fun getLoginJs(): String? {

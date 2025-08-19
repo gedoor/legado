@@ -1269,6 +1269,7 @@ class ReadBookActivity : BaseReadBookActivity(),
             startActivity<SourceLoginActivity> {
                 putExtra("type", "bookSource")
                 putExtra("key", it.bookSourceUrl)
+                putExtra("bookUrl", ReadBook.book?.bookUrl)
             }
         }
     }

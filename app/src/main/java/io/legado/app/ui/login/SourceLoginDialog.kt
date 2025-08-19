@@ -23,6 +23,7 @@ import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.utils.GSON
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.dpToPx
+import io.legado.app.utils.fromJsonArray
 import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.openUrl
 import io.legado.app.utils.printOnDebug
@@ -38,6 +39,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
 import splitties.views.onClick
+import kotlin.text.lastIndexOf
+import kotlin.text.startsWith
+import kotlin.text.substring
 
 
 class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
@@ -50,12 +54,40 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
         setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
     }
 
+    fun evalJS(jsStr: String): String? {
+        val source = viewModel.source ?: return null
+        val loginJS = source.getLoginJs() ?: ""
+        return source.evalJS("$loginJS\n$jsStr") {
+            put("result", source.getLoginInfoMap())
+            put("book", viewModel.book)
+            put("chapter", viewModel.chapter)
+        }.toString()
+    }
+
+    fun loginUi(loginUi: String?): List<RowUi>? {
+        val json = loginUi?.let {
+            try {
+                when {
+                    it.startsWith("@js:") -> evalJS(it.substring(4))
+                    it.startsWith("<js>") -> evalJS(it.substring(4, it.lastIndexOf("<")))
+                    else -> it
+                }
+            } catch (e: Throwable) {
+                AppLog.put(e.message)
+                null
+            }
+        }
+        return GSON.fromJsonArray<RowUi>(json).onFailure {
+            it.printOnDebug()
+        }.getOrNull()
+    }
+
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         val source = viewModel.source ?: return
         binding.toolBar.setBackgroundColor(primaryColor)
         binding.toolBar.title = getString(R.string.login_source, source.getTag())
         val loginInfo = source.getLoginInfoMap()
-        val loginUi = source.loginUi()
+        val loginUi = loginUi(source.loginUi)
         loginUi?.forEachIndexed { index, rowUi ->
             when (rowUi.type) {
                 RowUi.Type.text -> ItemSourceEditBinding.inflate(
@@ -136,6 +168,8 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
                     runScriptWithContext {
                         source.evalJS("$loginJS\n$buttonFunctionJS") {
                             put("result", getLoginData(loginUi))
+                            put("book", viewModel.book)
+                            put("chapter", viewModel.chapter)
                         }
                     }
                 }.onFailure { e ->
