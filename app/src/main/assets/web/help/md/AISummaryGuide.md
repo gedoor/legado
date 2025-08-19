@@ -15,11 +15,11 @@
     *   **例如 (DeepSeek):** 登录后，在 API 文档的“快速入门”部分通常会提供基础 URL。
 
 *   **格式：**
-    一个标准的 HTTPS URL 字符串。
+    一个标准的 HTTPS URL 字符串。**暂时只支持openai规范的API。**
 
 *   **示例：**
     *   **OpenAI:** `https://api.openai.com/v1/chat/completions`
-    *   **Google AI:** `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent`
+    *   ~~**Google AI:** `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent`~~
     *   **DeepSeek:** `https://api.deepseek.com/chat/completions`
     *   **Moonshot (月之暗面):** `https://api.moonshot.cn/v1/chat/completions`
 
@@ -64,7 +64,7 @@
 *   **示例：**
     *   **OpenAI:** `gpt-4o`, `gpt-5（:`
     *   **Google AI:** `gemini-2.5-pro`, `gemini-2.5-flash`
-    *   **DeepSeek:** `deepseek--r1`, `deepseek-v3`
+    *   **DeepSeek:** `deepseek-r1`, `deepseek-v3`
 
 ---
 
