@@ -219,7 +219,7 @@ class TextChapterLayout(
             durY += titleBottomSpacing
 
             // 如果是单图模式且当前页有内容，强制分页
-            if (isSingleImageStyle && pendingTextPage.lines.isNotEmpty()) {
+            if (isSingleImageStyle && pendingTextPage.lines.isNotEmpty() && contents.isNotEmpty()) {
                 prepareNextPageIfNeed()
             }
         }
