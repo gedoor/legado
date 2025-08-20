@@ -15,11 +15,102 @@
         app:layout_constraintTop_toTopOf="parent"
         app:title="@string/discovery" />
 
+    <!-- 新增：书源类型切换 -->
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_source_type"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorSurface"
+        app:layout_constraintTop_toBottomOf="@+id/title_bar"
+        app:tabMode="fixed"
+        app:tabGravity="center"
+        app:tabIndicatorColor="?attr/colorPrimary"
+        app:tabSelectedTextColor="?attr/colorPrimary"
+        app:tabTextColor="?attr/colorOnSurface" />
+
+    <!-- 新增：当前书源信息区域 -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_current_source"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:visibility="gone"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="2dp"
+        app:layout_constraintTop_toBottomOf="@+id/tab_source_type">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="12dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/tv_current_source_info"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="14sp"
+                android:textColor="?attr/colorOnSurface"
+                tools:text="当前书源：笔趣阁 (小说)" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_switch_source"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/switch_source"
+                android:textSize="12sp"
+                style="@style/Widget.Material3.Button.TextButton" />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <!-- 新增：分组筛选 -->
+    <HorizontalScrollView
+        android:id="@+id/scroll_groups"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:scrollbars="none"
+        app:layout_constraintTop_toBottomOf="@+id/card_current_source">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group_groups"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="16dp"
+            app:singleSelection="true"
+            app:selectionRequired="false" />
+
+    </HorizontalScrollView>
+
+    <!-- 新增：分类筛选 -->
+    <HorizontalScrollView
+        android:id="@+id/scroll_categories"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:scrollbars="none"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@+id/scroll_groups">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group_categories"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="16dp"
+            app:singleSelection="true"
+            app:selectionRequired="false" />
+
+    </HorizontalScrollView>
+
     <io.legado.app.ui.widget.recycler.RecyclerViewAtPager2
         android:id="@+id/rv_find"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@+id/title_bar"
+        app:layout_constraintTop_toBottomOf="@+id/scroll_categories"
         app:layout_constraintBottom_toBottomOf="parent"
         tools:listitem="@layout/item_find_book" />
 
@@ -31,7 +122,7 @@
         android:gravity="center"
         android:visibility="gone"
         android:text="@string/explore_empty"
-        app:layout_constraintTop_toBottomOf="@+id/title_bar"
+        app:layout_constraintTop_toBottomOf="@+id/scroll_categories"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

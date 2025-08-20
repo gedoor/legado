@@ -79,6 +79,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlin.system.measureTimeMillis
 
 /**
  * 书源管理界面
@@ -88,6 +89,155 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     BookSourceAdapter.CallBack,
     SelectActionBar.CallBack,
     SearchView.OnQueryTextListener {
+    
+    /**
+     * 性能监控工具类
+     * 用于跟踪BookSourceActivity中各种操作的性能指标
+     */
+    private class PerformanceMonitor {
+        private val operationTimes = mutableMapOf<String, MutableList<Long>>()
+        private val memorySnapshots = mutableMapOf<String, Long>()
+        
+        /**
+         * 记录操作耗时
+         */
+        fun recordOperationTime(operation: String, timeMs: Long) {
+            operationTimes.getOrPut(operation) { mutableListOf() }.add(timeMs)
+            AppLog.put("PerformanceMonitor: $operation 耗时: ${timeMs}ms")
+        }
+        
+        /**
+         * 记录内存快照
+         */
+        fun recordMemorySnapshot(operation: String) {
+            val runtime = Runtime.getRuntime()
+            val usedMemory = runtime.totalMemory() - runtime.freeMemory()
+            memorySnapshots[operation] = usedMemory
+            AppLog.put("PerformanceMonitor: $operation 内存使用: ${usedMemory / 1024 / 1024}MB")
+        }
+        
+        /**
+         * 获取操作的平均耗时
+         */
+        fun getAverageTime(operation: String): Double {
+            val times = operationTimes[operation] ?: return 0.0
+            return if (times.isNotEmpty()) times.average() else 0.0
+        }
+        
+        /**
+         * 输出性能报告
+         */
+        fun generateReport(): String {
+            val report = StringBuilder("=== BookSourceActivity 性能报告 ===\n")
+            operationTimes.forEach { (operation, times) ->
+                if (times.isNotEmpty()) {
+                    val avg = times.average()
+                    val max = times.maxOrNull() ?: 0
+                    val min = times.minOrNull() ?: 0
+                    report.append("$operation: 平均${String.format("%.2f", avg)}ms, 最大${max}ms, 最小${min}ms, 次数${times.size}\n")
+                }
+            }
+            return report.toString()
+        }
+    }
+
+    override fun upCountView() {
+        binding.selectActionBar
+            .upCountView(adapter.selection.size, adapter.itemCount)
+    }
+
+    override fun getSourceHost(origin: String): String {
+        return hostMap.getOrPut(origin) {
+            NetworkUtils.getSubDomainOrNull(origin) ?: "#"
+        }
+    }
+
+    override fun onQueryTextChange(newText: String?): Boolean {
+        newText?.let {
+            upBookSource(it)
+        }
+        return false
+    }
+
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        return false
+    }
+
+    override fun del(bookSource: BookSourcePart) {
+        alert(R.string.draw) {
+            setMessage(getString(R.string.sure_del) + "\n" + bookSource.bookSourceName)
+            noButton()
+            yesButton {
+                viewModel.del(listOf(bookSource))
+            }
+        }.show()
+    }
+
+    override fun edit(bookSource: BookSourcePart) {
+        startActivity<BookSourceEditActivity> {
+            putExtra("sourceUrl", bookSource.bookSourceUrl)
+        }
+    }
+
+    override fun upOrder(items: List<BookSourcePart>) {
+        viewModel.upOrder(items)
+    }
+
+    override fun enable(enable: Boolean, bookSource: BookSourcePart) {
+        viewModel.enable(enable, listOf(bookSource))
+    }
+
+    override fun enableExplore(enable: Boolean, bookSource: BookSourcePart) {
+        viewModel.enableExplore(enable, listOf(bookSource))
+    }
+
+    override fun toTop(bookSource: BookSourcePart) {
+        if (sortAscending) {
+            viewModel.topSource(bookSource)
+        } else {
+            viewModel.bottomSource(bookSource)
+        }
+    }
+
+    override fun toBottom(bookSource: BookSourcePart) {
+        if (sortAscending) {
+            viewModel.bottomSource(bookSource)
+        } else {
+            viewModel.topSource(bookSource)
+        }
+    }
+
+    override fun searchBook(bookSource: BookSourcePart) {
+        startActivity<SearchActivity> {
+            putExtra("searchScope", SearchScope(bookSource).toString())
+        }
+    }
+
+    override fun debug(bookSource: BookSourcePart) {
+        startActivity<BookSourceDebugActivity> {
+            putExtra("key", bookSource.bookSourceUrl)
+        }
+    }
+
+    override fun finish() {
+        if (searchView.query.isNullOrEmpty()) {
+            super.finish()
+        } else {
+            searchView.setQuery("", true)
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (!Debug.isChecking) {
+            Debug.debugMessageMap.clear()
+        }
+        // 输出性能报告
+        AppLog.put(performanceMonitor.generateReport())
+    }
+    
+    private val performanceMonitor = PerformanceMonitor()
+    
     override val binding by viewBinding(ActivityBookSourceBinding::inflate)
     override val viewModel by viewModels<BookSourceViewModel>()
     private val importRecordKey = "bookSourceRecordKey"
@@ -130,7 +280,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                 okButton {
                     sendToClip(uri.toString())
                 }
-            }
+            }.show()
         }
     }
     private val groupMenuLifecycleOwner = object : LifecycleOwner {
@@ -148,15 +298,23 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        initRecyclerView()
-        initSearchView()
-        upBookSource()
-        initLiveDataGroup()
-        initSelectActionBar()
-        resumeCheckSource()
-        if (!LocalConfig.bookSourcesHelpVersionIsLast) {
-            showHelp("SourceMBookHelp")
+        // 性能监控：记录Activity创建开始
+        performanceMonitor.recordMemorySnapshot("Activity创建开始")
+        val activityCreateTime = measureTimeMillis {
+            initRecyclerView()
+            initSearchView()
+            upBookSource()
+            initLiveDataGroup()
+            initSelectActionBar()
+            resumeCheckSource()
+            if (!LocalConfig.bookSourcesHelpVersionIsLast) {
+                showHelp("SourceMBookHelp")
+            }
         }
+        
+        // 性能监控：记录Activity创建完成
+        performanceMonitor.recordOperationTime("Activity创建", activityCreateTime)
+        AppLog.put("BookSourceActivity: Activity创建完成，总耗时: ${activityCreateTime}ms")
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
@@ -308,48 +466,58 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
 
 
     private fun upBookSource(searchKey: String? = null) {
+        // 性能监控：记录upBookSource开始
+        performanceMonitor.recordMemorySnapshot("upBookSource开始")
+        AppLog.put("BookSourceActivity: 开始upBookSource，排序方式: $sort")
+        
         sourceFlowJob?.cancel()
         sourceFlowJob = lifecycleScope.launch {
-            when {
-                searchKey.isNullOrEmpty() -> {
-                    appDb.bookSourceDao.flowAll()
-                }
+            val upBookSourceTime = measureTimeMillis {
+                when {
+                    searchKey.isNullOrEmpty() -> {
+                        appDb.bookSourceDao.flowAll()
+                    }
 
-                searchKey == getString(R.string.enabled) -> {
-                    appDb.bookSourceDao.flowEnabled()
-                }
+                    searchKey == getString(R.string.enabled) -> {
+                        appDb.bookSourceDao.flowEnabled()
+                    }
 
-                searchKey == getString(R.string.disabled) -> {
-                    appDb.bookSourceDao.flowDisabled()
-                }
+                    searchKey == getString(R.string.disabled) -> {
+                        appDb.bookSourceDao.flowDisabled()
+                    }
 
-                searchKey == getString(R.string.need_login) -> {
-                    appDb.bookSourceDao.flowLogin()
-                }
+                    searchKey == getString(R.string.need_login) -> {
+                        appDb.bookSourceDao.flowLogin()
+                    }
 
-                searchKey == getString(R.string.no_group) -> {
-                    appDb.bookSourceDao.flowNoGroup()
-                }
+                    searchKey == getString(R.string.no_group) -> {
+                        appDb.bookSourceDao.flowNoGroup()
+                    }
 
-                searchKey == getString(R.string.enabled_explore) -> {
-                    appDb.bookSourceDao.flowEnabledExplore()
-                }
+                    searchKey == getString(R.string.enabled_explore) -> {
+                        appDb.bookSourceDao.flowEnabledExplore()
+                    }
 
-                searchKey == getString(R.string.disabled_explore) -> {
-                    appDb.bookSourceDao.flowDisabledExplore()
-                }
+                    searchKey == getString(R.string.disabled_explore) -> {
+                        appDb.bookSourceDao.flowDisabledExplore()
+                    }
 
-                searchKey.startsWith("group:") -> {
-                    val key = searchKey.substringAfter("group:")
-                    appDb.bookSourceDao.flowGroupSearch(key)
-                }
+                    searchKey.startsWith("group:") -> {
+                        val key = searchKey.substringAfter("group:")
+                        appDb.bookSourceDao.flowGroupSearch(key)
+                    }
 
-                else -> {
-                    appDb.bookSourceDao.flowSearch(searchKey)
+                    else -> {
+                        appDb.bookSourceDao.flowSearch(searchKey)
+                    }
+                }.map { data ->
+                // 性能优化：将排序操作移到后台线程，减少主线程阻塞
+                AppLog.put("BookSourceActivity: 开始排序 ${data.size} 个书源")
+                val sortTime = measureTimeMillis {
+                    hostMap.clear()
                 }
-            }.map { data ->
-                hostMap.clear()
-                if (showDuplicationSource) {
+                
+                val sortedData = if (showDuplicationSource) {
                     data.sortedWith(
                         compareBy<BookSourcePart> { getSourceHost(it.bookSourceUrl) == "#" }
                             .thenBy { getSourceHost(it.bookSourceUrl) }
@@ -360,7 +528,6 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                         BookSourceSort.Name -> data.sortedWith { o1, o2 ->
                             o1.bookSourceName.cnCompare(o2.bookSourceName)
                         }
-
                         BookSourceSort.Url -> data.sortedBy { it.bookSourceUrl }
                         BookSourceSort.Update -> data.sortedByDescending { it.lastUpdateTime }
                         BookSourceSort.Respond -> data.sortedBy { it.respondTime }
@@ -371,7 +538,6 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                             }
                             sort
                         }
-
                         else -> data
                     }
                 } else {
@@ -380,7 +546,6 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                         BookSourceSort.Name -> data.sortedWith { o1, o2 ->
                             o2.bookSourceName.cnCompare(o1.bookSourceName)
                         }
-
                         BookSourceSort.Url -> data.sortedByDescending { it.bookSourceUrl }
                         BookSourceSort.Update -> data.sortedBy { it.lastUpdateTime }
                         BookSourceSort.Respond -> data.sortedByDescending { it.respondTime }
@@ -391,43 +556,126 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                             }
                             sort
                         }
-
                         else -> data.reversed()
                     }
                 }
+                
+                // 性能监控：记录排序耗时
+                performanceMonitor.recordOperationTime("数据排序", sortTime)
+                AppLog.put("BookSourceActivity: 排序完成，耗时: ${sortTime}ms")
+                sortedData
             }.flowWithLifecycleAndDatabaseChange(
                 lifecycle,
                 table = AppDatabase.BOOK_SOURCE_TABLE_NAME
             ).catch {
                 AppLog.put("书源界面更新书源出错", it)
             }.flowOn(IO).conflate().collect { data ->
-                adapter.setItems(data, adapter.diffItemCallback, !Debug.isChecking)
-                itemTouchCallback.isCanDrag =
-                    sort == BookSourceSort.Default && !showDuplicationSource
-                delay(500)
+                // 性能优化：添加UI更新日志，监控性能
+                val uiStartTime = System.currentTimeMillis()
+                AppLog.put("BookSourceActivity: 开始更新UI，数据量: ${data.size}")
+                
+                try {
+                    // 性能优化：检查数据是否真的发生了变化，避免不必要的UI更新
+                    val currentItems = adapter.getItems()
+                    val hasDataChanged = currentItems.size != data.size || 
+                        !currentItems.zip(data).all { (old, new) -> 
+                            adapter.diffItemCallback.areItemsTheSame(old, new) && 
+                            adapter.diffItemCallback.areContentsTheSame(old, new)
+                        }
+                    
+                    if (hasDataChanged || currentItems.isEmpty()) {
+                        AppLog.put("BookSourceActivity: 数据发生变化，执行UI更新")
+                        adapter.setItems(data, adapter.diffItemCallback, !Debug.isChecking)
+                    } else {
+                        AppLog.put("BookSourceActivity: 数据未变化，跳过UI更新")
+                    }
+                    
+                    // 更新拖拽状态
+                    val canDrag = sort == BookSourceSort.Default && !showDuplicationSource
+                    if (itemTouchCallback.isCanDrag != canDrag) {
+                        itemTouchCallback.isCanDrag = canDrag
+                    }
+                    
+                    val uiTime = System.currentTimeMillis() - uiStartTime
+                    AppLog.put("BookSourceActivity: UI更新完成，耗时: ${uiTime}ms")
+                } catch (e: Exception) {
+                    AppLog.put("BookSourceActivity UI更新异常", e)
+                    // 异常情况下强制更新UI
+                    try {
+                        adapter.setItems(data, adapter.diffItemCallback, !Debug.isChecking)
+                    } catch (fallbackException: Exception) {
+                        AppLog.put("BookSourceActivity UI强制更新也失败", fallbackException)
+                    }
+                }
+                
+                // 减少延迟时间，提高响应性
+                delay(50)
             }
+            
+            }
+            // 性能监控：记录upBookSource总耗时
+            performanceMonitor.recordOperationTime("upBookSource总耗时", upBookSourceTime)
+            performanceMonitor.recordMemorySnapshot("upBookSource完成")
         }
     }
 
+    /**
+     * 初始化分组数据流
+     * 性能优化：减少不必要的Flow操作，添加异常处理和性能监控
+     */
     private fun initLiveDataGroup() {
+        // 性能监控：记录分组数据初始化开始
+        performanceMonitor.recordMemorySnapshot("分组数据初始化开始")
+        
         lifecycleScope.launch {
-            appDb.bookSourceDao.flowGroups()
-                .flowWithLifecycleAndDatabaseChange(
-                    lifecycle,
-                    table = AppDatabase.BOOK_SOURCE_TABLE_NAME
-                )
-                .flowWithLifecycleAndDatabaseChangeFirst(
-                    groupMenuLifecycleOwner.lifecycle,
-                    table = AppDatabase.BOOK_SOURCE_TABLE_NAME
-                )
-                .conflate()
-                .distinctUntilChanged()
-                .collect {
-                    groups.clear()
-                    groups.addAll(it)
-                    upGroupMenu()
-                    delay(500)
+            val initGroupTime = measureTimeMillis {
+                try {
+                    AppLog.put("BookSourceActivity: 开始初始化分组数据")
+                    
+                    appDb.bookSourceDao.flowGroups()
+                        .flowWithLifecycleAndDatabaseChange(
+                            lifecycle,
+                            table = AppDatabase.BOOK_SOURCE_TABLE_NAME
+                        )
+                        .flowWithLifecycleAndDatabaseChangeFirst(
+                            groupMenuLifecycleOwner.lifecycle,
+                            table = AppDatabase.BOOK_SOURCE_TABLE_NAME
+                        )
+                        .conflate()
+                        .distinctUntilChanged()
+                        .catch { e ->
+                            AppLog.put("BookSourceActivity 分组数据流异常", e)
+                        }
+                        .flowOn(IO)
+                        .collect { groupList ->
+                            val groupUpdateTime = measureTimeMillis {
+                                AppLog.put("BookSourceActivity: 开始更新分组菜单，分组数量: ${groupList.size}")
+                                
+                                try {
+                                    groups.clear()
+                                    groups.addAll(groupList)
+                                    upGroupMenu()
+                                } catch (e: Exception) {
+                                    AppLog.put("BookSourceActivity 分组菜单更新异常", e)
+                                }
+                            }
+                            
+                            // 性能监控：记录分组UI更新耗时
+                            performanceMonitor.recordOperationTime("分组UI更新", groupUpdateTime)
+                            AppLog.put("BookSourceActivity: 分组数据更新完成，分组数量: ${groupList.size}，UI更新耗时: ${groupUpdateTime}ms")
+                            
+                            // 减少延迟时间，提高响应性
+                            delay(50)
+                        }
+                } catch (e: Exception) {
+                    AppLog.put("BookSourceActivity 初始化分组数据异常", e)
                 }
+            }
+            
+            // 性能监控：记录分组数据初始化总耗时
+            performanceMonitor.recordOperationTime("分组数据初始化", initGroupTime)
+            performanceMonitor.recordMemorySnapshot("分组数据初始化完成")
+            AppLog.put("BookSourceActivity: 分组数据初始化完成，总耗时: ${initGroupTime}ms")
         }
     }
 
@@ -447,7 +695,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
             yesButton { viewModel.del(adapter.selection) }
             noButton()
-        }
+        }.show()
     }
 
     override fun onMenuOpened(featureId: Int, menu: Menu): Boolean {
@@ -512,49 +760,60 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         return true
     }
 
-    @SuppressLint("InflateParams")
+
     private fun checkSource() {
-        val dialog = alert(titleResource = R.string.search_book_key) {
+        val dialog: AlertDialog = alert(titleResource = R.string.search_book_key) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
                 editView.hint = "search word"
                 editView.setText(CheckSource.keyword)
             }
             customView { alertBinding.root }
             okButton {
-                keepScreenOn(true)
+                // 在对话框的回调作用域中显式引用外部Activity成员，避免未解析引用
+                this@BookSourceActivity.keepScreenOn(true)
+
                 alertBinding.editView.text?.toString()?.let {
                     if (it.isNotEmpty()) {
                         CheckSource.keyword = it
                     }
                 }
+
                 val selectItems = adapter.selection
                 CheckSource.start(this@BookSourceActivity, selectItems)
+
                 val adapterItems = adapter.getItems()
                 val firstItem = adapterItems.indexOf(selectItems.firstOrNull())
                 val lastItem = adapterItems.indexOf(selectItems.lastOrNull())
                 Debug.isChecking = firstItem >= 0 && lastItem >= 0
-                startCheckMessageRefreshJob(firstItem, lastItem)
+
+                // 显式限定，防止在DSL接收者环境下解析失败
+                this@BookSourceActivity.startCheckMessageRefreshJob(firstItem, lastItem)
             }
             neutralButton(R.string.check_source_config)
             cancelButton()
         }
-        //手动设置监听 避免点击打开校验设置后对话框关闭
+        dialog.show()
+        // 手动设置监听，避免点击打开校验设置后对话框关闭
         dialog.getButton(AlertDialog.BUTTON_NEUTRAL)?.setOnClickListener {
             showDialogFragment<CheckSourceConfig>()
         }
     }
 
-    private fun resumeCheckSource() {
+
+
+
+    fun resumeCheckSource() {
         if (!Debug.isChecking) {
             return
         }
-        keepScreenOn(true)
+        // 在普通方法中同样显式限定，保证一致性与可读性
+        this@BookSourceActivity.keepScreenOn(true)
         CheckSource.resume(this)
-        startCheckMessageRefreshJob(0, 0)
+        this@BookSourceActivity.startCheckMessageRefreshJob(0, 0)
     }
 
-    @SuppressLint("InflateParams")
-    private fun selectionAddToGroups() {
+
+    fun selectionAddToGroups() {
         alert(titleResource = R.string.add_group) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
                 editView.setHint(R.string.group_name)
@@ -570,11 +829,18 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                 }
             }
             cancelButton()
+        }.show()
+    }
+
+    fun upGroupMenu() = groupMenu?.transaction { menu ->
+        menu.removeGroup(R.id.source_group)
+        groups.forEach {
+            menu.add(R.id.source_group, Menu.NONE, Menu.NONE, it)
         }
     }
 
-    @SuppressLint("InflateParams")
-    private fun selectionRemoveFromGroups() {
+
+    fun selectionRemoveFromGroups() {
         alert(titleResource = R.string.remove_group) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
                 editView.setHint(R.string.group_name)
@@ -590,77 +856,14 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                 }
             }
             cancelButton()
-        }
+        }.show()
     }
 
-    private fun upGroupMenu() = groupMenu?.transaction { menu ->
-        menu.removeGroup(R.id.source_group)
-        groups.forEach {
-            menu.add(R.id.source_group, Menu.NONE, Menu.NONE, it)
-        }
-    }
 
-    @SuppressLint("InflateParams")
-    private fun showImportDialog() {
-        val aCache = ACache.get(cacheDir = false)
-        val cacheUrls: MutableList<String> = aCache
-            .getAsString(importRecordKey)
-            ?.splitNotBlank(",")
-            ?.toMutableList() ?: mutableListOf()
-        alert(titleResource = R.string.import_on_line) {
-            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                editView.hint = "url"
-                editView.setFilterValues(cacheUrls)
-                editView.delCallBack = {
-                    cacheUrls.remove(it)
-                    aCache.put(importRecordKey, cacheUrls.joinToString(","))
-                }
-            }
-            customView { alertBinding.root }
-            okButton {
-                val text = alertBinding.editView.text?.toString()
-                text?.let {
-                    if (it.isAbsUrl() && !cacheUrls.contains(it)) {
-                        cacheUrls.add(0, it)
-                        aCache.put(importRecordKey, cacheUrls.joinToString(","))
-                    }
-                    showDialogFragment(ImportBookSourceDialog(it))
-                }
-            }
-            cancelButton()
-        }
-    }
 
-    override fun observeLiveBus() {
-        observeEvent<String>(EventBus.CHECK_SOURCE) { msg ->
-            snackBar?.setText(msg) ?: let {
-                snackBar = Snackbar
-                    .make(binding.root, msg, Snackbar.LENGTH_INDEFINITE)
-                    .setAction(R.string.cancel) {
-                        CheckSource.stop(this)
-                        Debug.finishChecking()
-                    }.apply { show() }
-            }
-        }
-        observeEvent<Int>(EventBus.CHECK_SOURCE_DONE) {
-            keepScreenOn(false)
-            snackBar?.dismiss()
-            snackBar = null
-            adapter.notifyItemRangeChanged(
-                0,
-                adapter.itemCount,
-                bundleOf(Pair("checkSourceMessage", null))
-            )
-            groups.forEach { group ->
-                if (group.contains("失效") && searchView.query.isEmpty()) {
-                    searchView.setQuery("失效", true)
-                    toastOnUi("发现有失效书源，已为您自动筛选！")
-                }
-            }
-        }
-    }
 
-    private fun startCheckMessageRefreshJob(firstItem: Int, lastItem: Int) {
+
+    fun startCheckMessageRefreshJob(firstItem: Int, lastItem: Int) {
         checkMessageRefreshJob?.cancel()
         checkMessageRefreshJob = lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -690,7 +893,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     /**
      * 保持亮屏
      */
-    private fun keepScreenOn(on: Boolean) {
+    fun keepScreenOn(on: Boolean) {
         val isScreenOn =
             (window.attributes.flags and WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) != 0
         if (on == isScreenOn) return
@@ -701,96 +904,64 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         }
     }
 
-    override fun upCountView() {
-        binding.selectActionBar
-            .upCountView(adapter.selection.size, adapter.itemCount)
+
+    fun showImportDialog() {
+        val aCache = ACache.get(cacheDir = false)
+        val cacheUrls: MutableList<String> = aCache
+            .getAsString(importRecordKey)
+            ?.splitNotBlank(",")
+            ?.toMutableList() ?: mutableListOf()
+        alert(titleResource = R.string.import_on_line) {
+            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                editView.hint = "url"
+                editView.setFilterValues(cacheUrls)
+                editView.delCallBack = {
+                    cacheUrls.remove(it)
+                    aCache.put(importRecordKey, cacheUrls.joinToString(","))
+                }
+            }
+            customView { alertBinding.root }
+            okButton {
+                val text = alertBinding.editView.text?.toString()
+                text?.let {
+                    if (it.isAbsUrl() && !cacheUrls.contains(it)) {
+                        cacheUrls.add(0, it)
+                        aCache.put(importRecordKey, cacheUrls.joinToString(","))
+                    }
+                    showDialogFragment(ImportBookSourceDialog(it))
+                }
+            }
+            cancelButton()
+        }.show()
     }
 
-    override fun getSourceHost(origin: String): String {
-        return hostMap.getOrPut(origin) {
-            NetworkUtils.getSubDomainOrNull(origin) ?: "#"
-        }
-    }
-
-    override fun onQueryTextChange(newText: String?): Boolean {
-        newText?.let {
-            upBookSource(it)
-        }
-        return false
-    }
-
-    override fun onQueryTextSubmit(query: String?): Boolean {
-        return false
-    }
-
-    override fun del(bookSource: BookSourcePart) {
-        alert(R.string.draw) {
-            setMessage(getString(R.string.sure_del) + "\n" + bookSource.bookSourceName)
-            noButton()
-            yesButton {
-                viewModel.del(listOf(bookSource))
+    override fun observeLiveBus() {
+        observeEvent<String>(EventBus.CHECK_SOURCE) { msg ->
+            snackBar?.setText(msg) ?: let {
+                snackBar = Snackbar
+                    .make(binding.root, msg, Snackbar.LENGTH_INDEFINITE)
+                    .setAction(R.string.cancel) {
+                        CheckSource.stop(this)
+                        Debug.finishChecking()
+                    }.apply { show() }
             }
         }
-    }
-
-    override fun edit(bookSource: BookSourcePart) {
-        startActivity<BookSourceEditActivity> {
-            putExtra("sourceUrl", bookSource.bookSourceUrl)
-        }
-    }
-
-    override fun upOrder(items: List<BookSourcePart>) {
-        viewModel.upOrder(items)
-    }
-
-    override fun enable(enable: Boolean, bookSource: BookSourcePart) {
-        viewModel.enable(enable, listOf(bookSource))
-    }
-
-    override fun enableExplore(enable: Boolean, bookSource: BookSourcePart) {
-        viewModel.enableExplore(enable, listOf(bookSource))
-    }
-
-    override fun toTop(bookSource: BookSourcePart) {
-        if (sortAscending) {
-            viewModel.topSource(bookSource)
-        } else {
-            viewModel.bottomSource(bookSource)
-        }
-    }
-
-    override fun toBottom(bookSource: BookSourcePart) {
-        if (sortAscending) {
-            viewModel.bottomSource(bookSource)
-        } else {
-            viewModel.topSource(bookSource)
-        }
-    }
-
-    override fun searchBook(bookSource: BookSourcePart) {
-        startActivity<SearchActivity> {
-            putExtra("searchScope", SearchScope(bookSource).toString())
-        }
-    }
-
-    override fun debug(bookSource: BookSourcePart) {
-        startActivity<BookSourceDebugActivity> {
-            putExtra("key", bookSource.bookSourceUrl)
-        }
-    }
-
-    override fun finish() {
-        if (searchView.query.isNullOrEmpty()) {
-            super.finish()
-        } else {
-            searchView.setQuery("", true)
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        if (!Debug.isChecking) {
-            Debug.debugMessageMap.clear()
+        observeEvent<Int>(EventBus.CHECK_SOURCE_DONE) {
+            // 校验完成后恢复屏幕常亮状态
+            this@BookSourceActivity.keepScreenOn(false)
+            snackBar?.dismiss()
+            snackBar = null
+            adapter.notifyItemRangeChanged(
+                0,
+                adapter.itemCount,
+                bundleOf(Pair("checkSourceMessage", null))
+            )
+            groups.forEach { group ->
+                if (group.contains("失效") && searchView.query.isEmpty()) {
+                    searchView.setQuery("失效", true)
+                    toastOnUi("发现有失效书源，已为您自动筛选！")
+                }
+            }
         }
     }
 
