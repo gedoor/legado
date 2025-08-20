@@ -762,7 +762,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
 
 
     private fun checkSource() {
-        val dialog: AlertDialog = alert(titleResource = R.string.search_book_key) {
+        val dialog = alert(titleResource = R.string.search_book_key) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
                 editView.hint = "search word"
                 editView.setText(CheckSource.keyword)

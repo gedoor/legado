@@ -5,11 +5,18 @@ import androidx.lifecycle.MutableLiveData
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.BookSourceType
+import io.legado.app.constant.AppLog
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.BookSourcePart
+import io.legado.app.data.entities.SearchBook
 import io.legado.app.help.config.SourceConfig
 import io.legado.app.help.source.SourceHelp
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import splitties.init.appCtx
+import io.legado.app.utils.getPrefString
+import io.legado.app.utils.putPrefString
 
 class ExploreViewModel(application: Application) : BaseViewModel(application) {
 
@@ -24,6 +31,9 @@ class ExploreViewModel(application: Application) : BaseViewModel(application) {
     
     // 新增：当前选中的分类
     val selectedCategory = MutableLiveData<String?>(null)
+    // 新增：是否已自动选择过默认书源
+    private var hasAutoSelectedDefault = false
+
     
     // 新增：书源类型列表 - 在Fragment中动态获取字符串资源
     val sourceTypes = listOf(
@@ -54,6 +64,7 @@ class ExploreViewModel(application: Application) : BaseViewModel(application) {
         currentBookSource.value = null
         selectedGroup.value = null
         selectedCategory.value = null
+        hasAutoSelectedDefault = false
     }
     
     // 新增：设置当前书源
@@ -61,6 +72,12 @@ class ExploreViewModel(application: Application) : BaseViewModel(application) {
         currentBookSource.value = bookSource
         // 重置分类筛选
         selectedCategory.value = null
+        // 记住最近一次选择（按类型存储）
+        if (bookSource != null) {
+            val type = selectedSourceType.value ?: BookSourceType.default
+            val key = "explore_last_source_$type"
+            appCtx.putPrefString(key, bookSource.bookSourceUrl)
+        }
     }
     
     // 新增：设置分组
@@ -76,27 +93,36 @@ class ExploreViewModel(application: Application) : BaseViewModel(application) {
     }
     
     // 新增：获取筛选后的书源列表
-    fun getFilteredBookSources(): List<BookSourcePart> {
+    suspend fun getFilteredBookSources(): List<BookSourcePart> = withContext(Dispatchers.IO) {
         val type = selectedSourceType.value ?: BookSourceType.default
         val group = selectedGroup.value
         val source = currentBookSource.value
-        
-        return when {
-            source != null -> {
-                // 如果选择了特定书源，只返回该书源
-                listOf(source.toBookSourcePart())
-            }
-            group != null -> {
-                // 如果选择了分组，返回该分组下的书源
-                appDb.bookSourceDao.getEnabledPartByGroup(group)
-                    .filter { it.hasExploreUrl && it.enabledExplore }
-            }
-            else -> {
-                // 根据类型筛选
-                appDb.bookSourceDao.getEnabledByType(type)
-                    .map { it.toBookSourcePart() }
-                    .filter { it.hasExploreUrl && it.enabledExplore }
-            }
+
+        return@withContext when {
+            source != null -> listOf(source.toBookSourcePart())
+            group != null -> appDb.bookSourceDao.getEnabledPartByGroup(group)
+                .filter { it.hasExploreUrl && it.enabledExplore }
+            else -> appDb.bookSourceDao.getEnabledByType(type)
+                .map { it.toBookSourcePart() }
+                .filter { it.hasExploreUrl && it.enabledExplore }
+        }
+    }
+
+    // 新增：确保默认选中第一个可用书源
+    suspend fun ensureDefaultCurrentSource() = withContext(Dispatchers.IO) {
+        if (hasAutoSelectedDefault || currentBookSource.value != null) return@withContext
+        val type = selectedSourceType.value ?: BookSourceType.default
+        val enabledList = appDb.bookSourceDao.getEnabledByType(type)
+            .filter { it.enabledExplore && !it.exploreUrl.isNullOrBlank() }
+        // 优先使用上次选择
+        val savedKey = "explore_last_source_$type"
+        val savedUrl = appCtx.getPrefString(savedKey)
+        val saved = enabledList.firstOrNull { it.bookSourceUrl == savedUrl }
+        val first = saved ?: (enabledList.minByOrNull { it.customOrder } ?: return@withContext)
+        hasAutoSelectedDefault = true
+        // 切回主线程更新
+        withContext(Dispatchers.Main) {
+            setCurrentBookSource(first)
         }
     }
     
@@ -129,6 +155,22 @@ class ExploreViewModel(application: Application) : BaseViewModel(application) {
             source.bookSourceName
         } else {
             "${source.bookSourceName} (${source.bookSourceGroup})"
+        }
+    }
+    
+    // 新增：添加书籍到书架
+    fun addToBookshelf(book: SearchBook) {
+        execute {
+            try {
+                // 转换为 Book 实体
+                val bookEntity = book.toBook()
+                // 添加到数据库
+                appDb.bookDao.insert(bookEntity)
+                // 记录操作
+                AppLog.put("书籍已添加到书架: ${book.name}")
+            } catch (e: Exception) {
+                AppLog.put("添加书籍到书架失败: ${book.name}", e)
+            }
         }
     }
 }
