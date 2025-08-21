@@ -31,6 +31,8 @@ class ExploreViewModel(application: Application) : BaseViewModel(application) {
     
     // 新增：当前选中的分类
     val selectedCategory = MutableLiveData<String?>(null)
+    // 新增：上次选中的分类（用于刷新时恢复）
+    val lastSelectedCategory = MutableLiveData<String?>(null)
     // 新增：是否已自动选择过默认书源
     private var hasAutoSelectedDefault = false
 
@@ -89,7 +91,17 @@ class ExploreViewModel(application: Application) : BaseViewModel(application) {
     
     // 新增：设置分类
     fun setCategory(category: String?) {
+        // 修复：设置分类时同时保存到lastSelectedCategory，用于状态恢复
+        if (category != null && category != "refresh") {
+            lastSelectedCategory.value = category
+        }
         selectedCategory.value = category
+    }
+    
+    // 新增：清除分类状态
+    fun clearCategoryState() {
+        selectedCategory.value = null
+        lastSelectedCategory.value = null
     }
     
     // 新增：获取筛选后的书源列表

@@ -219,6 +219,20 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         }
     }
 
+
+
+    override fun selectAll(selectAll: Boolean) {
+        if (selectAll) {
+            adapter.selectAll()
+        } else {
+            adapter.revertSelection()
+        }
+    }
+
+    override fun revertSelection() {
+        adapter.revertSelection()
+    }
+
     override fun finish() {
         if (searchView.query.isNullOrEmpty()) {
             super.finish()
@@ -314,6 +328,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         
         // 性能监控：记录Activity创建完成
         performanceMonitor.recordOperationTime("Activity创建", activityCreateTime)
+        performanceMonitor.recordMemorySnapshot("Activity创建完成")
         AppLog.put("BookSourceActivity: Activity创建完成，总耗时: ${activityCreateTime}ms")
     }
 
@@ -611,8 +626,8 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                 // 减少延迟时间，提高响应性
                 delay(50)
             }
-            
             }
+            
             // 性能监控：记录upBookSource总耗时
             performanceMonitor.recordOperationTime("upBookSource总耗时", upBookSourceTime)
             performanceMonitor.recordMemorySnapshot("upBookSource完成")
@@ -677,18 +692,6 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             performanceMonitor.recordMemorySnapshot("分组数据初始化完成")
             AppLog.put("BookSourceActivity: 分组数据初始化完成，总耗时: ${initGroupTime}ms")
         }
-    }
-
-    override fun selectAll(selectAll: Boolean) {
-        if (selectAll) {
-            adapter.selectAll()
-        } else {
-            adapter.revertSelection()
-        }
-    }
-
-    override fun revertSelection() {
-        adapter.revertSelection()
     }
 
     override fun onClickSelectBarMainAction() {
@@ -760,60 +763,47 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         return true
     }
 
-
+    @SuppressLint("InflateParams")
     private fun checkSource() {
-        val dialog = alert(titleResource = R.string.search_book_key) {
+        alert(titleResource = R.string.search_book_key) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
                 editView.hint = "search word"
                 editView.setText(CheckSource.keyword)
             }
             customView { alertBinding.root }
             okButton {
-                // 在对话框的回调作用域中显式引用外部Activity成员，避免未解析引用
                 this@BookSourceActivity.keepScreenOn(true)
-
                 alertBinding.editView.text?.toString()?.let {
                     if (it.isNotEmpty()) {
                         CheckSource.keyword = it
                     }
                 }
-
                 val selectItems = adapter.selection
                 CheckSource.start(this@BookSourceActivity, selectItems)
-
                 val adapterItems = adapter.getItems()
                 val firstItem = adapterItems.indexOf(selectItems.firstOrNull())
                 val lastItem = adapterItems.indexOf(selectItems.lastOrNull())
                 Debug.isChecking = firstItem >= 0 && lastItem >= 0
-
-                // 显式限定，防止在DSL接收者环境下解析失败
                 this@BookSourceActivity.startCheckMessageRefreshJob(firstItem, lastItem)
             }
-            neutralButton(R.string.check_source_config)
+            neutralButton(R.string.check_source_config) {
+                showDialogFragment<CheckSourceConfig>()
+            }
             cancelButton()
-        }
-        dialog.show()
-        // 手动设置监听，避免点击打开校验设置后对话框关闭
-        dialog.getButton(AlertDialog.BUTTON_NEUTRAL)?.setOnClickListener {
-            showDialogFragment<CheckSourceConfig>()
         }
     }
 
-
-
-
-    fun resumeCheckSource() {
+    private fun resumeCheckSource() {
         if (!Debug.isChecking) {
             return
         }
-        // 在普通方法中同样显式限定，保证一致性与可读性
-        this@BookSourceActivity.keepScreenOn(true)
+        this.keepScreenOn(true)
         CheckSource.resume(this)
-        this@BookSourceActivity.startCheckMessageRefreshJob(0, 0)
+        this.startCheckMessageRefreshJob(0, 0)
     }
 
-
-    fun selectionAddToGroups() {
+    @SuppressLint("InflateParams")
+    private fun selectionAddToGroups() {
         alert(titleResource = R.string.add_group) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
                 editView.setHint(R.string.group_name)
@@ -832,15 +822,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         }.show()
     }
 
-    fun upGroupMenu() = groupMenu?.transaction { menu ->
-        menu.removeGroup(R.id.source_group)
-        groups.forEach {
-            menu.add(R.id.source_group, Menu.NONE, Menu.NONE, it)
-        }
-    }
-
-
-    fun selectionRemoveFromGroups() {
+    private fun selectionRemoveFromGroups() {
         alert(titleResource = R.string.remove_group) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
                 editView.setHint(R.string.group_name)
@@ -859,11 +841,16 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         }.show()
     }
 
+    private fun upGroupMenu() = groupMenu?.transaction { menu ->
+        menu.removeGroup(R.id.source_group)
+        groups.forEach {
+            menu.add(R.id.source_group, Menu.NONE, Menu.NONE, it)
+        }
+    }
 
 
 
-
-    fun startCheckMessageRefreshJob(firstItem: Int, lastItem: Int) {
+    private fun startCheckMessageRefreshJob(firstItem: Int, lastItem: Int) {
         checkMessageRefreshJob?.cancel()
         checkMessageRefreshJob = lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -893,7 +880,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
     /**
      * 保持亮屏
      */
-    fun keepScreenOn(on: Boolean) {
+    private fun keepScreenOn(on: Boolean) {
         val isScreenOn =
             (window.attributes.flags and WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) != 0
         if (on == isScreenOn) return
@@ -904,8 +891,8 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         }
     }
 
-
-    fun showImportDialog() {
+    @SuppressLint("InflateParams")
+    private fun showImportDialog() {
         val aCache = ACache.get(cacheDir = false)
         val cacheUrls: MutableList<String> = aCache
             .getAsString(importRecordKey)
@@ -947,8 +934,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             }
         }
         observeEvent<Int>(EventBus.CHECK_SOURCE_DONE) {
-            // 校验完成后恢复屏幕常亮状态
-            this@BookSourceActivity.keepScreenOn(false)
+            this.keepScreenOn(false)
             snackBar?.dismiss()
             snackBar = null
             adapter.notifyItemRangeChanged(
@@ -964,5 +950,7 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
             }
         }
     }
+
+
 
 }

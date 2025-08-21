@@ -85,19 +85,34 @@ class ExploreFragment() : VMBaseFragment<ExploreViewModel>(R.layout.fragment_exp
     private val binding by viewBinding(FragmentExploreBinding::bind)
     private val adapter by lazy { ExploreAdapter(requireContext(), this) }
     private val bookGridAdapter by lazy { BookGridAdapter(requireContext(), object : BookGridAdapter.CallBack {
-                 override fun onBookClick(book: SearchBook) {
-             // 添加详细的调试日志
-             AppLog.put("书籍点击事件触发: ${book.name} - ${book.author}")
-             AppLog.put("书籍URL: ${book.bookUrl}")
-             AppLog.put("书籍信息: name=${book.name}, author=${book.author}, intro=${book.intro?.take(50)}")
-             AppLog.put("书籍数据完整性: name=${!book.name.isBlank()}, author=${!book.author.isBlank()}, bookUrl=${!book.bookUrl.isBlank()}")
-             
-             // 数据完整性验证
-             if (book.name.isBlank() || book.author.isBlank() || book.bookUrl.isBlank()) {
-                 AppLog.put("警告: 书籍数据不完整，无法打开详情页")
-                 android.widget.Toast.makeText(requireContext(), "书籍信息不完整，请重试", android.widget.Toast.LENGTH_SHORT).show()
-                 return
-             }
+                           override fun onBookClick(book: SearchBook) {
+              // 添加详细的调试日志
+              AppLog.put("书籍点击事件触发: ${book.name} - ${book.author}")
+              AppLog.put("书籍URL: ${book.bookUrl}")
+              AppLog.put("书籍信息: name=${book.name}, author=${book.author}, intro=${book.intro?.take(50)}")
+              AppLog.put("书籍数据完整性: name=${!book.name.isBlank()}, author=${!book.author.isBlank()}, bookUrl=${!book.bookUrl.isBlank()}")
+              
+              // 获取当前书源类型，为动漫类书源提供更宽松的验证
+              val currentSource = viewModel.currentBookSource.value
+              val isAnimeSource = currentSource?.bookSourceType == BookSourceType.image
+              
+              AppLog.put("当前书源类型: ${currentSource?.bookSourceType}, 是否为动漫类: $isAnimeSource")
+              
+              // 数据完整性验证（动漫类书源放宽标准）
+              val isValidBook = if (isAnimeSource) {
+                  // 动漫类书源：只要求书名和URL不为空
+                  !book.name.isBlank() && !book.bookUrl.isBlank()
+              } else {
+                  // 其他类型书源：要求书名、作者、URL都不为空
+                  !book.name.isBlank() && !book.author.isBlank() && !book.bookUrl.isBlank()
+              }
+              
+              if (!isValidBook) {
+                  val requiredFields = if (isAnimeSource) "书名和URL" else "书名、作者和URL"
+                  AppLog.put("警告: 书籍数据不完整，无法打开详情页。需要字段: $requiredFields")
+                  android.widget.Toast.makeText(requireContext(), "书籍信息不完整，请重试", android.widget.Toast.LENGTH_SHORT).show()
+                  return
+              }
              
              // 数据完整，直接打开详情页
              openBookDetail(book)
@@ -108,43 +123,7 @@ class ExploreFragment() : VMBaseFragment<ExploreViewModel>(R.layout.fragment_exp
              showBookLongPressMenu(book)
          }
          
-         // 新增：统一处理书籍详情页打开
-         private fun openBookDetail(book: SearchBook) {
-             try {
-                 AppLog.put("打开书籍详情页: ${book.name} - ${book.author}")
-                 
-                 // 跳转到书籍详情
-                 startActivity<BookInfoActivity> {
-                     putExtra("name", book.name)
-                     putExtra("author", book.author)
-                     putExtra("bookUrl", book.bookUrl)
-                     putExtra("intro", book.intro ?: "暂无简介")
-                     putExtra("coverUrl", book.coverUrl)
-                     putExtra("wordCount", book.wordCount ?: 0)
-                     putExtra("latestChapterTitle", book.latestChapterTitle ?: "暂无章节信息")
-                     putExtra("origin", book.origin)
-                     putExtra("originName", book.originName)
-                     putExtra("kind", book.kind)
-                     putExtra("type", book.type)
-                 }
-                 AppLog.put("成功启动 BookInfoActivity，传递参数: name=${book.name}, author=${book.author}, intro=${book.intro?.take(50)}")
-             } catch (e: Exception) {
-                 AppLog.put("启动 BookInfoActivity 失败", e)
-                 // 尝试使用备用方法
-                 try {
-                     val intent = android.content.Intent(requireContext(), BookInfoActivity::class.java).apply {
-                         putExtra("name", book.name)
-                         putExtra("author", book.author)
-                         putExtra("bookUrl", book.bookUrl)
-                     }
-                     startActivity(intent)
-                     AppLog.put("使用备用方法启动 BookInfoActivity 成功")
-                 } catch (e2: Exception) {
-                     AppLog.put("备用方法也失败", e2)
-                     android.widget.Toast.makeText(requireContext(), "打开书籍详情失败，请重试", android.widget.Toast.LENGTH_SHORT).show()
-                 }
-             }
-         }
+                                       
      }) }
     private val linearLayoutManager by lazy { LinearLayoutManager(context) }
     private var searchView: SearchView? = null
@@ -180,13 +159,31 @@ class ExploreFragment() : VMBaseFragment<ExploreViewModel>(R.layout.fragment_exp
                       // 延迟一下，避免与初始化冲突
                       delay(500)
                       
-                      // 用户返回发现界面时，显示有限数量的书籍（数据已预加载）
-                      if (currentCategory.isNullOrBlank() || currentCategory == "refresh") {
-                          loadAndShowBooks()
-                      } else {
-                          // 使用智能加载：显示9-12本书，数据已预加载
-                          loadBooksWithPreload(currentCategory, showLimited = true)
-                      }
+                                           // 修复：用户返回发现界面时，保持分类状态，避免自动重置
+                     if (currentCategory.isNullOrBlank()) {
+                         // 只有在真正没有分类时才加载默认书籍
+                         AppLog.put("onResume: 没有选中分类，加载默认书籍")
+                         loadAndShowBooks()
+                     } else if (currentCategory == "refresh") {
+                         // 刷新时保持当前分类，不重置
+                         val lastCategory = viewModel.lastSelectedCategory.value
+                         if (lastCategory.isNullOrBlank()) {
+                             AppLog.put("onResume: 刷新模式，加载默认书籍")
+                             loadAndShowBooks()
+                         } else {
+                             AppLog.put("onResume: 刷新模式，保持分类: $lastCategory")
+                             // 修复：刷新时先清除旧数据，避免显示错误内容
+                             clearBooksData()
+                             loadBooksWithPreload(lastCategory, showLimited = true)
+                         }
+                     } else {
+                         // 正常分类加载，保存当前分类用于刷新时恢复
+                         AppLog.put("onResume: 加载分类书籍: $currentCategory")
+                         viewModel.lastSelectedCategory.value = currentCategory
+                         // 修复：切换分类时先清除旧数据
+                         clearBooksData()
+                         loadBooksWithPreload(currentCategory, showLimited = true)
+                     }
                   }
               } catch (e: Exception) {
                   AppLog.put("onResume 刷新书籍数据失败", e)
@@ -252,6 +249,42 @@ class ExploreFragment() : VMBaseFragment<ExploreViewModel>(R.layout.fragment_exp
         } catch (e: Exception) {
             // 记录错误但不崩溃
             AppLog.put("初始化组件失败", e)
+        }
+    }
+    
+    // 新增：清除书籍数据
+    private fun clearBooksData() {
+        try {
+            binding.cardBooksSection.isVisible = false
+            bookGridAdapter.setItems(emptyList())
+            AppLog.put("分类切换：清除书籍数据")
+        } catch (e: Exception) {
+            AppLog.put("清除书籍数据失败", e)
+        }
+    }
+    
+    // 新增：预加载书籍详情，避免返回空页面
+    private fun preloadBookDetails(books: List<SearchBook>) {
+        try {
+            AppLog.put("开始预加载 ${books.size} 本书的详情")
+            
+            // 异步预加载书籍详情
+            lifecycleScope.launch(IO) {
+                books.forEach { book ->
+                    try {
+                        // 预加载书籍详情，确保返回时有数据
+                        if (book.bookUrl.isNotBlank()) {
+                            // 这里可以调用预加载逻辑，暂时记录日志
+                            AppLog.put("预加载书籍: ${book.name} - ${book.bookUrl}")
+                        }
+                    } catch (e: Exception) {
+                        AppLog.put("预加载书籍失败: ${book.name}", e)
+                    }
+                }
+                AppLog.put("预加载完成")
+            }
+        } catch (e: Exception) {
+            AppLog.put("预加载书籍详情失败", e)
         }
     }
     
@@ -1372,7 +1405,7 @@ class ExploreFragment() : VMBaseFragment<ExploreViewModel>(R.layout.fragment_exp
                      AppLog.put("找到分类: ${targetCategory.title}, URL: ${targetCategory.url}")
                      
                      // 调用探索API获取该分类下的真实书籍
-                     WebBook.exploreBook(lifecycleScope, currentSource, targetCategory.url)
+                     WebBook.exploreBook(lifecycleScope, currentSource, targetCategory.url!!)
                          .timeout(30000L)
                          .onSuccess(IO) { searchBooks ->
                              AppLog.put("成功获取书籍，数量: ${searchBooks.size}")
@@ -1451,17 +1484,11 @@ class ExploreFragment() : VMBaseFragment<ExploreViewModel>(R.layout.fragment_exp
                     viewModel.addToBookshelf(book)
                     true
                 }
-                2 -> {
-                    // 查看详情
-                    startActivity<BookInfoActivity> {
-                        putExtra("name", book.name)
-                        putExtra("author", book.author)
-                        putExtra("bookUrl", book.bookUrl)
-                        putExtra("intro", book.intro)
-                        putExtra("coverUrl", book.coverUrl)
-                    }
-                    true
-                }
+                                 2 -> {
+                     // 查看详情 - 使用统一的打开方法
+                     openBookDetail(book)
+                     true
+                 }
                 3 -> {
                     // 分享
                     shareBook(book)
@@ -1622,6 +1649,12 @@ class ExploreFragment() : VMBaseFragment<ExploreViewModel>(R.layout.fragment_exp
                  return
              }
              
+             // 动漫类书源特殊处理日志
+             if (currentSource.bookSourceType == BookSourceType.image) {
+                 AppLog.put("🎯 动漫类书源特殊处理: ${currentSource.bookSourceName}")
+                 AppLog.put("🎯 分类信息: $categoryName")
+             }
+             
              // 如果显示限制书籍，先跳转到完整列表预加载数据
              if (!showLimited) {
                  openCategoryFullList(categoryName)
@@ -1648,6 +1681,14 @@ class ExploreFragment() : VMBaseFragment<ExploreViewModel>(R.layout.fragment_exp
                          }
                      }
                      
+                     // 动漫类书源分类信息详细日志
+                     if (currentSource.bookSourceType == BookSourceType.image) {
+                         AppLog.put("🎯 动漫类书源分类数量: ${categories.size}")
+                         categories.forEach { category ->
+                             AppLog.put("🎯 分类: ${category.title} - URL: ${category.url}")
+                         }
+                     }
+                     
                      if (categories.isEmpty()) {
                          AppLog.put("书源没有可用分类: $categoryName")
                          withContext(kotlinx.coroutines.Dispatchers.Main) {
@@ -1661,50 +1702,13 @@ class ExploreFragment() : VMBaseFragment<ExploreViewModel>(R.layout.fragment_exp
                      if (targetCategory != null && !targetCategory.url.isNullOrBlank()) {
                          AppLog.put("找到分类: ${targetCategory.title}, URL: ${targetCategory.url}")
                          
-                         // 调用探索API获取该分类下的书籍
-                         WebBook.exploreBook(lifecycleScope, currentSource, targetCategory.url)
-                             .timeout(30000L)
-                             .onSuccess(IO) { searchBooks ->
-                                 AppLog.put("成功获取分类书籍，数量: ${searchBooks.size}")
-                                 
-                                 // 验证书籍数据的完整性
-                                 val validBooks = searchBooks.filter { book ->
-                                     !book.name.isBlank() && 
-                                     !book.author.isBlank() && 
-                                     !book.bookUrl.isBlank()
-                                 }
-                                 
-                                 AppLog.put("分类书籍数据完整性检查：总书籍 ${searchBooks.size}，有效书籍 ${validBooks.size}")
-                                 
-                                 // 在主线程更新UI，显示限制数量的书籍
-                                 withContext(kotlinx.coroutines.Dispatchers.Main) {
-                                     if (validBooks.isNotEmpty()) {
-                                         binding.cardBooksSection.isVisible = true
-                                         binding.tvBooksSectionTitle.text = "${categoryName} - 热门书籍 (${validBooks.size}本)"
-                                         
-                                         // 显示9-12本书，支持滚动查看更多
-                                         val displayBooks = if (validBooks.size > 12) validBooks.take(12) else validBooks
-                                         bookGridAdapter.setItems(displayBooks)
-                                         AppLog.put("分类书籍加载完成，显示 ${displayBooks.size} 本，总共 ${validBooks.size} 本")
-                                         
-                                         // 记录第一本书的详细信息用于调试
-                                         if (displayBooks.isNotEmpty()) {
-                                             val firstBook = displayBooks.first()
-                                             AppLog.put("分类第一本书详情: name=${firstBook.name}, author=${firstBook.author}, bookUrl=${firstBook.bookUrl}, intro=${firstBook.intro?.take(50)}")
-                                         }
-                                     } else {
-                                         binding.cardBooksSection.isVisible = false
-                                         AppLog.put("该分类下没有有效书籍")
-                                         android.widget.Toast.makeText(requireContext(), "该分类下暂无有效书籍", android.widget.Toast.LENGTH_SHORT).show()
-                                     }
-                                 }
-                             }.onError { e ->
-                                 AppLog.put("加载分类书籍失败: $categoryName", e)
-                                 withContext(kotlinx.coroutines.Dispatchers.Main) {
-                                     binding.cardBooksSection.isVisible = false
-                                     android.widget.Toast.makeText(requireContext(), "加载书籍失败: ${e.message}", android.widget.Toast.LENGTH_SHORT).show()
-                                 }
-                             }
+                         // 动漫类书源：尝试多种加载策略
+                         if (currentSource.bookSourceType == BookSourceType.image) {
+                             loadAnimeBooksWithFallback(currentSource, targetCategory, categoryName)
+                         } else {
+                             // 其他类型书源：使用原有逻辑
+                             loadNormalBooks(currentSource, targetCategory, categoryName)
+                         }
                      } else {
                          AppLog.put("未找到分类或分类URL为空: $categoryName")
                          withContext(kotlinx.coroutines.Dispatchers.Main) {
@@ -1725,6 +1729,129 @@ class ExploreFragment() : VMBaseFragment<ExploreViewModel>(R.layout.fragment_exp
              android.widget.Toast.makeText(requireContext(), "加载书籍失败，请重试", android.widget.Toast.LENGTH_SHORT).show()
          }
      }
+               
+    // 重新设计：简化的动漫类书源加载逻辑
+    private suspend fun loadAnimeBooksWithFallback(
+        currentSource: BookSource,
+        targetCategory: ExploreKind,
+        categoryName: String
+    ) {
+        try {
+            val startTime = System.currentTimeMillis()
+            AppLog.put("开始动漫类书源加载: ${categoryName}")
+            
+            // 立即显示加载状态
+            withContext(kotlinx.coroutines.Dispatchers.Main) {
+                binding.cardBooksSection.isVisible = true
+                binding.tvBooksSectionTitle.text = "正在加载 ${categoryName}..."
+                bookGridAdapter.setItems(emptyList())
+            }
+            
+            // 只使用探索API，简化逻辑
+            WebBook.exploreBook(lifecycleScope, currentSource, targetCategory.url!!)
+                .timeout(15000L) // 减少超时时间到15秒
+                .onSuccess(IO) { searchBooks ->
+                    AppLog.put("探索API成功，获取书籍数量: ${searchBooks.size}")
+                    
+                    // 直接使用原始数据，不进行复杂验证
+                    if (searchBooks.isNotEmpty()) {
+                        withContext(kotlinx.coroutines.Dispatchers.Main) {
+                            // 显示所有书籍，最多12本（减少数据处理）
+                            val displayBooks = if (searchBooks.size > 12) searchBooks.take(12) else searchBooks
+                            bookGridAdapter.setItems(displayBooks)
+                            binding.tvBooksSectionTitle.text = "${categoryName} (${searchBooks.size}本)"
+                            val loadTime = System.currentTimeMillis() - startTime
+                            AppLog.put("动漫类加载成功，显示 ${displayBooks.size} 本，耗时 ${loadTime}ms")
+                        }
+                    } else {
+                        // 数据为空时的简单处理
+                        withContext(kotlinx.coroutines.Dispatchers.Main) {
+                            binding.tvBooksSectionTitle.text = "${categoryName} (0本)"
+                            bookGridAdapter.setItems(emptyList())
+                            AppLog.put("动漫类数据为空")
+                        }
+                    }
+                }
+                .onError { e ->
+                    val loadTime = System.currentTimeMillis() - startTime
+                    AppLog.put("探索API失败，耗时 ${loadTime}ms", e)
+                    withContext(kotlinx.coroutines.Dispatchers.Main) {
+                        binding.tvBooksSectionTitle.text = "加载失败，请重试"
+                        bookGridAdapter.setItems(emptyList())
+                    }
+                }
+                
+        } catch (e: Exception) {
+            AppLog.put("动漫类书源加载异常", e)
+            withContext(kotlinx.coroutines.Dispatchers.Main) {
+                binding.cardBooksSection.isVisible = true
+                binding.tvBooksSectionTitle.text = "加载异常，请重试"
+                bookGridAdapter.setItems(emptyList())
+            }
+        }
+    }
+     
+     // 新增：普通书源加载（保持原有逻辑）
+     private suspend fun loadNormalBooks(
+         currentSource: BookSource,
+         targetCategory: ExploreKind,
+         categoryName: String
+     ) {
+         try {
+             AppLog.put("普通书源加载: ${targetCategory.title}")
+             
+             // 调用探索API获取该分类下的书籍
+             WebBook.exploreBook(lifecycleScope, currentSource, targetCategory.url!!)
+                 .timeout(30000L)
+                 .onSuccess(IO) { searchBooks ->
+                     AppLog.put("成功获取分类书籍，数量: ${searchBooks.size}")
+                     
+                     // 验证书籍数据的完整性
+                     val validBooks = searchBooks.filter { book ->
+                         !book.name.isBlank() && 
+                         !book.author.isBlank() && 
+                         !book.bookUrl.isBlank()
+                     }
+                     
+                     AppLog.put("分类书籍数据完整性检查：总书籍 ${searchBooks.size}，有效书籍 ${validBooks.size}")
+                     
+                     // 在主线程更新UI，显示限制数量的书籍
+                     withContext(kotlinx.coroutines.Dispatchers.Main) {
+                         if (validBooks.isNotEmpty()) {
+                             binding.cardBooksSection.isVisible = true
+                             binding.tvBooksSectionTitle.text = "${categoryName} - 热门书籍 (${validBooks.size}本)"
+                             
+                             // 显示9-12本书，支持滚动查看更多
+                             val displayBooks = if (validBooks.size > 12) validBooks.take(12) else validBooks
+                             bookGridAdapter.setItems(displayBooks)
+                             AppLog.put("分类书籍加载完成，显示 ${displayBooks.size} 本，总共 ${validBooks.size} 本")
+                             
+                             // 记录第一本书的详细信息用于调试
+                             if (displayBooks.isNotEmpty()) {
+                                 val firstBook = displayBooks.first()
+                                 AppLog.put("分类第一本书详情: name=${firstBook.name}, author=${firstBook.author}, bookUrl=${firstBook.bookUrl}, intro=${firstBook.intro?.take(50)}")
+                             }
+                         } else {
+                             binding.cardBooksSection.isVisible = false
+                             AppLog.put("该分类下没有有效书籍")
+                             android.widget.Toast.makeText(requireContext(), "该分类下暂无有效书籍", android.widget.Toast.LENGTH_SHORT).show()
+                         }
+                     }
+                 }.onError { e ->
+                     AppLog.put("加载分类书籍失败: $categoryName", e)
+                     withContext(kotlinx.coroutines.Dispatchers.Main) {
+                         binding.cardBooksSection.isVisible = false
+                         android.widget.Toast.makeText(requireContext(), "加载书籍失败: ${e.message}", android.widget.Toast.LENGTH_SHORT).show()
+                     }
+                 }
+         } catch (e: Exception) {
+             AppLog.put("普通书源加载异常: $categoryName", e)
+             withContext(kotlinx.coroutines.Dispatchers.Main) {
+                 binding.cardBooksSection.isVisible = false
+                 android.widget.Toast.makeText(requireContext(), "加载书籍异常: ${e.message}", android.widget.Toast.LENGTH_SHORT).show()
+             }
+         }
+     }
      
      // 新增：直接打开分类的完整书籍列表（优化版）
      private fun openCategoryFullList(categoryName: String) {
@@ -1737,6 +1864,11 @@ class ExploreFragment() : VMBaseFragment<ExploreViewModel>(R.layout.fragment_exp
                  android.widget.Toast.makeText(requireContext(), "请先选择书源", android.widget.Toast.LENGTH_SHORT).show()
                  return
              }
+             
+                           // 动漫类书源特殊处理日志
+              if (currentSource.bookSourceType == BookSourceType.image) {
+                  AppLog.put("🎯 动漫类书源打开完整列表: $categoryName")
+              }
              
              // 显示加载提示
              android.widget.Toast.makeText(requireContext(), "正在加载分类: $categoryName", android.widget.Toast.LENGTH_SHORT).show()
@@ -1764,19 +1896,19 @@ class ExploreFragment() : VMBaseFragment<ExploreViewModel>(R.layout.fragment_exp
                          return@launch
                      }
                      
-                     val targetCategory = categories.find { it.title == categoryName }
-                     if (targetCategory != null && !targetCategory.url.isNullOrBlank()) {
-                         AppLog.put("找到分类: ${targetCategory.title}, URL: ${targetCategory.url}")
-                         
-                         withContext(kotlinx.coroutines.Dispatchers.Main) {
-                             // 直接跳转到完整书籍列表
-                             startActivity<ExploreShowActivity> {
-                                 putExtra("sourceUrl", currentSource.bookSourceUrl)
-                                 putExtra("exploreUrl", targetCategory.url)
-                                 putExtra("exploreName", "$categoryName - 全部书籍")
-                             }
-                             AppLog.put("成功启动分类完整书籍列表: $categoryName")
-                         }
+                                           val targetCategory = categories.find { it.title == categoryName }
+                      if (targetCategory != null && !targetCategory.url.isNullOrBlank()) {
+                          AppLog.put("找到分类: ${targetCategory.title}, URL: ${targetCategory.url}")
+                          
+                          withContext(kotlinx.coroutines.Dispatchers.Main) {
+                              // 直接跳转到完整书籍列表
+                              startActivity<ExploreShowActivity> {
+                                  putExtra("sourceUrl", currentSource.bookSourceUrl)
+                                  putExtra("exploreUrl", targetCategory.url)
+                                  putExtra("exploreName", "$categoryName - 全部书籍")
+                              }
+                              AppLog.put("成功启动分类完整书籍列表: $categoryName")
+                          }
                      } else {
                          // 如果找不到分类URL，尝试使用默认探索
                          if (!currentSource.exploreUrl.isNullOrBlank()) {
@@ -1818,6 +1950,83 @@ class ExploreFragment() : VMBaseFragment<ExploreViewModel>(R.layout.fragment_exp
          } catch (e: Exception) {
              AppLog.put("打开分类完整书籍列表失败: $categoryName", e)
              android.widget.Toast.makeText(requireContext(), "打开书籍列表失败，请重试", android.widget.Toast.LENGTH_SHORT).show()
+         }
+     }
+     
+     // 新增：统一处理书籍详情页打开（增强版）
+     private fun openBookDetail(book: SearchBook) {
+         try {
+             AppLog.put("打开书籍详情页: ${book.name} - ${book.author}")
+             AppLog.put("书籍完整数据: name=${book.name}, author=${book.author}, bookUrl=${book.bookUrl}")
+             AppLog.put("书籍额外数据: intro=${book.intro?.take(50)}, coverUrl=${book.coverUrl}, wordCount=${book.wordCount}")
+             
+             // 获取当前书源信息
+             val currentSource = viewModel.currentBookSource.value
+             val isAnimeSource = currentSource?.bookSourceType == BookSourceType.image
+             
+             // 构建完整的书籍信息
+             val bookInfo = Bundle().apply {
+                 putString("name", book.name)
+                 putString("author", book.author ?: "未知作者")
+                 putString("bookUrl", book.bookUrl)
+                 putString("intro", book.intro ?: "暂无简介")
+                 putString("coverUrl", book.coverUrl ?: "")
+                 putString("wordCount", book.wordCount ?: "0")
+                 putString("latestChapterTitle", book.latestChapterTitle ?: "暂无章节信息")
+                 
+                 // 书源相关信息
+                 putString("sourceUrl", currentSource?.bookSourceUrl ?: "")
+                 putString("sourceName", currentSource?.bookSourceName ?: "")
+                 putInt("sourceType", currentSource?.bookSourceType ?: 0)
+                 
+                 // 分类信息
+                 putString("category", viewModel.selectedCategory.value ?: "")
+                 
+                 // 动漫类书源特殊处理
+                 if (isAnimeSource) {
+                     putBoolean("isAnime", true)
+                     putString("animeStatus", "连载中") // 默认状态
+                 }
+             }
+             
+             AppLog.put("准备启动 BookInfoActivity，传递参数数量: ${bookInfo.size()}")
+             
+             // 跳转到书籍详情
+             startActivity<BookInfoActivity> {
+                 putExtras(bookInfo)
+             }
+             
+             AppLog.put("成功启动 BookInfoActivity")
+             
+         } catch (e: Exception) {
+             AppLog.put("启动 BookInfoActivity 失败", e)
+             
+             // 尝试使用备用方法 - 直接传递核心参数
+             try {
+                 val intent = android.content.Intent(requireContext(), BookInfoActivity::class.java).apply {
+                     putExtra("name", book.name)
+                     putExtra("author", book.author ?: "未知作者")
+                     putExtra("bookUrl", book.bookUrl)
+                     putExtra("intro", book.intro ?: "暂无简介")
+                 }
+                 startActivity(intent)
+                 AppLog.put("使用备用方法启动 BookInfoActivity 成功")
+             } catch (e2: Exception) {
+                 AppLog.put("备用方法也失败", e2)
+                 
+                 // 最后尝试：只传递最基本的参数
+                 try {
+                     val simpleIntent = android.content.Intent(requireContext(), BookInfoActivity::class.java).apply {
+                         putExtra("name", book.name)
+                         putExtra("bookUrl", book.bookUrl)
+                     }
+                     startActivity(simpleIntent)
+                     AppLog.put("使用最简单方法启动 BookInfoActivity 成功")
+                 } catch (e3: Exception) {
+                     AppLog.put("所有启动方法都失败", e3)
+                     android.widget.Toast.makeText(requireContext(), "打开书籍详情失败，请重试", android.widget.Toast.LENGTH_SHORT).show()
+                 }
+             }
          }
      }
  }
