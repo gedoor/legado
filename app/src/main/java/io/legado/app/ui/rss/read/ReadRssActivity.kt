@@ -126,9 +126,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             if (binding.customWebView.size > 0) {
                 customWebViewCallback?.onCustomViewHidden()
                 return@addCallback
-            } else if (binding.webView.canGoBack()
-                && binding.webView.copyBackForwardList().size > 1
-            ) {
+            } else if (binding.webView.canGoBack() && binding.webView.copyBackForwardList().size > 1) {
                 binding.webView.goBack()
                 return@addCallback
             }
@@ -211,6 +209,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             R.id.menu_browser_open -> binding.webView.url?.let {
                 openUrl(it)
             } ?: toastOnUi("url null")
+
             R.id.menu_log -> showDialogFragment<AppLogDialog>()
         }
         return super.onCompatOptionsItemSelected(item)
@@ -265,9 +264,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         binding.webView.addJavascriptInterface(this, "thisActivity")
         binding.webView.setOnLongClickListener {
             val hitTestResult = binding.webView.hitTestResult
-            if (hitTestResult.type == WebView.HitTestResult.IMAGE_TYPE ||
-                hitTestResult.type == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE
-            ) {
+            if (hitTestResult.type == WebView.HitTestResult.IMAGE_TYPE || hitTestResult.type == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE) {
                 hitTestResult.extra?.let { webPic ->
                     selector(
                         arrayListOf(
@@ -311,6 +308,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                 }
             }
         }
+
         @JavascriptInterface
         fun openUI(name: String, url: String) {
             val source = viewModel.rssSource ?: return
@@ -319,33 +317,38 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                 "sort" -> {
                     RssSortActivity.start(this@ReadRssActivity, url, sourceUrl)
                 }
+
                 "rss" -> {
-                    GSONStrict.fromJsonObject<Map<String, String>>(url).getOrThrow().entries.firstOrNull()?.let {
-                        start(this@ReadRssActivity, it.key, it.value, sourceUrl)
-                    }
+                    GSONStrict.fromJsonObject<Map<String, String>>(url)
+                        .getOrThrow().entries.firstOrNull()?.let {
+                            start(this@ReadRssActivity, it.key, it.value, sourceUrl)
+                        }
                 }
             }
         }
+
         @JavascriptInterface
-        fun request(jsCode:String, id: String) {
+        fun request(jsCode: String, id: String) {
             Coroutine.async(lifecycleScope) {
                 AnalyzeRule(null, viewModel.rssSource).run {
                     setCoroutineContext(coroutineContext)
                     evalJS(jsCode).toString()
                 }
             }.onSuccess { data ->
-                binding.webView.evaluateJavascript("window.JSBridgeResult('$id', '${data.escapeForJs()}', null);", null)
+                binding.webView.evaluateJavascript(
+                    "window.JSBridgeResult('$id', '${data.escapeForJs()}', null);", null
+                )
             }.onError {
-                binding.webView.evaluateJavascript("window.JSBridgeResult('$id', null, '${it.localizedMessage}');", null)
+                binding.webView.evaluateJavascript(
+                    "window.JSBridgeResult('$id', null, '${it.localizedMessage}');", null
+                )
             }
         }
     }
+
     fun String.escapeForJs(): String {
-        return this
-            .replace("\\", "\\\\")  // 先处理反斜杠
-            .replace("'", "\\'")
-            .replace("\n", "\\n")
-            .replace("\r", "\\r")
+        return this.replace("\\", "\\\\")  // 先处理反斜杠
+            .replace("'", "\\'").replace("\n", "\\n").replace("\r", "\\r")
             .replace("\u2028", "\\u2028") // Unicode 行分隔符
             .replace("\u2029", "\\u2029") // Unicode 段分隔符
     }
@@ -428,11 +431,21 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                 binding.webView.settings.userAgentString =
                     viewModel.headerMap[AppConst.UA_NAME] ?: AppConfig.userAgent
                 if (viewModel.rssSource?.loadWithBaseUrl == true) {
-                    binding.webView
-                        .loadDataWithBaseURL(url, html, "text/html", "utf-8", url)//不想用baseUrl进else
+                    binding.webView.loadDataWithBaseURL(
+                        url,
+                        html,
+                        "text/html",
+                        "utf-8",
+                        url
+                    )//不想用baseUrl进else
                 } else {
-                    binding.webView
-                        .loadDataWithBaseURL(null, html, "text/html;charset=utf-8", "utf-8", url)
+                    binding.webView.loadDataWithBaseURL(
+                        null,
+                        html,
+                        "text/html;charset=utf-8",
+                        "utf-8",
+                        url
+                    )
                 }
             }
         }
@@ -441,15 +454,13 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                 upJavaScriptEnable()
                 CookieManager.applyToWebView(urlState.url)
                 settings.userAgentString = urlState.getUserAgent()
-                val processedHtml = viewModel.rssSource?.ruleContent?.takeIf { it.isNotEmpty() }?.let(viewModel::clHtml)
+                val processedHtml = viewModel.rssSource?.ruleContent?.takeIf { it.isNotEmpty() }
+                    ?.let(viewModel::clHtml)
                 if (processedHtml != null) {
-                    val baseUrl = if (viewModel.rssSource?.loadWithBaseUrl == true) urlState.url else null
+                    val baseUrl =
+                        if (viewModel.rssSource?.loadWithBaseUrl == true) urlState.url else null
                     loadDataWithBaseURL(
-                        baseUrl,
-                        processedHtml,
-                        "text/html;charset=utf-8",
-                        "utf-8",
-                        urlState.url
+                        baseUrl, processedHtml, "text/html;charset=utf-8", "utf-8", urlState.url
                     )
                 } else {
                     loadUrl(urlState.url, urlState.headerMap)
@@ -459,9 +470,11 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         viewModel.htmlLiveData.observe(this) { html ->
             viewModel.rssSource?.let {
                 upJavaScriptEnable()
-                binding.webView.settings.userAgentString = viewModel.headerMap[AppConst.UA_NAME] ?: AppConfig.userAgent
-                binding.webView
-                    .loadDataWithBaseURL(it.sourceUrl, viewModel.hbHtml(html), "text/html", "utf-8", it.sourceUrl)
+                binding.webView.settings.userAgentString =
+                    viewModel.headerMap[AppConst.UA_NAME] ?: AppConfig.userAgent
+                binding.webView.loadDataWithBaseURL(
+                    it.sourceUrl, viewModel.hbHtml(html), "text/html", "utf-8", it.sourceUrl
+                )
             }
         }
     }
@@ -506,12 +519,9 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         } else {
             binding.webView.settings.javaScriptEnabled = true
             binding.webView.evaluateJavascript("document.documentElement.outerHTML") {
-                val html = StringEscapeUtils.unescapeJson(it)
-                    .replace("^\"|\"$".toRegex(), "")
+                val html = StringEscapeUtils.unescapeJson(it).replace("^\"|\"$".toRegex(), "")
                 viewModel.readAloud(
-                    Jsoup.parse(html)
-                        .textArray()
-                        .joinToString("\n")
+                    Jsoup.parse(html).textArray().joinToString("\n")
                 )
             }
         }
@@ -563,14 +573,19 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
 
         /* 监听网页日志 */
         override fun onConsoleMessage(consoleMessage: ConsoleMessage): Boolean {
-            viewModel.rssSource?.let{
+            viewModel.rssSource?.let {
                 if (it.showWebLog) {
                     val message = it.sourceName + ": ${consoleMessage.message()}"
                     when (consoleMessage.messageLevel()) {
                         ConsoleMessage.MessageLevel.LOG -> AppLog.put(message)
                         ConsoleMessage.MessageLevel.DEBUG -> AppLog.put(message + "\n-${consoleMessage.lineNumber()}")
                         ConsoleMessage.MessageLevel.WARNING -> AppLog.put(message + "\n-${consoleMessage.sourceId()}")
-                        ConsoleMessage.MessageLevel.ERROR -> AppLog.put(message + "\n-Line ${consoleMessage.lineNumber()} of ${consoleMessage.sourceId()}", null, true)
+                        ConsoleMessage.MessageLevel.ERROR -> AppLog.put(
+                            message + "\n-Line ${consoleMessage.lineNumber()} of ${consoleMessage.sourceId()}",
+                            null,
+                            true
+                        )
+
                         ConsoleMessage.MessageLevel.TIP -> AppLog.put(message)
                         else -> AppLog.put(message)
                     }
@@ -584,8 +599,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
     inner class CustomWebViewClient : WebViewClient() {
 
         override fun shouldOverrideUrlLoading(
-            view: WebView,
-            request: WebResourceRequest
+            view: WebView, request: WebResourceRequest
         ): Boolean {
             return shouldOverrideUrlLoading(request.url)
         }
@@ -601,8 +615,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
          * 都没有不做处理
          */
         override fun shouldInterceptRequest(
-            view: WebView,
-            request: WebResourceRequest
+            view: WebView, request: WebResourceRequest
         ): WebResourceResponse? {
             val url = request.url.toString()
             val source = viewModel.rssSource ?: return super.shouldInterceptRequest(view, request)
@@ -638,10 +651,12 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             }
             return super.shouldInterceptRequest(view, request)
         }
+
         private fun isImageUrl(url: String): Boolean {
             val imageExtensions = listOf("jpg", "jpeg", "png", "gif", "webp")
             return imageExtensions.any { url.contains(it, ignoreCase = true) }
         }
+
         private fun getMimeType(url: String): String? {
             return try {
                 URLConnection.guessContentTypeFromName(url)?.takeIf { it.startsWith("image/") }
@@ -649,13 +664,12 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                 null
             }
         }
+
         private fun getGlideCachedImage(url: String): WebResourceResponse? {
             if (url.isBlank()) return null
             return try {
                 // 同步获取Glide缓存
-                val future = Glide.with(this@ReadRssActivity)
-                    .downloadOnly()
-                    .load(url)
+                val future = Glide.with(this@ReadRssActivity).downloadOnly().load(url)
                     .onlyRetrieveFromCache(true) // 只查缓存
                     .submit()
                 val cacheFile = future.get() // 阻塞式获取
@@ -671,6 +685,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                         // 未命中缓存
                         null
                     }
+
                     else -> {
                         AppLog.put("Glide加载失败: ${e.message} URL:$url")
                         null
@@ -705,9 +720,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
 
         private fun createEmptyResource(): WebResourceResponse {
             return WebResourceResponse(
-                "text/plain",
-                "utf-8",
-                ByteArrayInputStream("".toByteArray())
+                "text/plain", "utf-8", ByteArrayInputStream("".toByteArray())
             )
         }
 
@@ -716,8 +729,17 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                 handleSpecialSchemes(source, url)?.let { return it }
                 source.shouldOverrideUrlLoading?.takeUnless(String::isNullOrBlank)?.let { js ->
                     val startTime = SystemClock.uptimeMillis()
-                    val result = runJsInterception(source, js, url)
-                    if (SystemClock.uptimeMillis() - startTime > 30) {
+                    val result = kotlin.runCatching {
+                        runScriptWithContext(lifecycleScope.coroutineContext) {
+                            source.evalJS(js) {
+                                put("java", rssJsExtensions)
+                                put("url", url.toString())
+                            }.toString()
+                        }
+                    }.onFailure {
+                        AppLog.put("${source.getTag()}: url跳转拦截js出错", it)
+                    }.getOrNull()
+                    if (SystemClock.uptimeMillis() - startTime > 99) {
                         AppLog.put("${source.getTag()}: url跳转拦截js执行耗时过长")
                     }
                     if (result.isTrue()) return true
@@ -725,6 +747,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             }
             return handleCommonSchemes(url)
         }
+
         private fun handleSpecialSchemes(source: RssSource, url: Uri): Boolean? {
             return when (url.scheme) {
                 "opensorturl" -> {
@@ -732,26 +755,17 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                     RssSortActivity.start(this@ReadRssActivity, decodedUrl, source.sourceUrl)
                     true
                 }
+
                 "openrssurl" -> {
                     val decodedUrl = decodeUrl(url, "rssurl://")
                     start(this@ReadRssActivity, source.sourceName, decodedUrl, source.sourceUrl)
                     true
                 }
+
                 else -> null
             }
         }
-        private fun runJsInterception(source: RssSource, js: String, url: Uri): String? {
-            return kotlin.runCatching {
-                runScriptWithContext(lifecycleScope.coroutineContext) {
-                    source.evalJS(js) {
-                        put("java", rssJsExtensions)
-                        put("url", url.toString())
-                    }.toString()
-                }
-            }.onFailure {
-                AppLog.put("${source.getTag()}: url跳转拦截js出错", it)
-            }.getOrNull()
-        }
+
         private fun handleCommonSchemes(url: Uri): Boolean {
             return when (url.scheme) {
                 "http", "https", "jsbridge" -> false
@@ -759,6 +773,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                     startActivity<OnLineImportActivity> { data = url }
                     true
                 }
+
                 else -> {
                     binding.root.longSnackbar(R.string.jump_to_another_app, R.string.confirm) {
                         openUrl(url)
@@ -767,15 +782,14 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                 }
             }
         }
+
         private fun decodeUrl(url: Uri, prefix: String): String {
             return URLDecoder.decode(url.toString().substringAfter(prefix), "UTF-8")
         }
 
         @SuppressLint("WebViewClientOnReceivedSslError")
         override fun onReceivedSslError(
-            view: WebView?,
-            handler: SslErrorHandler?,
-            error: SslError?
+            view: WebView?, handler: SslErrorHandler?, error: SslError?
         ) {
             handler?.proceed()
         }

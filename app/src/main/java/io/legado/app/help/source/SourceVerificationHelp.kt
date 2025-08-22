@@ -92,9 +92,7 @@ object SourceVerificationHelp {
             putExtra("sourceType", source.getSourceType())
             putExtra("sourceVerificationEnable", saveResult)
             putExtra("refetchAfterSuccess", refetchAfterSuccess)
-            if (html != null) {
-                putExtra("html", html)
-            }
+            putExtra("html", html)
             IntentData.put(getVerificationResultKey(source), Thread.currentThread())
         }
     }
