@@ -402,16 +402,16 @@ object BookHelp {
      */
         fun getContent(book: Book, bookChapter: BookChapter): String? {
         if (AppConfig.aiSummaryModeEnabled) {
-            io.legado.app.utils.LogUtils.d("AiSummary", "BookHelp.getContent for chapter: ${bookChapter.title} (AI Mode Enabled)")
+            Log.d("AiSummary", "BookHelp.getContent 获取章节: ${bookChapter.title} (AI模式)")
             val summary = ZhanweifuBookHelp.getAiSummaryFromCache(book, bookChapter)
             if (summary != null) {
-                io.legado.app.utils.LogUtils.d("AiSummary", "Found AI summary cache for '${bookChapter.title}'. Returning summary.")
+                Log.d("AiSummary", "找到AI摘要缓存: '${bookChapter.title}'. 返回摘要.")
                 return summary
             }
-            io.legado.app.utils.LogUtils.d("AiSummary", "AI summary cache not found for '${bookChapter.title}'.")
+            Log.d("AiSummary", "未找到AI摘要缓存: '${bookChapter.title}'.")
         }
 
-        io.legado.app.utils.LogUtils.d("AiSummary", "Falling back to original content for '${bookChapter.title}'.")
+        Log.d("AiSummary", "回退到原始内容: '${bookChapter.title}'.")
         val file = downloadDir.getFile(
             cacheFolderName,
             book.getFolderName(),

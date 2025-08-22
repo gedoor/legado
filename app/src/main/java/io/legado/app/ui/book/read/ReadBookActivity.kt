@@ -276,7 +276,7 @@ class ReadBookActivity : BaseReadBookActivity(),
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        io.legado.app.utils.LogUtils.d("AiSummary", "onActivityCreated")
+        Log.d("AiSummary", "onActivityCreated (Activity创建)")
         super.onActivityCreated(savedInstanceState)
         aiSummaryHelper.onActivityCreated()
         binding.cursorLeft.setColorFilter(accentColor)
@@ -653,7 +653,7 @@ class ReadBookActivity : BaseReadBookActivity(),
     
 
     private fun aiSummary() {
-        io.legado.app.utils.LogUtils.d("AiSummary", "ReadBookActivity::aiSummary called")
+        Log.d("AiSummary", "ReadBookActivity::aiSummary (摘要方法调用)")
         val content = ReadBook.curTextChapter?.getContent()
         if (content.isNullOrEmpty()) {
             toastOnUi("本章无内容")
@@ -664,7 +664,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         bundle.putString("content", content)
         dialog.arguments = bundle
         dialog.show(supportFragmentManager, "aiSummaryDialog")
-        io.legado.app.utils.LogUtils.d("AiSummary", "ReadBookActivity::dialog.show called")
+        Log.d("AiSummary", "ReadBookActivity::dialog.show (对话框显示)")
     }
 
     private fun refreshContentAll(book: Book) {

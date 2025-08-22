@@ -1254,4 +1254,6 @@
     <string name="manga_epaper_value">阈值</string>
     <string name="disable_horizontal_animation">禁用水平滚动动画</string>
     <string name="enable_manga_gray">开启图片灰色</string>
+    <string name="ai_summary_models_url">模型列表URL</string>
+    <string name="ai_summary_models_url_desc">用于获取可用模型列表的URL</string>
 </resources>

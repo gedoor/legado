@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.DialogFragment
+import android.util.Log
 import io.legado.app.R
 import io.legado.app.help.config.AppConfig
 import io.legado.app.ui.book.read.content.ZhanweifuBookHelp
@@ -101,26 +102,26 @@ class AiSummaryDialog : DialogFragment() {
                     .addHeader("Authorization", "Bearer $apiKey")
                     .build()
 
-                io.legado.app.utils.LogUtils.d("AiSummary", "Request URL: $apiUrl")
-                io.legado.app.utils.LogUtils.d("AiSummary", "Request Headers: ${request.headers}")
+                Log.d("AiSummary", "请求 URL: $apiUrl")
+                Log.d("AiSummary", "请求头: ${request.headers}")
                 val buffer = Buffer()
                 requestBody.writeTo(buffer)
-                io.legado.app.utils.LogUtils.d("AiSummary", "Request Body: ${buffer.readUtf8()}")
+                Log.d("AiSummary", "请求体: ${buffer.readUtf8()}")
 
                 val response = client.newCall(request).execute()
 
-                io.legado.app.utils.LogUtils.d("AiSummary", "Response Code: ${response.code}")
-                io.legado.app.utils.LogUtils.d("AiSummary", "Response Message: ${response.message}")
-                io.legado.app.utils.LogUtils.d("AiSummary", "Response Headers: ${response.headers}")
+                Log.d("AiSummary", "响应代码: ${response.code}")
+                Log.d("AiSummary", "响应消息: ${response.message}")
+                Log.d("AiSummary", "响应头: ${response.headers}")
 
                 if (response.isSuccessful) {
                     val responseBody = response.body?.string()
-                    io.legado.app.utils.LogUtils.d("AiSummary", "Successful Response Body: $responseBody")
+                    Log.d("AiSummary", "成功响应体: $responseBody")
                     val summary = GSON.fromJson(responseBody, Map::class.java)
                         ?.get("choices")?.let { it as List<*> }?.get(0)?.let { it as Map<*, *> }?.get("message")?.let { it as Map<*, *> }?.get("content") as? String
 
                     if (summary != null) {
-                        io.legado.app.utils.LogUtils.d("AiSummary", "Parsed Summary: $summary")
+                        Log.d("AiSummary", "解析的摘要: $summary")
                         withContext(Dispatchers.Main) {
                             binding.progressBar.visibility = View.GONE
                             binding.tvSummary.visibility = View.VISIBLE
@@ -136,7 +137,7 @@ class AiSummaryDialog : DialogFragment() {
                     }
                 } else {
                     val errorBody = response.body?.string()
-                    io.legado.app.utils.LogUtils.e("AiSummary", "Error Response Code: ${response.code}, Message: ${response.message}, Body: $errorBody")
+                    Log.e("AiSummary", "错误响应代码: ${response.code}, 消息: ${response.message}, 响应体: $errorBody")
                     toastOnUi("AI摘要失败：${response.message}. 详情请查看日志")
                 }
             } catch (e: IOException) {
@@ -158,9 +159,9 @@ class AiSummaryDialog : DialogFragment() {
             return
         }
 
-        io.legado.app.utils.LogUtils.d("AiSummary", "Cache Path URI String: $cachePathUriString")
-        io.legado.app.utils.LogUtils.d("AiSummary", "Save Format: $saveFormat")
-        io.legado.app.utils.LogUtils.d("AiSummary", "Save Mode: $saveMode")
+        Log.d("AiSummary", "缓存路径URI字符串: $cachePathUriString")
+        Log.d("AiSummary", "保存格式: $saveFormat")
+        Log.d("AiSummary", "保存模式: $saveMode")
 
         val fileName = "${book.name}"
         val fileExtension = if (saveFormat == "json") "json" else "txt"
@@ -170,22 +171,22 @@ class AiSummaryDialog : DialogFragment() {
             val pickedDir = try {
                 DocumentFile.fromTreeUri(requireContext(), cacheUri)
             } catch (e: IllegalArgumentException) {
-                io.legado.app.utils.LogUtils.e("AiSummary", "Malformed cache URI: $cachePathUriString, Error: ${e.message}")
+                Log.e("AiSummary", "格式错误的缓存URI: $cachePathUriString, 错误: ${e.message}")
                 toastOnUi("AI摘要保存失败：缓存目录URI格式错误")
                 return
             } catch (e: SecurityException) {
-                io.legado.app.utils.LogUtils.e("AiSummary", "Permission denied for cache URI: $cachePathUriString, Error: ${e.message}")
+                Log.e("AiSummary", "缓存URI权限被拒绝: $cachePathUriString, 错误: ${e.message}")
                 toastOnUi("AI摘要保存失败：无权限访问缓存目录，请重新选择")
                 return
             }
-            io.legado.app.utils.LogUtils.d("AiSummary", "Picked directory: $pickedDir")
+            Log.d("AiSummary", "选择的目录: $pickedDir")
             if (pickedDir != null) {
-                io.legado.app.utils.LogUtils.d("AiSummary", "Picked directory exists: ${pickedDir.exists()}")
-                io.legado.app.utils.LogUtils.d("AiSummary", "Picked directory is directory: ${pickedDir.isDirectory()}")
+                Log.d("AiSummary", "选择的目录存在: ${pickedDir.exists()}")
+                Log.d("AiSummary", "选择的目录是文件夹: ${pickedDir.isDirectory()}")
             }
 
             if (pickedDir == null || !pickedDir.exists() || !pickedDir.isDirectory) {
-                io.legado.app.utils.LogUtils.e("AiSummary", "Invalid or non-existent cache directory: $cachePathUriString")
+                Log.e("AiSummary", "无效或不存在的缓存目录: $cachePathUriString")
                 toastOnUi("AI摘要保存失败：缓存目录无效或不存在")
                 return
             }
@@ -195,7 +196,7 @@ class AiSummaryDialog : DialogFragment() {
             if (bookDir == null || !bookDir.exists() || !bookDir.isDirectory) {
                 bookDir = pickedDir.createDirectory(book.name)
                 if (bookDir == null) {
-                    io.legado.app.utils.LogUtils.e("AiSummary", "Failed to create book directory: ${book.name}")
+                    Log.e("AiSummary", "创建书籍目录失败: ${book.name}")
                     toastOnUi("AI摘要保存失败：无法创建书籍目录")
                     return
                 }
@@ -209,7 +210,7 @@ class AiSummaryDialog : DialogFragment() {
                     }
 
                     if (targetFile == null) {
-                        io.legado.app.utils.LogUtils.e("AiSummary", "Failed to create or find file: $fileName.$fileExtension")
+                        Log.e("AiSummary", "创建或查找文件失败: $fileName.$fileExtension")
                         toastOnUi("AI摘要保存失败：无法创建或找到文件")
                         return
                     }
@@ -218,7 +219,7 @@ class AiSummaryDialog : DialogFragment() {
                         requireContext().contentResolver.openOutputStream(targetFile.uri)?.use { outputStream: OutputStream ->
                             outputStream.write(summary.toByteArray())
                         }
-                        io.legado.app.utils.LogUtils.d("AiSummary", "Summary saved (overwrite): ${targetFile.uri}")
+                        Log.d("AiSummary", "摘要已保存 (覆盖): ${targetFile.uri}")
                         toastOnUi("AI摘要保存成功")
                     } else { // append
                         requireContext().contentResolver.openOutputStream(targetFile.uri, "wa")?.use { outputStream: OutputStream ->
@@ -229,7 +230,7 @@ class AiSummaryDialog : DialogFragment() {
 """.toByteArray(Charsets.UTF_8))
                             outputStream.write(summary.toByteArray())
                         }
-                        io.legado.app.utils.LogUtils.d("AiSummary", "Summary saved (append): ${targetFile.uri}")
+                        Log.d("AiSummary", "摘要已保存 (追加): ${targetFile.uri}")
                         toastOnUi("AI摘要保存成功")
                     }
                 }
@@ -241,16 +242,16 @@ class AiSummaryDialog : DialogFragment() {
                         requireContext().contentResolver.openOutputStream(newFile.uri)?.use { outputStream: OutputStream ->
                             outputStream.write(summary.toByteArray())
                         }
-                        io.legado.app.utils.LogUtils.d("AiSummary", "Summary saved (new_file): ${newFile.uri}")
+                        Log.d("AiSummary", "摘要已保存 (新文件): ${newFile.uri}")
                         toastOnUi(getString(R.string.summary_save_success, newFile.uri.path))
                     } else {
-                        io.legado.app.utils.LogUtils.e("AiSummary", "Failed to create new file: $newFileName")
+                        Log.e("AiSummary", "创建新文件失败: $newFileName")
                         toastOnUi(getString(R.string.summary_save_failed, "无法创建新文件"))
                     }
                 }
             }
         } catch (e: Exception) {
-            io.legado.app.utils.LogUtils.e("AiSummary", "Error saving summary to file: ${e.message}")
+            Log.e("AiSummary", "将摘要保存到文件时出错: ${e.message}")
             toastOnUi("AI摘要保存失败：${e.message}")
         }
     }

@@ -1263,4 +1263,6 @@
     <string name="enable_manga_gray">开启图片灰色</string>
     <string name="summary_save_success">AI摘要保存成功</string>
     <string name="summary_save_failed">AI摘要保存失败：%s</string>
+    <string name="ai_summary_models_url">Models URL</string>
+    <string name="ai_summary_models_url_desc">URL to fetch the list of available models from</string>
 </resources>

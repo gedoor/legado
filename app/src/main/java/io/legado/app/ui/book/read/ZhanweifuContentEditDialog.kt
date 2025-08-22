@@ -1,6 +1,7 @@
 package io.legado.app.ui.book.read
 
 import android.app.Application
+import android.util.Log
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.View
@@ -47,7 +48,7 @@ class ZhanweifuContentEditDialog : BaseDialogFragment(R.layout.zhanweifu_dialog_
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        LogUtils.d("AiSummary", "ZhanweifuContentEditDialog::onFragmentCreated")
+        Log.d("AiSummary", "ZhanweifuContentEditDialog::onFragmentCreated (片段创建)")
         binding.zhanweifuToolBar.setBackgroundColor(primaryColor)
         binding.zhanweifuToolBar.title = ReadBook.curTextChapter?.title
         zhanweifuInitMenu()
@@ -148,7 +149,7 @@ class ZhanweifuContentEditDialog : BaseDialogFragment(R.layout.zhanweifu_dialog_
         val contentStream = MutableLiveData<String>()
 
         fun zhanweifuInitContent(reset: Boolean = false, success: (String) -> Unit) {
-            LogUtils.d("AiSummary", "ViewModel::zhanweifuInitContent start")
+            Log.d("AiSummary", "ViewModel::zhanweifuInitContent (内容初始化开始)")
             execute {
                 val book = ReadBook.book ?: return@execute
                 val chapter = appDb.bookChapterDao
@@ -156,7 +157,7 @@ class ZhanweifuContentEditDialog : BaseDialogFragment(R.layout.zhanweifu_dialog_
                     ?: return@execute
 
                 if (reset) {
-                    LogUtils.d("AiSummary", "ViewModel::zhanweifuInitContent - reset content")
+                    Log.d("AiSummary", "ViewModel::zhanweifuInitContent - (重置内容)")
                     ZhanweifuBookHelp.zhanweifuDelContent(book, chapter)
                     ZhanweifuBookHelp.delAiSummaryCache(book, chapter)
                 }

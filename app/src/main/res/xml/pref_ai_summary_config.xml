@@ -14,9 +14,15 @@
         android:persistent="true" />
 
     <EditTextPreference
+        android:key="aiSummaryModelsUrl"
+        android:title="@string/ai_summary_models_url"
+        android:summary="@string/ai_summary_models_url_desc"
+        android:persistent="true" />
+
+    <ListPreference
         android:key="aiSummaryModelId"
         android:title="@string/ai_summary_model_id"
-        android:summary="@string/ai_summary_model_id_desc"
+        android:summary="%s"
         android:persistent="true"
         android:defaultValue="gpt-3.5-turbo" />
 

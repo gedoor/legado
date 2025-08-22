@@ -74,7 +74,7 @@ class AiSummaryHelper(
     }
 
     fun onAiCoarseClick() {
-        Log.d("AiSummary", "[GEMINI] onAiCoarseClick called")
+        Log.d("AiSummary", "[GEMINI] onAiCoarseClick 已调用")
         binding.readMenu.runMenuOut()
         AppConfig.aiSummaryModeEnabled = !AppConfig.aiSummaryModeEnabled
         binding.readMenu.setAiCoarseState(AppConfig.aiSummaryModeEnabled)
@@ -82,15 +82,15 @@ class AiSummaryHelper(
         if (AppConfig.aiSummaryModeEnabled) {
             val chapterIndex = ReadBook.curTextChapter!!.chapter.index
             val chapter = ReadBook.curTextChapter!!.chapter
-            LogUtils.d("AiSummary", "Attempting to manually generate summary for chapter $chapterIndex ('${chapter.title}').")
+            Log.d("AiSummary", "尝试为章节 $chapterIndex ('${chapter.title}') 手动生成摘要。")
             if (!AiSummaryState.inProgress.add(chapterIndex)) {
-                LogUtils.d("AiSummary", "Manual generation for chapter $chapterIndex ('${chapter.title}') skipped, task already in progress.")
+                Log.d("AiSummary", "章节 $chapterIndex ('${chapter.title}') 的手动生成任务已在进行中，已跳过。")
                 activity.toastOnUi("本章AI摘要正在生成中，请稍候")
                 AppConfig.aiSummaryModeEnabled = false
                 binding.readMenu.setAiCoarseState(false)
                 return
             }
-            LogUtils.d("AiSummary", "New manual generation task for chapter $chapterIndex ('${chapter.title}') started.")
+            Log.d("AiSummary", "章节 $chapterIndex ('${chapter.title}') 的新手动生成任务已开始。")
 
             val book = ReadBook.book!!
             lastPreCacheChapterIndex = chapterIndex
@@ -266,72 +266,95 @@ class AiSummaryHelper(
         }
     }
 
-    private suspend fun runPreCacheTask(book: Book, chapter: BookChapter, delay: Long) {
+        private suspend fun runPreCacheTask(book: Book, chapter: BookChapter, delay: Long) {
+        // 延迟执行，避免同时触发多个任务
         delay(delay)
 
-        // First, check if cached without locking
+        Log.d("AiSummary", "任务开始: 章节 ${chapter.index} ('${chapter.title}'). 准备检查缓存.")
+        // 首先，在没有锁定的情况下检查是否已缓存，以快速跳过
         if (ZhanweifuBookHelp.getAiSummaryFromCache(book, chapter) != null) {
-            return
+            Log.d("AiSummary", "任务退出: 章节 ${chapter.index} ('${chapter.title}') 已有缓存.")
+            return // 如果已缓存，则直接返回
         }
 
-        LogUtils.d("AiSummary", "Attempting to pre-cache summary for chapter ${chapter.index} ('${chapter.title}').")
-        // Atomically check and add the chapter index to the in-progress set.
-        // If add() returns false, it means the chapter is already being processed.
+        Log.d("AiSummary", "准备锁定: 章节 ${chapter.index} ('${chapter.title}').")
+        // 原子性地检查并添加章节索引到进行中的集合。
         if (!AiSummaryState.inProgress.add(chapter.index)) {
-            LogUtils.d("AiSummary", "Pre-caching for chapter ${chapter.index} ('${chapter.title}') already in progress. Skipping.")
-            return
+            Log.d("AiSummary", "任务退出: 章节 ${chapter.index} ('${chapter.title}') 已在处理中，跳过.")
+            return // 如果已在处理中，则跳过
         }
-        LogUtils.d("AiSummary", "New pre-cache task for chapter ${chapter.index} ('${chapter.title}') started.")
+        
+        Log.d("AiSummary", "锁定成功: 章节 ${chapter.index} ('${chapter.title}') 开始处理.")
 
         try {
+            // 获取信号量许可，控制并发任务数量
             preCacheSemaphore?.acquire()
+            Log.d("AiSummary", "获取信号量: 章节 ${chapter.index} ('${chapter.title}').")
             try {
-                Log.d("AiSummary", "runPreCacheTask: Starting generation for '${chapter.title}'.")
-
-                // Double check cache after acquiring semaphore, another task might have finished.
+                // 获取信号量后再次检查缓存，因为其他任务可能已经完成
                 if (ZhanweifuBookHelp.getAiSummaryFromCache(book, chapter) != null) {
-                    return
+                    Log.d("AiSummary", "任务退出: 章节 ${chapter.index} ('${chapter.title}') 在获取信号量后发现已有缓存.")
+                    return // 如果已缓存，则直接返回
                 }
 
+                // 获取章节的原始内容
                 val chapterContent = BookHelp.getOriginalContent(book, chapter)
+                // 如果内容为空或null，则无法生成摘要
                 if (chapterContent.isNullOrEmpty()) {
-                    Log.d("AiSummary", "runPreCacheTask: Original content for '${chapter.title}' is null or empty. Cannot generate summary.")
-                    return
+                    Log.d("AiSummary", "任务退出: 章节 ${chapter.index} ('${chapter.title}') 内容为空.")
+                    return // 返回
                 }
 
+                // 如果章节内容太短，则跳过摘要生成
                 if (chapterContent.length <= 1000) {
-                    Log.d("AiSummary", "runPreCacheTask: Chapter '${chapter.title}' is too short (${chapterContent.length} words). Skipping summary generation.")
-                    return
+                    Log.d("AiSummary", "任务退出: 章节 ${chapter.index} ('${chapter.title}') 内容太短.")
+                    return // 返回
                 }
 
+                // 切换到主线程以显示UI提示
                 withContext(Dispatchers.Main) {
                     activity.toastOnUi("开始缓存: ${chapter.title}")
                 }
+                // 记录任务开始时间
                 val startTime = System.currentTimeMillis()
+                // 用于构建摘要的 StringBuilder
                 val summaryBuilder = StringBuilder()
+                
+                Log.d("AiSummary", "调用getAiSummary: 章节 ${chapter.index} ('${chapter.title}').")
+                // 调用AI摘要生成函数
                 ZhanweifuBookHelp.getAiSummary(
-                    content = chapterContent,
-                    onResponse = { summaryBuilder.append(it) },
-                    onFinish = {
-                        val finalSummary = summaryBuilder.toString()
-                        if (finalSummary.isNotEmpty()) {
-                            Log.d("AiSummary", "Successfully generated summary for '${chapter.title}'")
+                    content = chapterContent, // 传入章节内容
+                    onResponse = { summaryBuilder.append(it) }, // 实时追加收到的摘要片段
+                    onFinish = { // 完成时的回调
+                        Log.d("AiSummary", "onFinish回调: 章节 ${chapter.index} ('${chapter.title}') 摘要生成成功.")
+                        val finalSummary = summaryBuilder.toString() // 获取完整的摘要
+                        if (finalSummary.isNotEmpty()) { // 如果摘要不为空
+                            // 将摘要保存到缓存
                             ZhanweifuBookHelp.saveAiSummaryToCache(book, chapter, finalSummary)
+                            // 计算耗时
                             val duration = (System.currentTimeMillis() - startTime) / 1000
+                            // 创建提示消息
                             val message = "(${chapter.title}) 已缓存, 耗时 ${duration} 秒"
+                            // 在UI上显示消息
                             activity.toastOnUi(message)
                         } else {
-                            Log.d("AiSummary", "Finished generating summary for '${chapter.title}', but summary was empty.")
+                            Log.d("AiSummary", "onFinish回调: 章节 ${chapter.index} ('${chapter.title}') 生成的摘要为空.")
                         }
                     },
-                    onError = {
-                        Log.e("runPreCacheTask for ${chapter.title}", it)
+                    onError = { e -> // 发生错误时的回调
+                        Log.e("AiSummary", "onError回调: 章节 ${chapter.index} ('${chapter.title}') 发生错误: $e")
                     }
                 )
+                Log.d("AiSummary", "getAiSummary调用结束: 章节 ${chapter.index} ('${chapter.title}').")
+
             } finally {
+                // 释放信号量许可
+                Log.d("AiSummary", "释放信号量: 章节 ${chapter.index} ('${chapter.title}').")
                 preCacheSemaphore?.release()
             }
         } finally {
+            // 从进行中集合中移除该章节索引，表示处理结束
+            Log.d("AiSummary", "任务解锁: 章节 ${chapter.index} ('${chapter.title}') 从inProgress中移除.")
             AiSummaryState.inProgress.remove(chapter.index)
         }
     }

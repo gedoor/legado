@@ -11,11 +11,13 @@ import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.getPrefLong
 import io.legado.app.utils.getPrefString
+import io.legado.app.utils.getPrefStringSet
 import io.legado.app.utils.isNightMode
 import io.legado.app.utils.putPrefBoolean
 import io.legado.app.utils.putPrefInt
 import io.legado.app.utils.putPrefLong
 import io.legado.app.utils.putPrefString
+import io.legado.app.utils.putPrefStringSet
 import io.legado.app.utils.removePref
 import io.legado.app.utils.sysConfiguration
 import io.legado.app.utils.toastOnUi
@@ -738,5 +740,20 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
 
     var aiSummaryModeEnabled: Boolean = false
 
-}
+    var aiSummaryModelsUrl: String?
+        get() = appCtx.getPrefString(PreferKey.aiSummaryModelsUrl)
+        set(value) {
+            appCtx.putPrefString(PreferKey.aiSummaryModelsUrl, value)
+        }
 
+    var aiSummaryModelList: Set<String>?
+        get() = appCtx.getPrefStringSet(PreferKey.aiSummaryModelList)
+        set(value) {
+            if (value == null) {
+                appCtx.removePref(PreferKey.aiSummaryModelList)
+            } else {
+                appCtx.putPrefStringSet(PreferKey.aiSummaryModelList, value.toMutableSet())
+            }
+        }
+
+}

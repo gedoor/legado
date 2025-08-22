@@ -5,6 +5,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.config.AppConfig
 import io.legado.app.model.AiSummaryState
+import android.util.Log
 import io.legado.app.utils.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -45,19 +46,19 @@ object ZhanweifuBookHelp {
 
     fun getAiSummaryFromCache(book: Book, chapter: BookChapter): String? {
         val file = cacheDir.getFile(book.getFolderName(), chapter.getFileName() + "_ai_summary")
-        LogUtils.d("AiSummary", "getAiSummaryFromCache for chapter '${chapter.title}', path: ${file.absolutePath}")
+        Log.d("AiSummary", "获取AI摘要缓存 章节 '${chapter.title}', 路径: ${file.absolutePath}")
         return if (file.exists()) {
-            LogUtils.d("AiSummary", "Cache exists, returning content.")
+            Log.d("AiSummary", "缓存存在，返回内容。")
             file.readText()
         } else {
-            LogUtils.d("AiSummary", "Cache does not exist.")
+            Log.d("AiSummary", "缓存不存在。")
             null
         }
     }
 
     fun saveAiSummaryToCache(book: Book, chapter: BookChapter, summary: String) {
         val file = cacheDir.getFile(book.getFolderName(), chapter.getFileName() + "_ai_summary")
-        LogUtils.d("AiSummary", "saveAiSummaryToCache for chapter '${chapter.title}', path: ${file.absolutePath}")
+        Log.d("AiSummary", "保存AI摘要缓存 章节 '${chapter.title}', 路径: ${file.absolutePath}")
         file.createFileIfNotExist().writeText(summary)
     }
 
@@ -84,7 +85,7 @@ object ZhanweifuBookHelp {
 
         
         val wordCount = content.length
-        LogUtils.d("AiSummary", "开始生成AI摘要，请求字数：${wordCount}")
+        Log.d("AiSummary", "开始生成AI摘要，请求字数：${wordCount}")
    
         val newContent = "${content}\n\n本章${wordCount}字左右"
         
@@ -120,7 +121,7 @@ object ZhanweifuBookHelp {
                 }
             }
         } catch (e: IOException) {
-            LogUtils.e("getAiSummary", e.stackTraceToString())
+            Log.e("getAiSummary", e.stackTraceToString())
             withContext(Dispatchers.Main) {
                 onError.invoke("请求失败: ${e.message}")
                 onFinish.invoke()
@@ -161,7 +162,7 @@ object ZhanweifuBookHelp {
                 }
             }
         } catch (e: IOException) {
-            LogUtils.e("handleStreamResponse", e.stackTraceToString())
+            Log.e("handleStreamResponse", e.stackTraceToString())
             withContext(Dispatchers.Main) {
                 onError.invoke("读取数据流失败: ${e.message}")
             }
