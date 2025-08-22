@@ -1265,4 +1265,8 @@
     <string name="summary_save_failed">AI摘要保存失败：%s</string>
     <string name="ai_summary_models_url">Models URL</string>
     <string name="ai_summary_models_url_desc">URL to fetch the list of available models from</string>
+    <string name="ai_summary_custom_model">Custom Model</string>
+    <string name="ai_summary_custom_model_desc">Define a custom model to be added to the list</string>
+    <string name="ai_summary_model">Model</string>
+    <string name="ai_summary_model_list">Model List</string>
 </resources>

@@ -1,75 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <EditTextPreference
-        android:key="aiSummaryApiKey"
-        android:title="@string/ai_summary_api_key"
-        android:summary="@string/ai_summary_api_key_desc"
-        android:persistent="true" />
+        app:key="aiSummaryApiKey"
+        app:title="@string/ai_summary_api_key"
+        app:summary="@string/ai_summary_api_key_desc"
+        app:persistent="true" />
 
     <EditTextPreference
-        android:key="aiSummaryApiUrl"
-        android:title="@string/ai_summary_api_url"
-        android:summary="@string/ai_summary_api_url_desc"
-        android:persistent="true" />
+        app:key="aiSummaryApiUrl"
+        app:title="@string/ai_summary_api_url"
+        app:summary="@string/ai_summary_api_url_desc"
+        app:persistent="true" />
 
     <EditTextPreference
-        android:key="aiSummaryModelsUrl"
-        android:title="@string/ai_summary_models_url"
-        android:summary="@string/ai_summary_models_url_desc"
-        android:persistent="true" />
+        app:key="aiSummaryModelsUrl"
+        app:title="@string/ai_summary_models_url"
+        app:summary="@string/ai_summary_models_url_desc"
+        app:useSimpleSummaryProvider="true" />
 
     <ListPreference
-        android:key="aiSummaryModelId"
-        android:title="@string/ai_summary_model_id"
-        android:summary="%s"
-        android:persistent="true"
-        android:defaultValue="gpt-3.5-turbo" />
+        app:key="aiSummaryModelId"
+        app:title="@string/ai_summary_model_list"
+        app:useSimpleSummaryProvider="true" />
 
     <EditTextPreference
-        android:key="aiSummarySystemPrompt"
-        android:title="@string/ai_summary_system_prompt"
-        android:summary="@string/ai_summary_system_prompt_desc"
-        android:persistent="true"
-        android:defaultValue="请总结以下内容：" />
+        app:key="ai_summary_custom_model"
+        app:title="@string/ai_summary_custom_model"
+        app:summary="@string/ai_summary_custom_model_desc"
+        app:useSimpleSummaryProvider="true" />
 
     <EditTextPreference
-        android:key="pref_ai_summary_chapter_count"
-        android:title="@string/ai_summary_chapter_count"
-        android:summary="@string/ai_summary_chapter_count_desc"
-        android:persistent="true"
-        android:defaultValue="3"
+        app:key="aiSummarySystemPrompt"
+        app:title="@string/ai_summary_system_prompt"
+        app:summary="@string/ai_summary_system_prompt_desc"
+        app:persistent="true"
+        app:defaultValue="请总结以下内容：" />
+
+    <EditTextPreference
+        app:key="pref_ai_summary_chapter_count"
+        app:title="@string/ai_summary_chapter_count"
+        app:summary="@string/ai_summary_chapter_count_desc"
+        app:persistent="true"
+        app:defaultValue="3"
         android:inputType="number" />
 
     <io.legado.app.lib.prefs.PathPreference
-        android:key="aiSummaryCachePath"
-        android:title="@string/ai_summary_cache_path"
-        android:summary="@string/ai_summary_cache_path_desc" />
+        app:key="aiSummaryCachePath"
+        app:title="@string/ai_summary_cache_path"
+        app:summary="@string/ai_summary_cache_path_desc" />
 
     <ListPreference
-        android:key="aiSummarySaveFormat"
-        android:title="@string/ai_summary_save_format"
-        android:summary="@string/ai_summary_save_format_desc"
-        android:defaultValue="txt"
-        android:entries="@array/ai_summary_save_format_entries"
-        android:entryValues="@array/ai_summary_save_format_values" />
+        app:key="aiSummarySaveFormat"
+        app:title="@string/ai_summary_save_format"
+        app:summary="@string/ai_summary_save_format_desc"
+        app:defaultValue="txt"
+        app:entries="@array/ai_summary_save_format_entries"
+        app:entryValues="@array/ai_summary_save_format_values" />
 
     <ListPreference
-        android:key="aiSummarySaveMode"
-        android:title="@string/ai_summary_save_mode"
-        android:summary="@string/ai_summary_save_mode_desc"
-        android:defaultValue="append"
-        android:entries="@array/ai_summary_save_mode_entries"
-        android:entryValues="@array/ai_summary_save_mode_values" />
+        app:key="aiSummarySaveMode"
+        app:title="@string/ai_summary_save_mode"
+        app:summary="@string/ai_summary_save_mode_desc"
+        app:defaultValue="append"
+        app:entries="@array/ai_summary_save_mode_entries"
+        app:entryValues="@array/ai_summary_save_mode_values" />
 
     <Preference
-        android:key="aiSummaryHelp"
-        android:title="@string/ai_summary_help"
-        android:summary="@string/ai_summary_help_desc" />
+        app:key="aiSummaryHelp"
+        app:title="@string/ai_summary_help"
+        app:summary="@string/ai_summary_help_desc" />
 
     <Preference
-        android:key="aiSummaryClearCache"
-        android:title="@string/ai_summary_clear_cache"
-        android:summary="@string/ai_summary_clear_cache_desc" />
+        app:key="aiSummaryClearCache"
+        app:title="@string/ai_summary_clear_cache"
+        app:summary="@string/ai_summary_clear_cache_desc" />
 
 </PreferenceScreen>

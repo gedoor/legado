@@ -756,4 +756,10 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             }
         }
 
+    var aiSummaryCustomModel: String?
+        get() = appCtx.getPrefString(PreferKey.aiSummaryCustomModel)
+        set(value) {
+            appCtx.putPrefString(PreferKey.aiSummaryCustomModel, value)
+        }
+
 }

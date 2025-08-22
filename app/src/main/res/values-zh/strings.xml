@@ -1256,4 +1256,8 @@
     <string name="enable_manga_gray">开启图片灰色</string>
     <string name="ai_summary_models_url">模型列表URL</string>
     <string name="ai_summary_models_url_desc">用于获取可用模型列表的URL</string>
+    <string name="ai_summary_custom_model">自定义模型</string>
+    <string name="ai_summary_custom_model_desc">定义一个要添加到列表中的自定义模型</string>
+    <string name="ai_summary_model">模型</string>
+    <string name="ai_summary_model_list">模型列表</string>
 </resources>

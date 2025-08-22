@@ -36,12 +36,12 @@ class AiSummaryConfigFragment : PreferenceFragmentCompat(), SharedPreferences.On
     private val TAG = "AiSummaryConfig"
     private lateinit var openDirectoryLauncher: ActivityResultLauncher<Uri?>
     private lateinit var modelsUrlPreference: EditTextPreference
+    private lateinit var customModelPreference: EditTextPreference
     private lateinit var modelIdPreference: ListPreference
 
     private val gson = Gson()
     private val originalSummaries = mutableMapOf<String, CharSequence?>()
 
-    // Data classes for robust JSON parsing
     private data class ModelsResponse(val data: List<ModelData>?)
     private data class ModelData(val id: String?)
 
@@ -49,6 +49,7 @@ class AiSummaryConfigFragment : PreferenceFragmentCompat(), SharedPreferences.On
         PreferKey.aiSummaryApiKey,
         PreferKey.aiSummaryApiUrl,
         PreferKey.aiSummaryModelsUrl,
+        PreferKey.aiSummaryCustomModel,
         PreferKey.aiSummarySystemPrompt,
         PreferKey.aiSummaryChapterCount
     )
@@ -66,6 +67,7 @@ class AiSummaryConfigFragment : PreferenceFragmentCompat(), SharedPreferences.On
         pathPreference?.registerResultLauncher(openDirectoryLauncher)
 
         modelsUrlPreference = findPreference(PreferKey.aiSummaryModelsUrl)!!
+        customModelPreference = findPreference(PreferKey.aiSummaryCustomModel)!!
         modelIdPreference = findPreference(PreferKey.aiSummaryModelId)!!
 
         setupModelPreferences()
@@ -74,7 +76,6 @@ class AiSummaryConfigFragment : PreferenceFragmentCompat(), SharedPreferences.On
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // Only fetch models if the list is empty, and do it after the view is created.
         if (AppConfig.aiSummaryModelList.isNullOrEmpty()) {
             fetchModelsFromServer()
         }
@@ -92,8 +93,19 @@ class AiSummaryConfigFragment : PreferenceFragmentCompat(), SharedPreferences.On
             true
         }
 
-        modelIdPreference.setOnPreferenceChangeListener { preference, newValue ->
-            preference.summary = newValue as String
+        customModelPreference.setOnPreferenceChangeListener { _, _ ->
+            viewLifecycleOwner.lifecycleScope.launch {
+                withContext(Dispatchers.IO) { Thread.sleep(200) } // Wait for pref to save
+                withContext(Dispatchers.Main) { 
+                    loadModelsFromPrefs()
+                    toastOnUi("自定义模型已添加，请在模型列表中选择后使用")
+                }
+            }
+            true
+        }
+
+        modelIdPreference.setOnPreferenceChangeListener { _, _ ->
+            // Summary is handled by SimpleSummaryProvider
             true
         }
     }
@@ -109,35 +121,40 @@ class AiSummaryConfigFragment : PreferenceFragmentCompat(), SharedPreferences.On
     }
 
     private fun loadModelsFromPrefs() {
-        val modelList = AppConfig.aiSummaryModelList
-        if (!modelList.isNullOrEmpty()) {
-            val entries = modelList.toTypedArray()
+        val onlineModels = AppConfig.aiSummaryModelList
+        val customModel = AppConfig.aiSummaryCustomModel
+
+        val combinedModels = mutableListOf<String>()
+        if (!customModel.isNullOrBlank()) {
+            combinedModels.add(customModel)
+        }
+        if (!onlineModels.isNullOrEmpty()) {
+            combinedModels.addAll(onlineModels)
+        }
+
+        if (combinedModels.isNotEmpty()) {
+            val entries = combinedModels.distinct().toTypedArray()
             modelIdPreference.entries = entries
             modelIdPreference.entryValues = entries
             modelIdPreference.isEnabled = true
         } else {
             modelIdPreference.isEnabled = false
-            modelIdPreference.summary = "点击可在线获取模型"
         }
-        modelIdPreference.summary = AppConfig.aiSummaryModelId
     }
 
     private fun fetchModelsFromServer(url: String? = null) {
         viewLifecycleOwner.lifecycleScope.launch {
             modelIdPreference.isEnabled = false
-            modelIdPreference.summary = "正在加载模型..."
 
             val modelsUrl = url ?: AppConfig.aiSummaryModelsUrl
             if (modelsUrl.isNullOrEmpty()) {
                 toastOnUi("Models URL is not set.")
-                modelIdPreference.summary = "加载失败: Models URL 未设置"
                 modelIdPreference.isEnabled = true
                 return@launch
             }
             val apiKey = AppConfig.aiSummaryApiKey
             if (apiKey.isNullOrEmpty()) {
                 toastOnUi("API Key is not set.")
-                modelIdPreference.summary = "加载失败: API Key 未设置"
                 modelIdPreference.isEnabled = true
                 return@launch
             }
@@ -170,7 +187,6 @@ class AiSummaryConfigFragment : PreferenceFragmentCompat(), SharedPreferences.On
                             loadModelsFromPrefs()
                             toastOnUi("模型列表更新成功")
                         } else {
-                            modelIdPreference.summary = "加载失败: 未能解析模型"
                             toastOnUi("Failed to parse models from response.")
                             modelIdPreference.isEnabled = true
                         }
@@ -179,7 +195,6 @@ class AiSummaryConfigFragment : PreferenceFragmentCompat(), SharedPreferences.On
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to fetch models", e)
                 withContext(Dispatchers.Main) {
-                    modelIdPreference.summary = "加载失败: ${e.message}"
                     toastOnUi("Error: ${e.message}")
                     modelIdPreference.isEnabled = true
                 }
@@ -218,16 +233,19 @@ class AiSummaryConfigFragment : PreferenceFragmentCompat(), SharedPreferences.On
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         if (key in summaryKeys) {
-            val preference = findPreference<EditTextPreference>(key ?: return)
-            val value = sharedPreferences?.getString(key, "")
-            if (!value.isNullOrEmpty()) {
-                if (key == PreferKey.aiSummaryApiKey) {
-                    preference?.summary = maskApiKey(value)
-                } else {
-                    preference?.summary = value
+            findPreference<EditTextPreference>(key ?: return)?.let { preference ->
+                if (preference.summaryProvider == null) {
+                    val value = sharedPreferences?.getString(key, "")
+                    if (!value.isNullOrEmpty()) {
+                        if (key == PreferKey.aiSummaryApiKey) {
+                            preference.summary = maskApiKey(value)
+                        } else {
+                            preference.summary = value
+                        }
+                    } else {
+                        preference.summary = originalSummaries[key]
+                    }
                 }
-            } else {
-                preference?.summary = originalSummaries[key]
             }
         }
     }
@@ -249,10 +267,12 @@ class AiSummaryConfigFragment : PreferenceFragmentCompat(), SharedPreferences.On
                 originalSummaries[key] = preference.summary
                 val value = preferenceScreen.sharedPreferences?.getString(key, "")
                 if (!value.isNullOrEmpty()) {
-                    if (key == PreferKey.aiSummaryApiKey) {
-                        preference.summary = maskApiKey(value)
-                    } else {
-                        preference.summary = value
+                    if (preference.summaryProvider == null) {
+                        if (key == PreferKey.aiSummaryApiKey) {
+                            preference.summary = maskApiKey(value)
+                        } else {
+                            preference.summary = value
+                        }
                     }
                 }
             }

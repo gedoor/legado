@@ -192,6 +192,7 @@ object PreferKey {
     const val aiSummarySaveFormat = "aiSummarySaveFormat"
     const val aiSummarySaveMode = "aiSummarySaveMode"
     const val aiSummaryChapterCount = "pref_ai_summary_chapter_count"
+    const val aiSummaryCustomModel = "ai_summary_custom_model"
     const val aiSummaryModelsUrl = "aiSummaryModelsUrl"
     const val aiSummaryModelList = "aiSummaryModelList"
 }
