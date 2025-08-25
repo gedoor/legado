@@ -71,6 +71,7 @@ import splitties.views.bottomPadding
 import java.io.ByteArrayInputStream
 import java.net.URLDecoder
 import java.util.regex.PatternSyntaxException
+import androidx.core.net.toUri
 
 /**
  * rss阅读界面
@@ -83,6 +84,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
 
     private var starMenuItem: MenuItem? = null
     private var ttsMenuItem: MenuItem? = null
+    private var isFullScreen = false
     private var customWebViewCallback: WebChromeClient.CustomViewCallback? = null
     private val selectImageDir = registerForActivityResult(HandleFileContract()) {
         it.uri?.let { uri ->
@@ -154,6 +156,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.menu_full_screen -> toggleFullScreen()
             R.id.menu_rss_refresh -> viewModel.refresh {
                 binding.webView.reload()
             }
@@ -184,6 +187,19 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             } ?: toastOnUi("url null")
         }
         return super.onCompatOptionsItemSelected(item)
+    }
+
+    //实现starBrowser调起页面全屏
+    private fun toggleFullScreen() {
+        isFullScreen = !isFullScreen
+
+        toggleSystemBar(!isFullScreen)
+
+        if (isFullScreen) {
+            supportActionBar?.hide()
+        } else {
+            supportActionBar?.show()
+        }
     }
 
     override fun updateFavorite(title: String?, group: String?) {
@@ -267,7 +283,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         if (path.isNullOrEmpty()) {
             selectSaveFolder(webPic)
         } else {
-            viewModel.saveImage(webPic, Uri.parse(path))
+            viewModel.saveImage(webPic, path.toUri())
         }
     }
 
@@ -402,7 +418,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
 
         @Suppress("DEPRECATION", "OVERRIDE_DEPRECATION", "KotlinRedundantDiagnosticSuppress")
         override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
-            return shouldOverrideUrlLoading(Uri.parse(url))
+            return shouldOverrideUrlLoading(url.toUri())
         }
 
         /**
