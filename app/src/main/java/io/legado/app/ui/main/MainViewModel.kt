@@ -40,7 +40,9 @@ import kotlinx.coroutines.launch
 import java.util.LinkedList
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
+import kotlin.collections.forEach
 import kotlin.math.min
+import io.legado.app.model.RuleUpdate
 
 class MainViewModel(application: Application) : BaseViewModel(application) {
     private var threadCount = AppConfig.threadCount
@@ -56,6 +58,10 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     }
     val booksGridRecycledViewPool = RecycledViewPool().apply {
         setMaxRecycledViews(0, 100)
+    }
+    var callback: CallBack? = null
+    fun setActivityCallback(callback: CallBack) {
+        this.callback = callback
     }
 
     init {
@@ -88,6 +94,20 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     fun upAllBookToc() {
         execute {
             addToWaitUp(appDb.bookDao.hasUpdateBooks)
+        }
+    }
+
+    fun ruleSubsUp() {
+        execute {
+            val ruleSubs = appDb.ruleSubDao.all
+            for (ruleSub in ruleSubs) {
+                if (ruleSub.autoUpdate) {
+                    val checkResult = RuleUpdate.cacheSource(ruleSub)
+                    if(checkResult) {
+                        callback?.openImportUi(ruleSub.type, ruleSub.url)
+                    }
+                }
+            }
         }
     }
 
@@ -255,6 +275,10 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         execute {
             appDb.bookDao.deleteNotShelfBook()
         }
+    }
+
+    interface CallBack {
+        fun openImportUi(type: Int, source: String)
     }
 
 }

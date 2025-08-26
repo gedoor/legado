@@ -1239,4 +1239,8 @@
     <string name="r_startStyle">启动页style文本（startStyle）</string>
     <string name="r_startJs">启动页Js（startJs）</string>
     <string name="load_with_web_log">输出 WebLog</string>
+    <string name="auto_update">自动更新</string>
+    <string name="time_day">天</string>
+    <string name="update_interval">间隔：</string>
+    <string name="silent_update">静默更新</string>
 </resources>
