@@ -23,6 +23,7 @@ Legado is a free and open source novel reader for Android.
     - 支持书源通过图片链接控制样式
     - 点击图片执行链接js函数
     - 支持标题显示图片(在标题规则获取)
+    - 支持自动更新书源、订阅源、替换规则的订阅链接
 - 功能完善
     - 订阅源支持显示识别更新状态
     - 字数显示能智能识别在线字数
@@ -36,6 +37,7 @@ Legado is a free and open source novel reader for Android.
     - 支持epub统计每章字数
     - 优化字数统计，使其更加准确
     - 允许jslib密封对象的修改，禁止未用var声明的隐性创建全局变量
+    - 详情页刷新目录成功后也会移除更新失败分组
 - 内置浏览器变动
     - 支持screen.orientation.lock在全屏时控制屏幕方向
     - 支持window.close()关闭网页
@@ -61,6 +63,7 @@ Legado is a free and open source novel reader for Android.
     - source.refreshExplore()刷新发现
     - source.refreshJSLib()刷新jslib
     - 目录规则新增isFromBookInfo变量，判断执行规则时是否来着详情页刷新
+    - 登录url规则含有book和chapter对象
 - 其余杂项
     - 目录卷章会显示获取的章节信息
     - 目录页，字数显示在章节信息右侧
