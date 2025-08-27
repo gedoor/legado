@@ -1259,5 +1259,7 @@
     <string name="ai_summary_custom_model">自定义模型</string>
     <string name="ai_summary_custom_model_desc">定义一个要添加到列表中的自定义模型</string>
     <string name="ai_summary_model">模型</string>
+    <string name="replace_body">替换正文</string>
     <string name="ai_summary_model_list">模型列表</string>
+    <string name="ai_summary_replace_tooltip">使用AI摘要替换原文</string>
 </resources>

@@ -1268,5 +1268,7 @@
     <string name="ai_summary_custom_model">Custom Model</string>
     <string name="ai_summary_custom_model_desc">Define a custom model to be added to the list</string>
     <string name="ai_summary_model">Model</string>
+    <string name="replace_body">Replace Body</string>
     <string name="ai_summary_model_list">Model List</string>
+    <string name="ai_summary_replace_tooltip">Replace original text with AI summary</string>
 </resources>

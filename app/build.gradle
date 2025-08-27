@@ -72,7 +72,7 @@ android {
         buildConfig true
         viewBinding true
     }
-    buildTypes {
+        buildTypes {
         release {
             if (project.hasProperty("RELEASE_STORE_FILE")) {
                 signingConfig signingConfigs.myConfig
@@ -106,6 +106,11 @@ android {
         app {
             dimension "mode"
             manifestPlaceholders.put("APP_CHANNEL_VALUE", "app")
+        }
+        play {
+            dimension "mode"
+            applicationId "io.legado.play"
+            manifestPlaceholders.put("APP_CHANNEL_VALUE", "play")
         }
     }
 

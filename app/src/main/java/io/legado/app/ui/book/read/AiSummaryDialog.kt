@@ -32,6 +32,15 @@ import java.util.concurrent.TimeUnit
 class AiSummaryDialog : DialogFragment() {
 
     private lateinit var binding: io.legado.app.databinding.DialogAiSummaryBinding
+    private var listener: AiSummaryListener? = null
+
+    interface AiSummaryListener {
+        fun onReplace(summary: String)
+    }
+
+    fun setListener(listener: AiSummaryListener) {
+        this.listener = listener
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -60,6 +69,11 @@ class AiSummaryDialog : DialogFragment() {
                 binding.progressBar.visibility = View.GONE
                 binding.tvSummary.visibility = View.VISIBLE
                 binding.tvSummary.text = cachedSummary
+                binding.btnReplaceContent.visibility = View.VISIBLE
+                binding.btnReplaceContent.setOnClickListener {
+                    listener?.onReplace(cachedSummary)
+                    dismiss()
+                }
                 // We don't save here because it's already cached internally.
                 // The external save is a separate action.
                 return
@@ -68,6 +82,7 @@ class AiSummaryDialog : DialogFragment() {
 
         binding.progressBar.visibility = View.VISIBLE
         binding.tvSummary.visibility = View.GONE
+        binding.btnReplaceContent.visibility = View.GONE
 
         val apiKey = AppConfig.aiSummaryApiKey
         val apiUrl = AppConfig.aiSummaryApiUrl
@@ -126,6 +141,11 @@ class AiSummaryDialog : DialogFragment() {
                             binding.progressBar.visibility = View.GONE
                             binding.tvSummary.visibility = View.VISIBLE
                             binding.tvSummary.text = summary
+                            binding.btnReplaceContent.visibility = View.VISIBLE
+                            binding.btnReplaceContent.setOnClickListener {
+                                listener?.onReplace(summary)
+                                dismiss()
+                            }
                             // Also save to internal cache for consistency
                             if (book != null && chapter != null) {
                                 ZhanweifuBookHelp.saveAiSummaryToCache(book, chapter, summary)

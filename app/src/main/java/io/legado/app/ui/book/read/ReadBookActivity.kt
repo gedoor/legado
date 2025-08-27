@@ -163,7 +163,12 @@ class ReadBookActivity : BaseReadBookActivity(),
     AutoReadDialog.CallBack,
     TxtTocRuleDialog.CallBack,
     ColorPickerDialogListener,
+    AiSummaryDialog.AiSummaryListener,
+    ZhanweifuContentEditDialog.ContentReplaceListener,
     LayoutProgressListener {
+
+    private var isAiSummaryReplaceMode = false
+    private var originalContentForAiReplace: String? = null
 
     private val tocActivity =
         registerForActivityResult(TocActivityResult()) {
@@ -663,8 +668,14 @@ class ReadBookActivity : BaseReadBookActivity(),
         val bundle = Bundle()
         bundle.putString("content", content)
         dialog.arguments = bundle
+        dialog.setListener(this)
         dialog.show(supportFragmentManager, "aiSummaryDialog")
         Log.d("AiSummary", "ReadBookActivity::dialog.show (对话框显示)")
+    }
+
+    override fun onReplace(summary: String) {
+        replaceContent(summary)
+        ReadBook.loadContent(false)
     }
 
     private fun refreshContentAll(book: Book) {
@@ -1523,7 +1534,27 @@ class ReadBookActivity : BaseReadBookActivity(),
     }
 
     override fun onEditContentClick() {
-        showDialogFragment(ZhanweifuContentEditDialog())
+        if (isAiSummaryReplaceMode) {
+            originalContentForAiReplace?.let {
+                replaceContent(it)
+                ReadBook.loadContent(false)
+            }
+            isAiSummaryReplaceMode = false
+            originalContentForAiReplace = null
+        } else {
+            val dialog = ZhanweifuContentEditDialog()
+            dialog.setContentReplaceListener(this)
+            showDialogFragment(dialog)
+        }
+    }
+
+    override fun onContentReplace(content: String) {
+        originalContentForAiReplace = ReadBook.curTextChapter?.let {
+            io.legado.app.help.book.BookHelp.getOriginalContent(ReadBook.book!!, it.chapter)
+        }
+        replaceContent(content)
+        ReadBook.loadContent(false)
+        isAiSummaryReplaceMode = true
     }
 
     override fun onAiCoarseClick() {

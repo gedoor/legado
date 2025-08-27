@@ -35,15 +35,25 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import java.io.IOException
 import java.util.concurrent.TimeUnit
+import androidx.appcompat.widget.TooltipCompat
 
 
 class ZhanweifuContentEditDialog : BaseDialogFragment(R.layout.zhanweifu_dialog_content_edit) {
 
     val binding by viewBinding(ZhanweifuDialogContentEditBinding::bind)
     val viewModel by viewModels<ZhanweifuContentEditViewModel>()
+    private var listener: ContentReplaceListener? = null
+
+    interface ContentReplaceListener {
+        fun onContentReplace(content: String)
+    }
+
+    fun setContentReplaceListener(listener: ContentReplaceListener) {
+        this.listener = listener
+    }
 
     override fun onStart() {
-        super.onStart()
+        super.onStart() 
         setLayout(1f, ViewGroup.LayoutParams.MATCH_PARENT)
     }
 
@@ -52,6 +62,14 @@ class ZhanweifuContentEditDialog : BaseDialogFragment(R.layout.zhanweifu_dialog_
         binding.zhanweifuToolBar.setBackgroundColor(primaryColor)
         binding.zhanweifuToolBar.title = ReadBook.curTextChapter?.title
         zhanweifuInitMenu()
+        binding.fabReplaceToggle.setOnClickListener {
+            val content = binding.zhanweifuContentView.text?.toString()
+            if (!content.isNullOrEmpty()) {
+                listener?.onContentReplace(content)
+            }
+            dismiss()
+        }
+        TooltipCompat.setTooltipText(binding.fabReplaceToggle, getString(R.string.ai_summary_replace_tooltip))
         binding.zhanweifuToolBar.setOnClickListener {
             lifecycleScope.launch {
                 val book = ReadBook.book ?: return@launch
