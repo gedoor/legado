@@ -107,16 +107,20 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         initLiveData()
         viewModel.initData(intent)
         onBackPressedDispatcher.addCallback(this) {
-            if (binding.customWebView.size > 0) {
-                customWebViewCallback?.onCustomViewHidden()
-                return@addCallback
-            } else if (binding.webView.canGoBack()
-                && binding.webView.copyBackForwardList().size > 1
-            ) {
-                binding.webView.goBack()
-                return@addCallback
+           if(isFullScreen) {
+                toggleFullScreen()
+            }else {
+                if (binding.customWebView.size > 0) {
+                    customWebViewCallback?.onCustomViewHidden()
+                    return@addCallback
+                } else if (binding.webView.canGoBack()
+                    && binding.webView.copyBackForwardList().size > 1
+                ) {
+                    binding.webView.goBack()
+                    return@addCallback
+                }
+                finish()
             }
-            finish()
         }
     }
 
