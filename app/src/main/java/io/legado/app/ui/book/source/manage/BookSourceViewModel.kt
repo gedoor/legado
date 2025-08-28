@@ -275,13 +275,11 @@ class BookSourceViewModel(application: Application) : BaseViewModel(application)
 
     fun delGroup(group: String) {
         execute {
-            execute {
-                val sources = appDb.bookSourceDao.getByGroup(group)
-                sources.forEach { source ->
-                    source.removeGroup(group)
-                }
-                appDb.bookSourceDao.update(*sources.toTypedArray())
+            val sources = appDb.bookSourceDao.getByGroup(group)
+            sources.forEach { source ->
+                source.removeGroup(group)
             }
+            appDb.bookSourceDao.update(*sources.toTypedArray())
         }
     }
 
