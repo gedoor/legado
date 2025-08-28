@@ -119,6 +119,23 @@ class SpeakEngineDialog() : BaseDialogFragment(R.layout.dialog_recycler_view),
                     upTts(GSON.toJson(SelectItem("系统默认", "")))
                 }
             }
+
+        }
+        adapter.addHeaderView {
+            ItemHttpTtsBinding.inflate(layoutInflater, recyclerView, false).apply {
+                sysTtsViews.add(cbName)
+                ivEdit.gone()
+                ivMenuDelete.gone()
+                labelSys.visible()
+                cbName.text = "Edge大声朗读"
+                cbName.tag = "edgeinner"
+                cbName.isChecked = GSON.fromJsonObject<SelectItem<String>>(ttsEngine)
+                    .getOrNull()?.value == cbName.tag
+                cbName.setOnClickListener {
+                    upTts(GSON.toJson(SelectItem("Edge大声朗读", "edgeinner")))
+                }
+            }
+
         }
         viewModel.sysEngines.forEach { engine ->
             adapter.addHeaderView {
