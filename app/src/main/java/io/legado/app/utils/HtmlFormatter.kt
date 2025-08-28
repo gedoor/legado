@@ -17,6 +17,7 @@ object HtmlFormatter {
         "<img[^>]*\\ssrc\\s*=\\s*['\"]([^'\"{>]*\\{(?:[^{}]|\\{[^}>]+\\})+\\})['\"][^>]*>|<img[^>]*\\s(?:data-src|src)\\s*=\\s*['\"]([^'\">]+)['\"][^>]*>|<img[^>]*\\sdata-[^=>]*=\\s*['\"]([^'\">]*)['\"][^>]*>",
         Pattern.CASE_INSENSITIVE
     )
+    private val onClickRegex = "onclick\\s*=\\s*['\"]([^'\">]+)".toRegex()
     private val indent1Regex = "\\s*\\n+\\s*".toRegex()
     private val indent2Regex = "^[\\n\\s]+".toRegex()
     private val lastRegex = "[\\n\\s]+$".toRegex()
@@ -43,6 +44,7 @@ object HtmlFormatter {
         var appendPos = 0
         val sb = StringBuilder()
         while (matcher.find()) {
+            val onClick = onClickRegex.find(matcher.group())
             var param = ""
             sb.append(
                 keepImgHtml.substring(appendPos, matcher.start()), "<img src=\"${
@@ -56,7 +58,8 @@ object HtmlFormatter {
                             } else it
                         } ?: matcher.group(2) ?: matcher.group(3)!!
                     ) + param
-                }\">"
+                }\""+if(onClick==null||onClick.groupValues[1].isBlank())">"
+                else " onclick=\"${onClick.groupValues[1]}\">"
             )
             appendPos = matcher.end()
         }
