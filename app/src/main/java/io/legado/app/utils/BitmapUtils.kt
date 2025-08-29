@@ -6,10 +6,14 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Bitmap.Config
 import android.graphics.BitmapFactory
+import android.graphics.BlurMaskFilter
+import android.graphics.Canvas
 import android.graphics.Color
-import com.google.android.renderscript.Toolkit
+import android.graphics.Paint
 import java.io.*
 import kotlin.math.*
+import androidx.core.graphics.scale
+import androidx.core.graphics.createBitmap
 
 
 @Suppress("WeakerAccess", "MemberVisibilityCanBePrivate")
@@ -224,17 +228,66 @@ object BitmapUtils {
  * 获取指定宽高的图片
  */
 fun Bitmap.resizeAndRecycle(newWidth: Int, newHeight: Int): Bitmap {
-    //获取新的bitmap
-    val bitmap = Toolkit.resize(this, newWidth, newHeight)
-    recycle()
-    return bitmap
+    // 使用Android原生API进行缩放
+    val scaledBitmap = this.scale(newWidth, newHeight)
+    // 回收原始 bitmap
+    if (this != scaledBitmap) {
+        recycle()
+    }
+    return scaledBitmap
 }
 
 /**
  * 高斯模糊
  */
-fun Bitmap.stackBlur(radius: Int = 8): Bitmap {
-    return Toolkit.blur(this, radius)
+fun Bitmap.stackBlur(radius: Int = 8, scale: Int = 2): Bitmap {
+    // 限制参数范围
+    val validRadius = radius.coerceIn(1, 25)
+    val validScale = scale.coerceIn(1, 8) // 缩放比例不超过8倍，避免过度损失细节
+
+    // 当缩放比例为1时直接处理原图（无性能优化，保留最佳效果）
+    if (validScale == 1) {
+        return createBlurredBitmap(this, validRadius)
+    }
+
+    // 计算缩放后的尺寸
+    val scaledWidth = width / validScale
+    val scaledHeight = height / validScale
+
+    // 避免缩放后尺寸为0（针对极小图片）
+    if (scaledWidth <= 0 || scaledHeight <= 0) {
+        return createBlurredBitmap(this, validRadius)
+    }
+
+    // 创建缩放后的临时Bitmap
+    val scaledBitmap = this.scale(scaledWidth, scaledHeight)
+
+    // 对缩放后的图片应用模糊
+    val blurredScaled = createBlurredBitmap(scaledBitmap, validRadius)
+
+    // 放大回原始尺寸
+    val result = blurredScaled.scale(width, height)
+
+    // 释放临时资源
+    scaledBitmap.recycle()
+    blurredScaled.recycle()
+
+    return result
+}
+
+/**
+ * 基础模糊处理函数，直接对Bitmap应用模糊滤镜
+ */
+private fun createBlurredBitmap(bitmap: Bitmap, radius: Int): Bitmap {
+    val output = createBitmap(bitmap.width, bitmap.height)
+    val canvas = Canvas(output)
+    val paint = Paint().apply {
+        isAntiAlias = true
+        isFilterBitmap = true
+        maskFilter = BlurMaskFilter(radius.toFloat(), BlurMaskFilter.Blur.NORMAL)
+    }
+    canvas.drawBitmap(bitmap, 0f, 0f, paint)
+    return output
 }
 
 /**
