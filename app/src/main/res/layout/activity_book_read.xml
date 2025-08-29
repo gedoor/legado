@@ -32,24 +32,7 @@
         android:src="@drawable/ic_cursor_right"
         android:visibility="invisible" />
 
-    <io.legado.app.ui.book.read.ReadMenu
-        android:id="@+id/read_menu"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone" />
-
-    <io.legado.app.ui.book.read.SearchMenu
-        android:id="@+id/search_menu"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone" />
-
-    <View
-        android:id="@+id/navigation_bar"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:background="@color/background_menu"
-        android:layout_gravity="bottom" />
+    
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -87,12 +70,31 @@
 
         <ImageView
             android:id="@+id/ai_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
             android:layout_margin="16dp"
             android:src="@drawable/text_fields_alt_24_coarse_selected"
             android:visibility="gone" />
 
     </LinearLayout>
+
+    <io.legado.app.ui.book.read.ReadMenu
+        android:id="@+id/read_menu"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+    <io.legado.app.ui.book.read.SearchMenu
+        android:id="@+id/search_menu"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+    <View
+        android:id="@+id/navigation_bar"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/background_menu"
+        android:layout_gravity="bottom" />
 
 </FrameLayout>

@@ -19,12 +19,12 @@ import java.io.File
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
-object ZhanweifuBookHelp {
+object AiSummaryProvider {
 
     private const val cacheFolderName = "zhanweifu_cache"
     private val cacheDir: File by lazy { appCtx.externalFiles.getFile(cacheFolderName) }
 
-    fun zhanweifuGetContent(book: Book, bookChapter: BookChapter): String? {
+    fun getDialogContent(book: Book, bookChapter: BookChapter): String? {
         val file = cacheDir.getFile(book.getFolderName(), bookChapter.getFileName())
         if (file.exists()) {
             return file.readText()
@@ -32,12 +32,12 @@ object ZhanweifuBookHelp {
         return null
     }
 
-    fun zhanweifuSaveText(book: Book, bookChapter: BookChapter, content: String) {
+    fun saveDialogContent(book: Book, bookChapter: BookChapter, content: String) {
         cacheDir.getFile(book.getFolderName(), bookChapter.getFileName())
             .createFileIfNotExist().writeText(content)
     }
 
-    fun zhanweifuDelContent(book: Book, bookChapter: BookChapter) {
+    fun deleteDialogContent(book: Book, bookChapter: BookChapter) {
         val file = cacheDir.getFile(book.getFolderName(), bookChapter.getFileName())
         if (file.exists()) {
             file.delete()

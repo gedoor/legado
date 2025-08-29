@@ -77,7 +77,7 @@ import io.legado.app.ui.book.bookmark.BookmarkDialog
 import io.legado.app.ui.book.changesource.ChangeBookSourceDialog
 import io.legado.app.ui.book.changesource.ChangeChapterSourceDialog
 import io.legado.app.ui.book.info.BookInfoActivity
-import io.legado.app.ui.book.read.AiSummaryDialog
+
 import io.legado.app.ui.book.read.config.AutoReadDialog
 import io.legado.app.ui.book.read.config.BgTextConfigDialog.Companion.BG_COLOR
 import io.legado.app.ui.book.read.config.BgTextConfigDialog.Companion.TEXT_COLOR
@@ -105,7 +105,7 @@ import io.legado.app.ui.replace.ReplaceRuleActivity
 import io.legado.app.ui.replace.edit.ReplaceEditActivity
 import io.legado.app.ui.widget.PopupAction
 import io.legado.app.ui.widget.dialog.PhotoDialog
-import io.legado.app.ui.book.read.content.ZhanweifuBookHelp
+import io.legado.app.ui.book.read.content.AiSummaryProvider
 import io.legado.app.utils.ACache
 import io.legado.app.utils.Debounce
 import io.legado.app.utils.LogUtils
@@ -163,11 +163,11 @@ class ReadBookActivity : BaseReadBookActivity(),
     AutoReadDialog.CallBack,
     TxtTocRuleDialog.CallBack,
     ColorPickerDialogListener,
-    AiSummaryDialog.AiSummaryListener,
-    ZhanweifuContentEditDialog.ContentReplaceListener,
+    
+    StreamingContentEditDialog.ContentReplaceListener,
     LayoutProgressListener {
 
-    private var isAiSummaryReplaceMode = false
+    internal var isAiSummaryReplaceMode = false
     private var originalContentForAiReplace: String? = null
 
     private val tocActivity =
@@ -541,7 +541,7 @@ class ReadBookActivity : BaseReadBookActivity(),
 
             
 
-            R.id.menu_ai_summary -> aiSummary()
+            
 
             R.id.menu_update_toc -> ReadBook.book?.let {
                 if (it.isEpub) {
@@ -657,26 +657,7 @@ class ReadBookActivity : BaseReadBookActivity(),
 
     
 
-    private fun aiSummary() {
-        Log.d("AiSummary", "ReadBookActivity::aiSummary (摘要方法调用)")
-        val content = ReadBook.curTextChapter?.getContent()
-        if (content.isNullOrEmpty()) {
-            toastOnUi("本章无内容")
-            return
-        }
-        val dialog = AiSummaryDialog()
-        val bundle = Bundle()
-        bundle.putString("content", content)
-        dialog.arguments = bundle
-        dialog.setListener(this)
-        dialog.show(supportFragmentManager, "aiSummaryDialog")
-        Log.d("AiSummary", "ReadBookActivity::dialog.show (对话框显示)")
-    }
-
-    override fun onReplace(summary: String) {
-        replaceContent(summary)
-        ReadBook.loadContent(false)
-    }
+    
 
     private fun refreshContentAll(book: Book) {
         ReadBook.clearTextChapter()
@@ -1542,10 +1523,11 @@ class ReadBookActivity : BaseReadBookActivity(),
             isAiSummaryReplaceMode = false
             originalContentForAiReplace = null
         } else {
-            val dialog = ZhanweifuContentEditDialog()
+            val dialog = StreamingContentEditDialog()
             dialog.setContentReplaceListener(this)
             showDialogFragment(dialog)
         }
+        aiSummaryHelper.upAiWordCount()
     }
 
     override fun onContentReplace(content: String) {
@@ -1555,6 +1537,7 @@ class ReadBookActivity : BaseReadBookActivity(),
         replaceContent(content)
         ReadBook.loadContent(false)
         isAiSummaryReplaceMode = true
+        aiSummaryHelper.upAiWordCount()
     }
 
     override fun onAiCoarseClick() {
