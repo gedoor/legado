@@ -26,6 +26,7 @@
     <color name="transparent20">#20000000</color>
     <color name="transparent30">#30000000</color>
     <color name="transparent50">#50000000</color>
+    <color name="transparent60">#60000000</color>
 
     <color name="highlight">#d3321b</color>
 
@@ -113,4 +114,9 @@
     <color name="ate_navigation_drawer_selected_dark">#202020</color>
 
     <color name="book_ant_10">#141414</color>
+
+    <!-- AI Summary Indicator Colors -->
+    <color name="indicator_red">#D32F2F</color>
+    <color name="indicator_green">#388E3C</color>
+    <color name="indicator_blue">#1976D2</color>
 </resources>

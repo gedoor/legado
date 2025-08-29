@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <EditTextPreference
+        app:key="aiSummaryApiKey"
+        app:title="@string/ai_summary_api_key"
+        app:summary="@string/ai_summary_api_key_desc"
+        app:persistent="true" />
+
+    <EditTextPreference
+        app:key="aiSummaryApiUrl"
+        app:title="@string/ai_summary_api_url"
+        app:summary="@string/ai_summary_api_url_desc"
+        app:persistent="true" />
+
+    <EditTextPreference
+        app:key="aiSummaryModelsUrl"
+        app:title="@string/ai_summary_models_url"
+        app:summary="@string/ai_summary_models_url_desc"
+        app:useSimpleSummaryProvider="true" />
+
+    <ListPreference
+        app:key="aiSummaryModelId"
+        app:title="@string/ai_summary_model_list"
+        app:useSimpleSummaryProvider="true" />
+
+    <EditTextPreference
+        app:key="ai_summary_custom_model"
+        app:title="@string/ai_summary_custom_model"
+        app:summary="@string/ai_summary_custom_model_desc"
+        app:useSimpleSummaryProvider="true" />
+
+    <EditTextPreference
+        app:key="aiSummarySystemPrompt"
+        app:title="@string/ai_summary_system_prompt"
+        app:summary="@string/ai_summary_system_prompt_desc"
+        app:persistent="true"
+        app:defaultValue="请总结以下内容：" />
+
+    <EditTextPreference
+        app:key="pref_ai_summary_chapter_count"
+        app:title="@string/ai_summary_chapter_count"
+        app:summary="@string/ai_summary_chapter_count_desc"
+        app:persistent="true"
+        app:defaultValue="3"
+        android:inputType="number" />
+
+    <io.legado.app.lib.prefs.PathPreference
+        app:key="aiSummaryCachePath"
+        app:title="@string/ai_summary_cache_path"
+        app:summary="@string/ai_summary_cache_path_desc" />
+
+    <ListPreference
+        app:key="aiSummarySaveFormat"
+        app:title="@string/ai_summary_save_format"
+        app:summary="@string/ai_summary_save_format_desc"
+        app:defaultValue="txt"
+        app:entries="@array/ai_summary_save_format_entries"
+        app:entryValues="@array/ai_summary_save_format_values" />
+
+    <ListPreference
+        app:key="aiSummarySaveMode"
+        app:title="@string/ai_summary_save_mode"
+        app:summary="@string/ai_summary_save_mode_desc"
+        app:defaultValue="append"
+        app:entries="@array/ai_summary_save_mode_entries"
+        app:entryValues="@array/ai_summary_save_mode_values" />
+
+    <Preference
+        app:key="aiSummaryHelp"
+        app:title="@string/ai_summary_help"
+        app:summary="@string/ai_summary_help_desc" />
+
+    <Preference
+        app:key="aiSummaryClearCache"
+        app:title="@string/ai_summary_clear_cache"
+        app:summary="@string/ai_summary_clear_cache_desc" />
+
+</PreferenceScreen>

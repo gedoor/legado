@@ -54,6 +54,14 @@
         android:title="@string/edit_content"
         app:showAsAction="never" />
 
+    
+
+    <item
+        android:id="@+id/menu_ai_summary"
+        android:title="@string/ai_summary"
+        android:visible="false"
+        app:showAsAction="never" />
+
     <item
         android:id="@+id/menu_page_anim"
         android:title="@string/book_page_anim"

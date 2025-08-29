@@ -79,6 +79,13 @@
             app:allowDividerBelow="false"
             app:iconSpaceReserved="false" />
 
+        <io.legado.app.lib.prefs.Preference
+            android:icon="@drawable/ic_cfg_other"
+            android:key="ai_summary_config"
+            android:summary="@string/ai_summary_config"
+            android:title="@string/ai_summary_config"
+            app:iconSpaceReserved="false" />
+
     </io.legado.app.lib.prefs.PreferenceCategory>
 
     <io.legado.app.lib.prefs.PreferenceCategory
