@@ -19,7 +19,7 @@ import io.legado.app.help.book.isSameNameAuthor
 import io.legado.app.help.book.readSimulating
 import io.legado.app.help.book.simulatedTotalChapterNum
 import io.legado.app.help.book.update
-import io.legado.app.ui.book.read.content.ZhanweifuBookHelp
+import io.legado.app.ui.book.read.content.AiSummaryProvider
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.help.coroutine.Coroutine

@@ -16,13 +16,13 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.databinding.DialogEditTextBinding
-import io.legado.app.databinding.ZhanweifuDialogContentEditBinding
+import io.legado.app.databinding.DialogStreamingContentEditBinding
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.model.ReadBook
-import io.legado.app.ui.book.read.content.ZhanweifuBookHelp
+import io.legado.app.ui.book.read.content.AiSummaryProvider
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers
@@ -38,10 +38,10 @@ import java.util.concurrent.TimeUnit
 import androidx.appcompat.widget.TooltipCompat
 
 
-class ZhanweifuContentEditDialog : BaseDialogFragment(R.layout.zhanweifu_dialog_content_edit) {
+class StreamingContentEditDialog : BaseDialogFragment(R.layout.dialog_streaming_content_edit) {
 
-    val binding by viewBinding(ZhanweifuDialogContentEditBinding::bind)
-    val viewModel by viewModels<ZhanweifuContentEditViewModel>()
+    val binding by viewBinding(DialogStreamingContentEditBinding::bind)
+    val viewModel by viewModels<StreamingContentEditViewModel>()
     private var listener: ContentReplaceListener? = null
 
     interface ContentReplaceListener {
@@ -58,43 +58,43 @@ class ZhanweifuContentEditDialog : BaseDialogFragment(R.layout.zhanweifu_dialog_
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        Log.d("AiSummary", "ZhanweifuContentEditDialog::onFragmentCreated (片段创建)")
-        binding.zhanweifuToolBar.setBackgroundColor(primaryColor)
-        binding.zhanweifuToolBar.title = ReadBook.curTextChapter?.title
-        zhanweifuInitMenu()
+        Log.d("AiSummary", "StreamingContentEditDialog::onFragmentCreated (片段创建)")
+        binding.toolBar.setBackgroundColor(primaryColor)
+        binding.toolBar.title = ReadBook.curTextChapter?.title
+        initMenu()
         binding.fabReplaceToggle.setOnClickListener {
-            val content = binding.zhanweifuContentView.text?.toString()
+            val content = binding.contentView.text?.toString()
             if (!content.isNullOrEmpty()) {
                 listener?.onContentReplace(content)
             }
             dismiss()
         }
         TooltipCompat.setTooltipText(binding.fabReplaceToggle, getString(R.string.ai_summary_replace_tooltip))
-        binding.zhanweifuToolBar.setOnClickListener {
+        binding.toolBar.setOnClickListener {
             lifecycleScope.launch {
                 val book = ReadBook.book ?: return@launch
                 val chapter = withContext(Dispatchers.IO) {
                     appDb.bookChapterDao.getChapter(book.bookUrl, ReadBook.durChapterIndex)
                 } ?: return@launch
-                zhanweifuEditTitle(chapter)
+                editTitle(chapter)
             }
         }
         viewModel.loadStateLiveData.observe(viewLifecycleOwner) {
             if (it) {
-                binding.zhanweifuRlLoading.visible()
+                binding.rlLoading.visible()
             } else {
-                binding.zhanweifuRlLoading.gone()
+                binding.rlLoading.gone()
             }
         }
         viewModel.contentStream.observe(viewLifecycleOwner) {
-            binding.zhanweifuContentView.append(it)
+            binding.contentView.append(it)
         }
-        viewModel.zhanweifuInitContent { initialContent ->
-            if (binding.zhanweifuContentView.text.isNullOrEmpty()) {
-                binding.zhanweifuContentView.setText(initialContent)
+        viewModel.initContent { initialContent ->
+            if (binding.contentView.text.isNullOrEmpty()) {
+                binding.contentView.setText(initialContent)
             }
-            binding.zhanweifuContentView.post {
-                binding.zhanweifuContentView.apply {
+            binding.contentView.post {
+                binding.contentView.apply {
                     val lineIndex = layout.getLineForOffset(ReadBook.durChapterPos)
                     val lineHeight = layout.getLineTop(lineIndex)
                     scrollTo(0, lineHeight)
@@ -103,30 +103,30 @@ class ZhanweifuContentEditDialog : BaseDialogFragment(R.layout.zhanweifu_dialog_
         }
     }
 
-    private fun zhanweifuInitMenu() {
-        binding.zhanweifuToolBar.inflateMenu(R.menu.zhanweifu_content_edit)
-        binding.zhanweifuToolBar.menu.applyTint(requireContext())
-        binding.zhanweifuToolBar.setOnMenuItemClickListener {
+    private fun initMenu() {
+        binding.toolBar.inflateMenu(R.menu.menu_streaming_content_edit)
+        binding.toolBar.menu.applyTint(requireContext())
+        binding.toolBar.setOnMenuItemClickListener {
             when (it.itemId) {
-                R.id.zhanweifu_menu_save -> {
-                    zhanweifuSave()
+                R.id.menu_save -> {
+                    saveContent()
                     dismiss()
                 }
-                R.id.zhanweifu_menu_reset -> {
-                    binding.zhanweifuContentView.setText("")
-                    viewModel.zhanweifuInitContent(true) { content ->
-                        binding.zhanweifuContentView.setText(content)
+                R.id.menu_reset -> {
+                    binding.contentView.setText("")
+                    viewModel.initContent(true) { content ->
+                        binding.contentView.setText(content)
                         ReadBook.loadContent(ReadBook.durChapterIndex, resetPageOffset = false)
                     }
                 }
-                R.id.zhanweifu_menu_copy_all -> requireContext()
-                    .sendToClip("${binding.zhanweifuToolBar.title}\n${binding.zhanweifuContentView.text}")
+                R.id.menu_copy_all -> requireContext()
+                    .sendToClip("${binding.toolBar.title}\n${binding.contentView.text}")
             }
             return@setOnMenuItemClickListener true
         }
     }
 
-    private fun zhanweifuEditTitle(chapter: BookChapter) {
+    private fun editTitle(chapter: BookChapter) {
         alert {
             setTitle(R.string.edit)
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater)
@@ -138,7 +138,7 @@ class ZhanweifuContentEditDialog : BaseDialogFragment(R.layout.zhanweifu_dialog_
                     withContext(Dispatchers.IO) {
                         appDb.bookChapterDao.update(chapter)
                     }
-                    binding.zhanweifuToolBar.title = chapter.getDisplayTitle()
+                    binding.toolBar.title = chapter.getDisplayTitle()
                     ReadBook.loadContent(ReadBook.durChapterIndex, resetPageOffset = false)
                 }
             }
@@ -147,27 +147,27 @@ class ZhanweifuContentEditDialog : BaseDialogFragment(R.layout.zhanweifu_dialog_
 
     override fun onCancel(dialog: DialogInterface) {
         super.onCancel(dialog)
-        zhanweifuSave()
+        saveContent()
     }
 
-    private fun zhanweifuSave() {
-        val content = binding.zhanweifuContentView.text?.toString() ?: return
+    private fun saveContent() {
+        val content = binding.contentView.text?.toString() ?: return
         Coroutine.async {
             val book = ReadBook.book ?: return@async
             val chapter = appDb.bookChapterDao
                 .getChapter(book.bookUrl, ReadBook.durChapterIndex)
                 ?: return@async
-            ZhanweifuBookHelp.zhanweifuSaveText(book, chapter, content)
+            AiSummaryProvider.saveDialogContent(book, chapter, content)
             ReadBook.loadContent(ReadBook.durChapterIndex, resetPageOffset = false)
         }
     }
 
-    class ZhanweifuContentEditViewModel(application: Application) : BaseViewModel(application) {
+    class StreamingContentEditViewModel(application: Application) : BaseViewModel(application) {
         val loadStateLiveData = MutableLiveData<Boolean>()
         val contentStream = MutableLiveData<String>()
 
-        fun zhanweifuInitContent(reset: Boolean = false, success: (String) -> Unit) {
-            Log.d("AiSummary", "ViewModel::zhanweifuInitContent (内容初始化开始)")
+        fun initContent(reset: Boolean = false, success: (String) -> Unit) {
+            Log.d("AiSummary", "ViewModel::initContent (内容初始化开始)")
             execute {
                 val book = ReadBook.book ?: return@execute
                 val chapter = appDb.bookChapterDao
@@ -175,18 +175,18 @@ class ZhanweifuContentEditDialog : BaseDialogFragment(R.layout.zhanweifu_dialog_
                     ?: return@execute
 
                 if (reset) {
-                    Log.d("AiSummary", "ViewModel::zhanweifuInitContent - (重置内容)")
-                    ZhanweifuBookHelp.zhanweifuDelContent(book, chapter)
-                    ZhanweifuBookHelp.delAiSummaryCache(book, chapter)
+                    Log.d("AiSummary", "ViewModel::initContent - (重置内容)")
+                    AiSummaryProvider.deleteDialogContent(book, chapter)
+                    AiSummaryProvider.delAiSummaryCache(book, chapter)
                 }
 
-                val dialogContent = ZhanweifuBookHelp.zhanweifuGetContent(book, chapter)
+                val dialogContent = AiSummaryProvider.getDialogContent(book, chapter)
                 if (!dialogContent.isNullOrEmpty()) {
                     withContext(Dispatchers.Main) { success.invoke(dialogContent) }
                     return@execute
                 }
 
-                val cachedSummary = ZhanweifuBookHelp.getAiSummaryFromCache(book, chapter)
+                val cachedSummary = AiSummaryProvider.getAiSummaryFromCache(book, chapter)
                 if (!cachedSummary.isNullOrEmpty()) {
                     withContext(Dispatchers.Main) { success.invoke(cachedSummary) }
                     return@execute
@@ -200,7 +200,7 @@ class ZhanweifuContentEditDialog : BaseDialogFragment(R.layout.zhanweifu_dialog_
                 
                 loadStateLiveData.postValue(true)
                 val summaryBuilder = StringBuilder()
-                ZhanweifuBookHelp.getAiSummary(
+                AiSummaryProvider.getAiSummary(
                     content = chapterContent,
                     onResponse = { 
                         contentStream.postValue(it)
@@ -210,7 +210,7 @@ class ZhanweifuContentEditDialog : BaseDialogFragment(R.layout.zhanweifu_dialog_
                         loadStateLiveData.postValue(false)
                         val finalSummary = summaryBuilder.toString()
                         if (finalSummary.isNotEmpty()) {
-                            ZhanweifuBookHelp.saveAiSummaryToCache(book, chapter, finalSummary)
+                            AiSummaryProvider.saveAiSummaryToCache(book, chapter, finalSummary)
                         }
                     },
                     onError = { 

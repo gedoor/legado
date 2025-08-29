@@ -5,18 +5,18 @@
     tools:ignore="AlwaysShowAction">
 
     <item
-        android:id="@+id/zhanweifu_menu_save"
+        android:id="@+id/menu_save"
         android:icon="@drawable/ic_save"
         android:title="@string/action_save"
         app:showAsAction="always" />
 
     <item
-        android:id="@+id/zhanweifu_menu_reset"
+        android:id="@+id/menu_reset"
         android:title="@string/reset"
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/zhanweifu_menu_copy_all"
+        android:id="@+id/menu_copy_all"
         android:title="@string/copy_all"
         app:showAsAction="never" />
 

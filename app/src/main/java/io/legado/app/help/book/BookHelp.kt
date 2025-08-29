@@ -13,7 +13,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.config.AppConfig
 import io.legado.app.model.AiSummaryState
-import io.legado.app.ui.book.read.content.ZhanweifuBookHelp
+import io.legado.app.ui.book.read.content.AiSummaryProvider
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.ArchiveUtils
@@ -403,7 +403,7 @@ object BookHelp {
         fun getContent(book: Book, bookChapter: BookChapter): String? {
         if (AppConfig.aiSummaryModeEnabled) {
             Log.d("AiSummary", "BookHelp.getContent 获取章节: ${bookChapter.title} (AI模式)")
-            val summary = ZhanweifuBookHelp.getAiSummaryFromCache(book, bookChapter)
+            val summary = AiSummaryProvider.getAiSummaryFromCache(book, bookChapter)
             if (summary != null) {
                 Log.d("AiSummary", "找到AI摘要缓存: '${bookChapter.title}'. 返回摘要.")
                 return summary

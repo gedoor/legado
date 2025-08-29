@@ -19,7 +19,7 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.prefs.PathPreference
-import io.legado.app.ui.book.read.content.ZhanweifuBookHelp
+import io.legado.app.ui.book.read.content.AiSummaryProvider
 import io.legado.app.ui.browser.WebViewActivity
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.toastOnUi
@@ -212,7 +212,7 @@ class AiSummaryConfigFragment : PreferenceFragmentCompat(), SharedPreferences.On
                 ) {
                     okButton {
                         Coroutine.async {
-                            ZhanweifuBookHelp.clearAllAiSummaryCache()
+                            AiSummaryProvider.clearAllAiSummaryCache()
                             toastOnUi(R.string.ai_summary_clear_cache_success)
                         }
                     }
@@ -233,20 +233,7 @@ class AiSummaryConfigFragment : PreferenceFragmentCompat(), SharedPreferences.On
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         if (key in summaryKeys) {
-            findPreference<EditTextPreference>(key ?: return)?.let { preference ->
-                if (preference.summaryProvider == null) {
-                    val value = sharedPreferences?.getString(key, "")
-                    if (!value.isNullOrEmpty()) {
-                        if (key == PreferKey.aiSummaryApiKey) {
-                            preference.summary = maskApiKey(value)
-                        } else {
-                            preference.summary = value
-                        }
-                    } else {
-                        preference.summary = originalSummaries[key]
-                    }
-                }
-            }
+            updatePreferenceSummary(key ?: return)
         }
     }
 
@@ -262,18 +249,25 @@ class AiSummaryConfigFragment : PreferenceFragmentCompat(), SharedPreferences.On
 
     private fun initSummary() {
         for (key in summaryKeys) {
-            val preference = findPreference<EditTextPreference>(key)
-            if (preference != null) {
-                originalSummaries[key] = preference.summary
+            findPreference<EditTextPreference>(key)?.let {
+                originalSummaries[key] = it.summary
+                updatePreferenceSummary(key)
+            }
+        }
+    }
+
+    private fun updatePreferenceSummary(key: String) {
+        findPreference<EditTextPreference>(key)?.let { preference ->
+            if (preference.summaryProvider == null) {
                 val value = preferenceScreen.sharedPreferences?.getString(key, "")
                 if (!value.isNullOrEmpty()) {
-                    if (preference.summaryProvider == null) {
-                        if (key == PreferKey.aiSummaryApiKey) {
-                            preference.summary = maskApiKey(value)
-                        } else {
-                            preference.summary = value
-                        }
+                    preference.summary = if (key == PreferKey.aiSummaryApiKey) {
+                        maskApiKey(value)
+                    } else {
+                        value
                     }
+                } else {
+                    preference.summary = originalSummaries[key]
                 }
             }
         }

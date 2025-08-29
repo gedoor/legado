@@ -14,7 +14,7 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.model.AiSummaryState
 import io.legado.app.model.ReadBook
 import android.util.Log
-import io.legado.app.ui.book.read.content.ZhanweifuBookHelp
+import io.legado.app.ui.book.read.content.AiSummaryProvider
 import io.legado.app.utils.LogUtils
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.toastOnUi
@@ -95,7 +95,7 @@ class AiSummaryHelper(
             val book = ReadBook.book!!
             lastPreCacheChapterIndex = chapterIndex
 
-            val cachedSummary = ZhanweifuBookHelp.getAiSummaryFromCache(book, chapter)
+            val cachedSummary = AiSummaryProvider.getAiSummaryFromCache(book, chapter)
             if (cachedSummary != null) {
                 ReadBook.loadContent(false)
                 preCacheNextChapterSummary()
@@ -120,7 +120,7 @@ class AiSummaryHelper(
                 )
                 inProgressSnackbar?.show()
                 val summaryBuilder = StringBuilder()
-                ZhanweifuBookHelp.getAiSummary(
+                AiSummaryProvider.getAiSummary(
                     content = originalContent,
                     onResponse = { summaryBuilder.append(it) },
                     onFinish = {
@@ -129,7 +129,7 @@ class AiSummaryHelper(
                         val finalSummary = summaryBuilder.toString()
                         if (finalSummary.isNotEmpty()) {
                             activity.toastOnUi("生成成功")
-                            ZhanweifuBookHelp.saveAiSummaryToCache(book, chapter, finalSummary)
+                            AiSummaryProvider.saveAiSummaryToCache(book, chapter, finalSummary)
                             ReadBook.loadContent(false)
                             preCacheNextChapterSummary()
                         }
@@ -152,10 +152,18 @@ class AiSummaryHelper(
         inProgressSnackbar?.dismiss()
     }
 
-    private fun upAiWordCount() {
+        internal fun upAiWordCount() {
         lifecycleScope.launch(Dispatchers.Main) {
             val indicator = binding.tvNextCachedIndicator
             indicator.clearAnimation()
+
+            if (activity.isAiSummaryReplaceMode) {
+                // Force show icon for dialog-replace mode
+                binding.aiIcon.visible(true)
+                binding.tvAiWordCount.visible(false)
+                indicator.visible(false)
+                return@launch
+            }
 
             if (!AppConfig.aiSummaryModeEnabled) {
                 binding.tvAiWordCount.visible(false)
@@ -168,7 +176,7 @@ class AiSummaryHelper(
                 // Update current chapter's summary UI
                 ReadBook.curTextChapter?.chapter?.let { chapter ->
                     val summary = withContext(Dispatchers.IO) {
-                        ZhanweifuBookHelp.getAiSummaryFromCache(book, chapter)
+                        AiSummaryProvider.getAiSummaryFromCache(book, chapter)
                     }
                     val summaryLength = summary?.length ?: 0
                     val originalLength = withContext(Dispatchers.IO) {
@@ -194,7 +202,7 @@ class AiSummaryHelper(
                     val (isNextCached, nextChapterWordCount) = withContext(Dispatchers.IO) {
                         val nextChapter = appDb.bookChapterDao.getChapter(book.bookUrl, nextChapterIndex)
                         if (nextChapter != null) {
-                            val isCached = ZhanweifuBookHelp.getAiSummaryFromCache(book, nextChapter) != null
+                            val isCached = AiSummaryProvider.getAiSummaryFromCache(book, nextChapter) != null
                             val wordCount = if (!isCached) {
                                 BookHelp.getOriginalContent(book, nextChapter)?.length ?: 0
                             } else {
@@ -272,7 +280,7 @@ class AiSummaryHelper(
 
         Log.d("AiSummary", "任务开始: 章节 ${chapter.index} ('${chapter.title}'). 准备检查缓存.")
         // 首先，在没有锁定的情况下检查是否已缓存，以快速跳过
-        if (ZhanweifuBookHelp.getAiSummaryFromCache(book, chapter) != null) {
+        if (AiSummaryProvider.getAiSummaryFromCache(book, chapter) != null) {
             Log.d("AiSummary", "任务退出: 章节 ${chapter.index} ('${chapter.title}') 已有缓存.")
             return // 如果已缓存，则直接返回
         }
@@ -292,7 +300,7 @@ class AiSummaryHelper(
             Log.d("AiSummary", "获取信号量: 章节 ${chapter.index} ('${chapter.title}').")
             try {
                 // 获取信号量后再次检查缓存，因为其他任务可能已经完成
-                if (ZhanweifuBookHelp.getAiSummaryFromCache(book, chapter) != null) {
+                if (AiSummaryProvider.getAiSummaryFromCache(book, chapter) != null) {
                     Log.d("AiSummary", "任务退出: 章节 ${chapter.index} ('${chapter.title}') 在获取信号量后发现已有缓存.")
                     return // 如果已缓存，则直接返回
                 }
@@ -322,7 +330,7 @@ class AiSummaryHelper(
                 
                 Log.d("AiSummary", "调用getAiSummary: 章节 ${chapter.index} ('${chapter.title}').")
                 // 调用AI摘要生成函数
-                ZhanweifuBookHelp.getAiSummary(
+                AiSummaryProvider.getAiSummary(
                     content = chapterContent, // 传入章节内容
                     onResponse = { summaryBuilder.append(it) }, // 实时追加收到的摘要片段
                     onFinish = { // 完成时的回调
@@ -330,7 +338,7 @@ class AiSummaryHelper(
                         val finalSummary = summaryBuilder.toString() // 获取完整的摘要
                         if (finalSummary.isNotEmpty()) { // 如果摘要不为空
                             // 将摘要保存到缓存
-                            ZhanweifuBookHelp.saveAiSummaryToCache(book, chapter, finalSummary)
+                            AiSummaryProvider.saveAiSummaryToCache(book, chapter, finalSummary)
                             // 计算耗时
                             val duration = (System.currentTimeMillis() - startTime) / 1000
                             // 创建提示消息
