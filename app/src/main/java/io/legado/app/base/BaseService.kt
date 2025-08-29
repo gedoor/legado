@@ -71,9 +71,9 @@ abstract class BaseService : LifecycleService() {
     }
 
     @CallSuper
-    override fun onTimeout(startId: Int) {
-        super.onTimeout(startId)
-        LogUtils.d(simpleName, "onTimeout startId:$startId")
+    override fun onTimeout(startId: Int, fgsType: Int) {
+        super.onTimeout(startId, fgsType)
+        LogUtils.d(simpleName, "onTimeout startId:$startId fgsType:$fgsType")
         stopSelf()
     }
 
