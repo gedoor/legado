@@ -436,6 +436,7 @@ class ReadBookActivity : BaseReadBookActivity(),
                     R.id.menu_reverse_content -> item.isVisible = onLine
                     R.id.menu_del_ruby_tag -> item.isChecked = book.getDelTag(Book.rubyTag)
                     R.id.menu_del_h_tag -> item.isChecked = book.getDelTag(Book.hTag)
+                    R.id.menu_touch_dict -> item.isChecked = book.getTouchDict()
                 }
             }
         }
@@ -529,7 +530,10 @@ class ReadBookActivity : BaseReadBookActivity(),
                 item.isChecked = it.getReSegment()
                 ReadBook.loadContent(false)
             }
-
+            R.id.menu_touch_dict -> ReadBook.book?.let {
+                it.setTouchDict(!it.getTouchDict())
+                item.isChecked = it.getTouchDict()
+            }
 //            R.id.menu_enable_review -> {
 //                AppConfig.enableReview = !AppConfig.enableReview
 //                item.isChecked = AppConfig.enableReview
@@ -820,6 +824,13 @@ class ReadBookActivity : BaseReadBookActivity(),
      * 显示文本操作菜单
      */
     override fun showTextActionMenu() {
+        var book = ReadBook.book ?: return
+        if (book.getTouchDict()) {
+            ReadAloud.pause(this)
+            onMenuItemSelected(R.id.menu_dict)
+            binding.readView.cancelSelect()
+            return
+        }
         val navigationBarHeight =
             if (!ReadBookConfig.hideNavigationBar && navigationBarGravity == Gravity.BOTTOM)
                 binding.navigationBar.height else 0
@@ -1585,6 +1596,30 @@ class ReadBookActivity : BaseReadBookActivity(),
                 ReadBook.setProgress(progress)
             }
             noButton()
+        }
+    }
+
+    override fun toggleTouchDict() {
+        ReadBook.book?.let { book ->
+            book.setTouchDict(!book.getTouchDict())
+            val state = if (book.getTouchDict()) R.string.enabled else R.string.disabled
+            toastOnUi(getString(R.string.book_touch_dict) + ": " + getString(state))
+            // Refresh the page to update touch dict status in header/footer
+            binding.readView.upContent(resetPageOffset = false)
+        }
+    }
+
+    override fun onContentAreaTap(x: Float, y: Float) {
+        // 在点击查字典模式下，点击正文区域触发查词典
+        // 选择整个单词并直接查词典
+        binding.readView.selectWordAt(x, y) {
+            // 如果正在朗读，先暂停
+            if (BaseReadAloudService.isRun) {
+                ReadAloud.pause(this)
+            }
+            // 直接触发词典查询
+            onMenuItemSelected(R.id.menu_dict)
+            binding.readView.cancelSelect()
         }
     }
 

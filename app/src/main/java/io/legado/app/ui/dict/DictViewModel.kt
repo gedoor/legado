@@ -5,6 +5,7 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.DictRule
 import io.legado.app.help.coroutine.Coroutine
+import io.legado.app.model.ReadAloud
 
 class DictViewModel(application: Application) : BaseViewModel(application) {
 
@@ -33,5 +34,8 @@ class DictViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-
+    override fun onCleared() {
+        super.onCleared()
+        ReadAloud.resume(context)
+    }
 }

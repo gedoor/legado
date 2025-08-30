@@ -54,6 +54,7 @@ class PageView(context: Context) : FrameLayout(context) {
     private var tvBookName: BatteryView? = null
     private var tvTimeBattery: BatteryView? = null
     private var tvTimeBatteryP: BatteryView? = null
+    private var tvTouchDictStatus: BatteryView? = null
     private var isMainView = false
     var isScroll = false
 
@@ -62,6 +63,13 @@ class PageView(context: Context) : FrameLayout(context) {
             val h1 = if (binding.vwStatusBar.isGone) 0 else binding.vwStatusBar.height
             val h2 = if (binding.llHeader.isGone) 0 else binding.llHeader.height
             return h1 + h2 + binding.vwRoot.paddingTop
+        }
+
+    val footerHeight: Int
+        get() {
+            val h1 = if (binding.vwNavigationBar.isGone) 0 else binding.vwNavigationBar.height
+            val h2 = if (binding.llFooter.isGone) 0 else binding.llFooter.height
+            return h1 + h2 + binding.vwRoot.paddingBottom
         }
 
     init {
@@ -243,6 +251,12 @@ class PageView(context: Context) : FrameLayout(context) {
             typeface = ChapterProvider.typeface
             textSize = 12f
         }
+        tvTouchDictStatus = getTipView(ReadTipConfig.touchDictStatus)?.apply {
+            tag = ReadTipConfig.touchDictStatus
+            isBattery = false
+            typeface = ChapterProvider.typeface
+            textSize = 12f
+        }
     }
 
     /**
@@ -365,6 +379,9 @@ class PageView(context: Context) : FrameLayout(context) {
             tvPageAndTotal?.setTextIfNotEqual("${index.plus(1)}/$pageSize  $readProgress")
             tvPage?.setTextIfNotEqual("${index.plus(1)}/$pageSize")
         }
+        // Display touch dict status
+        val touchDictEnabled = ReadBook.book?.getTouchDict() == true
+        tvTouchDictStatus?.setTextIfNotEqual(if (touchDictEnabled) "✓" else "✗")
     }
 
     fun setAutoPager(autoPager: AutoPager?) {
