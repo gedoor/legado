@@ -2,13 +2,12 @@ package io.legado.app.ui.browser
 
 import android.app.Application
 import android.content.Intent
-import android.net.Uri
 import android.util.Base64
 import android.webkit.URLUtil
 import android.webkit.WebView
-import androidx.documentfile.provider.DocumentFile
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppConst
+import io.legado.app.constant.AppConst.imagePathKey
 import io.legado.app.constant.SourceType
 import io.legado.app.data.appDb
 import io.legado.app.exception.NoStackTraceException
@@ -17,14 +16,13 @@ import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.source.SourceHelp
 import io.legado.app.help.source.SourceVerificationHelp
 import io.legado.app.model.analyzeRule.AnalyzeUrl
-import io.legado.app.utils.DocumentUtils
-import io.legado.app.utils.FileUtils
-import io.legado.app.utils.isContentScheme
+import io.legado.app.utils.ACache
+import io.legado.app.utils.FileDoc
+import io.legado.app.utils.createFileIfNotExist
+import io.legado.app.utils.openOutputStream
 import io.legado.app.utils.printOnDebug
 import io.legado.app.utils.toastOnUi
-import io.legado.app.utils.writeBytes
 import org.apache.commons.text.StringEscapeUtils
-import java.io.File
 import java.util.Date
 
 class WebViewModel(application: Application) : BaseViewModel(application) {
@@ -70,19 +68,15 @@ class WebViewModel(application: Application) : BaseViewModel(application) {
         webPic ?: return
         execute {
             val fileName = "${AppConst.fileNameFormat.format(Date(System.currentTimeMillis()))}.jpg"
-            webData2bitmap(webPic)?.let { biteArray ->
-                if (path.isContentScheme()) {
-                    val uri = Uri.parse(path)
-                    DocumentFile.fromTreeUri(context, uri)?.let { doc ->
-                        DocumentUtils.createFileIfNotExist(doc, fileName)
-                            ?.writeBytes(context, biteArray)
-                    }
-                } else {
-                    val file = FileUtils.createFileIfNotExist(File(path), fileName)
-                    file.writeBytes(biteArray)
+            webData2bitmap(webPic)?.let { byteArray ->
+                val fileDoc = FileDoc.fromDir(path)
+                val picFile = fileDoc.createFileIfNotExist(fileName)
+                picFile.openOutputStream().getOrThrow().use {
+                    it.write(byteArray)
                 }
             } ?: throw Throwable("NULL")
         }.onError {
+            ACache.get().remove(imagePathKey)
             context.toastOnUi("保存图片失败:${it.localizedMessage}")
         }.onSuccess {
             context.toastOnUi("保存成功")

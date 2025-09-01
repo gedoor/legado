@@ -22,12 +22,14 @@ import androidx.core.view.size
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppConst
+import io.legado.app.constant.AppConst.imagePathKey
 import io.legado.app.databinding.ActivityWebViewBinding
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.http.CookieStore
 import io.legado.app.help.source.SourceVerificationHelp
 import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.model.Download
 import io.legado.app.ui.association.OnLineImportActivity
@@ -51,7 +53,6 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
 
     override val binding by viewBinding(ActivityWebViewBinding::inflate)
     override val viewModel by viewModels<WebViewModel>()
-    private val imagePathKey = "imagePath"
     private var customWebViewCallback: WebChromeClient.CustomViewCallback? = null
     private var webPic: String? = null
     private var isCloudflareChallenge = false
@@ -182,8 +183,18 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
             if (hitTestResult.type == WebView.HitTestResult.IMAGE_TYPE ||
                 hitTestResult.type == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE
             ) {
-                hitTestResult.extra?.let {
-                    saveImage(it)
+                hitTestResult.extra?.let { webPic ->
+                    selector(
+                        arrayListOf(
+                            SelectItem(getString(R.string.action_save), "save"),
+                            SelectItem(getString(R.string.select_folder), "selectFolder")
+                        )
+                    ) { _, charSequence, _ ->
+                        when (charSequence.value) {
+                            "save" -> saveImage(webPic)
+                            "selectFolder" -> selectSaveFolder()
+                        }
+                    }
                     return@setOnLongClickListener true
                 }
             }
