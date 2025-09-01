@@ -235,8 +235,9 @@ class TextChapterLayout(
                 sb.setLength(0)
                 val matcher = AppPattern.imgPattern.matcher(text)
                 while (matcher.find()) {
+                    val onclick = "onclick=['\"]([^'\">]+)".toRegex().find(matcher.group())
                     matcher.group(1)?.let { src ->
-                        srcList.add(src)
+                        srcList.add(src +"\n"+if (onclick != null) onclick.groupValues[1] else "")
                         matcher.appendReplacement(sb, ChapterProvider.srcReplaceChar)
                     }
                 }
@@ -256,53 +257,93 @@ class TextChapterLayout(
                     isSetTypedImage = false
                     prepareNextPageIfNeed()
                 }
-                var start = 0
                 if (content.contains("<img")) {
                     val matcher = AppPattern.imgPattern.matcher(content)
+                    val textSegments = mutableListOf<String>()
+                    val embeddedImages = mutableListOf<String>()
+                    var lastEnd = 0
+                    var hasNonEmbeddedImage = false
+                    var isFirstSegment = true
                     while (matcher.find()) {
                         coroutineContext.ensureActive()
-                        val text = content.substring(start, matcher.start())
-                        if (text.isNotBlank()) {
-                            setTypeText(
-                                book,
-                                text,
-                                contentPaint,
-                                contentPaintTextHeight,
-                                contentPaintFontMetrics,
-                                imageStyle,
-                                isFirstLine = start == 0
-                            )
+                        var src = matcher.group(1)!!+"\n"
+                        val isTextEmbedded = src.contains(Regex("""["']type["']\s*:\s*["']text["']""", RegexOption.IGNORE_CASE))
+                        val textBefore = content.substring(lastEnd, matcher.start())
+                        val onclick = "onclick=['\"]([^'\">]+)".toRegex().find(matcher.group())
+                        if (onclick != null) {
+                            src += onclick.groupValues[1]
                         }
-                        setTypeImage(
-                            book,
-                            matcher.group(1)!!,
-                            contentPaintTextHeight,
-                            imageStyle
-                        )
-                        isSetTypedImage = true
-                        start = matcher.end()
+                        if (textBefore.isNotBlank()) {
+                            textSegments.add(textBefore)
+                        }
+                        if (isTextEmbedded) {
+                            embeddedImages.add(src)
+                            textSegments.add(ChapterProvider.srcReplaceChar)
+                        } else {
+                            hasNonEmbeddedImage = true
+                            if (textSegments.isNotEmpty()) {
+                                val combinedText = textSegments.joinToString("")
+                                setTypeText(
+                                    book,
+                                    combinedText,
+                                    contentPaint,
+                                    contentPaintTextHeight,
+                                    contentPaintFontMetrics,
+                                    "TEXT",
+                                    isFirstLine = isFirstSegment,
+                                    srcList = LinkedList(embeddedImages)
+                                )
+                                textSegments.clear()
+                                embeddedImages.clear()
+                                isFirstSegment = false
+                            }
+                            setTypeImage(
+                                book,
+                                src,
+                                contentPaintTextHeight,
+                                imageStyle
+                            )
+                            isSetTypedImage = true
+                        }
+
+                        lastEnd = matcher.end()
                     }
-                }
-                if (start < content.length) {
-                    if (isSingleImageStyle && isSetTypedImage) {
-                        isSetTypedImage = false
-                        prepareNextPageIfNeed()
+                    if (lastEnd < content.length) {
+                        val remainingText = content.substring(lastEnd)
+                        if (remainingText.isNotBlank()) {
+                            textSegments.add(remainingText)
+                        }
                     }
-                    val text = content.substring(start, content.length)
-                    if (text.isNotBlank()) {
+                    if (textSegments.isNotEmpty()) {
+                        val combinedText = textSegments.joinToString("")
                         setTypeText(
                             book,
-                            if (AppConfig.enableReview) text + ChapterProvider.reviewChar else text,
+                            combinedText,
+                            contentPaint,
+                            contentPaintTextHeight,
+                            contentPaintFontMetrics,
+                            "TEXT",
+                            isFirstLine = !hasNonEmbeddedImage && isFirstSegment,
+                            srcList = LinkedList(embeddedImages)
+                        )
+                    }
+                } else {
+                    if (content.isNotBlank()) {
+                        setTypeText(
+                            book,
+                            if (AppConfig.enableReview) content + ChapterProvider.reviewChar else content,
                             contentPaint,
                             contentPaintTextHeight,
                             contentPaintFontMetrics,
                             imageStyle,
-                            isFirstLine = start == 0
+                            isFirstLine = true
                         )
                     }
                 }
             }
-            pendingTextPage.lines.last().isParagraphEnd = true
+            if (pendingTextPage.lines.isNotEmpty()) {
+                pendingTextPage.lines.last().isParagraphEnd = true
+            }
             stringBuilder.append("\n")
         }
         val textPage = pendingTextPage
@@ -326,9 +367,11 @@ class TextChapterLayout(
         book: Book,
         src: String,
         textHeight: Float,
-        imageStyle: String?,
+        imageStyle: String?
     ) {
         val size = ImageProvider.getImageSize(book, src, ReadBook.bookSource)
+        val srcWithClick = src.split("\n")
+        val src = srcWithClick[0]
         if (size.width > 0 && size.height > 0) {
             prepareNextPageIfNeed(durY)
             var height = size.height
@@ -381,7 +424,7 @@ class TextChapterLayout(
                 Pair(0f, width.toFloat())
             }
             textLine.addColumn(
-                ImageColumn(start = absStartX + start, end = absStartX + end, src = src)
+                ImageColumn(start = absStartX + start, end = absStartX + end, src = src, onClick = srcWithClick[1])
             )
             calcTextLinePosition(textPages, textLine, stringBuilder.length)
             stringBuilder.append(" ") // 确保翻页时索引计算正确
@@ -698,12 +741,14 @@ class TextChapterLayout(
     ) {
         val column = when {
             srcList != null && char == ChapterProvider.srcReplaceChar -> {
-                val src = srcList.removeFirst()
+                val srcWithClick = srcList.removeFirst().split("\n")
+                val src = srcWithClick[0]
                 ImageProvider.cacheImage(book, src, ReadBook.bookSource)
                 ImageColumn(
                     start = absStartX + xStart,
                     end = absStartX + xEnd,
-                    src = src
+                    src = src,
+                    srcWithClick[1]
                 )
             }
 
