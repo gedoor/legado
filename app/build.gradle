@@ -78,7 +78,7 @@ android {
                 signingConfig signingConfigs.myConfig
             }
             applicationIdSuffix '.release'
-            if (getApplicationIdSuffix() == '.releaseA') {
+            if (applicationIdSuffix?.toString() == '.releaseA') {
                 manifestPlaceholders.put("app_name", "@string/app_name_a")
             } else {
                 manifestPlaceholders.put("app_name", "@string/app_name")
@@ -173,9 +173,6 @@ dependencies {
     //def coroutines_version = '1.7.3'
     implementation(libs.bundles.coroutines)
 
-
-    //图像处理库Toolkit
-    implementation(libs.renderscript.intrinsics.replacement.toolkit)
 
     //androidX
     implementation(libs.core.ktx)

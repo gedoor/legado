@@ -35,11 +35,11 @@ class ReaderProvider : ContentProvider() {
                 addURI(authority, "bookSources/delete", RequestCode.DeleteBookSources.ordinal)
                 addURI(authority, "bookSource/query", RequestCode.GetBookSource.ordinal)
                 addURI(authority, "bookSources/query", RequestCode.GetBookSources.ordinal)
-                addURI(authority, "rssSource/insert", RequestCode.SaveBookSource.ordinal)
-                addURI(authority, "rssSources/insert", RequestCode.SaveBookSources.ordinal)
-                addURI(authority, "rssSources/delete", RequestCode.DeleteBookSources.ordinal)
-                addURI(authority, "rssSource/query", RequestCode.GetBookSource.ordinal)
-                addURI(authority, "rssSources/query", RequestCode.GetBookSources.ordinal)
+                addURI(authority, "rssSource/insert", RequestCode.SaveRssSource.ordinal)
+                addURI(authority, "rssSources/insert", RequestCode.SaveRssSources.ordinal)
+                addURI(authority, "rssSources/delete", RequestCode.DeleteRssSources.ordinal)
+                addURI(authority, "rssSource/query", RequestCode.GetRssSource.ordinal)
+                addURI(authority, "rssSources/query", RequestCode.GetRssSources.ordinal)
                 addURI(authority, "book/insert", RequestCode.SaveBook.ordinal)
                 addURI(authority, "books/query", RequestCode.GetBookshelf.ordinal)
                 addURI(authority, "book/refreshToc/query", RequestCode.RefreshToc.ordinal)
@@ -65,7 +65,7 @@ class ReaderProvider : ContentProvider() {
         if (sMatcher.match(uri) < 0) return -1
         when (RequestCode.entries[sMatcher.match(uri)]) {
             RequestCode.DeleteBookSources -> BookSourceController.deleteSources(selection)
-            RequestCode.DeleteRssSources -> BookSourceController.deleteSources(selection)
+            RequestCode.DeleteRssSources -> RssSourceController.deleteSources(selection)
             else -> throw IllegalStateException(
                 "Unexpected value: " + RequestCode.entries[sMatcher.match(uri)].name
             )
