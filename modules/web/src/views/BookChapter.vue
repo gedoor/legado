@@ -305,12 +305,6 @@ const getContent = (index: number, reloadChapter = true, chapterPos = 0) => {
         if (res.data.isSuccess) {
           const data = res.data.data
           const content = data.split(/\n+/)
-          const urlEncodedBookUrl = encodeURIComponent(bookUrl)
-          for (let i = 0; i < content.length; i++) {
-            if (!/^\s*<img[^>]*src[^>]+>$/.test(content[i])) {
-              content[i] = content[i].replace(new RegExp('img src="', 'g'), `img src="/image?url=${urlEncodedBookUrl}&path=`);
-            }
-          }
           chapterData.value.push({ index, content, title })
           if (reloadChapter) toChapterPos(chapterPos)
         } else {

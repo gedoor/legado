@@ -167,7 +167,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
             if (book.bookUrl == bookUrl) {
                 appDb.bookDao.update(book)
             } else {
-                appDb.bookDao.insert(book)
+                appDb.bookDao.replace(oldBook, book)
                 BookHelp.updateCacheFolder(oldBook, book)
             }
             appDb.bookChapterDao.delByBook(bookUrl)
