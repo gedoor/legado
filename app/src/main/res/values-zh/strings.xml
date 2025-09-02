@@ -354,6 +354,8 @@
     <string name="ps_show_all_find">关闭则只显示勾选源的发现</string>
     <string name="update_toc">更新目录</string>
     <string name="txt_toc_rule">TXT 目录规则</string>
+    <string name="txt_toc_replace">TXT 目录替换</string>
+    <string name="import_toc">导入目录</string>
     <string name="select_section_export">选择待导出章节</string>
     <string name="set_charset">设置编码</string>
     <string name="swap_sort">倒序-顺序</string>
@@ -870,6 +872,7 @@
     <string name="show">显示</string>
     <string name="hide">隐藏</string>
     <string name="hide_when_status_bar_show">状态栏显示时隐藏</string>
+    <string name="export_toc">导出目录</string>
     <string name="reverse_toc">反转目录</string>
     <string name="show_discovery">显示发现</string>
     <string name="style">样式</string>
