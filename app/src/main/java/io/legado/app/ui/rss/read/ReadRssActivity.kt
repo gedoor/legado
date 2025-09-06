@@ -344,6 +344,11 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                 )
             }
         }
+
+        @JavascriptInterface
+        fun onCloseRequested() {
+            finish()
+        }
     }
 
     fun String.escapeForJs(): String {
@@ -388,6 +393,9 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                         }
                         delete window.JSBridgeCallbacks[requestId];
                     }
+                };
+                window.close = function() {
+                    window.AndroidComm?.onCloseRequested();
                 };
                 window.openui = function(name,object) {
                     return new Promise((resolve, reject) => {

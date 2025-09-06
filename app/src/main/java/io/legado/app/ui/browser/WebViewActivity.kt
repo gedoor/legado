@@ -253,6 +253,10 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
                 binding.webView.evaluateJavascript("window.JSBridgeResult('$id', null, '${it.localizedMessage}');", null)
             }
         }
+        @JavascriptInterface
+        fun onCloseRequested() {
+            close()
+        }
     }
     fun String.escapeForJs(): String {
         return this
@@ -301,6 +305,9 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
                     delete window.JSBridgeCallbacks[requestId];
                 }
             };
+            window.close = function() {
+                window.AndroidComm?.onCloseRequested();
+            };
             """ else ""}
         })();
         """.trimIndent()
@@ -331,6 +338,19 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
     override fun finish() {
         SourceVerificationHelp.checkResult(viewModel.sourceOrigin)
         super.finish()
+    }
+
+    private fun close() {
+        if (!isCloudflareChallenge) {
+            if (viewModel.sourceVerificationEnable) {
+                viewModel.saveVerificationResult(binding.webView) {
+                    finish()
+                }
+            }
+            else {
+                finish()
+            }
+        }
     }
 
     override fun onDestroy() {
@@ -374,16 +394,7 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
 
         /* 覆盖window.close() */
         override fun onCloseWindow(window: WebView?) {
-            if (!isCloudflareChallenge) {
-                if (viewModel.sourceVerificationEnable) {
-                    viewModel.saveVerificationResult(binding.webView) {
-                        finish()
-                    }
-                }
-                else {
-                    finish()
-                }
-            }
+            close()
         }
         
     }
