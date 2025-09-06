@@ -168,7 +168,7 @@ object BookChapterList {
             list.getOrElse(book.simulatedTotalChapterNum() - 1) { list.last() }
                 .getDisplayTitle(replaceRules, book.getUseReplaceRule())
         coroutineContext.ensureActive()
-        getWordCount(list, book)
+        upChapterInfo(list, book)
         return list
     }
 
@@ -288,17 +288,18 @@ object BookChapterList {
         return Pair(chapterList, nextUrlList)
     }
 
-    private fun getWordCount(list: ArrayList<BookChapter>, book: Book) {
+    private fun upChapterInfo(list: ArrayList<BookChapter>, book: Book) {
         if (!AppConfig.tocCountWords) {
             return
         }
         val chapterList = appDb.bookChapterDao.getChapterList(book.bookUrl)
         if (chapterList.isNotEmpty()) {
-            val map = chapterList.associateBy({ it.getFileName() }, { it.wordCount })
+            val map = chapterList.associateBy({ it.getFileName() }, {Triple(it.wordCount, it.variable, it.reviewImg)})
             for (bookChapter in list) {
-                val wordCount = map[bookChapter.getFileName()]
-                if (wordCount != null) {
-                    bookChapter.wordCount = wordCount
+                map[bookChapter.getFileName()]?.let { info ->
+                    bookChapter.wordCount = info.first
+                    bookChapter.variable = info.second
+                    bookChapter.reviewImg = info.third
                 }
             }
         }

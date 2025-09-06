@@ -8,6 +8,7 @@ import io.legado.app.data.entities.TxtTocRule
 import io.legado.app.exception.EmptyFileException
 import io.legado.app.help.DefaultData
 import io.legado.app.help.book.isLocalModified
+import io.legado.app.help.config.AppConfig
 import io.legado.app.utils.EncodingDetect
 import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.StringUtils
@@ -99,6 +100,7 @@ class TextFile(private var book: Book) {
             bookChapter.bookUrl = book.bookUrl
             bookChapter.url = MD5Utils.md5Encode16(book.originName + index + bookChapter.title)
         }
+        getWordCount(toc, book)
         return toc
     }
 
@@ -474,6 +476,22 @@ class TextFile(private var book: Book) {
             }
         }
         return rules
+    }
+
+    private fun getWordCount(list: ArrayList<BookChapter>, book: Book) {
+        if (!AppConfig.tocCountWords) {
+            return
+        }
+        val chapterList = appDb.bookChapterDao.getChapterList(book.bookUrl)
+        if (chapterList.isNotEmpty()) {
+            val map = chapterList.associateBy({ it.getFileName() }, { it.wordCount })
+            for (bookChapter in list) {
+                val wordCount = map[bookChapter.getFileName()]
+                if (wordCount != null) {
+                    bookChapter.wordCount = wordCount
+                }
+            }
+        }
     }
 
 }
