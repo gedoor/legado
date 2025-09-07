@@ -250,7 +250,7 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
             }.onSuccess { data ->
                 binding.webView.evaluateJavascript("window.JSBridgeResult('$id', '${data.escapeForJs()}', null);", null)
             }.onError {
-                binding.webView.evaluateJavascript("window.JSBridgeResult('$id', null, '${it.localizedMessage}');", null)
+                binding.webView.evaluateJavascript("window.JSBridgeResult('$id', null, '${it.localizedMessage?.escapeForJs()}');", null)
             }
         }
         @JavascriptInterface

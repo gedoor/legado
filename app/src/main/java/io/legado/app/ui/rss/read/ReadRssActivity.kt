@@ -340,7 +340,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                 )
             }.onError {
                 binding.webView.evaluateJavascript(
-                    "window.JSBridgeResult('$id', null, '${it.localizedMessage}');", null
+                    "window.JSBridgeResult('$id', null, '${it.localizedMessage?.escapeForJs()}');", null
                 )
             }
         }
