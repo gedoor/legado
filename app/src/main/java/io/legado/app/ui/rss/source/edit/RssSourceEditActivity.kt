@@ -1,10 +1,12 @@
 package io.legado.app.ui.rss.source.edit
 
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.tabs.TabLayout
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
@@ -427,6 +429,22 @@ class RssSourceEditActivity :
             } else {
                 edit.replace(start, end, text)//光标所在位置插入文字
             }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    override fun onUndoClicked() {
+        val editText = window.decorView.findFocus()
+        if (editText is EditText) {
+            editText.onTextContextMenuItem(android.R.id.undo)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    override fun onRedoClicked() {
+        val editText = window.decorView.findFocus()
+        if (editText is EditText) {
+            editText.onTextContextMenuItem(android.R.id.redo)
         }
     }
 

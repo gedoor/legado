@@ -1,11 +1,13 @@
 package io.legado.app.ui.book.source.edit
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.tabs.TabLayout
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
@@ -658,6 +660,22 @@ class BookSourceEditActivity :
 
     override fun setVariable(key: String, variable: String?) {
         viewModel.bookSource?.setVariable(variable)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    override fun onUndoClicked() {
+        val editText = window.decorView.findFocus()
+        if (editText is EditText) {
+            editText.onTextContextMenuItem(android.R.id.undo)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    override fun onRedoClicked() {
+        val editText = window.decorView.findFocus()
+        if (editText is EditText) {
+            editText.onTextContextMenuItem(android.R.id.redo)
+        }
     }
 
 }
