@@ -22,6 +22,7 @@ import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.model.ReadBook
 import io.legado.app.ui.about.AppLogDialog
+import io.legado.app.ui.book.toc.replace.TxtTocReplaceDialog
 import io.legado.app.ui.book.toc.rule.TxtTocRuleDialog
 import io.legado.app.ui.file.HandleFileContract
 import io.legado.app.ui.widget.dialog.WaitDialog
@@ -37,7 +38,8 @@ import io.legado.app.utils.visible
  * 目录
  */
 class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>(),
-    TxtTocRuleDialog.CallBack {
+    TxtTocRuleDialog.CallBack,
+    TxtTocReplaceDialog.CallBack{
 
     override val binding by viewBinding(ActivityChapterListBinding::inflate)
     override val viewModel by viewModels<TocViewModel>()
@@ -51,6 +53,7 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>(),
             when (it.requestCode) {
                 1 -> viewModel.saveBookmark(uri)
                 2 -> viewModel.saveBookmarkMd(uri)
+                3 -> viewModel.exportToc(uri)
             }
         }
     }
@@ -144,12 +147,20 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>(),
                 TxtTocRuleDialog(viewModel.bookData.value?.tocUrl)
             )
 
+            R.id.menu_toc_replace -> showDialogFragment(
+                TxtTocReplaceDialog(viewModel.bookData.value?.bookUrl)
+            )
+
             R.id.menu_split_long_chapter -> {
                 viewModel.bookData.value?.let { book ->
                     item.isChecked = !item.isChecked
                     book.setSplitLongChapter(item.isChecked)
                     upBookAndToc(book)
                 }
+            }
+
+            R.id.menu_export_toc -> exportDir.launch {
+                requestCode = 3
             }
 
             R.id.menu_reverse_toc -> viewModel.reverseToc {
@@ -189,6 +200,11 @@ class TocActivity : VMBaseActivity<ActivityChapterListBinding, TocViewModel>(),
             book.tocUrl = tocRegex
             upBookAndToc(book)
         }
+    }
+
+    override fun onTocReplaced() {
+        viewModel.chapterListCallBack?.clearDisplayTitle()
+        viewModel.chapterListCallBack?.upChapterList(searchView?.query?.toString())
     }
 
     private fun upBookAndToc(book: Book) {
