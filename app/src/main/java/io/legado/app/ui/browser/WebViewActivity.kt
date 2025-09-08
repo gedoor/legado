@@ -57,6 +57,7 @@ import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeRule.Companion.setCoroutineContext
 import io.legado.app.help.http.CookieManager as AppCookieManager
 import io.legado.app.model.ReadBook
+import io.legado.app.utils.escapeForJs
 
 class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
 
@@ -257,15 +258,6 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
         fun onCloseRequested() {
             close()
         }
-    }
-    fun String.escapeForJs(): String {
-        return this
-            .replace("\\", "\\\\")  // 先处理反斜杠
-            .replace("'", "\\'")
-            .replace("\n", "\\n")
-            .replace("\r", "\\r")
-            .replace("\u2028", "\\u2028") // Unicode 行分隔符
-            .replace("\u2029", "\\u2029") // Unicode 段分隔符
     }
 
     private fun injectOrientationSupport() {

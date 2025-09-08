@@ -88,6 +88,7 @@ import java.io.FileInputStream
 import java.net.URLConnection
 import java.util.concurrent.ExecutionException
 import io.legado.app.ui.about.AppLogDialog
+import io.legado.app.utils.escapeForJs
 
 /**
  * rss阅读界面
@@ -349,13 +350,6 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         fun onCloseRequested() {
             finish()
         }
-    }
-
-    fun String.escapeForJs(): String {
-        return this.replace("\\", "\\\\")  // 先处理反斜杠
-            .replace("'", "\\'").replace("\n", "\\n").replace("\r", "\\r")
-            .replace("\u2028", "\\u2028") // Unicode 行分隔符
-            .replace("\u2029", "\\u2029") // Unicode 段分隔符
     }
 
     private fun injectOrientationSupport() {
