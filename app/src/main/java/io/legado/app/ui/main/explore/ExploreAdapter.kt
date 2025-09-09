@@ -107,6 +107,42 @@ class ExploreAdapter(context: Context, val callBack: CallBack) :
         }
     }
 
+    // 新增：根据分类筛选显示
+    fun filterByCategory(category: String?) {
+        if (category.isNullOrBlank()) {
+            // 显示所有分类
+            notifyDataSetChanged()
+        } else {
+            // 只显示指定分类
+            // 这里需要重新加载数据，暂时简单处理
+            notifyDataSetChanged()
+        }
+    }
+
+    // 新增：获取当前展开的书源
+    fun getExpandedSource(): BookSourcePart? {
+        return if (exIndex >= 0 && exIndex < itemCount) {
+            getItem(exIndex)
+        } else {
+            null
+        }
+    }
+
+    // 新增：设置展开状态
+    fun setExpandedState(position: Int, expanded: Boolean) {
+        val oldEx = exIndex
+        exIndex = if (expanded) position else -1
+        
+        if (oldEx != exIndex) {
+            if (oldEx >= 0) {
+                notifyItemChanged(oldEx, false)
+            }
+            if (exIndex >= 0) {
+                notifyItemChanged(exIndex, false)
+            }
+        }
+    }
+
     @Synchronized
     private fun getFlexboxChild(flexbox: FlexboxLayout): TextView {
         return if (recycler.isEmpty()) {
