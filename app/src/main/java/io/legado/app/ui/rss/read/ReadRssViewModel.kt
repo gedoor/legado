@@ -13,6 +13,7 @@ import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppConst.imagePathKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.RssArticle
+import io.legado.app.data.entities.RssReadRecord
 import io.legado.app.data.entities.RssSource
 import io.legado.app.data.entities.RssStar
 import io.legado.app.exception.NoStackTraceException
@@ -80,13 +81,9 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
                 else if (rssSource!!.singleUrl) {
                     htmlLiveData.postValue(ruleContent)
                 }
-                else {
+                else if (openUrl != null) {
                     val title = intent.getStringExtra("title") ?: rssSource!!.sourceName
-                    val rssArticle = RssArticle()
-                    rssArticle.origin = origin
-                    rssArticle.link = openUrl ?: origin
-                    rssArticle.sort = title
-                    rssArticle.title = title
+                    val rssArticle = appDb.rssArticleDao.get(origin, openUrl) ?: RssArticle(origin, title, title, link = openUrl)
                     loadContent(rssArticle, ruleContent)
                 }
             }
@@ -290,6 +287,17 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
     override fun onCleared() {
         super.onCleared()
         tts?.clearTts()
+    }
+
+    fun readRss(title: String, link: String) {
+        execute {
+            val rssReadRecord = RssReadRecord(
+                record = link,
+                title = title,
+                readTime = System.currentTimeMillis()
+            )
+            appDb.rssReadRecordDao.insertRecord(rssReadRecord)
+        }
     }
 
 }

@@ -180,7 +180,6 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_rss_refresh -> {
-                //viewModel.refresh
                 viewModel.rssArticle?.let {
                     start(this@ReadRssActivity, it.title, it.link, it.origin)
                 }
@@ -322,6 +321,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                 "rss" -> {
                     GSONStrict.fromJsonObject<Map<String, String>>(url)
                         .getOrThrow().entries.firstOrNull()?.let {
+                            viewModel.readRss(it.key, it.value)
                             start(this@ReadRssActivity, it.key, it.value, sourceUrl)
                         }
                 }
@@ -760,6 +760,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
 
                 "openrssurl" -> {
                     val decodedUrl = decodeUrl(url, "rssurl://")
+                    viewModel.readRss(source.sourceName, decodedUrl)
                     start(this@ReadRssActivity, source.sourceName, decodedUrl, source.sourceUrl)
                     true
                 }
