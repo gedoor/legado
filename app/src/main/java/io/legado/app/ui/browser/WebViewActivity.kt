@@ -256,7 +256,9 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
         }
         @JavascriptInterface
         fun onCloseRequested() {
-            close()
+            runOnUiThread {
+                close()
+            }
         }
     }
 
