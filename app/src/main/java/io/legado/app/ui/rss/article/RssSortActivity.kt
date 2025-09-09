@@ -63,6 +63,10 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
         tabsContainer.removeAllViews()
         tabRows.clear()
         tabScrollViews.clear()
+        if (sortList.isEmpty()) {
+            tabsContainer.gone()
+            return
+        }
         // 动态计算每行标签数量,最多3行
         val rowCount = when {
             sortList.size <= 10 -> 1
@@ -103,9 +107,7 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
             tabRows.add(rowLayout)
         }
         // 初始选中状态
-        if (sortList.isNotEmpty()) {
-            updateTabSelection(binding.viewPager.currentItem)
-        }
+        updateTabSelection(binding.viewPager.currentItem)
     }
 
     private fun createTabView(title: String, position: Int): TextView {
