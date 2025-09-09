@@ -36,6 +36,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
 import splitties.views.onClick
@@ -54,27 +55,27 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
         setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
     }
 
-    fun evalJS(jsStr: String): String? {
-        val source = viewModel.source ?: return null
+    fun evalJS(jsStr: String): String? = runBlocking(IO) {
+        val source = viewModel.source ?: return@runBlocking null
         val loginJS = source.getLoginJs() ?: ""
-        return source.evalJS("$loginJS\n$jsStr") {
-            put("result", source.getLoginInfoMap())
-            put("book", viewModel.book)
-            put("chapter", viewModel.chapter)
-        }.toString()
+        try {
+            source.evalJS("$loginJS\n$jsStr") {
+                put("result", source.getLoginInfoMap())
+                put("book", viewModel.book)
+                put("chapter", viewModel.chapter)
+            }.toString()
+        } catch (e: Exception) {
+            AppLog.put(e.localizedMessage ?: e.toString(), e)
+            null
+        }
     }
 
     fun loginUi(loginUi: String?): List<RowUi>? {
         val json = loginUi?.let {
-            try {
-                when {
-                    it.startsWith("@js:") -> evalJS(it.substring(4))
-                    it.startsWith("<js>") -> evalJS(it.substring(4, it.lastIndexOf("<")))
-                    else -> it
-                }
-            } catch (e: Throwable) {
-                AppLog.put(e.message)
-                null
+            when {
+                it.startsWith("@js:") -> evalJS(it.substring(4))
+                it.startsWith("<js>") -> evalJS(it.substring(4, it.lastIndexOf("<")))
+                else -> it
             }
         }
         return GSON.fromJsonArray<RowUi>(json).onFailure {
@@ -98,7 +99,7 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
                     binding.flexbox.addView(it.root)
                     it.root.id = index + 1000
                     it.textInputLayout.hint = rowUi.name
-                    it.editText.setText(loginInfo?.get(rowUi.name))
+                    it.editText.setText(loginInfo[rowUi.name])
                 }
 
                 RowUi.Type.password -> ItemSourceEditBinding.inflate(
@@ -111,7 +112,7 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
                     it.textInputLayout.hint = rowUi.name
                     it.editText.inputType =
                         InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_CLASS_TEXT
-                    it.editText.setText(loginInfo?.get(rowUi.name))
+                    it.editText.setText(loginInfo[rowUi.name])
                 }
 
                 RowUi.Type.button -> ItemFilletTextBinding.inflate(
