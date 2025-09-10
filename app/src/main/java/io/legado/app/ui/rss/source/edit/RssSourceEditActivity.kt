@@ -418,16 +418,40 @@ class RssSourceEditActivity :
     }
 
     override fun sendText(text: String) {
-        if (text.isBlank()) return
         val view = window.decorView.findFocus()
         if (view is EditText) {
             val start = view.selectionStart
             val end = view.selectionEnd
-            val edit = view.editableText//获取EditText的文字
-            if (start < 0 || start >= edit.length) {
-                edit.append(text)
-            } else {
-                edit.replace(start, end, text)//光标所在位置插入文字
+            if (text.isNotBlank()) {
+                val edit = view.editableText//获取EditText的文字
+                if (start < 0 || start >= edit.length) {
+                    edit.append(text)
+                } else {
+                    edit.replace(start, end, text)//光标所在位置插入文字
+                }
+            }
+            if (adapter.editEntityMaxLine > 999999) {
+                view.post {
+                    // view.requestFocus()
+                    val editTextLocation = IntArray(2)
+                    view.getLocationOnScreen(editTextLocation)
+                    val recyclerViewLocation = IntArray(2)
+                    binding.recyclerView.getLocationOnScreen(recyclerViewLocation)
+                    val layout = view.layout
+                    if (layout != null) {
+                        val line = layout.getLineForOffset(end)
+                        val cursorYInEditText = layout.getLineTop(line)
+                        // 光标相对于屏幕的位置
+                        val cursorYOnScreen = editTextLocation[1] + cursorYInEditText
+                        // 光标相对于RecyclerView的位置
+                        val cursorYInRecyclerView = cursorYOnScreen - recyclerViewLocation[1]
+                        // 需要滚动的距离大于400才执行
+                        val scrollDistance = cursorYInRecyclerView - (binding.recyclerView.height / 2)
+                        if (kotlin.math.abs(scrollDistance) > 400) {
+                            binding.recyclerView.smoothScrollBy(0, scrollDistance)
+                        }
+                    }
+                }
             }
         }
     }
