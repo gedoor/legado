@@ -172,8 +172,8 @@ interface BaseSource : JsExtensions {
     }
 
     fun getLoginInfoMap(): Map<String, String> {
-        val json = getLoginInfo() ?: return emptyMap()
-        return GSON.fromJsonObject<Map<String, String>>(json).getOrNull() ?: emptyMap()
+        val json = getLoginInfo() ?: return mutableMapOf()
+        return GSON.fromJsonObject<Map<String, String>>(json).getOrNull() ?: mutableMapOf()
     }
 
     /**
