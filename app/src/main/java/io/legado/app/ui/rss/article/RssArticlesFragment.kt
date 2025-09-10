@@ -79,7 +79,7 @@ class RssArticlesFragment() : VMBaseFragment<RssArticlesViewModel>(R.layout.frag
             }
         }
         recyclerView.layoutManager = if (activityViewModel.isWaterLayout) {
-            recyclerView.setPadding(8, 0, 8, 0)
+            recyclerView.setPadding(4, 0, 4, 0)
             StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         } else if (activityViewModel.isGridLayout) {
             recyclerView.setPadding(8, 0, 8, 0)

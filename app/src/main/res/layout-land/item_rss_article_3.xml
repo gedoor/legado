@@ -11,7 +11,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:background="@color/background" >
 
         <ImageView
             android:id="@+id/image_view"
@@ -30,7 +31,7 @@
             android:id="@+id/tv_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:maxLines="2"
+            android:maxLines="5"
             android:ellipsize="end"
             android:text="@string/app_name"
             android:textColor="@color/primaryText"
@@ -50,7 +51,7 @@
             android:layout_gravity="center"
             android:text="@string/app_name"
             android:textSize="14sp"
-            android:maxLines="1"
+            android:maxLines="19"
             android:paddingTop="8dp"
             android:layout_marginStart="8dp"
             android:paddingBottom="12dp"
