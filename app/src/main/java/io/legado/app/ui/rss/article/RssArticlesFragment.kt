@@ -11,6 +11,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
 import io.legado.app.constant.AppLog
@@ -51,6 +52,7 @@ class RssArticlesFragment() : VMBaseFragment<RssArticlesViewModel>(R.layout.frag
         when (activityViewModel.rssSource?.articleStyle) {
             1 -> RssArticlesAdapter1(requireContext(), this@RssArticlesFragment)
             2 -> RssArticlesAdapter2(requireContext(), this@RssArticlesFragment)
+            3 -> RssArticlesAdapter3(requireContext(), this@RssArticlesFragment)
             else -> RssArticlesAdapter(requireContext(), this@RssArticlesFragment)
         }
     }
@@ -76,7 +78,10 @@ class RssArticlesFragment() : VMBaseFragment<RssArticlesViewModel>(R.layout.frag
                 scrollToBottom(true)
             }
         }
-        recyclerView.layoutManager = if (activityViewModel.isGridLayout) {
+        recyclerView.layoutManager = if (activityViewModel.isWaterLayout) {
+            recyclerView.setPadding(8, 0, 8, 0)
+            StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+        } else if (activityViewModel.isGridLayout) {
             recyclerView.setPadding(8, 0, 8, 0)
             GridLayoutManager(requireContext(), 2)
         } else {
