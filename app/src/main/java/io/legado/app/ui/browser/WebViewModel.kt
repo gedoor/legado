@@ -37,6 +37,11 @@ class WebViewModel(application: Application) : BaseViewModel(application) {
     var sourceName: String = ""
     var sourceOrigin: String = ""
     var sourceType = SourceType.book
+    companion object {
+        // 应用期间保持状态
+        var sessionShowWebLog = false
+    }
+    var showWebLog = false
 
     fun initData(
         intent: Intent,
@@ -52,6 +57,7 @@ class WebViewModel(application: Application) : BaseViewModel(application) {
             sourceVerificationEnable = intent.getBooleanExtra("sourceVerificationEnable", false)
             refetchAfterSuccess = intent.getBooleanExtra("refetchAfterSuccess", true)
             html = intent.getStringExtra("html")
+            showWebLog = sessionShowWebLog
             source = SourceHelp.getSource(sourceOrigin, sourceType)
             val analyzeUrl = AnalyzeUrl(url, source = source, coroutineContext = coroutineContext)
             baseUrl = analyzeUrl.url
@@ -84,6 +90,12 @@ class WebViewModel(application: Application) : BaseViewModel(application) {
         }.onSuccess {
             context.toastOnUi("保存成功")
         }
+    }
+
+    fun toggleShowWebLog() {
+        val newValue = !showWebLog
+        showWebLog = newValue
+        sessionShowWebLog = newValue
     }
 
     private suspend fun webData2bitmap(data: String): ByteArray? {

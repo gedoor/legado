@@ -24,6 +24,11 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_show_web_log"
+        android:title="@string/show_web_log"
+        android:checkable="true" />
+
+    <item
         android:id="@+id/menu_disable_source"
         android:title="@string/disable_source"
         android:visible="false"

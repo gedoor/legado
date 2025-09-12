@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.webkit.ConsoleMessage
 import android.webkit.CookieManager
 import android.webkit.SslErrorHandler
 import android.webkit.URLUtil
@@ -50,6 +51,7 @@ import io.legado.app.utils.visible
 import java.net.URLDecoder
 import android.webkit.JavascriptInterface
 import androidx.lifecycle.lifecycleScope
+import io.legado.app.constant.AppLog
 import io.legado.app.help.coroutine.Coroutine
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
@@ -119,6 +121,7 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
             menu.findItem(R.id.menu_disable_source)?.isVisible = true
             menu.findItem(R.id.menu_delete_source)?.isVisible = true
         }
+        menu.findItem(R.id.menu_show_web_log)?.isChecked = viewModel.showWebLog
         return super.onPrepareOptionsMenu(menu)
     }
 
@@ -137,6 +140,10 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
             }
 
             R.id.menu_full_screen -> toggleFullScreen()
+            R.id.menu_show_web_log -> {
+                viewModel.toggleShowWebLog()
+                item.isChecked = viewModel.showWebLog
+            }
             R.id.menu_disable_source -> {
                 viewModel.disableSource {
                     finish()
@@ -389,6 +396,26 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
         /* 覆盖window.close() */
         override fun onCloseWindow(window: WebView?) {
             close()
+        }
+
+        /* 监听网页日志 */
+        override fun onConsoleMessage(consoleMessage: ConsoleMessage): Boolean {
+            viewModel.source?.let {
+                if (viewModel.showWebLog) {
+                    val consoleException = Exception("${consoleMessage.messageLevel().name}: \n${consoleMessage.message()}\n-Line ${consoleMessage.lineNumber()} of ${consoleMessage.sourceId()}")
+                    val message = viewModel.sourceName + ": ${consoleMessage.message()}"
+                    when (consoleMessage.messageLevel()) {
+                        ConsoleMessage.MessageLevel.LOG -> AppLog.put(message)
+                        ConsoleMessage.MessageLevel.DEBUG -> AppLog.put(message, consoleException)
+                        ConsoleMessage.MessageLevel.WARNING -> AppLog.put(message, consoleException)
+                        ConsoleMessage.MessageLevel.ERROR -> AppLog.put(message, consoleException)
+                        ConsoleMessage.MessageLevel.TIP -> AppLog.put(message)
+                        else -> AppLog.put(message)
+                    }
+                    return true
+                }
+            }
+            return false
         }
         
     }

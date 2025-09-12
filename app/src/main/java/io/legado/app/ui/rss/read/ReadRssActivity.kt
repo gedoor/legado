@@ -577,17 +577,13 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         override fun onConsoleMessage(consoleMessage: ConsoleMessage): Boolean {
             viewModel.rssSource?.let {
                 if (it.showWebLog) {
+                    val consoleException = Exception("${consoleMessage.messageLevel().name}: \n${consoleMessage.message()}\n-Line ${consoleMessage.lineNumber()} of ${consoleMessage.sourceId()}")
                     val message = it.sourceName + ": ${consoleMessage.message()}"
                     when (consoleMessage.messageLevel()) {
                         ConsoleMessage.MessageLevel.LOG -> AppLog.put(message)
-                        ConsoleMessage.MessageLevel.DEBUG -> AppLog.put(message + "\n-${consoleMessage.lineNumber()}")
-                        ConsoleMessage.MessageLevel.WARNING -> AppLog.put(message + "\n-${consoleMessage.sourceId()}")
-                        ConsoleMessage.MessageLevel.ERROR -> AppLog.put(
-                            message + "\n-Line ${consoleMessage.lineNumber()} of ${consoleMessage.sourceId()}",
-                            null,
-                            true
-                        )
-
+                        ConsoleMessage.MessageLevel.DEBUG -> AppLog.put(message, consoleException)
+                        ConsoleMessage.MessageLevel.WARNING -> AppLog.put(message, consoleException)
+                        ConsoleMessage.MessageLevel.ERROR -> AppLog.put(message, consoleException)
                         ConsoleMessage.MessageLevel.TIP -> AppLog.put(message)
                         else -> AppLog.put(message)
                     }

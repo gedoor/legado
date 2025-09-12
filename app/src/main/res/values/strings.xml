@@ -1243,4 +1243,5 @@
     <string name="time_day">天</string>
     <string name="update_interval">间隔：</string>
     <string name="silent_update">静默更新</string>
+    <string name="show_web_log">输出日志</string>
 </resources>
