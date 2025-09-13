@@ -88,6 +88,8 @@ import java.io.FileInputStream
 import java.net.URLConnection
 import java.util.concurrent.ExecutionException
 import io.legado.app.ui.about.AppLogDialog
+import io.legado.app.ui.rss.source.edit.RssSourceEditActivity
+import io.legado.app.utils.StartActivityContract
 import io.legado.app.utils.escapeForJs
 
 /**
@@ -110,6 +112,20 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         }
     }
     private val rssJsExtensions by lazy { RssJsExtensions(this, viewModel.rssSource) }
+    private fun refresh() {
+        viewModel.rssArticle?.let {
+            start(this@ReadRssActivity, it.title, it.link, it.origin)
+        } ?: run {
+            viewModel.initData(intent)
+        }
+    }
+    private val editSourceResult = registerForActivityResult(
+        StartActivityContract(RssSourceEditActivity::class.java)
+    ) {
+        if (it.resultCode == RESULT_OK) {
+            refresh()
+        }
+    }
 
     fun getSource(): RssSource? {
         return viewModel.rssSource
@@ -179,11 +195,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_rss_refresh -> {
-                viewModel.rssArticle?.let {
-                    start(this@ReadRssActivity, it.title, it.link, it.origin)
-                }
-            }
+            R.id.menu_rss_refresh -> refresh()
 
             R.id.menu_rss_star -> {
                 viewModel.addFavorite()
@@ -209,7 +221,11 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             R.id.menu_browser_open -> binding.webView.url?.let {
                 openUrl(it)
             } ?: toastOnUi("url null")
-
+            R.id.menu_edit_source -> viewModel.rssSource?.sourceUrl?.let {
+                editSourceResult.launch {
+                    putExtra("sourceUrl", it)
+                }
+            }
             R.id.menu_log -> showDialogFragment<AppLogDialog>()
         }
         return super.onCompatOptionsItemSelected(item)
@@ -474,8 +490,10 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                 upJavaScriptEnable()
                 binding.webView.settings.userAgentString =
                     viewModel.headerMap[AppConst.UA_NAME] ?: AppConfig.userAgent
+                val baseUrl =
+                    if (viewModel.rssSource?.loadWithBaseUrl == true) it.sourceUrl else null
                 binding.webView.loadDataWithBaseURL(
-                    it.sourceUrl, viewModel.hbHtml(html), "text/html", "utf-8", it.sourceUrl
+                    baseUrl, html, "text/html", "utf-8", it.sourceUrl
                 )
             }
         }

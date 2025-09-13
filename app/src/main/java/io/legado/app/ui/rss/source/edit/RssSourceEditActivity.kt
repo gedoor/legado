@@ -20,6 +20,7 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.primaryColor
+import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.file.HandleFileContract
 import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.ui.qrcode.QrCodeResult
@@ -159,6 +160,7 @@ class RssSourceEditActivity :
                 ErrorCorrectionLevel.L
             )
 
+            R.id.menu_log -> showDialogFragment<AppLogDialog>()
             R.id.menu_help -> showHelp("ruleHelp")
         }
         return super.onCompatOptionsItemSelected(item)

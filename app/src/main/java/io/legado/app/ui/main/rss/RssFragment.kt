@@ -197,8 +197,8 @@ class RssFragment() : VMBaseFragment<RssViewModel>(R.layout.fragment_rss),
         } else {
             startActivity<ReadRssActivity> {
                 putExtra("title", rssSource.sourceName)
-                putExtra("startHtml", rssSource.startHtml)
                 putExtra("origin", rssSource.sourceUrl)
+                putExtra("startHtml", true)
             }
         }
     }

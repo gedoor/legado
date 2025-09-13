@@ -70,10 +70,10 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
                 }
             } else {
                 val ruleContent = rssSource?.ruleContent
-                val startHtml = intent.getStringExtra("startHtml")
+                val startHtml = intent.getBooleanExtra("startHtml", false)
                 val openUrl = intent.getStringExtra("openUrl")
-                if (!startHtml.isNullOrEmpty()) {
-                    htmlLiveData.postValue(startHtml)
+                if (startHtml) {
+                    htmlLiveData.postValue(hbHtml())
                 }
                 else if (ruleContent.isNullOrBlank()) {
                     loadUrl(openUrl ?: origin, origin)
@@ -235,35 +235,37 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun hbHtml(html: String): String {
-        val style = rssSource?.run { startStyle ?: style } ?: """"img{max-width:100% !important; width:auto; height:auto;}video{object-fit:fill; max-width:100% !important; width:auto; height:auto;}body{word-wrap:break-word; height:auto;max-width: 100%; width:auto;}"""
-        val javascript = rssSource?.startJs
-        var processedHtml = html.let{
-            rssSource ?: return@let it
-            try {
-                when {
-                    it.startsWith("@js:") -> rssSource!!.evalJS( it.substring(4)).toString()
-                    it.startsWith("<js>") -> rssSource!!.evalJS(it.substring(4,it.lastIndexOf("<"))).toString()
-                    else -> it
+    fun hbHtml(): String {
+        rssSource?.let{
+            var processedHtml = it.startHtml!!.let{ html  ->
+                try {
+                    when {
+                        html.startsWith("@js:") -> it.evalJS( html.substring(4)).toString()
+                        html.startsWith("<js>") -> it.evalJS(html.substring(4, html.lastIndexOf("<"))).toString()
+                        else -> html
+                    }
+                } catch (e: Throwable) {
+                    e.printOnDebug()
+                    html
                 }
-            } catch (e: Throwable) {
-                e.printOnDebug()
-                it
             }
-        }
-        if (!javascript.isNullOrBlank()) {
-            processedHtml = if (processedHtml.contains("</body>")) {
-                processedHtml.replaceFirst("</body>", "<script>$javascript</script></body>")
+            val javascript = rssSource?.startJs
+            if (!javascript.isNullOrBlank()) {
+                processedHtml = if (processedHtml.contains("</body>")) {
+                    processedHtml.replaceFirst("</body>", "<script>$javascript</script></body>")
+                } else {
+                    "<body>$processedHtml<script>$javascript</script></body>"
+                }
+            }
+            val style = rssSource?.run { startStyle ?: style } ?: """"img{max-width:100% !important; width:auto; height:auto;}video{object-fit:fill; max-width:100% !important; width:auto; height:auto;}body{word-wrap:break-word; height:auto;max-width: 100%; width:auto;}"""
+            processedHtml = if (processedHtml.contains("<head>")) {
+                processedHtml.replaceFirst("<head>", "<head><style>$style</style>")
             } else {
-                "<body>$processedHtml<script>$javascript</script></body>"
+                "<head><style>$style</style></head>$processedHtml"
             }
+            return processedHtml
         }
-        processedHtml = if (processedHtml.contains("<head>")) {
-            processedHtml.replaceFirst("<head>", "<head><style>$style</style>")
-        } else {
-            "<head><style>$style</style></head>$processedHtml"
-        }
-        return processedHtml
+        return "<body>rssSource is null</body>"
     }
 
     @Synchronized

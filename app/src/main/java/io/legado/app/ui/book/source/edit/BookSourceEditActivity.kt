@@ -29,6 +29,7 @@ import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.primaryColor
+import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.book.search.SearchScope
 import io.legado.app.ui.book.source.debug.BookSourceDebugActivity
@@ -147,6 +148,7 @@ class BookSourceEditActivity :
                 ErrorCorrectionLevel.L
             )
 
+            R.id.menu_log -> showDialogFragment<AppLogDialog>()
             R.id.menu_help -> showHelp("ruleHelp")
             R.id.menu_login -> viewModel.save(getSource()) { source ->
                 startActivity<SourceLoginActivity> {
