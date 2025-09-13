@@ -49,6 +49,7 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
 
     private val binding by viewBinding(DialogLoginBinding::bind)
     private val viewModel by activityViewModels<SourceLoginViewModel>()
+    private var lastClickTime: Long = 0
 
     override fun onStart() {
         super.onStart()
@@ -125,7 +126,16 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
                     it.root.id = index + 1000
                     it.textView.text = rowUi.name
                     it.textView.setPadding(16.dpToPx())
-                    it.root.onClick {
+                    it.root.onClick { it ->
+                        val currentTime = System.currentTimeMillis()
+                        if (currentTime - lastClickTime < 300) {
+                            return@onClick // 按钮300ms防抖
+                        }
+                        lastClickTime = currentTime
+                        it.isSelected = true
+                        it.postDelayed({
+                            it.isSelected = false
+                        }, 120) // 点击动效还原
                         handleButtonClick(source, rowUi, loginUi)
                     }
                 }

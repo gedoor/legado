@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 选中状态 -->
+    <item android:state_selected="true">
+        <set>
+            <objectAnimator
+                android:duration="120"
+                android:propertyName="scaleX"
+                android:valueTo="0.92"
+                android:valueType="floatType"
+                android:interpolator="@android:interpolator/overshoot" />
+            <objectAnimator
+                android:duration="120"
+                android:propertyName="scaleY"
+                android:valueTo="0.92"
+                android:valueType="floatType"
+                android:interpolator="@android:interpolator/overshoot" />
+        </set>
+    </item>
+    <!-- 按下状态 -->
+    <item android:state_pressed="true">
+        <set>
+            <objectAnimator
+                android:duration="120"
+                android:propertyName="scaleX"
+                android:valueTo="0.92"
+                android:valueType="floatType"
+                android:interpolator="@android:interpolator/overshoot" />
+            <objectAnimator
+                android:duration="120"
+                android:propertyName="scaleY"
+                android:valueTo="0.92"
+                android:valueType="floatType"
+                android:interpolator="@android:interpolator/overshoot" />
+        </set>
+    </item>
+    <!-- 默认状态 -->
+    <item>
+        <set>
+            <objectAnimator
+                android:duration="120"
+                android:propertyName="scaleX"
+                android:valueTo="1.0"
+                android:valueType="floatType"
+                android:interpolator="@android:interpolator/overshoot" />
+            <objectAnimator
+                android:duration="120"
+                android:propertyName="scaleY"
+                android:valueTo="1.0"
+                android:valueType="floatType"
+                android:interpolator="@android:interpolator/overshoot" />
+        </set>
+    </item>
+</selector>

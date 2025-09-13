@@ -6,6 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_margin="3dp"
     android:background="@drawable/selector_fillet_btn_bg"
+    android:stateListAnimator="@animator/button_scale_animator"
     android:ellipsize="end"
     android:gravity="center"
     android:paddingTop="4dp"
