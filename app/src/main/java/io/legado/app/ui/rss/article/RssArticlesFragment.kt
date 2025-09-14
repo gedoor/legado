@@ -34,6 +34,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
+import androidx.recyclerview.widget.DiffUtil
 
 class RssArticlesFragment() : VMBaseFragment<RssArticlesViewModel>(R.layout.fragment_rss_articles),
     BaseRssArticlesAdapter.CallBack {
@@ -78,7 +79,7 @@ class RssArticlesFragment() : VMBaseFragment<RssArticlesViewModel>(R.layout.frag
                 scrollToBottom(true)
             }
         }
-        recyclerView.layoutManager = if (activityViewModel.isWaterLayout) {
+        val layoutManager = if (activityViewModel.isWaterLayout) {
             recyclerView.setPadding(4, 0, 4, 0)
             StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         } else if (activityViewModel.isGridLayout) {
@@ -88,6 +89,7 @@ class RssArticlesFragment() : VMBaseFragment<RssArticlesViewModel>(R.layout.frag
             recyclerView.addItemDecoration(VerticalDivider(requireContext()))
             LinearLayoutManager(requireContext())
         }
+        recyclerView.layoutManager = layoutManager
         recyclerView.adapter = adapter
         adapter.addFooterView {
             ViewLoadMoreBinding.bind(loadMoreView)
@@ -100,6 +102,16 @@ class RssArticlesFragment() : VMBaseFragment<RssArticlesViewModel>(R.layout.frag
                 super.onScrolled(recyclerView, dx, dy)
                 if (!recyclerView.canScrollVertically(1)) {
                     scrollToBottom()
+                    return
+                }
+                if (layoutManager is StaggeredGridLayoutManager) {
+                    val visibleItemCount = layoutManager.childCount
+                    val totalItemCount = layoutManager.itemCount
+                    val firstVisibleItemPositions = layoutManager.findFirstVisibleItemPositions(null)
+                    val firstVisibleItemPosition = firstVisibleItemPositions?.minOrNull() ?: 0
+                    if ((visibleItemCount + firstVisibleItemPosition) >= (totalItemCount - 5)) {
+                        scrollToBottom()
+                    }
                 }
             }
         })
@@ -118,8 +130,17 @@ class RssArticlesFragment() : VMBaseFragment<RssArticlesViewModel>(R.layout.frag
         articlesFlowJob = viewLifecycleOwner.lifecycleScope.launch {
             appDb.rssArticleDao.flowByOriginSort(rssUrl, viewModel.sortName).catch {
                 AppLog.put("订阅文章界面获取数据失败\n${it.localizedMessage}", it)
-            }.flowOn(IO).collect {
-                adapter.setItems(it)
+            }.flowOn(IO).collect { newList ->
+                // adapter.setItems(it)
+                // 用DiffUtil只对差异数据进行更新
+                adapter.setItems(newList, object : DiffUtil.ItemCallback<RssArticle>() {
+                    override fun areItemsTheSame(oldItem: RssArticle, newItem: RssArticle): Boolean {
+                        return oldItem.link == newItem.link
+                    }
+                    override fun areContentsTheSame(oldItem: RssArticle, newItem: RssArticle): Boolean {
+                        return oldItem == newItem
+                    }
+                })
             }
         }
     }
