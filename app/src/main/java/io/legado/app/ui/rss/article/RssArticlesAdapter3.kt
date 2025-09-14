@@ -61,33 +61,32 @@ class RssArticlesAdapter3(context: Context, callBack: CallBack) :
                 .set(OkHttpModelLoader.sourceOriginOption, item.origin)
             val imageRequest = ImageLoader.load(context, imageUrl)
                 .apply(options)
+                .placeholder(R.drawable.transparent_placeholder) //svg图会依靠这个进行尺寸约束
             if (cachedSize == null) {
-                imageRequest.placeholder(R.drawable.image_rss_article)
-                    .addListener(object : RequestListener<Drawable> {
-                        override fun onLoadFailed(
-                            e: GlideException?,
-                            model: Any?,
-                            target: Target<Drawable>,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            return false
+                imageRequest.addListener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<Drawable>,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        return false
+                    }
+                    override fun onResourceReady(
+                        resource: Drawable,
+                        model: Any,
+                        target: Target<Drawable>?,
+                        dataSource: DataSource,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        val width = resource.intrinsicWidth
+                        val height = resource.intrinsicHeight
+                        if (width > 0 && height > 0 && imageUrl != null) {
+                            imageSizeCache.put(imageUrl, Pair(width, height))
                         }
-
-                        override fun onResourceReady(
-                            resource: Drawable,
-                            model: Any,
-                            target: Target<Drawable>?,
-                            dataSource: DataSource,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            val width = resource.intrinsicWidth
-                            val height = resource.intrinsicHeight
-                            if (width > 0 && height > 0 && imageUrl != null) {
-                                imageSizeCache.put(imageUrl, Pair(width, height))
-                            }
-                            return false
-                        }
-                    })
+                        return false
+                    }
+                })
             }
             imageRequest.into(imageView)
             if (item.read) {

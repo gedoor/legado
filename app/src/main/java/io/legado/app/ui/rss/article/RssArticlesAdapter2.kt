@@ -44,7 +44,7 @@ class RssArticlesAdapter2(context: Context, callBack: CallBack) :
                     RequestOptions().set(OkHttpModelLoader.sourceOriginOption, item.origin)
                 ImageLoader.load(context, item.image).apply(options).apply {
                     if (callBack.isGridLayout) {
-                        placeholder(R.drawable.image_rss_article)
+                        placeholder(R.drawable.transparent_placeholder)
                     } else {
                         addListener(object : RequestListener<Drawable> {
                             override fun onLoadFailed(

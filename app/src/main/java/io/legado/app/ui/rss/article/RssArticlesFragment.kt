@@ -80,6 +80,7 @@ class RssArticlesFragment() : VMBaseFragment<RssArticlesViewModel>(R.layout.frag
             }
         }
         val layoutManager = if (activityViewModel.isWaterLayout) {
+            recyclerView.itemAnimator = null
             recyclerView.setPadding(4, 0, 4, 0)
             StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         } else if (activityViewModel.isGridLayout) {
@@ -131,16 +132,19 @@ class RssArticlesFragment() : VMBaseFragment<RssArticlesViewModel>(R.layout.frag
             appDb.rssArticleDao.flowByOriginSort(rssUrl, viewModel.sortName).catch {
                 AppLog.put("订阅文章界面获取数据失败\n${it.localizedMessage}", it)
             }.flowOn(IO).collect { newList ->
-                // adapter.setItems(it)
-                // 用DiffUtil只对差异数据进行更新
-                adapter.setItems(newList, object : DiffUtil.ItemCallback<RssArticle>() {
-                    override fun areItemsTheSame(oldItem: RssArticle, newItem: RssArticle): Boolean {
-                        return oldItem.link == newItem.link
-                    }
-                    override fun areContentsTheSame(oldItem: RssArticle, newItem: RssArticle): Boolean {
-                        return oldItem == newItem
-                    }
-                })
+                if (adapter.getActualItemCount() == 0) {
+                    adapter.setItems(newList)
+                } else {
+                    // 用DiffUtil只对差异数据进行更新
+                    adapter.setItems(newList, object : DiffUtil.ItemCallback<RssArticle>() {
+                        override fun areItemsTheSame(oldItem: RssArticle, newItem: RssArticle): Boolean {
+                            return oldItem.link == newItem.link
+                        }
+                        override fun areContentsTheSame(oldItem: RssArticle, newItem: RssArticle): Boolean {
+                            return oldItem == newItem
+                        }
+                    }, true)
+                }
             }
         }
     }
