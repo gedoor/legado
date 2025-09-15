@@ -7,8 +7,11 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface RssArticleDao {
 
+    @Query("select * from rssArticles where origin = :origin and link = :link and sort = :sort")
+    fun get(origin: String, link: String, sort: String): RssArticle?
+
     @Query("select * from rssArticles where origin = :origin and link = :link")
-    fun get(origin: String, link: String): RssArticle?
+    fun getByLink(origin: String, link: String): RssArticle?
 
     @Query(
         """select t1.link, t1.sort, t1.origin, t1.`order`, t1.title, t1.content, 

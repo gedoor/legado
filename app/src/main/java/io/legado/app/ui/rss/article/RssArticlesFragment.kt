@@ -183,6 +183,7 @@ class RssArticlesFragment() : VMBaseFragment<RssArticlesViewModel>(R.layout.frag
             putExtra("title", rssArticle.title)
             putExtra("origin", rssArticle.origin)
             putExtra("link", rssArticle.link)
+            putExtra("sort", rssArticle.sort)
         }
     }
 }

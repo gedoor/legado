@@ -9,7 +9,7 @@ import kotlinx.parcelize.IgnoredOnParcel
 
 @Entity(
     tableName = "rssArticles",
-    primaryKeys = ["origin", "link"]
+    primaryKeys = ["origin", "link", "sort"]
 )
 data class RssArticle(
     override var origin: String = "",
@@ -31,7 +31,7 @@ data class RssArticle(
 
     override fun equals(other: Any?): Boolean {
         other ?: return false
-        return if (other is RssArticle) origin == other.origin && link == other.link else false
+        return if (other is RssArticle) origin == other.origin && link == other.link && sort == other.sort else false
     }
 
     @delegate:Transient

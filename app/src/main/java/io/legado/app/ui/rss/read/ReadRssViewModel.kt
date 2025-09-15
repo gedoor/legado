@@ -54,20 +54,28 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
             }
             if (link != null) {
                 rssStar = appDb.rssStarDao.get(origin, link)
-                rssArticle = rssStar?.toRssArticle() ?: appDb.rssArticleDao.get(origin, link)
-                val rssArticle = rssArticle ?: return@execute
-                if (!rssArticle.description.isNullOrBlank()) {
-                    contentLiveData.postValue(rssArticle.description!!)
-                } else {
-                    rssSource?.let {
-                        val ruleContent = it.ruleContent
-                        if (!ruleContent.isNullOrBlank()) {
-                            loadContent(rssArticle, ruleContent)
-                        } else {
-                            loadUrl(rssArticle.link, rssArticle.origin)
-                        }
-                    } ?: loadUrl(rssArticle.link, rssArticle.origin)
-                }
+                val sort = intent.getStringExtra("sort")
+                rssArticle = rssStar?.toRssArticle()
+                    ?: if (sort == null) {
+                        appDb.rssArticleDao.getByLink(origin, link)
+                    } else {
+                        appDb.rssArticleDao.get(origin, link, sort)
+                    }
+
+                rssArticle?.let { article ->
+                    if (!article.description.isNullOrBlank()) {
+                        contentLiveData.postValue(article.description!!)
+                    } else {
+                        rssSource?.let {
+                            val ruleContent = it.ruleContent
+                            if (!ruleContent.isNullOrBlank()) {
+                                loadContent(article, ruleContent)
+                            } else {
+                                loadUrl(article.link, article.origin)
+                            }
+                        } ?: loadUrl(article.link, article.origin)
+                    }
+                } ?: return@execute
             } else {
                 val ruleContent = rssSource?.ruleContent
                 val startHtml = intent.getBooleanExtra("startHtml", false)
@@ -83,7 +91,7 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
                 }
                 else if (openUrl != null) {
                     val title = intent.getStringExtra("title") ?: rssSource!!.sourceName
-                    val rssArticle = appDb.rssArticleDao.get(origin, openUrl) ?: RssArticle(origin, title, title, link = openUrl)
+                    val rssArticle = appDb.rssArticleDao.getByLink(origin, openUrl) ?: RssArticle(origin, title, title, link = openUrl)
                     loadContent(rssArticle, ruleContent)
                 }
             }
