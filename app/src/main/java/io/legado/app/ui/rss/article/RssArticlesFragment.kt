@@ -63,6 +63,7 @@ class RssArticlesFragment() : VMBaseFragment<RssArticlesViewModel>(R.layout.frag
     private var articlesFlowJob: Job? = null
     override val isGridLayout: Boolean
         get() = activityViewModel.isGridLayout
+    private var fullRefresh = true
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.init(arguments)
@@ -132,7 +133,7 @@ class RssArticlesFragment() : VMBaseFragment<RssArticlesViewModel>(R.layout.frag
             appDb.rssArticleDao.flowByOriginSort(rssUrl, viewModel.sortName).catch {
                 AppLog.put("订阅文章界面获取数据失败\n${it.localizedMessage}", it)
             }.flowOn(IO).collect { newList ->
-                if (adapter.getActualItemCount() == 0) {
+                if (fullRefresh) {
                     adapter.setItems(newList)
                 } else {
                     // 用DiffUtil只对差异数据进行更新
@@ -150,6 +151,7 @@ class RssArticlesFragment() : VMBaseFragment<RssArticlesViewModel>(R.layout.frag
     }
 
     private fun loadArticles() {
+        fullRefresh = true
         activityViewModel.rssSource?.let {
             viewModel.loadArticles(it)
         }
@@ -157,6 +159,7 @@ class RssArticlesFragment() : VMBaseFragment<RssArticlesViewModel>(R.layout.frag
 
     private fun scrollToBottom(forceLoad: Boolean = false) {
         if (viewModel.isLoading) return
+        fullRefresh = false
         if ((loadMoreView.hasMore && adapter.getActualItemCount() > 0) || forceLoad) {
             loadMoreView.hasMore()
             activityViewModel.rssSource?.let {
