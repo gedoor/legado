@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.lifecycleScope
@@ -33,6 +34,7 @@ import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.ui.book.search.SearchScope
 import io.legado.app.ui.book.source.debug.BookSourceDebugActivity
+import io.legado.app.ui.code.CodeEditActivity
 import io.legado.app.ui.file.HandleFileContract
 import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.ui.qrcode.QrCodeResult
@@ -54,6 +56,7 @@ import io.legado.app.utils.shareWithQr
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.showHelp
 import io.legado.app.utils.startActivity
+import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
@@ -123,8 +126,37 @@ class BookSourceEditActivity :
         return super.onMenuOpened(featureId, menu)
     }
 
+    private val textEditLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val editedText = result.data?.getStringExtra("text")
+            editedText?.let {
+                val view = window.decorView.findFocus()
+                if (view is EditText) {
+                    view.setText(it)
+                } else {
+                    toastOnUi(R.string.focus_lost_on_textbox)
+                }
+            }
+        }
+    }
+    fun onFullEditClicked() {
+        val view = window.decorView.findFocus()
+        if (view is EditText) {
+            val currentText = view.text.toString()
+            val intent = Intent(this, CodeEditActivity::class.java).apply {
+                putExtra("text", currentText)
+            }
+            textEditLauncher.launch(intent)
+        }
+        else {
+            toastOnUi(R.string.please_focus_cursor_on_textbox)
+        }
+    }
+
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.menu_fullscreen_edit -> onFullEditClicked()
+
             R.id.menu_save -> viewModel.save(getSource()) {
                 setResult(RESULT_OK, Intent().putExtra("origin", it.bookSourceUrl))
                 finish()

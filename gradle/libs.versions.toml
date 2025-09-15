@@ -18,6 +18,7 @@ hutool = "5.8.22"
 libarchive = "1.1.6"
 lifecycle = "2.9.0"
 lyricViewx = "1.3.2"
+soraEditor = "0.23.7"
 glide = "4.16.0"
 gson = "2.13.1"
 jsonPath = "2.9.0"
@@ -92,6 +93,7 @@ lifecycle-service = { module = "androidx.lifecycle:lifecycle-service", version.r
 
 lyricViewx = { module = "com.github.Moriafly:LyricViewX", version.ref = "lyricViewx" }
 
+
 media-media = { module = "androidx.media:media", version.ref = "media" }
 media3-datasource-okhttp = { module = "androidx.media3:media3-datasource-okhttp", version.ref = "media3" }
 media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3" }
@@ -131,6 +133,9 @@ avif = { module = "org.aomedia.avif.android:avif", version = "1.1.1.14d8e3c4" }
 glide-svg = { module = "com.github.qoqa:glide-svg", version = "4.0.2" }
 androidsvg = { module = "com.caverock:androidsvg-aar", version = "1.4" }
 
+soraEditor-bom = { module = "io.github.rosemoe:editor-bom", version.ref = "soraEditor" }
+soraEditor-core = { module = "io.github.rosemoe:editor" }
+soraEditor-language-textmate = { module = "io.github.rosemoe:language-textmate" }
 splitties-appctx = { module = "com.louiscad.splitties:splitties-appctx", version.ref = "splitties" }
 splitties-activities = { module = "com.louiscad.splitties:splitties-activities", version.ref = "splitties" }
 splitties-systemservices = { module = "com.louiscad.splitties:splitties-systemservices", version.ref = "splitties" }

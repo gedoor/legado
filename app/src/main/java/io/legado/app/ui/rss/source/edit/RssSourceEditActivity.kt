@@ -1,12 +1,17 @@
 package io.legado.app.ui.rss.source.edit
 
+import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
+import androidx.activity.result.contract.ActivityResultContract
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.tabs.TabLayout
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
@@ -21,6 +26,7 @@ import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.about.AppLogDialog
+import io.legado.app.ui.code.CodeEditActivity
 import io.legado.app.ui.file.HandleFileContract
 import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.ui.qrcode.QrCodeResult
@@ -43,6 +49,7 @@ import io.legado.app.utils.shareWithQr
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.showHelp
 import io.legado.app.utils.startActivity
+import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -127,8 +134,37 @@ class RssSourceEditActivity :
         return super.onMenuOpened(featureId, menu)
     }
 
+    private val textEditLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val editedText = result.data?.getStringExtra("text")
+            editedText?.let {
+                val view = window.decorView.findFocus()
+                if (view is EditText) {
+                    view.setText(it)
+                } else {
+                    toastOnUi(R.string.focus_lost_on_textbox)
+                }
+            }
+        }
+    }
+    fun onFullEditClicked() {
+        val view = window.decorView.findFocus()
+        if (view is EditText) {
+            val currentText = view.text.toString()
+            val intent = Intent(this, CodeEditActivity::class.java).apply {
+                putExtra("text", currentText)
+            }
+            textEditLauncher.launch(intent)
+        }
+        else {
+            toastOnUi(R.string.please_focus_cursor_on_textbox)
+        }
+    }
+
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.menu_fullscreen_edit -> onFullEditClicked()
+
             R.id.menu_save -> viewModel.save(getRssSource()) {
                 setResult(RESULT_OK)
                 finish()
