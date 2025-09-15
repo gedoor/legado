@@ -21,6 +21,7 @@ import androidx.core.view.isVisible
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
+import io.legado.app.constant.AppLog
 import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.ItemTextBinding
 import io.legado.app.databinding.PopupActionMenuBinding
@@ -233,8 +234,12 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
 
             else -> item.intent?.let {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    it.putExtra(Intent.EXTRA_PROCESS_TEXT, callBack.selectedText)
-                    context.startActivity(it)
+                    kotlin.runCatching {
+                        it.putExtra(Intent.EXTRA_PROCESS_TEXT, callBack.selectedText)
+                        context.startActivity(it)
+                    }.onFailure { e ->
+                        AppLog.put("执行文本菜单操作出错\n$e", e, true)
+                    }
                 }
             }
         }
