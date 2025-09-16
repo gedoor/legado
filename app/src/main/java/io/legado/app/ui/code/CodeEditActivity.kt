@@ -1,10 +1,13 @@
 package io.legado.app.ui.code
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
+import androidx.lifecycle.lifecycleScope
 import io.github.rosemoe.sora.langs.textmate.TextMateColorScheme
 import io.github.rosemoe.sora.langs.textmate.TextMateLanguage
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry
@@ -16,17 +19,26 @@ import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.databinding.ActivityCodeEditBinding
 import io.legado.app.help.config.ThemeConfig
+import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.ui.about.AppLogDialog
+import io.legado.app.ui.widget.keyboard.KeyboardToolPop
+import io.legado.app.utils.imeHeight
+import io.legado.app.utils.setOnApplyWindowInsetsListenerCompat
 import io.legado.app.utils.showDialogFragment
+import io.legado.app.utils.showHelp
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import org.eclipse.tm4e.core.registry.IThemeSource
 import kotlin.getValue
 
 class CodeEditActivity :
-    VMBaseActivity<ActivityCodeEditBinding, CodeEditViewModel>() {
+    VMBaseActivity<ActivityCodeEditBinding, CodeEditViewModel>(),
+    KeyboardToolPop.CallBack {
     override val binding by viewBinding(ActivityCodeEditBinding::inflate)
     override val viewModel by viewModels<CodeEditViewModel>()
+    private val softKeyboardTool by lazy {
+        KeyboardToolPop(this, lifecycleScope, binding.root, this)
+    }
     var editor: CodeEditor? = null
     var initialText = ""
 
@@ -65,7 +77,16 @@ class CodeEditActivity :
         loadTextMateGrammars()
     }
 
+    private fun initView() {
+        binding.root.setOnApplyWindowInsetsListenerCompat { _, windowInsets ->
+            softKeyboardTool.initialPadding = windowInsets.imeHeight
+            windowInsets
+        }
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
+        softKeyboardTool.attachToWindow(window)
+        initView()
         initTextMate()
         val language = TextMateLanguage.create("source.js", true)
         val color = TextMateColorScheme.create(ThemeRegistry.getInstance())
@@ -124,5 +145,35 @@ class CodeEditActivity :
 
     override fun finish() {
         save(true)
+    }
+
+    override fun helpActions(): List<SelectItem<String>> {
+        return arrayListOf(
+            SelectItem("源教程", "ruleHelp"),
+            SelectItem("js教程", "jsHelp"),
+            SelectItem("正则教程", "regexHelp")
+        )
+    }
+
+    override fun onHelpActionSelect(action: String) {
+        when (action) {
+            "ruleHelp" -> showHelp("ruleHelp")
+            "jsHelp" -> showHelp("jsHelp")
+            "regexHelp" -> showHelp("regexHelp")
+        }
+    }
+
+    override fun sendText(text: String) {
+        editor?.insertText(text, text.length)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    override fun onUndoClicked() {
+        editor?.undo()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    override fun onRedoClicked() {
+        editor?.redo()
     }
 }
