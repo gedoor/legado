@@ -133,3 +133,7 @@ cn.hutool.core.util.**{*;}
 # Throwable
 -keepnames class * extends java.lang.Throwable
 -keepclassmembernames,allowobfuscation class * extends java.lang.Throwable{*;}
+
+# Sora Editor
+-keep class org.eclipse.tm4e.** { *; }
+-keep class org.joni.** { *; }
