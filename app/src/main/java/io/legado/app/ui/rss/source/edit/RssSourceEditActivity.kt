@@ -147,7 +147,7 @@ class RssSourceEditActivity :
             }
         }
     }
-    fun onFullEditClicked() {
+    private fun onFullEditClicked() {
         val view = window.decorView.findFocus()
         if (view is EditText) {
             val currentText = view.text.toString()

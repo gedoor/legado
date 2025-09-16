@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.core.view.ViewCompat
@@ -16,12 +17,14 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.databinding.ActivityReplaceEditBinding
 import io.legado.app.lib.dialogs.SelectItem
+import io.legado.app.ui.code.CodeEditActivity
 import io.legado.app.ui.widget.keyboard.KeyboardToolPop
 import io.legado.app.utils.GSON
 import io.legado.app.utils.imeHeight
 import io.legado.app.utils.sendToClip
 import io.legado.app.utils.setOnApplyWindowInsetsListenerCompat
 import io.legado.app.utils.showHelp
+import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 /**
@@ -70,8 +73,36 @@ class ReplaceEditActivity :
         return super.onCompatCreateOptionsMenu(menu)
     }
 
+    private val textEditLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val editedText = result.data?.getStringExtra("text")
+            editedText?.let {
+                val view = window.decorView.findFocus()
+                if (view is EditText) {
+                    view.setText(it)
+                } else {
+                    toastOnUi(R.string.focus_lost_on_textbox)
+                }
+            }
+        }
+    }
+    private fun onFullEditClicked() {
+        val view = window.decorView.findFocus()
+        if (view is EditText) {
+            val currentText = view.text.toString()
+            val intent = Intent(this, CodeEditActivity::class.java).apply {
+                putExtra("text", currentText)
+            }
+            textEditLauncher.launch(intent)
+        }
+        else {
+            toastOnUi(R.string.please_focus_cursor_on_textbox)
+        }
+    }
+
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.menu_fullscreen_edit -> onFullEditClicked()
             R.id.menu_save -> viewModel.save(getReplaceRule()) {
                 setResult(RESULT_OK)
                 finish()

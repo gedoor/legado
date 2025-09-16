@@ -1246,4 +1246,5 @@
     <string name="show_web_log">输出日志</string>
     <string name="please_focus_cursor_on_textbox">请将光标聚焦在文本框</string>
     <string name="focus_lost_on_textbox">在文本框丢失光标焦点</string>
+    <string name="edit_code">编辑代码</string>
 </resources>

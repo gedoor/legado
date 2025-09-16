@@ -7,31 +7,11 @@
     android:background="@color/md_grey_900"
     android:orientation="vertical">
 
-    <LinearLayout
+    <io.legado.app.ui.widget.TitleBar
+        android:id="@+id/title_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="0dp"
-        android:layout_marginTop="32dp" >
-
-        <Button
-            android:id="@+id/btnCancel"
-            style="?android:attr/buttonBarButtonStyle"
-            android:textColor="@android:color/white"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/cancel" />
-
-        <Button
-            android:id="@+id/btnSave"
-            style="?android:attr/buttonBarButtonStyle"
-            android:textColor="@android:color/white"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/action_save" />
-    </LinearLayout>
+        app:title="@string/edit_code" />
 
     <io.github.rosemoe.sora.widget.CodeEditor
         android:id="@+id/editText"
@@ -40,8 +20,7 @@
         android:gravity="top"
         android:inputType="textMultiLine"
         android:padding="16dp"
-        app:text="Hello, world!"
         app:textSize="18sp"
-        tools:background="@color/md_grey_900"
-        tools:viewBindingIgnore="false" />
+        tools:text="Hello, world!" />
+
 </LinearLayout>
