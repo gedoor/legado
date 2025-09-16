@@ -133,6 +133,7 @@ class BookSourceEditActivity :
                 val view = window.decorView.findFocus()
                 if (view is EditText) {
                     view.setText(it)
+                    view.setSelection(result.data!!.getIntExtra("cursorPosition", 0))
                 } else {
                     toastOnUi(R.string.focus_lost_on_textbox)
                 }

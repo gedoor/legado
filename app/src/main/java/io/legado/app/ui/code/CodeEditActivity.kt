@@ -102,6 +102,7 @@ class CodeEditActivity :
         } else {
             val result = Intent().apply {
                 putExtra("text", text)
+                putExtra("cursorPosition", editor?.cursor?.left ?: 0)
             }
             setResult(RESULT_OK, result)
             super.finish()

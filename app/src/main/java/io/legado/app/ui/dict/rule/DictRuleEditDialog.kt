@@ -55,6 +55,7 @@ class DictRuleEditDialog() : BaseDialogFragment(R.layout.dialog_dict_rule_edit, 
             result.data?.getStringExtra("text")?.let { editedText ->
                 focusedEditText?.let { editText ->
                     editText.setText(editedText)
+                    editText.setSelection(result.data!!.getIntExtra("cursorPosition", 0))
                     editText.requestFocus()
                 } ?: run {
                     toastOnUi(R.string.focus_lost_on_textbox)
