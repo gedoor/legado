@@ -133,7 +133,7 @@ class RssArticlesFragment() : VMBaseFragment<RssArticlesViewModel>(R.layout.frag
             appDb.rssArticleDao.flowByOriginSort(rssUrl, viewModel.sortName).catch {
                 AppLog.put("订阅文章界面获取数据失败\n${it.localizedMessage}", it)
             }.flowOn(IO).collect { newList ->
-                if (fullRefresh) {
+                if (fullRefresh || newList.isEmpty()) {
                     adapter.setItems(newList)
                 } else {
                     // 用DiffUtil只对差异数据进行更新
