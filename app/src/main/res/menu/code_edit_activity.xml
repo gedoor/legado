@@ -11,6 +11,11 @@
         app:showAsAction="always" />
 
     <item
+        android:id="@+id/menu_change_theme"
+        android:title="@string/change_theme"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_log"
         android:title="@string/log"
         app:showAsAction="never" />

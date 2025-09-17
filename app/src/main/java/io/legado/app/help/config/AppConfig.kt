@@ -27,6 +27,7 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
     var useAntiAlias = appCtx.getPrefBoolean(PreferKey.antiAlias)
     var userAgent: String = getPrefUserAgent()
     var customHosts = appCtx.getPrefString(PreferKey.customHosts) ?: ""
+    var editTheme = appCtx.getPrefInt(PreferKey.editTheme, 0)
     var isEInkMode = appCtx.getPrefString(PreferKey.themeMode) == "3"
     var clickActionTL = appCtx.getPrefInt(PreferKey.clickActionTL, 2)
     var clickActionTC = appCtx.getPrefInt(PreferKey.clickActionTC, 2)
@@ -86,6 +87,8 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             PreferKey.userAgent -> userAgent = getPrefUserAgent()
 
             PreferKey.customHosts -> customHosts = appCtx.getPrefString(PreferKey.customHosts) ?: ""
+
+            PreferKey.editTheme -> editTheme = appCtx.getPrefInt(PreferKey.editTheme, 0)
 
             PreferKey.antiAlias -> useAntiAlias = appCtx.getPrefBoolean(PreferKey.antiAlias)
 

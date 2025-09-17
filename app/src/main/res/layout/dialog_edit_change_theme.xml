@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <io.legado.app.ui.widget.text.AccentTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="16dp"
+            android:text="@string/change_theme"
+            android:textSize="18sp" />
+
+        <RadioGroup
+            android:id="@+id/ch_theme"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/edit_theme_monokai_dimmed"
+                android:paddingStart="8dp"
+                android:layout_marginBottom="8dp"
+                tools:ignore="RtlSymmetry,TouchTargetSizeCheck" />
+
+            <RadioButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="@string/edit_theme_monokai"
+                tools:ignore="RtlSymmetry,TouchTargetSizeCheck" />
+
+            <RadioButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="@string/edit_theme_modern_dark"
+                tools:ignore="RtlSymmetry,TouchTargetSizeCheck" />
+
+            <RadioButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="@string/edit_theme_modern_light"
+                tools:ignore="RtlSymmetry,TouchTargetSizeCheck" />
+
+            <RadioButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="@string/edit_theme_solarized_dark"
+                tools:ignore="RtlSymmetry,TouchTargetSizeCheck" />
+
+            <RadioButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="@string/edit_theme_solarized_light"
+                tools:ignore="RtlSymmetry,TouchTargetSizeCheck" />
+
+        </RadioGroup>
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

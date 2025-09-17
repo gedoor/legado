@@ -1247,4 +1247,11 @@
     <string name="please_focus_cursor_on_textbox">请将光标聚焦在文本框</string>
     <string name="focus_lost_on_textbox">在文本框丢失光标焦点</string>
     <string name="edit_code">编辑代码</string>
+    <string name="edit_theme_monokai">莫奈亮光</string>
+    <string name="edit_theme_monokai_dimmed">莫奈柔光</string>
+    <string name="change_theme">选择主题</string>
+    <string name="edit_theme_modern_dark">现代深色</string>
+    <string name="edit_theme_modern_light">现代浅色</string>
+    <string name="edit_theme_solarized_dark">日光深色</string>
+    <string name="edit_theme_solarized_light">日光浅色</string>
 </resources>
