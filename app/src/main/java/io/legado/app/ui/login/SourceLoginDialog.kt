@@ -21,6 +21,7 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.utils.GSON
+import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.dpToPx
 import io.legado.app.utils.fromJsonArray
@@ -36,7 +37,6 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
 import splitties.views.onClick
@@ -51,13 +51,17 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
     private val viewModel by activityViewModels<SourceLoginViewModel>()
     private var lastClickTime: Long = 0
 
+    companion object {
+        private val loginUiData = mutableMapOf<String, List<RowUi>?>()
+    }
+
     override fun onStart() {
         super.onStart()
         setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
     }
 
-    fun evalJS(jsStr: String): String? = runBlocking(IO) {
-        val source = viewModel.source ?: return@runBlocking null
+    suspend fun evalUiJs(jsStr: String): String? = withContext(IO) {
+        val source = viewModel.source ?: return@withContext null
         val loginJS = source.getLoginJs() ?: ""
         try {
             source.evalJS("$loginJS\n$jsStr") {
@@ -66,16 +70,16 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
                 put("chapter", viewModel.chapter)
             }.toString()
         } catch (e: Exception) {
-            AppLog.put(e.localizedMessage ?: e.toString(), e)
+            AppLog.put(source.getTag() + " loginUi err:" + (e.localizedMessage ?: e.toString()), e)
             null
         }
     }
 
-    fun loginUi(loginUi: String?): List<RowUi>? {
+    suspend fun loginUi(loginUi: String?): List<RowUi>? {
         val json = loginUi?.let {
             when {
-                it.startsWith("@js:") -> evalJS(it.substring(4))
-                it.startsWith("<js>") -> evalJS(it.substring(4, it.lastIndexOf("<")))
+                it.startsWith("@js:") -> evalUiJs(it.substring(4))
+                it.startsWith("<js>") -> evalUiJs(it.substring(4, it.lastIndexOf("<")))
                 else -> it
             }
         }
@@ -84,12 +88,8 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
         }.getOrNull()
     }
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        val source = viewModel.source ?: return
-        binding.toolBar.setBackgroundColor(primaryColor)
-        binding.toolBar.title = getString(R.string.login_source, source.getTag())
+    private fun buttonUi(source: BaseSource, loginUi: List<RowUi>?) {
         val loginInfo = source.getLoginInfoMap()
-        val loginUi = loginUi(source.loginUi)
         loginUi?.forEachIndexed { index, rowUi ->
             when (rowUi.type) {
                 RowUi.Type.text -> ItemSourceEditBinding.inflate(
@@ -141,8 +141,6 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
                 }
             }
         }
-        binding.toolBar.inflateMenu(R.menu.source_login)
-        binding.toolBar.menu.applyTint(requireContext())
         binding.toolBar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.menu_ok -> {
@@ -165,6 +163,31 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
             }
             return@setOnMenuItemClickListener true
         }
+    }
+
+    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+        val source = viewModel.source ?: return
+        val loginUiStr = source.loginUi ?: return
+        val key = if (loginUiStr.length < 2048) {
+            loginUiStr
+        } else {
+            MD5Utils.md5Encode16(loginUiStr)
+        }
+        var loginUi = loginUiData[key]
+        if (loginUi == null) {
+            lifecycleScope.launch(Main) {
+                loginUi = loginUi(loginUiStr)
+                buttonUi(source, loginUi)
+                loginUiData[key] = loginUi
+            }
+        }
+        else {
+            buttonUi(source, loginUi)
+        }
+        binding.toolBar.setBackgroundColor(primaryColor)
+        binding.toolBar.title = getString(R.string.login_source, source.getTag())
+        binding.toolBar.inflateMenu(R.menu.source_login)
+        binding.toolBar.menu.applyTint(requireContext())
     }
 
     private fun handleButtonClick(source: BaseSource, rowUi: RowUi, loginUi: List<RowUi>) {
