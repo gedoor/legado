@@ -22,7 +22,7 @@ class RssArticlesAdapter3(context: Context, callBack: CallBack) :
     BaseRssArticlesAdapter<ItemRssArticle3Binding>(context, callBack) {
 
     companion object {
-        val imageSizeCache = LruCache<String, Pair<Int, Int>>(999)
+        val imageSizeCache = LruCache<String, Float>(9999)
     }
     override fun getViewBinding(parent: ViewGroup): ItemRssArticle3Binding {
         return ItemRssArticle3Binding.inflate(inflater, parent, false)
@@ -42,16 +42,14 @@ class RssArticlesAdapter3(context: Context, callBack: CallBack) :
             imageView.adjustViewBounds = true
             val layoutParams = imageView.layoutParams
             layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
-            val cachedSize = if (imageUrl != null) imageSizeCache[imageUrl] else null
-            if (cachedSize == null) {
+            val aspectRatio = if (imageUrl != null) imageSizeCache[imageUrl] else null
+            if (aspectRatio == null) {
                 layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
             } else {
                 val parentWidth = imageView.width
                 if (parentWidth <= 0) {
                     layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
                 } else {
-                    val (width, height) = cachedSize
-                    val aspectRatio = height.toFloat() / width.toFloat()
                     val calculatedHeight = (parentWidth * aspectRatio).toInt()
                     layoutParams.height = calculatedHeight
                 }
@@ -62,7 +60,7 @@ class RssArticlesAdapter3(context: Context, callBack: CallBack) :
             val imageRequest = ImageLoader.load(context, imageUrl)
                 .apply(options)
                 .placeholder(R.drawable.transparent_placeholder) //svg图会依靠这个进行尺寸约束
-            if (cachedSize == null) {
+            if (aspectRatio == null) {
                 imageRequest.addListener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(
                         e: GlideException?,
@@ -82,7 +80,8 @@ class RssArticlesAdapter3(context: Context, callBack: CallBack) :
                         val width = resource.intrinsicWidth
                         val height = resource.intrinsicHeight
                         if (width > 0 && height > 0 && imageUrl != null) {
-                            imageSizeCache.put(imageUrl, Pair(width, height))
+                            val aspectRatio = height.toFloat() / width.toFloat()
+                            imageSizeCache.put(imageUrl, aspectRatio)
                         }
                         return false
                     }
