@@ -75,14 +75,7 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
         }
     }
 
-    suspend fun loginUi(loginUi: String?): List<RowUi>? {
-        val json = loginUi?.let {
-            when {
-                it.startsWith("@js:") -> evalUiJs(it.substring(4))
-                it.startsWith("<js>") -> evalUiJs(it.substring(4, it.lastIndexOf("<")))
-                else -> it
-            }
-        }
+    fun loginUi(json: String?): List<RowUi>? {
         return GSON.fromJsonArray<RowUi>(json).onFailure {
             it.printOnDebug()
         }.getOrNull()
@@ -168,14 +161,28 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         val source = viewModel.source ?: return
         val loginUiStr = source.loginUi ?: return
-        val key = if (loginUiStr.length < 2048) {
+        val key = if (loginUiStr.length < 1024) {
             loginUiStr
         } else {
             MD5Utils.md5Encode16(loginUiStr)
         }
         var loginUi = loginUiData[key]
         if (loginUi == null) {
-            lifecycleScope.launch(Main) {
+            val jsCode = loginUiStr.let {
+                when {
+                    it.startsWith("@js:") -> it.substring(4)
+                    it.startsWith("<js>") -> it.substring(4, it.lastIndexOf("<"))
+                    else -> null
+                }
+            }
+            if (jsCode != null) {
+                lifecycleScope.launch(Main) {
+                    loginUi = loginUi(evalUiJs(jsCode))
+                    buttonUi(source, loginUi)
+                    loginUiData[key] = loginUi
+                }
+            }
+            else {
                 loginUi = loginUi(loginUiStr)
                 buttonUi(source, loginUi)
                 loginUiData[key] = loginUi
