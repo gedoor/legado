@@ -8,8 +8,6 @@ import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.lifecycleScope
-import io.github.rosemoe.sora.langs.textmate.TextMateColorScheme
-import io.github.rosemoe.sora.langs.textmate.TextMateLanguage
 import io.github.rosemoe.sora.widget.CodeEditor
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -28,39 +26,36 @@ import kotlin.getValue
 
 class CodeEditActivity :
     VMBaseActivity<ActivityCodeEditBinding, CodeEditViewModel>(),
-    KeyboardToolPop.CallBack {
+    KeyboardToolPop.CallBack, ChangeThemeDialog.DialogCallback {
     override val binding by viewBinding(ActivityCodeEditBinding::inflate)
     override val viewModel by viewModels<CodeEditViewModel>()
     private val softKeyboardTool by lazy {
         KeyboardToolPop(this, lifecycleScope, binding.root, this)
     }
     var editor: CodeEditor? = null
-    var initialText = ""
 
-    private fun initTextMate() {
-        viewModel.loadTextMateThemes()
-        viewModel.loadTextMateGrammars()
-    }
 
     private fun initView() {
         binding.root.setOnApplyWindowInsetsListenerCompat { _, windowInsets ->
             softKeyboardTool.initialPadding = windowInsets.imeHeight
             windowInsets
         }
+        binding.editText.apply {
+            colorScheme = viewModel.color!!
+            setEditorLanguage(viewModel.language)
+            isWordwrap = true
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         softKeyboardTool.attachToWindow(window)
-        initView()
-        initTextMate()
-        val language = TextMateLanguage.create("source.js", true)
-        initialText = intent.getStringExtra("text") ?: ""
-        editor = binding.editText.apply {
-            setText(initialText)
-            colorScheme = TextMateColorScheme.create(viewModel.themeRegistry)
-            setEditorLanguage(language)
-            isWordwrap = true
+        viewModel.initData(intent) {
+            editor = binding.editText.apply {
+                setText(viewModel.initialText)
+                viewModel.customColors(this)
+            }
         }
+        initView()
     }
 
     override fun onDestroy() {
@@ -73,8 +68,8 @@ class CodeEditActivity :
     * */
     private fun save(check: Boolean) {
         editor ?: return
-        val text = editor!!.text.toString()
-        if (text == initialText) {
+        val text = editor?.text.toString()
+        if (text == viewModel.initialText) {
             super.finish()
         } else if (check) {
             alert(R.string.exit) {
@@ -94,6 +89,11 @@ class CodeEditActivity :
         }
     }
 
+    override fun upTheme(index: Int){
+        viewModel.loadTextMateThemes(index)
+        editor?.let { viewModel.customColors(it) }
+    }
+
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.code_edit_activity, menu)
         return super.onCompatCreateOptionsMenu(menu)
@@ -102,7 +102,7 @@ class CodeEditActivity :
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_save -> save(false)
-            R.id.menu_change_theme -> showDialogFragment(ChangeThemeDialog())
+            R.id.menu_change_theme -> showDialogFragment(ChangeThemeDialog(this))
             R.id.menu_log -> showDialogFragment<AppLogDialog>()
         }
         return super.onCompatOptionsItemSelected(item)

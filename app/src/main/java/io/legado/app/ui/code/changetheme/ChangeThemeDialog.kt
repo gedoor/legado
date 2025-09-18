@@ -3,7 +3,6 @@ package io.legado.app.ui.code.changetheme
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.activityViewModels
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.constant.PreferKey
@@ -14,12 +13,10 @@ import io.legado.app.utils.getIndexById
 import io.legado.app.utils.putPrefInt
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import io.legado.app.ui.code.CodeEditViewModel
 
 
-class ChangeThemeDialog() : BaseDialogFragment(R.layout.dialog_edit_change_theme) {
+class ChangeThemeDialog(private val callBack: DialogCallback) : BaseDialogFragment(R.layout.dialog_edit_change_theme) {
     private val binding by viewBinding(DialogEditChangeThemeBinding::bind)
-    private val viewModel by activityViewModels<CodeEditViewModel>()
     private var isClick = false
     override fun onStart() {
         super.onStart()
@@ -50,7 +47,7 @@ class ChangeThemeDialog() : BaseDialogFragment(R.layout.dialog_edit_change_theme
                     chThemeR.clearCheck()
                     val int = chThemeL.getIndexById(checkedId)
                     putPrefInt(PreferKey.editTheme, int * 2)
-                    viewModel.loadTextMateThemes()
+                    callBack.upTheme(int * 2)
                     isClick = false
                 }
             }
@@ -60,11 +57,14 @@ class ChangeThemeDialog() : BaseDialogFragment(R.layout.dialog_edit_change_theme
                     chThemeL.clearCheck()
                     val int = chThemeR.getIndexById(checkedId)
                     putPrefInt(PreferKey.editTheme, int * 2 + 1)
-                    viewModel.loadTextMateThemes()
+                    callBack.upTheme(int * 2 + 1)
                     isClick = false
                 }
             }
         }
+    }
+    interface DialogCallback {
+        fun upTheme(index: Int)
     }
 
 }
