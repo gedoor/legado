@@ -3,6 +3,7 @@
 package io.legado.app.ui.rss.article
 
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.StateListDrawable
@@ -55,7 +56,7 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
 
     // 添加类属性
     private val tabRows = mutableListOf<LinearLayout>()
-    var maxTagsPerRow = 10 // 每行10标签
+    var maxTagsPerRow = 10 // 每行尽量容纳10个标签,横屏20
     private val tabScrollViews = mutableListOf<HorizontalScrollView>() // 添加滚动视图列表
 
     private fun setupMultiLineTabs() {
@@ -68,11 +69,12 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
             return
         }
         // 动态计算每行标签数量,最多3行
-        val rowCount = when {
+        var rowCount = when {
             sortList.size <= 10 -> 1
             sortList.size <= 20 -> 2
             else -> 3
         }
+        if (rowCount > 1 && resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) rowCount-- //横屏最多2行
         maxTagsPerRow = (sortList.size + rowCount - 1) / rowCount
         sortList.chunked(maxTagsPerRow).forEachIndexed { rowIndex, rowItems ->
             // 创建横向滚动容器
