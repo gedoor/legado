@@ -11,14 +11,14 @@ import org.eclipse.tm4e.core.registry.IThemeSource
 
 class CodeEditViewModel(application: Application) : BaseViewModel(application) {
     companion object {
-        val themeFileNames = arrayOf("d_monokai_dimmed", "d_monokai", "d_modern", "l_modern", "d_solarized", "l_solarized")
+        val themeFileNames = arrayOf("d_monokai_dimmed", "d_monokai", "d_modern", "l_modern", "d_solarized", "l_solarized", "d_abyss", "l_quiet")
         private var durTheme =  ""
         private val themes = mutableMapOf<String, Boolean>()
         private var grammarsLoaded = false
     }
     val themeRegistry: ThemeRegistry = ThemeRegistry.getInstance()
     fun loadTextMateThemes() {
-        val theme = themeFileNames[AppConfig.editTheme]
+        val theme = themeFileNames.getOrElse(AppConfig.editTheme) { "d_monokai" }
         if (durTheme != theme) {
             if (themes[theme] != true) {
                 val themeAssetsPath = "textmate/$theme.json"

@@ -1254,4 +1254,6 @@
     <string name="edit_theme_modern_light">现代浅色</string>
     <string name="edit_theme_solarized_dark">日光深色</string>
     <string name="edit_theme_solarized_light">日光浅色</string>
+    <string name="edit_theme_abyss">渊默如海</string>
+    <string name="edit_theme_quiet_light">素影清晖</string>
 </resources>

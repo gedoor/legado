@@ -20,6 +20,7 @@ import io.legado.app.ui.code.CodeEditViewModel
 class ChangeThemeDialog() : BaseDialogFragment(R.layout.dialog_edit_change_theme) {
     private val binding by viewBinding(DialogEditChangeThemeBinding::bind)
     private val viewModel by activityViewModels<CodeEditViewModel>()
+    private var isClick = false
     override fun onStart() {
         super.onStart()
         setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
@@ -32,16 +33,36 @@ class ChangeThemeDialog() : BaseDialogFragment(R.layout.dialog_edit_change_theme
 
     private fun initData() {
         binding.run {
-            chTheme.checkByIndex(AppConfig.editTheme)
+            val themeIndex = AppConfig.editTheme
+            if (themeIndex % 2 == 0) {
+                chThemeL.checkByIndex(themeIndex / 2)
+            } else {
+                chThemeR.checkByIndex(themeIndex / 2)
+            }
         }
     }
 
     private fun initView() {
         binding.run {
-            chTheme.setOnCheckedChangeListener { _, checkedId ->
-                val int = chTheme.getIndexById(checkedId)
-                putPrefInt(PreferKey.editTheme, int)
-                viewModel.loadTextMateThemes()
+            chThemeL.setOnCheckedChangeListener { _, checkedId ->
+                if (!isClick) {
+                    isClick = true
+                    chThemeR.clearCheck()
+                    val int = chThemeL.getIndexById(checkedId)
+                    putPrefInt(PreferKey.editTheme, int * 2)
+                    viewModel.loadTextMateThemes()
+                    isClick = false
+                }
+            }
+            chThemeR.setOnCheckedChangeListener { _, checkedId ->
+                if (!isClick) {
+                    isClick = true
+                    chThemeL.clearCheck()
+                    val int = chThemeR.getIndexById(checkedId)
+                    putPrefInt(PreferKey.editTheme, int * 2 + 1)
+                    viewModel.loadTextMateThemes()
+                    isClick = false
+                }
             }
         }
     }
