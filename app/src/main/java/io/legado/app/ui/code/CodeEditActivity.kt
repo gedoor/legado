@@ -8,6 +8,7 @@ import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.lifecycleScope
+import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
 import io.github.rosemoe.sora.widget.CodeEditor
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -41,8 +42,7 @@ class CodeEditActivity :
             windowInsets
         }
         binding.editText.apply {
-            colorScheme = viewModel.color!!
-            setEditorLanguage(viewModel.language)
+            colorScheme = TextMateColorScheme2(ThemeRegistry.getInstance(), ThemeRegistry.getInstance().currentThemeModel)
             isWordwrap = true
         }
     }
@@ -52,7 +52,7 @@ class CodeEditActivity :
         viewModel.initData(intent) {
             editor = binding.editText.apply {
                 setText(viewModel.initialText)
-                viewModel.customColors(this)
+                setEditorLanguage(viewModel.language)
             }
         }
         initView()
@@ -91,7 +91,7 @@ class CodeEditActivity :
 
     override fun upTheme(index: Int){
         viewModel.loadTextMateThemes(index)
-        editor?.let { viewModel.customColors(it) }
+        editor?.setEditorLanguage(viewModel.language) //每次更改颜色后需要再执行一次语言设置,防止切换主题后高亮颜色不正确
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
