@@ -665,7 +665,7 @@ class BookSourceEditActivity :
         if (view is EditText) {
             val start = view.selectionStart
             val end = view.selectionEnd
-            if (text.isNotBlank()) {
+            if (text.isNotEmpty()) {
                 val edit = view.editableText//获取EditText的文字
                 if (start < 0 || start >= edit.length) {
                     edit.append(text)

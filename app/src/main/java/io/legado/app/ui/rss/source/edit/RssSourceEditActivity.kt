@@ -1,17 +1,14 @@
 package io.legado.app.ui.rss.source.edit
 
-import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.tabs.TabLayout
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
@@ -55,6 +52,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import splitties.views.bottomPadding
+import kotlin.text.isNotEmpty
 
 class RssSourceEditActivity :
     VMBaseActivity<ActivityRssSourceEditBinding, RssSourceEditViewModel>(),
@@ -461,7 +459,7 @@ class RssSourceEditActivity :
         if (view is EditText) {
             val start = view.selectionStart
             val end = view.selectionEnd
-            if (text.isNotBlank()) {
+            if (text.isNotEmpty()) {
                 val edit = view.editableText//获取EditText的文字
                 if (start < 0 || start >= edit.length) {
                     edit.append(text)
