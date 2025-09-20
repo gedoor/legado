@@ -1,4 +1,4 @@
-package io.legado.app.ui.code.changetheme
+package io.legado.app.ui.code.config
 
 import android.os.Bundle
 import android.view.View
@@ -15,7 +15,7 @@ import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 
-class ChangeThemeDialog(private val callBack: DialogCallback) : BaseDialogFragment(R.layout.dialog_edit_change_theme) {
+class ChangeThemeDialog(private val callBack: CallBack) : BaseDialogFragment(R.layout.dialog_edit_change_theme) {
     private val binding by viewBinding(DialogEditChangeThemeBinding::bind)
     private var isClick = false
     override fun onStart() {
@@ -63,7 +63,7 @@ class ChangeThemeDialog(private val callBack: DialogCallback) : BaseDialogFragme
             }
         }
     }
-    interface DialogCallback {
+    interface CallBack {
         fun upTheme(index: Int)
     }
 

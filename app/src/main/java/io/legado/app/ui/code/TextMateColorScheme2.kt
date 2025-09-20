@@ -1,6 +1,5 @@
 package io.legado.app.ui.code
 
-import io.github.rosemoe.sora.widget.schemes.EditorColorScheme
 import androidx.core.graphics.toColorInt
 import io.github.rosemoe.sora.langs.textmate.TextMateColorScheme
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
