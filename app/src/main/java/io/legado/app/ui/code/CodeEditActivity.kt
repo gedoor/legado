@@ -133,7 +133,11 @@ class CodeEditActivity :
         }
         binding.etFind.addTextChangedListener { text ->
             if (!text.isNullOrEmpty()) {
-                editorSearcher.search(text.toString(), options)
+                try {
+                    editorSearcher.search(text.toString(), options)
+                } catch (e: java.util.regex.PatternSyntaxException) {
+                    editorSearcher.stopSearch()
+                }
             }
             else {
                 editorSearcher.stopSearch()
@@ -161,6 +165,7 @@ class CodeEditActivity :
         binding.btnCloseReplace.setOnClickListener {
             binding.replaceGroup.visibility = View.GONE
             binding.btnReplaceAll.isEnabled = false
+            binding.etFind.requestFocus()
         }
         binding.btnReplaceAll.setOnClickListener {
             if (editorSearcher.hasQuery()) {
@@ -168,7 +173,14 @@ class CodeEditActivity :
             }
         }
         binding.switchRegex.setOnCheckedChangeListener { _, isChecked ->
-            options = EditorSearcher.SearchOptions(!isChecked,isChecked)
+            options = EditorSearcher.SearchOptions(!isChecked, isChecked)
+            try {
+                editorSearcher.search(binding.etFind.text.toString(), options)
+            } catch (e: java.util.regex.PatternSyntaxException) {
+                // 忽略正则表达式语法错误
+                editorSearcher.stopSearch()
+                editor.invalidate()
+            }
         }
     }
 
