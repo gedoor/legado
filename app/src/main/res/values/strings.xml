@@ -1261,4 +1261,5 @@
     <string name="btn_previous">上个</string>
     <string name="btn_next">下个</string>
     <string name="replace_all">全部</string>
+    <string name="format_code">格式化</string>
 </resources>

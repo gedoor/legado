@@ -22,6 +22,11 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_format_code"
+        android:title="@string/format_code"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_log"
         android:title="@string/log"
         app:showAsAction="never" />

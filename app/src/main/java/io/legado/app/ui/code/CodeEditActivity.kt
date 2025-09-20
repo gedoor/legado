@@ -197,6 +197,7 @@ class CodeEditActivity :
         when (item.itemId) {
             R.id.menu_search -> search()
             R.id.menu_save -> save(false)
+            R.id.menu_format_code -> viewModel.formatCode(editor)
             R.id.menu_change_theme -> showDialogFragment(ChangeThemeDialog(this))
             R.id.menu_log -> showDialogFragment<AppLogDialog>()
         }
