@@ -131,13 +131,10 @@ class CodeEditActivity :
             editor.requestFocus()
             editor.invalidate()
         }
+        searchTxt(binding.etFind.text.toString())
         binding.etFind.addTextChangedListener { text ->
             if (!text.isNullOrEmpty()) {
-                try {
-                    editorSearcher.search(text.toString(), options)
-                } catch (e: java.util.regex.PatternSyntaxException) {
-                    editorSearcher.stopSearch()
-                }
+                searchTxt(text.toString())
             }
             else {
                 editorSearcher.stopSearch()
@@ -145,10 +142,14 @@ class CodeEditActivity :
             }
         }
         binding.btnPrevious.setOnClickListener {
-            editorSearcher.gotoPrevious()
+            if (editorSearcher.hasQuery()) {
+                editorSearcher.gotoPrevious()
+            }
         }
         binding.btnNext.setOnClickListener {
-            editorSearcher.gotoNext()
+            if (editorSearcher.hasQuery()) {
+                editorSearcher.gotoNext()
+            }
         }
         binding.btnReplace.setOnClickListener {
             if (binding.replaceGroup.isGone) {
@@ -174,8 +175,14 @@ class CodeEditActivity :
         }
         binding.switchRegex.setOnCheckedChangeListener { _, isChecked ->
             options = EditorSearcher.SearchOptions(!isChecked, isChecked)
+            searchTxt(binding.etFind.text.toString())
+        }
+    }
+
+    private fun searchTxt(txt: String) {
+        if (txt.isNotEmpty()) {
             try {
-                editorSearcher.search(binding.etFind.text.toString(), options)
+                editorSearcher.search(txt, options)
             } catch (e: java.util.regex.PatternSyntaxException) {
                 // 忽略正则表达式语法错误
                 editorSearcher.stopSearch()
