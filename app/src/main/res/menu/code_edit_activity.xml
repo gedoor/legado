@@ -32,6 +32,12 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_auto_wrap"
+        android:title="@string/auto_wrap"
+        android:checkable="true"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_log"
         android:title="@string/log"
         app:showAsAction="never" />

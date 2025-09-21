@@ -9,7 +9,6 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.DialogEditSettingsBinding
 import io.legado.app.help.config.AppConfig
 import io.legado.app.ui.widget.number.NumberPickerDialog
-import io.legado.app.utils.putPrefBoolean
 import io.legado.app.utils.putPrefInt
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
@@ -26,11 +25,8 @@ class SettingsDialog(private val callBack: CallBack) :
 
     @SuppressLint("SetTextI18n")
     private fun initData() {
-        val fontScale = AppConfig.editFontScale
-        val autoWrap = AppConfig.editAutoWrap
         binding.run {
-            tvFontSize.text = fontSizeStr + fontScale
-            cbAutoWrap.isChecked = autoWrap
+            tvFontSize.text = fontSizeStr + AppConfig.editFontScale
         }
     }
 
@@ -53,10 +49,6 @@ class SettingsDialog(private val callBack: CallBack) :
                         callBack.upEdit()
                         tvFontSize.text = fontSizeStr + it
                     }
-            }
-            cbAutoWrap.setOnCheckedChangeListener { _, isChecked ->
-                putPrefBoolean(PreferKey.editAutoWrap, isChecked)
-                callBack.upEdit()
             }
         }
     }

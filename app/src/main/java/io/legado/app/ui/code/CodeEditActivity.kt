@@ -31,8 +31,10 @@ import io.github.rosemoe.sora.widget.EditorSearcher
 import androidx.core.view.isGone
 import io.github.rosemoe.sora.event.PublishSearchResultEvent
 import io.github.rosemoe.sora.event.SelectionChangeEvent
+import io.legado.app.constant.PreferKey
 import io.legado.app.help.config.AppConfig
 import io.legado.app.ui.code.config.SettingsDialog
+import io.legado.app.utils.putPrefBoolean
 
 class CodeEditActivity :
     VMBaseActivity<ActivityCodeEditBinding, CodeEditViewModel>(),
@@ -115,6 +117,10 @@ class CodeEditActivity :
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.code_edit_activity, menu)
         return super.onCompatCreateOptionsMenu(menu)
+    }
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        menu.findItem(R.id.menu_auto_wrap)?.isChecked = AppConfig.editAutoWrap
+        return super.onPrepareOptionsMenu(menu)
     }
 
     private fun search() {
@@ -214,6 +220,11 @@ class CodeEditActivity :
             R.id.menu_format_code -> viewModel.formatCode(editor)
             R.id.menu_change_theme -> showDialogFragment(ChangeThemeDialog(this))
             R.id.menu_config_settings -> showDialogFragment(SettingsDialog(this))
+            R.id.menu_auto_wrap -> {
+                putPrefBoolean(PreferKey.editAutoWrap, !AppConfig.editAutoWrap)
+                item.isChecked = !AppConfig.editAutoWrap
+                upEdit()
+            }
             R.id.menu_log -> showDialogFragment<AppLogDialog>()
         }
         return super.onCompatOptionsItemSelected(item)

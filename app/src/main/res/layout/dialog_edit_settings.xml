@@ -30,29 +30,6 @@
             android:textColor="@color/primaryText"
             android:textSize="16sp" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingTop="12dp"
-            android:paddingBottom="12dp">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/auto_wrap"
-                android:textColor="@color/primaryText"
-                android:textSize="16sp" />
-
-            <CheckBox
-                android:id="@+id/cb_auto_wrap"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="true" />
-
-        </LinearLayout>
-
     </LinearLayout>
 
 </androidx.core.widget.NestedScrollView>
