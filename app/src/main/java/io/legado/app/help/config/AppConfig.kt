@@ -46,9 +46,14 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
     var optimizeRender = CanvasRecorderFactory.isSupport
             && appCtx.getPrefBoolean(PreferKey.optimizeRender, false)
     var recordLog = appCtx.getPrefBoolean(PreferKey.recordLog)
+    var editFontScale = appCtx.getPrefInt(PreferKey.editFontScale, 18)
+    var editAutoWrap = appCtx.getPrefBoolean(PreferKey.editAutoWrap, true)
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         when (key) {
+            PreferKey.editFontScale -> editFontScale = appCtx.getPrefInt(PreferKey.editFontScale, 18)
+            PreferKey.editAutoWrap -> editAutoWrap = appCtx.getPrefBoolean(PreferKey.editAutoWrap, true)
+
             PreferKey.themeMode -> {
                 themeMode = appCtx.getPrefString(PreferKey.themeMode, "0")
                 isEInkMode = themeMode == "3"

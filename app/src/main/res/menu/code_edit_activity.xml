@@ -27,6 +27,11 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_config_settings"
+        android:title="@string/config_settings"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_log"
         android:title="@string/log"
         app:showAsAction="never" />

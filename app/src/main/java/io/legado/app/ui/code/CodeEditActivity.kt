@@ -31,10 +31,12 @@ import io.github.rosemoe.sora.widget.EditorSearcher
 import androidx.core.view.isGone
 import io.github.rosemoe.sora.event.PublishSearchResultEvent
 import io.github.rosemoe.sora.event.SelectionChangeEvent
+import io.legado.app.help.config.AppConfig
+import io.legado.app.ui.code.config.SettingsDialog
 
 class CodeEditActivity :
     VMBaseActivity<ActivityCodeEditBinding, CodeEditViewModel>(),
-    KeyboardToolPop.CallBack, ChangeThemeDialog.CallBack {
+    KeyboardToolPop.CallBack, ChangeThemeDialog.CallBack, SettingsDialog.CallBack {
     override val binding by viewBinding(ActivityCodeEditBinding::inflate)
     override val viewModel by viewModels<CodeEditViewModel>()
     private val softKeyboardTool by lazy {
@@ -54,7 +56,6 @@ class CodeEditActivity :
         }
         editor.apply {
             colorScheme = TextMateColorScheme2(ThemeRegistry.getInstance(), ThemeRegistry.getInstance().currentThemeModel)
-            isWordwrap = true
         }
     }
 
@@ -62,6 +63,7 @@ class CodeEditActivity :
         softKeyboardTool.attachToWindow(window)
         viewModel.initData(intent) {
             editor.apply {
+                upEdit()
                 setText(viewModel.initialText)
                 setEditorLanguage(viewModel.language)
             }
@@ -98,6 +100,11 @@ class CodeEditActivity :
             setResult(RESULT_OK, result)
             super.finish()
         }
+    }
+
+    override fun upEdit() {
+        editor.isWordwrap = AppConfig.editAutoWrap
+        editor.setTextSize(AppConfig.editFontScale.toFloat())
     }
 
     override fun upTheme(index: Int){
@@ -206,6 +213,7 @@ class CodeEditActivity :
             R.id.menu_save -> save(false)
             R.id.menu_format_code -> viewModel.formatCode(editor)
             R.id.menu_change_theme -> showDialogFragment(ChangeThemeDialog(this))
+            R.id.menu_config_settings -> showDialogFragment(SettingsDialog(this))
             R.id.menu_log -> showDialogFragment<AppLogDialog>()
         }
         return super.onCompatOptionsItemSelected(item)

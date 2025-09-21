@@ -1262,4 +1262,6 @@
     <string name="btn_next">下个</string>
     <string name="replace_all">全部</string>
     <string name="format_code">格式化</string>
+    <string name="config_settings">配置</string>
+    <string name="auto_wrap">自动换行</string>
 </resources>
