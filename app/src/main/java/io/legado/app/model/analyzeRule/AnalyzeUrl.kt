@@ -552,7 +552,7 @@ class AnalyzeUrl(
     }
 
     private fun parseCustomHosts(host: String):  List<InetAddress>? {
-        val configMap = hostMap ?: return null
+        val configMap = AppConfig.hostMap ?: return null
         val configIps = configMap[host] ?: return null
         return addressCache.getOrPut(host) {
                 when (configIps) {
@@ -741,12 +741,6 @@ class AnalyzeUrl(
             RFC3986.UNRESERVED.orNew(PercentCodec.of("!$%&()*+,/:;=?@[\\]^`{|}"))
         private val dnsCache = Collections.synchronizedMap(mutableMapOf<String, Dns>())
         private val addressCache = Collections.synchronizedMap(mutableMapOf<String, List<InetAddress>?>())
-        private val hostMap: Map<String, Any?>? by lazy {
-            when {
-                AppConfig.customHosts.isBlank() -> null
-                else -> GSON.fromJsonObject<Map<String, Any?>>(AppConfig.customHosts).getOrNull()
-            }
-        }
         private val isCronet: Boolean by lazy {AppConfig.isCronet}
 
         fun AnalyzeUrl.getMediaItem(): MediaItem {

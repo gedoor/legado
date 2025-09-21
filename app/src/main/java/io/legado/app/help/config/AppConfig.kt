@@ -6,7 +6,9 @@ import io.legado.app.BuildConfig
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
+import io.legado.app.utils.GSON
 import io.legado.app.utils.canvasrecorder.CanvasRecorderFactory
+import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.getPrefLong
@@ -27,6 +29,7 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
     var useAntiAlias = appCtx.getPrefBoolean(PreferKey.antiAlias)
     var userAgent: String = getPrefUserAgent()
     var customHosts = appCtx.getPrefString(PreferKey.customHosts) ?: ""
+    var hostMap = GSON.fromJsonObject<Map<String, Any?>>(customHosts).getOrNull()
     var editTheme = appCtx.getPrefInt(PreferKey.editTheme, 0)
     var isEInkMode = appCtx.getPrefString(PreferKey.themeMode) == "3"
     var clickActionTL = appCtx.getPrefInt(PreferKey.clickActionTL, 2)
@@ -86,7 +89,10 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
 
             PreferKey.userAgent -> userAgent = getPrefUserAgent()
 
-            PreferKey.customHosts -> customHosts = appCtx.getPrefString(PreferKey.customHosts) ?: ""
+            PreferKey.customHosts -> {
+                customHosts = appCtx.getPrefString(PreferKey.customHosts) ?: ""
+                hostMap = GSON.fromJsonObject<Map<String, Any?>>(customHosts).getOrNull()
+            }
 
             PreferKey.editTheme -> editTheme = appCtx.getPrefInt(PreferKey.editTheme, 0)
 
