@@ -70,6 +70,7 @@ class DictRuleEditDialog() : BaseDialogFragment(R.layout.dialog_dict_rule_edit, 
             val currentText = view.text.toString()
             val intent = Intent(requireActivity(), CodeEditActivity::class.java).apply {
                 putExtra("text", currentText)
+                putExtra("cursorPosition", view.selectionStart)
             }
             textEditLauncher.launch(intent)
         }

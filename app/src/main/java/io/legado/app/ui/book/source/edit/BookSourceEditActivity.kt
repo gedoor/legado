@@ -146,6 +146,7 @@ class BookSourceEditActivity :
             val currentText = view.text.toString()
             val intent = Intent(this, CodeEditActivity::class.java).apply {
                 putExtra("text", currentText)
+                putExtra("cursorPosition", view.selectionStart)
             }
             textEditLauncher.launch(intent)
         }

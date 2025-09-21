@@ -9,32 +9,31 @@ import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.core.view.isGone
+import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
+import io.github.rosemoe.sora.event.PublishSearchResultEvent
+import io.github.rosemoe.sora.event.SelectionChangeEvent
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
 import io.github.rosemoe.sora.widget.CodeEditor
+import io.github.rosemoe.sora.widget.EditorSearcher
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.ActivityCodeEditBinding
+import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.code.config.ChangeThemeDialog
+import io.legado.app.ui.code.config.SettingsDialog
 import io.legado.app.ui.widget.keyboard.KeyboardToolPop
 import io.legado.app.utils.imeHeight
+import io.legado.app.utils.putPrefBoolean
 import io.legado.app.utils.setOnApplyWindowInsetsListenerCompat
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.showHelp
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import kotlin.getValue
-import androidx.core.widget.addTextChangedListener
-import io.github.rosemoe.sora.widget.EditorSearcher
-import androidx.core.view.isGone
-import io.github.rosemoe.sora.event.PublishSearchResultEvent
-import io.github.rosemoe.sora.event.SelectionChangeEvent
-import io.legado.app.constant.PreferKey
-import io.legado.app.help.config.AppConfig
-import io.legado.app.ui.code.config.SettingsDialog
-import io.legado.app.utils.putPrefBoolean
 
 class CodeEditActivity :
     VMBaseActivity<ActivityCodeEditBinding, CodeEditViewModel>(),
@@ -56,9 +55,7 @@ class CodeEditActivity :
             softKeyboardTool.initialPadding = windowInsets.imeHeight
             windowInsets
         }
-        editor.apply {
-            colorScheme = TextMateColorScheme2(ThemeRegistry.getInstance(), ThemeRegistry.getInstance().currentThemeModel)
-        }
+        editor.colorScheme = TextMateColorScheme2(ThemeRegistry.getInstance(), ThemeRegistry.getInstance().currentThemeModel)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -68,6 +65,11 @@ class CodeEditActivity :
                 upEdit()
                 setText(viewModel.initialText)
                 setEditorLanguage(viewModel.language)
+                requestFocus()
+                postDelayed({
+                    val pos = editor.cursor.indexer.getCharPosition(viewModel.cursorPosition)
+                    setSelection(pos.line, pos.column, true)
+                }, 600) // 进行延时,确保加载渲染完成,从而确保光标能显示跳转到长文本最后
             }
         }
         initView()

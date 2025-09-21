@@ -34,6 +34,7 @@ class CodeEditViewModel(application: Application) : BaseViewModel(application) {
     }
 
     var initialText = ""
+    var cursorPosition = 0
     var language: TextMateLanguage? = null
     val themeRegistry: ThemeRegistry = ThemeRegistry.getInstance()
 
@@ -42,6 +43,7 @@ class CodeEditViewModel(application: Application) : BaseViewModel(application) {
     ) {
         execute {
             initialText = intent.getStringExtra("text") ?: throw NoStackTraceException("未获取到待编辑文本")
+            cursorPosition = intent.getIntExtra("cursorPosition", 0)
         }.onSuccess {
             success.invoke()
         }.onError {
