@@ -13,7 +13,8 @@ import io.legado.app.utils.putPrefBoolean
 import io.legado.app.utils.putPrefInt
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
-class SettingsDialog(private val callBack: CallBack) : BaseDialogFragment(R.layout.dialog_edit_settings)  {
+class SettingsDialog(private val callBack: CallBack) :
+    BaseDialogFragment(R.layout.dialog_edit_settings) {
     private val binding by viewBinding(DialogEditSettingsBinding::bind)
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
@@ -21,16 +22,19 @@ class SettingsDialog(private val callBack: CallBack) : BaseDialogFragment(R.layo
         initView()
     }
 
+    val fontSizeStr by lazy { getString(R.string.font_size) + " " }
+
     @SuppressLint("SetTextI18n")
     private fun initData() {
         val fontScale = AppConfig.editFontScale
         val autoWrap = AppConfig.editAutoWrap
         binding.run {
-            tvFontSize.text = "字体大小：$fontScale"
+            tvFontSize.text = fontSizeStr + fontScale
             cbAutoWrap.isChecked = autoWrap
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun initView() {
         binding.run {
             tvFontSize.setOnClickListener {
@@ -38,14 +42,16 @@ class SettingsDialog(private val callBack: CallBack) : BaseDialogFragment(R.layo
                     .setTitle(getString(R.string.font_scale))
                     .setMaxValue(36)
                     .setMinValue(9)
-                    .setValue(18)
+                    .setValue(AppConfig.editFontScale)
                     .setCustomButton((R.string.btn_default_s)) {
                         putPrefInt(PreferKey.editFontScale, 18)
                         callBack.upEdit()
+                        tvFontSize.text = fontSizeStr + "18"
                     }
                     .show {
                         putPrefInt(PreferKey.editFontScale, it)
                         callBack.upEdit()
+                        tvFontSize.text = fontSizeStr + it
                     }
             }
             cbAutoWrap.setOnCheckedChangeListener { _, isChecked ->

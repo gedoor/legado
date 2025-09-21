@@ -1264,4 +1264,5 @@
     <string name="format_code">格式化</string>
     <string name="config_settings">配置</string>
     <string name="auto_wrap">自动换行</string>
+    <string name="font_size">字体大小</string>
 </resources>

@@ -22,7 +22,6 @@
             android:id="@+id/tv_font_size"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/selector_common_bg"
             android:clickable="true"
             android:focusable="true"
             android:paddingTop="12dp"
