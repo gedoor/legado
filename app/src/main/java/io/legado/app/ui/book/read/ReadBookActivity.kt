@@ -85,6 +85,7 @@ import io.legado.app.ui.book.read.config.TipConfigDialog.Companion.TIP_COLOR
 import io.legado.app.ui.book.read.config.TipConfigDialog.Companion.TIP_DIVIDER_COLOR
 import io.legado.app.ui.book.read.page.ContentTextView
 import io.legado.app.ui.book.read.page.ReadView
+import io.legado.app.ui.book.read.page.delegate.ScrollPageDelegate
 import io.legado.app.ui.book.read.page.entities.PageDirection
 import io.legado.app.ui.book.read.page.entities.TextPage
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
@@ -668,9 +669,9 @@ class ReadBookActivity : BaseReadBookActivity(),
                 LogUtils.d("onGenericMotionEvent", "axisValue = $axisValue")
                 // 获得垂直坐标上的滚动方向
                 if (axisValue < 0.0f) { // 滚轮向下滚
-                    mouseWheelPage(PageDirection.NEXT)
+                    mouseWheelPage(PageDirection.NEXT, axisValue)
                 } else { // 滚轮向上滚
-                    mouseWheelPage(PageDirection.PREV)
+                    mouseWheelPage(PageDirection.PREV, axisValue)
                 }
                 return true
             }
@@ -916,11 +917,16 @@ class ReadBookActivity : BaseReadBookActivity(),
     /**
      * 鼠标滚轮翻页
      */
-    private fun mouseWheelPage(direction: PageDirection) {
+    private fun mouseWheelPage(direction: PageDirection, distance: Float) {
         if (menuLayoutIsVisible || !AppConfig.mouseWheelPage) {
             return
         }
-        keyPageDebounce(direction, mouseWheel = true, longPress = false)
+        if (binding.readView.isScroll) {
+            // 滚动视图时滚动,否则翻页
+            (binding.readView.pageDelegate as? ScrollPageDelegate)?.curPage?.scroll((distance * 50).toInt())
+        } else {
+            keyPageDebounce(direction, mouseWheel = true, longPress = false)
+        }
     }
 
     /**
