@@ -217,6 +217,13 @@ class RssSourceEditActivity :
         })
         binding.recyclerView.setEdgeEffectColor(primaryColor)
         binding.recyclerView.adapter = adapter
+        binding.recyclerView.viewTreeObserver.addOnGlobalFocusChangeListener { oldFocus, newFocus ->
+            if (newFocus != null) {
+                binding.recyclerView.post {
+                    sendText("")
+                }
+            }
+        }
         binding.tabLayout.setBackgroundColor(backgroundColor)
         binding.tabLayout.setSelectedTabIndicatorColor(accentColor)
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -468,7 +475,7 @@ class RssSourceEditActivity :
                     edit.replace(start, end, text)//光标所在位置插入文字
                 }
             }
-            if (adapter.editEntityMaxLine > 999999) {
+            if (adapter.editEntityMaxLine > 9999) {
                 view.post {
                     // view.requestFocus()
                     val editTextLocation = IntArray(2)
@@ -483,9 +490,14 @@ class RssSourceEditActivity :
                         val cursorYOnScreen = editTextLocation[1] + cursorYInEditText
                         // 光标相对于RecyclerView的位置
                         val cursorYInRecyclerView = cursorYOnScreen - recyclerViewLocation[1]
-                        // 需要滚动的距离大于400才执行
-                        val scrollDistance = cursorYInRecyclerView - (binding.recyclerView.height / 2)
-                        if (kotlin.math.abs(scrollDistance) > 400) {
+                        val recyclerViewBottom = binding.recyclerView.height
+                        // 判断光标是否在可见范围内
+                        val isCursorVisible = cursorYInRecyclerView >= 0 &&
+                                cursorYInRecyclerView <= recyclerViewBottom
+                        // 如果光标不在可见范围内，则滚动到光标位置
+                        if (!isCursorVisible) {
+                            // 计算需要滚动的距离，使光标位于可见区域的1/3处
+                            val scrollDistance = cursorYInRecyclerView - recyclerViewBottom / 3
                             binding.recyclerView.smoothScrollBy(0, scrollDistance)
                         }
                     }
