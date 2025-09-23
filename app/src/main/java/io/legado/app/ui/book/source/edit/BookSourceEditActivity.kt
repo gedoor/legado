@@ -127,19 +127,20 @@ class BookSourceEditActivity :
     }
 
     private val textEditLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == RESULT_OK) {
-            val editedText = result.data?.getStringExtra("text")
-            editedText?.let {
-                val view = window.decorView.findFocus()
-                if (view is EditText) {
-                    view.setText(it)
-                    view.setSelection(result.data!!.getIntExtra("cursorPosition", 0))
-                } else {
-                    toastOnUi(R.string.focus_lost_on_textbox)
+            if (result.resultCode == RESULT_OK) {
+                val editedText = result.data?.getStringExtra("text")
+                editedText?.let {
+                    val view = window.decorView.findFocus()
+                    if (view is EditText) {
+                        view.setText(it)
+                        view.setSelection(result.data!!.getIntExtra("cursorPosition", 0))
+                    } else {
+                        toastOnUi(R.string.focus_lost_on_textbox)
+                    }
                 }
             }
         }
-    }
+
     private fun onFullEditClicked() {
         val view = window.decorView.findFocus()
         if (view is EditText) {
@@ -225,10 +226,8 @@ class BookSourceEditActivity :
 //        binding.recyclerView.layoutManager = NoChildScrollLinearLayoutManager(this) //启用后会阻止跟随光标滚动
         binding.recyclerView.adapter = adapter
         binding.recyclerView.viewTreeObserver.addOnGlobalFocusChangeListener { oldFocus, newFocus ->
-            if (newFocus != null) {
-                binding.recyclerView.post {
-                    sendText("")
-                }
+            if (newFocus is EditText) {
+                newFocus.postDelayed({ sendText("") }, 120)
             }
         }
         binding.tabLayout.setBackgroundColor(backgroundColor)
@@ -286,6 +285,7 @@ class BookSourceEditActivity :
             else -> sourceEntities
         }
         binding.recyclerView.scrollToPosition(0)
+        window.decorView.rootView.clearFocus()
     }
 
     private fun upSourceView(bookSource: BookSource?) {
@@ -683,7 +683,6 @@ class BookSourceEditActivity :
             }
             if (adapter.editEntityMaxLine > 9999) {
                 view.post {
-                    // view.requestFocus()
                     val editTextLocation = IntArray(2)
                     view.getLocationOnScreen(editTextLocation)
                     val recyclerViewLocation = IntArray(2)
@@ -696,15 +695,13 @@ class BookSourceEditActivity :
                         val cursorYOnScreen = editTextLocation[1] + cursorYInEditText
                         // 光标相对于RecyclerView的位置
                         val cursorYInRecyclerView = cursorYOnScreen - recyclerViewLocation[1]
-                        val recyclerViewBottom = binding.recyclerView.height
-                        // 判断光标是否在可见范围内
-                        val isCursorVisible = cursorYInRecyclerView >= 0 &&
-                                cursorYInRecyclerView <= recyclerViewBottom
+                        val recyclerViewBottom = binding.recyclerView.height - 120 //考虑键盘的经验值
                         // 如果光标不在可见范围内，则滚动到光标位置
-                        if (!isCursorVisible) {
-                            // 计算需要滚动的距离，使光标位于可见区域的1/3处
+                        if (cursorYInRecyclerView < 0 || cursorYInRecyclerView > recyclerViewBottom) {
                             val scrollDistance = cursorYInRecyclerView - recyclerViewBottom / 3
-                            binding.recyclerView.smoothScrollBy(0, scrollDistance)
+                            if (scrollDistance > 0 && binding.recyclerView.canScrollVertically(1) || scrollDistance < 0 && binding.recyclerView.canScrollVertically(-1)) {
+                                binding.recyclerView.smoothScrollBy(0, scrollDistance)
+                            }
                         }
                     }
                 }
