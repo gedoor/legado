@@ -36,7 +36,9 @@ class CodeEditViewModel(application: Application) : BaseViewModel(application) {
     var initialText = ""
     var cursorPosition = 0
     var language: TextMateLanguage? = null
+    var languageName = "source.js"
     val themeRegistry: ThemeRegistry = ThemeRegistry.getInstance()
+    var writable = true
 
     fun initData(
         intent: Intent, success: () -> Unit
@@ -44,6 +46,7 @@ class CodeEditViewModel(application: Application) : BaseViewModel(application) {
         execute {
             initialText = intent.getStringExtra("text") ?: throw NoStackTraceException("未获取到待编辑文本")
             cursorPosition = intent.getIntExtra("cursorPosition", 0)
+            writable = intent.getBooleanExtra("writable", true)
         }.onSuccess {
             success.invoke()
         }.onError {
@@ -51,6 +54,7 @@ class CodeEditViewModel(application: Application) : BaseViewModel(application) {
             it.printOnDebug()
         }
         loadTextMateThemes()
+        intent.getStringExtra("languageName")?.let{ languageName = it }
         loadTextMateGrammars()
     }
 
@@ -74,14 +78,18 @@ class CodeEditViewModel(application: Application) : BaseViewModel(application) {
             GrammarRegistry.getInstance().loadGrammars("textmate/languages.json")
             grammarsLoaded = true
         }
-        language = TextMateLanguage.create("source.js", true)
+        language = TextMateLanguage.create(languageName, true)
     }
 
     fun formatCode(editor: CodeEditor) {
         execute {
             val text = editor.text.toString()
-            val beautifyJs = FileProviderRegistry.getInstance().tryGetInputStream("beautify.min.js")
+            val isHtml = languageName.contains("html")
+            val beautifyJs = FileProviderRegistry.getInstance().tryGetInputStream(if(isHtml) "beautify-html.min.js" else "beautify.min.js")
                 ?.use { inputStream -> inputStream.bufferedReader().readText() } ?: ""
+            if (isHtml) {
+                return@execute webFormatCodeHtml(beautifyJs,text)
+            }
             var start = 0
             val jsMatcher = JS_PATTERN.matcher(text)
             var result = ""
@@ -142,6 +150,35 @@ class CodeEditViewModel(application: Application) : BaseViewModel(application) {
         } catch(e: Exception){
             context.toastOnUi("格式化失败")
             jsCode
+        }
+    }
+
+    private suspend fun webFormatCodeHtml (beautifyJs: String, html: String): String? {
+        return try {
+            BackstageWebView(
+                url = null,
+                html = "<body>",
+                javaScript = """$beautifyJs
+                html_beautify("${html.escapeForJs()}", {
+                indent_size: 4,
+                indent_char: ' ',
+                indent_with_tabs: false,
+                preserve_newlines: true,
+                max_preserve_newlines: 5,
+                wrap_line_length: 80,
+                wrap_attributes: 'auto',
+                wrap_attributes_indent_size: 4,
+                unformatted: ['code', 'pre'],
+                indent_inner_html: true,
+                indent_scripts: 'keep',
+                extra_liners: []
+                });""".trimIndent(),
+                headerMap = null,
+                tag = null
+            ).getStrResponse().body
+        } catch(e: Exception){
+            context.toastOnUi("格式化失败")
+            html
         }
     }
 

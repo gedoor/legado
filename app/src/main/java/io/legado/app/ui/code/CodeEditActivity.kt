@@ -66,6 +66,7 @@ class CodeEditActivity :
                 setText(viewModel.initialText)
                 setEditorLanguage(viewModel.language)
                 requestFocus()
+                editor.editable = viewModel.writable
                 postDelayed({
                     val pos = editor.cursor.indexer.getCharPosition(viewModel.cursorPosition)
                     setSelection(pos.line, pos.column, true)
@@ -85,9 +86,10 @@ class CodeEditActivity :
     * 使用super.finish(),防止循环回调
     * */
     private fun save(check: Boolean) {
+        if (!viewModel.writable) return super.finish()
         val text = editor.text.toString()
         if (text == viewModel.initialText) {
-            super.finish()
+            return super.finish()
         } else if (check) {
             alert(R.string.exit) {
                 setMessage(R.string.exit_no_save)
