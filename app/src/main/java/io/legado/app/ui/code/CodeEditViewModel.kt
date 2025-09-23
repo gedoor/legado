@@ -84,6 +84,10 @@ class CodeEditViewModel(application: Application) : BaseViewModel(application) {
     fun formatCode(editor: CodeEditor) {
         execute {
             val text = editor.text.toString()
+            if (languageName.contains("markdown")) {
+                context.toastOnUi("markdown不需要格式化")
+                return@execute text
+            }
             val isHtml = languageName.contains("html")
             val beautifyJs = FileProviderRegistry.getInstance().tryGetInputStream(if(isHtml) "beautify-html.min.js" else "beautify.min.js")
                 ?.use { inputStream -> inputStream.bufferedReader().readText() } ?: ""

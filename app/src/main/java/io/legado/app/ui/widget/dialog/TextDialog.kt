@@ -66,20 +66,8 @@ class TextDialog() : BaseDialogFragment(R.layout.dialog_text_view) {
         arguments?.let {
             binding.toolBar.title = it.getString("title")
             val content = IntentData.get(it.getString("content")) ?: ""
-            binding.toolBar.setOnMenuItemClickListener { menu ->
-                when (menu.itemId) {
-                    R.id.menu_close -> dismissAllowingStateLoss()
-                    R.id.menu_fullscreen_edit -> {
-                        startActivity<CodeEditActivity> {
-                            putExtra("text", content)
-                            putExtra("writable", false)
-                            putExtra("languageName", "text.html.basic")
-                        }
-                    }
-                }
-                true
-            }
-            when (it.getString("mode")) {
+            val mode = it.getString("mode")
+            when (mode) {
                 Mode.MD.name -> viewLifecycleOwner.lifecycleScope.launch {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         binding.textView.setTextClassifier(TextClassifier.NO_OP)
@@ -106,6 +94,19 @@ class TextDialog() : BaseDialogFragment(R.layout.dialog_text_view) {
                         binding.textView.text = content
                     }
                 }
+            }
+            binding.toolBar.setOnMenuItemClickListener { menu ->
+                when (menu.itemId) {
+                    R.id.menu_close -> dismissAllowingStateLoss()
+                    R.id.menu_fullscreen_edit -> {
+                        startActivity<CodeEditActivity> {
+                            putExtra("text", content)
+                            putExtra("writable", false)
+                            putExtra("languageName", if (mode == Mode.MD.name) "text.html.markdown" else "text.html.basic")
+                        }
+                    }
+                }
+                true
             }
             time = it.getLong("time", 0L)
         }
