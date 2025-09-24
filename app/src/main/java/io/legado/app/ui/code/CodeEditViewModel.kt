@@ -4,7 +4,6 @@ import android.app.Application
 import android.content.Intent
 import io.github.rosemoe.sora.langs.textmate.TextMateLanguage
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry
-import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
 import io.github.rosemoe.sora.langs.textmate.registry.model.ThemeModel
 import io.github.rosemoe.sora.widget.CodeEditor
@@ -30,7 +29,6 @@ class CodeEditViewModel(application: Application) : BaseViewModel(application) {
             "d_abyss",
             "l_quiet"
         )
-        private var grammarsLoaded = false
     }
 
     var initialText = ""
@@ -44,7 +42,14 @@ class CodeEditViewModel(application: Application) : BaseViewModel(application) {
         intent: Intent, success: () -> Unit
     ) {
         execute {
-            initialText = intent.getStringExtra("text") ?: throw NoStackTraceException("未获取到待编辑文本")
+            initialText =
+                intent.getStringExtra("text") ?: throw NoStackTraceException("未获取到待编辑文本")
+            if (isHtmlStr(initialText)) {
+                languageName = "text.html.basic"
+            } else {
+                intent.getStringExtra("languageName")?.let { languageName = it }
+            }
+            language = TextMateLanguage.create(languageName, true)
             cursorPosition = intent.getIntExtra("cursorPosition", 0)
             writable = intent.getBooleanExtra("writable", true)
         }.onSuccess {
@@ -54,8 +59,12 @@ class CodeEditViewModel(application: Application) : BaseViewModel(application) {
             it.printOnDebug()
         }
         loadTextMateThemes()
-        intent.getStringExtra("languageName")?.let{ languageName = it }
-        loadTextMateGrammars()
+    }
+
+    private fun isHtmlStr(text: String): Boolean {
+        val trimmedText = text.trim()
+        val htmlRegex = Regex("""^(?:\[[\s\d.]])?<(?:html|!DOCTYPE)""", RegexOption.IGNORE_CASE)
+        return htmlRegex.containsMatchIn(trimmedText) && trimmedText.endsWith(">")
     }
 
     fun loadTextMateThemes(index: Int? = null) {
@@ -63,22 +72,17 @@ class CodeEditViewModel(application: Application) : BaseViewModel(application) {
         val themeModel = themeRegistry.findThemeByFileName(theme)
         if (themeModel == null) {
             val themeAssetsPath = "textmate/$theme.json"
-            val themeSource = IThemeSource.fromInputStream(FileProviderRegistry.getInstance().tryGetInputStream(themeAssetsPath), themeAssetsPath, null)
+            val themeSource = IThemeSource.fromInputStream(
+                FileProviderRegistry.getInstance().tryGetInputStream(themeAssetsPath),
+                themeAssetsPath,
+                null
+            )
             themeRegistry.loadTheme(ThemeModel(themeSource, theme).apply {
                 isDark = theme.startsWith("d_")
             })
-        }
-        else {
+        } else {
             themeRegistry.setTheme(themeModel)
         }
-    }
-
-    fun loadTextMateGrammars() {
-        if (!grammarsLoaded) {
-            GrammarRegistry.getInstance().loadGrammars("textmate/languages.json")
-            grammarsLoaded = true
-        }
-        language = TextMateLanguage.create(languageName, true)
     }
 
     fun formatCode(editor: CodeEditor) {
@@ -89,10 +93,11 @@ class CodeEditViewModel(application: Application) : BaseViewModel(application) {
                 return@execute text
             }
             val isHtml = languageName.contains("html")
-            val beautifyJs = FileProviderRegistry.getInstance().tryGetInputStream(if(isHtml) "beautify-html.min.js" else "beautify.min.js")
+            val beautifyJs = FileProviderRegistry.getInstance()
+                .tryGetInputStream(if (isHtml) "beautify-html.min.js" else "beautify.min.js")
                 ?.use { inputStream -> inputStream.bufferedReader().readText() } ?: ""
             if (isHtml) {
-                return@execute webFormatCodeHtml(beautifyJs,text)
+                return@execute webFormatCodeHtml(beautifyJs, text)
             }
             var start = 0
             val jsMatcher = JS_PATTERN.matcher(text)
@@ -104,18 +109,18 @@ class CodeEditViewModel(application: Application) : BaseViewModel(application) {
                 if (jsMatcher.group(2) != null) {
                     result += "@js:\n"
                     val jsCode = jsMatcher.group(2)!!
-                    result += webFormatCode(beautifyJs,jsCode)
+                    result += webFormatCode(beautifyJs, jsCode)
                 } else if (jsMatcher.group(1) != null) {
                     result += "<js>\n"
                     val jsCode = jsMatcher.group(1)!!
-                    result += webFormatCode(beautifyJs,jsCode)
+                    result += webFormatCode(beautifyJs, jsCode)
                     result += "\n</js>"
                 }
                 start = jsMatcher.end()
             }
             if (start == 0) {
                 val jsCode = text
-                result += webFormatCode(beautifyJs,jsCode)
+                result += webFormatCode(beautifyJs, jsCode)
                 start = text.length
             }
             if (text.length > start) {
@@ -129,7 +134,7 @@ class CodeEditViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    private suspend fun webFormatCode (beautifyJs: String, jsCode: String): String? {
+    private suspend fun webFormatCode(beautifyJs: String, jsCode: String): String? {
         return try {
             BackstageWebView(
                 url = null,
@@ -151,13 +156,13 @@ class CodeEditViewModel(application: Application) : BaseViewModel(application) {
                 headerMap = null,
                 tag = null
             ).getStrResponse().body
-        } catch(e: Exception){
+        } catch (e: Exception) {
             context.toastOnUi("格式化失败")
             jsCode
         }
     }
 
-    private suspend fun webFormatCodeHtml (beautifyJs: String, html: String): String? {
+    private suspend fun webFormatCodeHtml(beautifyJs: String, html: String): String? {
         return try {
             BackstageWebView(
                 url = null,
@@ -180,7 +185,7 @@ class CodeEditViewModel(application: Application) : BaseViewModel(application) {
                 headerMap = null,
                 tag = null
             ).getStrResponse().body
-        } catch(e: Exception){
+        } catch (e: Exception) {
             context.toastOnUi("格式化失败")
             html
         }

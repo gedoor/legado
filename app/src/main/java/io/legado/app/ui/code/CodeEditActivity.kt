@@ -55,22 +55,28 @@ class CodeEditActivity :
             softKeyboardTool.initialPadding = windowInsets.imeHeight
             windowInsets
         }
-        editor.colorScheme = TextMateColorScheme2(ThemeRegistry.getInstance(), ThemeRegistry.getInstance().currentThemeModel)
+        editor.colorScheme = TextMateColorScheme2(
+            ThemeRegistry.getInstance(),
+            ThemeRegistry.getInstance().currentThemeModel
+        )
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         softKeyboardTool.attachToWindow(window)
         viewModel.initData(intent) {
             editor.apply {
+                setEditorLanguage(viewModel.language)
                 upEdit()
                 setText(viewModel.initialText)
-                setEditorLanguage(viewModel.language)
+                if (!viewModel.writable) {
+                    editor.editable = false
+                    binding.titleBar.title = getString(R.string.view_code)
+                }
                 requestFocus()
-                editor.editable = viewModel.writable
                 postDelayed({
-                    val pos = editor.cursor.indexer.getCharPosition(viewModel.cursorPosition)
+                    val pos = cursor.indexer.getCharPosition(viewModel.cursorPosition)
                     setSelection(pos.line, pos.column, true)
-                }, 600) // 进行延时,确保加载渲染完成,从而确保光标能显示跳转到长文本最后
+                }, 360) // 进行延时,确保加载渲染完成,从而确保光标能显示跳转到长文本最后
             }
         }
         initView()
@@ -83,8 +89,8 @@ class CodeEditActivity :
     }
 
     /**
-    * 使用super.finish(),防止循环回调
-    * */
+     * 使用super.finish(),防止循环回调
+     * */
     private fun save(check: Boolean) {
         if (!viewModel.writable) return super.finish()
         val text = editor.text.toString()
@@ -113,7 +119,7 @@ class CodeEditActivity :
         editor.setTextSize(AppConfig.editFontScale.toFloat())
     }
 
-    override fun upTheme(index: Int){
+    override fun upTheme(index: Int) {
         viewModel.loadTextMateThemes(index)
         editor.setEditorLanguage(viewModel.language) //每次更改颜色后需要再执行一次语言设置,防止切换主题后高亮颜色不正确
     }
@@ -122,17 +128,19 @@ class CodeEditActivity :
         menuInflater.inflate(R.menu.code_edit_activity, menu)
         return super.onCompatCreateOptionsMenu(menu)
     }
+
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         menu.findItem(R.id.menu_auto_wrap)?.isChecked = AppConfig.editAutoWrap
         return super.onPrepareOptionsMenu(menu)
     }
 
     private fun search() {
-        val receiptSearch = editor.subscribeEvent(PublishSearchResultEvent::class.java) { event, _ ->
-            if (event.editor == editor) {
-                updateSearchResults()
+        val receiptSearch =
+            editor.subscribeEvent(PublishSearchResultEvent::class.java) { event, _ ->
+                if (event.editor == editor) {
+                    updateSearchResults()
+                }
             }
-        }
         val receiptChange = editor.subscribeEvent(SelectionChangeEvent::class.java) { event, _ ->
             if (event.cause == SelectionChangeEvent.CAUSE_SEARCH) {
                 updateSearchResults()
@@ -152,8 +160,7 @@ class CodeEditActivity :
         binding.etFind.addTextChangedListener { text ->
             if (!text.isNullOrEmpty()) {
                 searchTxt(text.toString())
-            }
-            else {
+            } else {
                 editorSearcher.stopSearch()
                 editor.invalidate()
             }
@@ -173,8 +180,7 @@ class CodeEditActivity :
                 binding.replaceGroup.visibility = View.VISIBLE
                 binding.btnReplaceAll.isEnabled = true
                 binding.etReplace.requestFocus()
-            }
-            else {
+            } else {
                 if (editorSearcher.hasQuery()) {
                     editorSearcher.replaceCurrentMatch(binding.etReplace.text.toString())
                 }
@@ -213,7 +219,8 @@ class CodeEditActivity :
         if (editorSearcher.hasQuery()) {
             val totalResults = editorSearcher.matchedPositionCount
             val currentPosition = editorSearcher.currentMatchedPositionIndex + 1
-            binding.tvSearchResult.text = "${if (currentPosition > 0) "$currentPosition/" else ""}$totalResults"
+            binding.tvSearchResult.text =
+                "${if (currentPosition > 0) "$currentPosition/" else ""}$totalResults"
         }
     }
 

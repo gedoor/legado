@@ -1265,4 +1265,5 @@
     <string name="config_settings">配置</string>
     <string name="auto_wrap">自动换行</string>
     <string name="font_size">字体大小</string>
+    <string name="view_code">查看代码</string>
 </resources>
