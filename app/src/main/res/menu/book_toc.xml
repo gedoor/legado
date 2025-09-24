@@ -20,6 +20,11 @@
             app:showAsAction="never" />
 
         <item
+            android:id="@+id/menu_toc_replace"
+            android:title="@string/txt_toc_replace"
+            app:showAsAction="never" />
+
+        <item
             android:id="@+id/menu_split_long_chapter"
             android:checkable="true"
             android:title="@string/split_long_chapter"
@@ -30,6 +35,11 @@
     <group
         android:id="@+id/menu_group_toc"
         android:visible="true">
+
+        <item
+            android:id="@+id/menu_export_toc"
+            android:title="@string/export_toc"
+            app:showAsAction="never" />
 
         <item
             android:id="@+id/menu_reverse_toc"
