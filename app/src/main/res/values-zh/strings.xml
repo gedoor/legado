@@ -3,7 +3,7 @@
     <string name="app_name">阅读</string>
     <string name="app_name_a">阅读·A</string>
     <string name="receiving_shared_label">阅读·搜索</string>
-    <string name="tip_perm_request_storage">阅读需要访问存储卡权限，请前往“设置”—“应用权限”，打开所需权限</string>
+    <string name="tip_perm_request_storage">阅读需要访问存储卡权限，请前往"设置"—"应用权限"，打开所需权限</string>
 
     <!--Other-->
     <string name="menu_backup">Home</string>
@@ -690,7 +690,7 @@
     <string name="btn_default_s">默认</string>
     <string name="main_menu">主菜单</string>
     <string name="request_permission">点击授予权限</string>
-    <string name="tip_local_perm_request_storage">阅读需要访问存储卡权限，请点击下方的“授予权限”按钮，或前往“设置”—“应用权限”，打开所需权限。如果授予权限后仍然不正常，请点击右上角的“选择文件夹”，使用系统文件夹选择器。</string>
+    <string name="tip_local_perm_request_storage">阅读需要访问存储卡权限，请点击下方的"授予权限"按钮，或前往"设置"—"应用权限"，打开所需权限。如果授予权限后仍然不正常，请点击右上角的"选择文件夹"，使用系统文件夹选择器。</string>
     <string name="alouding_disable">全文朗读中不能朗读选中文字</string>
     <string name="read_body_to_lh">扩展到刘海</string>
     <string name="toc_updateing">更新目录中</string>
@@ -1226,4 +1226,19 @@
     <string name="manga_epaper_value">阈值</string>
     <string name="disable_horizontal_animation">禁用水平滚动动画</string>
     <string name="enable_manga_gray">开启图片灰色</string>
+    
+    <!-- 新增：新版发现界面相关字符串 -->
+    <string name="source_type_novel">小说</string>
+    <string name="source_type_audio">音频</string>
+    <string name="source_type_manga">漫画</string>
+    <string name="source_type_file">文件</string>
+    <string name="current_source">当前书源</string>
+    <string name="switch_source">切换书源</string>
+    <string name="all_categories">全部</string>
+    <string name="loading_categories">加载中...</string>
+    <string name="select_source">选择书源</string>
+    <string name="select_source_hint">请选择要切换的书源</string>
+    <string name="no_available_sources">当前类型下没有可用的书源</string>
+    <string name="delete_source_confirm">删除书源</string>
+    <string name="delete_source_message">确定要删除书源"%s"吗？</string>
 </resources>

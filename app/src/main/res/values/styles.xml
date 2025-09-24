@@ -24,10 +24,13 @@
     </style>
 
     <!-- Base application theme. -->
-    <style name="Base.AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+    <style name="Base.AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primaryDark</item>
         <item name="colorAccent">@color/accent</item>
+        <item name="colorSurface">@color/md_grey_100</item>
+        <item name="colorOnSurface">@color/md_grey_900</item>
+        <item name="colorOnPrimary">@android:color/white</item>
         <item name="actionOverflowMenuStyle">@style/Style.PopupMenu</item>
         <item name="android:itemTextAppearance">@style/Style.MenuItemText</item>
         <item name="android:popupMenuStyle">@style/Style.PopupMenu</item>
