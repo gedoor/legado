@@ -11,6 +11,8 @@ import io.legado.app.data.entities.Book
 abstract class BaseBooksAdapter<VB : ViewBinding>(context: Context) :
     DiffRecyclerAdapter<Book, VB>(context) {
 
+    override val keepScrollPosition = true
+
     override val diffItemCallback: DiffUtil.ItemCallback<Book> =
         object : DiffUtil.ItemCallback<Book>() {
 
