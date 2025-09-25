@@ -18,6 +18,7 @@ import io.legado.app.exception.NoStackTraceException
 import io.legado.app.utils.registerForActivityResult
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.launch
+import androidx.core.content.edit
 
 class PermissionActivity : AppCompatActivity() {
 
@@ -195,6 +196,12 @@ class PermissionActivity : AppCompatActivity() {
             finish()
             return
         }
+        permissions.forEach {
+            if (getDenyCount(it) > 5){
+                finish()
+                return
+            }
+        }
         rationaleDialog = AlertDialog.Builder(this)
             .setTitle(R.string.dialog_title)
             .setMessage(rationale)
@@ -206,6 +213,7 @@ class PermissionActivity : AppCompatActivity() {
                     permissions,
                     IntArray(0)
                 )
+                permissions.forEach { incrementDenyCount(it) }
                 finish()
             }.setOnCancelListener {
                 RequestPlugins.sRequestCallback?.onRequestPermissionsResult(
@@ -215,6 +223,21 @@ class PermissionActivity : AppCompatActivity() {
                 finish()
             }
             .show()
+    }
+
+    private fun incrementDenyCount(permission: String): Int {
+        val prefs = getSharedPreferences("permission_deny_count", MODE_PRIVATE)
+        val count = prefs.getInt(permission, 0) + 1
+        prefs.edit { putInt(permission, count) }
+        return count
+    }
+    private fun getDenyCount(permission: String): Int {
+        val prefs = getSharedPreferences("permission_deny_count", MODE_PRIVATE)
+        return prefs.getInt(permission, 0)
+    }
+    private fun resetDenyCount(permission: String) {
+        val prefs = getSharedPreferences("permission_deny_count", MODE_PRIVATE)
+        prefs.edit { remove(permission) }
     }
 
     companion object {
