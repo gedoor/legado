@@ -70,7 +70,7 @@
     </style>
 
 
-    <style name="Activity.Permission" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="Activity.Permission" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowDisablePreview">true</item>
         <item name="android:windowIsTranslucent">true</item>
