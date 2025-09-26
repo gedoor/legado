@@ -386,6 +386,12 @@ order // 手动排序
 originOrder //书源排序
 variable // 自定义书籍变量信息(用于书源规则检索书籍信息)
  ```
+## book对象的部分可用函数
+ * 自定义书籍变量存取
+```js
+book.putVariable(key: String, variable: String?)
+book.getVariable(key: String): String?
+```
 
 ## chapter对象的部分可用属性
 > 使用方法: 在js中或{{}}中使用chapter.属性的方式即可获取.如在正文内容后加上 ##{{chapter.title+chapter.index}} 可以净化 章节标题+序号(如 第二章 天仙下凡2) 这一类的字符.
@@ -401,6 +407,17 @@ variable // 自定义书籍变量信息(用于书源规则检索书籍信息)
  end // 章节终止位置
  variable //变量
  ```
+ ## chapter对象的部分可用函数
+ * 自定义章节变量存取
+```js
+chapter.putVariable(key: String, variable: String?)
+chapter.getVariable(key: String): String?
+```
+ * 章节信息存储
+```js
+ chapter.putLyric(value: String?) // 存储音频章节歌词
+ chapter.putTitleIconUrl(value: String?) // 存储标题段评图标链接
+ ```
  
 ## source对象的部分可用函数
 * 获取书源url
@@ -409,8 +426,13 @@ source.getKey()
 ```
 * 书源变量存取
 ```js
-source.setVariable(variable: String?)
+source.putVariable(variable: String?)
 source.getVariable()
+```
+* 自定义书源变量存取
+```js
+source.put(key: String, variable: String?)
+source.get(key: String): String?
 ```
 * 登录头操作
 ```js

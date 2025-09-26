@@ -57,7 +57,7 @@ data class BookChapter(
     var endFragmentId: String? = null,    //EPUB书籍下一章节的fragmentId
     var variable: String? = null,        //变量
     var lyric: String? = null,        //歌词链接或文本
-    var reviewImg: String? = null        //段评图标
+    var reviewImg: String? = null        //标题段评图标链接
 ) : Parcelable, RuleDataInterface {
 
     @delegate:Transient
@@ -65,6 +65,16 @@ data class BookChapter(
     @IgnoredOnParcel
     override val variableMap: HashMap<String, String> by lazy {
         GSON.fromJsonObject<HashMap<String, String>>(variable).getOrNull() ?: hashMapOf()
+    }
+
+    fun putTitleIconUrl(value: String?) {
+        reviewImg =value
+        appDb.bookChapterDao.update(this)
+    }
+
+    fun putLyric(value: String?) {
+        lyric =value
+        appDb.bookChapterDao.update(this)
     }
 
     @Ignore

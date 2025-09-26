@@ -208,6 +208,18 @@ interface BaseSource : JsExtensions {
     }
 
     /**
+     * 设置自定义变量
+     * 新,统一为put名称存变量
+     */
+    fun putVariable(variable: String?) {
+        if (variable != null) {
+            CacheManager.put("sourceVariable_${getKey()}", variable)
+        } else {
+            CacheManager.delete("sourceVariable_${getKey()}")
+        }
+    }
+
+    /**
      * 获取自定义变量
      */
     fun getVariable(): String {

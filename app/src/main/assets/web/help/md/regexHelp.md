@@ -144,6 +144,7 @@
 |\D|匹配非数字: `[^\d]`|
 |\s|匹配空格符: `[\t\n\f\r\p{Z}]`|
 |\S|匹配非空格符: `[^\s]`|
+
 只在阅读的净化规则中\w包含汉字
 
 ## 4. 断言
@@ -174,7 +175,9 @@
 
 ### 4.3 正向后行断言
 
-正向后行断言是用于获取在特定模式之前的所有匹配内容。正向后行断言表示为 `(?<=...)`。例如正则表达式 `(?<=(T|t)he\s)(fat|mat)`，表示: 从输入字符串中获取在单词 `The` 或 `the` 之后的所有 `fat` 和 `mat` 单词。注：后行断言的查找字符不能无限，例如<del>(?<=.+)\n</del><pre>"(?<=(T|t)he\s)(fat|mat)" => The <a href="#learn-regex"><strong>fat</strong></a> cat sat on the <a href="#learn-regex"><strong>mat</strong></a>.</pre>
+正向后行断言是用于获取在特定模式之前的所有匹配内容。正向后行断言表示为 `(?<=...)`。例如正则表达式 `(?<=(T|t)he\s)(fat|mat)`，表示: 从输入字符串中获取在单词 `The` 或 `the` 之后的所有 `fat` 和 `mat` 单词。<pre>"(?<=(T|t)he\s)(fat|mat)" => The <a href="#learn-regex"><strong>fat</strong></a> cat sat on the <a href="#learn-regex"><strong>mat</strong></a>.</pre>  
+
+注：后行断言的查找字符不能无限，例如：(?<=.+)\n
 
 ### 4.4 负向后行断言
 
