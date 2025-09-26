@@ -60,7 +60,8 @@
             android:layout_height="wrap_content"
             android:padding="12dp"
             android:visibility="gone"
-            tools:ignore="RtlHardcoded" />
+            tools:ignore="RtlHardcoded"
+            tools:visibility="visible" />
 
         <Space
             android:layout_width="0dp"
@@ -79,7 +80,8 @@
                 android:text="@string/cancel"
                 android:textColor="@color/secondaryText"
                 android:visibility="gone"
-                tools:ignore="RtlHardcoded" />
+                tools:ignore="RtlHardcoded"
+                tools:visibility="visible" />
 
             <io.legado.app.ui.widget.text.AccentTextView
                 android:id="@+id/tv_ok"
@@ -88,7 +90,8 @@
                 android:padding="12dp"
                 android:text="@string/ok"
                 android:visibility="gone"
-                tools:ignore="RtlHardcoded" />
+                tools:ignore="RtlHardcoded"
+                tools:visibility="visible" />
 
         </LinearLayout>
 
