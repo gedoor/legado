@@ -170,6 +170,7 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
                 DialogBookshelfConfigBinding.inflate(layoutInflater)
                     .apply {
                         spGroupStyle.setSelection(AppConfig.bookGroupStyle)
+                        swShowBookname.isChecked = AppConfig.showBookname
                         swShowUnread.isChecked = AppConfig.showUnread
                         swShowLastUpdateTime.isChecked = AppConfig.showLastUpdateTime
                         swShowWaitUpBooks.isChecked = AppConfig.showWaitUpCount
@@ -185,6 +186,10 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
                     if (AppConfig.bookGroupStyle != spGroupStyle.selectedItemPosition) {
                         AppConfig.bookGroupStyle = spGroupStyle.selectedItemPosition
                         notifyMain = true
+                    }
+                    if (AppConfig.showBookname != swShowBookname.isChecked) {
+                        AppConfig.showBookname = swShowBookname.isChecked
+                        postEvent(EventBus.BOOKSHELF_REFRESH, "")
                     }
                     if (AppConfig.showUnread != swShowUnread.isChecked) {
                         AppConfig.showUnread = swShowUnread.isChecked

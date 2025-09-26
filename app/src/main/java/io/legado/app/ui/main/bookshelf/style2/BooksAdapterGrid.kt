@@ -10,7 +10,9 @@ import io.legado.app.databinding.ItemBookshelfGridBinding
 import io.legado.app.databinding.ItemBookshelfGridGroupBinding
 import io.legado.app.help.book.isLocal
 import io.legado.app.help.config.AppConfig
+import io.legado.app.utils.gone
 import io.legado.app.utils.invisible
+import io.legado.app.utils.visible
 import splitties.views.onLongClick
 
 @Suppress("UNUSED_PARAMETER")
@@ -49,7 +51,13 @@ class BooksAdapterGrid(context: Context, callBack: CallBack) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun onBind(item: Book, position: Int) = binding.run {
-            tvName.text = item.name
+            if (AppConfig.showBookname) {
+                tvName.visible()
+                tvName.text = item.name
+            }
+            else {
+                tvName.gone()
+            }
             ivCover.load(item.getDisplayCover(), item.name, item.author, false, item.origin)
             upRefresh(this, item)
         }

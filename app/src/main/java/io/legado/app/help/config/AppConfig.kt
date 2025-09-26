@@ -130,6 +130,11 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
                 }
             }
         }
+    var showBookname: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.showBookname, true)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.showBookname, value)
+        }
 
     var showUnread: Boolean
         get() = appCtx.getPrefBoolean(PreferKey.showUnread, true)

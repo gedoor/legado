@@ -67,14 +67,14 @@
         android:paddingBottom="4dp"
         android:scrollbars="none"
         android:singleLine="true"
-        android:text="@string/book_name"
         android:textColor="@color/primaryText"
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/tv_author"
         app:layout_constraintLeft_toRightOf="@+id/iv_cover"
         app:layout_constraintRight_toLeftOf="@id/fl_has_new"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="RtlHardcoded,RtlSymmetry" />
+        tools:ignore="RtlHardcoded,RtlSymmetry"
+        tools:text="@string/book_name"/>
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_author"

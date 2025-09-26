@@ -57,6 +57,7 @@
     <string name="action_search">搜索</string>
     <string name="action_download">下载</string>
     <string name="layout_list">列表</string>
+    <string name="layout_grid2">网格二列</string>
     <string name="layout_grid3">网格三列</string>
     <string name="layout_grid4">网格四列</string>
     <string name="layout_grid5">网格五列</string>
@@ -1229,4 +1230,5 @@
     <string name="enable_manga_gray">开启图片灰色</string>
     <string name="custom_hosts">自定义Hosts</string>
     <string name="custom_hosts_summary">域名到IP的映射</string>
+    <string name="show_bookname">显示书名</string>
 </resources>

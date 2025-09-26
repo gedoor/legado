@@ -58,6 +58,7 @@
     <string name="action_search">Search</string>
     <string name="action_download">Download</string>
     <string name="layout_list">List</string>
+    <string name="layout_grid2">Grid-2</string>
     <string name="layout_grid3">Grid-3</string>
     <string name="layout_grid4">Grid-4</string>
     <string name="layout_grid5">Grid-5</string>
@@ -1266,4 +1267,5 @@
     <string name="auto_wrap">自动换行</string>
     <string name="font_size">字体大小</string>
     <string name="view_code">查看代码</string>
+    <string name="show_bookname">显示书名</string>
 </resources>

@@ -8,7 +8,9 @@ import io.legado.app.data.entities.Book
 import io.legado.app.databinding.ItemBookshelfGridBinding
 import io.legado.app.help.book.isLocal
 import io.legado.app.help.config.AppConfig
+import io.legado.app.utils.gone
 import io.legado.app.utils.invisible
+import io.legado.app.utils.visible
 import splitties.views.onLongClick
 
 class BooksAdapterGrid(context: Context, private val callBack: CallBack) :
@@ -25,7 +27,13 @@ class BooksAdapterGrid(context: Context, private val callBack: CallBack) :
         payloads: MutableList<Any>
     ) = binding.run {
         if (payloads.isEmpty()) {
-            tvName.text = item.name
+            if (AppConfig.showBookname) {
+                tvName.visible()
+                tvName.text = item.name
+            }
+            else {
+                tvName.gone()
+            }
             ivCover.load(item.getDisplayCover(), item.name, item.author, false, item.origin)
             upRefresh(binding, item)
         } else {

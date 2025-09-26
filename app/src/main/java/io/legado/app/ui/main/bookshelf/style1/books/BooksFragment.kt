@@ -103,7 +103,7 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
         if (bookshelfLayout == 0) {
             binding.rvBookshelf.layoutManager = LinearLayoutManager(context)
         } else {
-            binding.rvBookshelf.layoutManager = GridLayoutManager(context, bookshelfLayout + 2)
+            binding.rvBookshelf.layoutManager = GridLayoutManager(context, bookshelfLayout + 1)
         }
         if (bookshelfLayout == 0) {
             binding.rvBookshelf.setRecycledViewPool(activityViewModel.booksListRecycledViewPool)
