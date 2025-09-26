@@ -496,7 +496,7 @@ class AnalyzeUrl(
                     get(urlNoQuery, encodedQuery)
                 }.let {
                     val connectionTime = System.currentTimeMillis() - startTime
-                    it.putCallTime(connectionTime)
+                    it.putCallTime(connectionTime.toInt())
                     val isXml = it.raw.body.contentType()?.toString()
                         ?.matches(AppPattern.xmlContentTypeRegex) == true
                     if (isXml && it.body?.trim()?.startsWith("<?xml", true) == false) {
@@ -506,7 +506,7 @@ class AnalyzeUrl(
                 strResponse
             } catch (e: Exception) {
                 return StrResponse(url, e.message).apply{
-                    putCallTime(99999L)
+                    putCallTime(99999)
                 }
             }
         }
