@@ -82,16 +82,25 @@ class ChangeCoverDialog() : BaseDialogFragment(R.layout.dialog_change_cover),
     override fun observeLiveBus() {
         super.observeLiveBus()
         viewModel.searchStateData.observe(viewLifecycleOwner) {
-            binding.refreshProgressBar.isAutoLoading = it
-            if (it) {
-                startStopMenuItem?.let { item ->
-                    item.setIcon(R.drawable.ic_stop_black_24dp)
-                    item.setTitle(R.string.stop)
+            binding.refreshProgressBar.isAutoLoading = it == 1
+            when (it) {
+                1 -> {
+                    startStopMenuItem?.let { item ->
+                        item.setIcon(R.drawable.ic_stop_black_24dp)
+                        item.setTitle(R.string.stop)
+                    }
                 }
-            } else {
-                startStopMenuItem?.let { item ->
-                    item.setIcon(R.drawable.ic_refresh_black_24dp)
-                    item.setTitle(R.string.refresh)
+                0 -> {
+                    startStopMenuItem?.let { item ->
+                        item.setIcon(R.drawable.ic_refresh_black_24dp)
+                        item.setTitle(R.string.refresh)
+                    }
+                }
+                2 -> {
+                    startStopMenuItem?.let { item ->
+                        item.setIcon(R.drawable.ic_play_outline_24dp)
+                        item.setTitle(R.string.resume)
+                    }
                 }
             }
             binding.toolBar.menu.applyTint(requireContext())

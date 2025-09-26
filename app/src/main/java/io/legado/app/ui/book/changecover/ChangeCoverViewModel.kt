@@ -9,10 +9,12 @@ import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern
 import io.legado.app.data.appDb
+import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.BookSourcePart
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.help.config.AppConfig
+import io.legado.app.model.BookCover
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.mapParallelSafe
 import kotlinx.coroutines.Dispatchers.IO
@@ -50,7 +52,7 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
         )
     }
     private var task: Job? = null
-    val searchStateData = MutableLiveData<Boolean>()
+    val searchStateData = MutableLiveData<Int>()
     var name: String = ""
     var author: String = ""
     val searchBooks: MutableList<SearchBook> = Collections.synchronizedList(arrayListOf())
@@ -102,12 +104,44 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
     private fun startSearch() {
         execute {
             stopSearch()
+            if(searchStateData.value == 2) {
+                upAdapter?.invoke()
+                initSearchPool()
+                search()
+                return@execute
+            }
             searchBooks.clear()
             upAdapter?.invoke()
             bookSourceParts.clear()
             bookSourceParts.addAll(appDb.bookSourceDao.allEnabledPart)
             initSearchPool()
-            search()
+            searchWithBookCover()
+        }
+    }
+
+    private fun searchWithBookCover() {
+        viewModelScope.launch(IO) {
+            searchStateData.postValue(1)
+            try {
+                val tempBook = Book(name = name, author = author)
+                val coverUrl = BookCover.searchCover(tempBook)
+                if (!coverUrl.isNullOrEmpty()) {
+                    val searchBook = SearchBook(
+                        originName = "封面规则",
+                        name = name,
+                        author = author,
+                        coverUrl = coverUrl,
+                        originOrder = -1
+                    )
+                    searchSuccess?.invoke(searchBook)
+                    searchStateData.postValue(2)
+                } else {
+                    search()
+                }
+            } catch (e: Exception) {
+                AppLog.put("封面规则搜索出错\n${e.localizedMessage}", e)
+                search()
+            }
         }
     }
 
@@ -120,13 +154,13 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
                     }
                 }
             }.onStart {
-                searchStateData.postValue(true)
+                searchStateData.postValue(1)
             }.mapParallelSafe(threadCount) {
                 withTimeout(60000L) {
                     search(it)
                 }
             }.onCompletion {
-                searchStateData.postValue(false)
+                searchStateData.postValue(0)
             }.catch {
                 AppLog.put("封面换源搜索出错\n${it.localizedMessage}", it)
             }.collect()
@@ -152,6 +186,7 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
         if (task == null || !task!!.isActive) {
             startSearch()
         } else {
+            searchStateData.postValue(0)
             stopSearch()
         }
     }
@@ -159,7 +194,6 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
     private fun stopSearch() {
         task?.cancel()
         searchPool?.close()
-        searchStateData.postValue(false)
     }
 
     override fun onCleared() {
