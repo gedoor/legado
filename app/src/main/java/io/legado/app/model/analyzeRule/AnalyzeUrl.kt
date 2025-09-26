@@ -479,6 +479,39 @@ class AnalyzeUrl(
         }
     }
 
+    /**
+     * 测试网址连接,返回带响应时间的StrResponse
+     * 只有get请求,用来测试网站可用性
+     */
+    suspend fun getStrResponseAwait2(): StrResponse {
+        if (type != null) {
+            return StrResponse(url, HexUtil.encodeHexStr(getByteArrayAwait()))
+        }
+        concurrentRateLimiter.withLimit {
+            setCookie()
+            val startTime = System.currentTimeMillis()
+            return try {
+                val strResponse: StrResponse = getClient().newCallStrResponse(retry) {
+                    addHeaders(headerMap)
+                    get(urlNoQuery, encodedQuery)
+                }.let {
+                    val connectionTime = System.currentTimeMillis() - startTime
+                    it.putCallTime(connectionTime)
+                    val isXml = it.raw.body.contentType()?.toString()
+                        ?.matches(AppPattern.xmlContentTypeRegex) == true
+                    if (isXml && it.body?.trim()?.startsWith("<?xml", true) == false) {
+                        StrResponse(it.raw, "<?xml version=\"1.0\"?>" + it.body)
+                    } else it
+                }
+                strResponse
+            } catch (e: Exception) {
+                return StrResponse(url, e.message).apply{
+                    putCallTime(99999L)
+                }
+            }
+        }
+    }
+
     @JvmOverloads
     fun getStrResponse(
         jsStr: String? = null,
@@ -520,7 +553,7 @@ class AnalyzeUrl(
         }
     }
 
-    private fun getClient(): OkHttpClient {
+    fun getClient(): OkHttpClient {
         val client = getProxyClient(proxy)
         val host = extractHostFromUrl(urlNoQuery)
         if (host.isNullOrEmpty()) return client

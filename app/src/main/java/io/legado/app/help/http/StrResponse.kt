@@ -20,6 +20,7 @@ class StrResponse {
         private set
     var errorBody: ResponseBody? = null
         private set
+    var callTime = 0L
 
     constructor(rawResponse: Response, body: String?) {
         this.raw = rawResponse
@@ -46,6 +47,9 @@ class StrResponse {
         this.errorBody = errorBody
     }
 
+    fun putCallTime(callTime: Long) {
+        this.callTime = callTime
+    }
     fun raw() = raw
 
     fun url(): String {

@@ -125,6 +125,7 @@ java.getWebViewUA(): String
 ```js
 java.ajax(urlStr): String
 java.ajaxAll(urlList: Array<String>): Array<StrResponse>
+java.ajaxTestAll(urlList: Array<String>, timeout: Int): Array<StrResponse> //仅支持get连接，响应的callTime属性为响应时间
 //返回StrResponse 方法body() code() message() headers() raw() toString() 
 java.connect(urlStr): StrResponse
 
