@@ -505,8 +505,21 @@ class AnalyzeUrl(
                 }
                 strResponse
             } catch (e: Exception) {
-                return StrResponse(url, e.localizedMessage).apply{
-                    putCallTime(99999)
+                val errorCode = when (e) {
+                    is java.net.SocketTimeoutException -> -2  // 超时错误
+                    is java.net.UnknownHostException -> -3   // 未找到域名
+                    is java.net.ConnectException -> -4       // 连接被拒绝
+                    is java.net.SocketException -> -5        // Socket错误（包括连接重置）
+                    is javax.net.ssl.SSLException -> -6      // SSL证书或握手错误
+                    is java.io.InterruptedIOException -> {
+                        if (e.message?.contains("timeout") == true) {
+                            -1  // 超过设定时间
+                        } else -7
+                    }
+                    else -> -7  // 其它错误
+                }
+                return StrResponse(url, e.message).apply {
+                    putCallTime(errorCode)
                 }
             }
         }
