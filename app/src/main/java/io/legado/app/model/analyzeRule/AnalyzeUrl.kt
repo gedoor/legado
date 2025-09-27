@@ -505,7 +505,7 @@ class AnalyzeUrl(
                 }
                 strResponse
             } catch (e: Exception) {
-                return StrResponse(url, e.message).apply{
+                return StrResponse(url, e.localizedMessage).apply{
                     putCallTime(99999)
                 }
             }

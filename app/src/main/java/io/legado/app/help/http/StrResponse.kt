@@ -51,6 +51,7 @@ class StrResponse {
         this.callTime = callTime
     }
     fun raw() = raw
+    fun callTime() = callTime
 
     fun url(): String {
         raw.networkResponse?.let {
