@@ -5,6 +5,7 @@ import android.content.Context
 import android.net.Uri
 import androidx.media3.common.MediaItem
 import androidx.media3.database.StandaloneDatabaseProvider
+import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.datasource.FileDataSource
 import androidx.media3.datasource.ResolvingDataSource
 import androidx.media3.datasource.cache.Cache
@@ -16,8 +17,9 @@ import androidx.media3.datasource.okhttp.OkHttpDataSource
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
+import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import com.google.gson.reflect.TypeToken
-import io.legado.app.help.http.okHttpClient
+import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.utils.GSON
 import io.legado.app.utils.externalCache
 import okhttp3.CacheControl
@@ -36,6 +38,8 @@ object ExoPlayerHelper {
     private val mapType by lazy {
         object : TypeToken<Map<String, String>>() {}.type
     }
+    val okHttpClient = AnalyzeUrl("").getClient(true)
+    val httpDataSourceFactory = OkHttpDataSource.Factory(okHttpClient)
 
     fun createMediaItem(url: String, headers: Map<String, String>): MediaItem {
         val formatUrl = url + SPLIT_TAG + GSON.toJson(headers, mapType)
@@ -43,7 +47,9 @@ object ExoPlayerHelper {
     }
 
     fun createHttpExoPlayer(context: Context): ExoPlayer {
-        return ExoPlayer.Builder(context).setLoadControl(
+        val dataSourceFactory = DefaultDataSource.Factory(context, httpDataSourceFactory)
+        val mediaSourceFactory = ProgressiveMediaSource.Factory(dataSourceFactory)
+        return ExoPlayer.Builder(context).setMediaSourceFactory(mediaSourceFactory).setLoadControl(
             DefaultLoadControl.Builder().setBufferDurationsMs(
                 DefaultLoadControl.DEFAULT_MIN_BUFFER_MS,
                 DefaultLoadControl.DEFAULT_MAX_BUFFER_MS,

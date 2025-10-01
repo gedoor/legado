@@ -57,10 +57,8 @@ import okhttp3.Response
 import okhttp3.Dns
 import java.io.ByteArrayInputStream
 import java.io.InputStream
-import java.net.InetAddress
 import java.net.URLEncoder
 import java.nio.charset.Charset
-import java.util.Collections
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
 import kotlin.coroutines.ContinuationInterceptor
@@ -566,17 +564,14 @@ class AnalyzeUrl(
         }
     }
 
-    fun getClient(): OkHttpClient {
+    fun getClient(isExo : Boolean = false): OkHttpClient {
         val client = getProxyClient(proxy)
         val host = extractHostFromUrl(urlNoQuery)
         if (host.isNullOrEmpty()) return client
-        //val ipAddress = if (isCronet) null else parseCustomHosts(host)//cronet的dns依旧需要这里进行设置
-        val ipAddress = parseCustomHosts(host)
-        if (readTimeout == null && callTimeout == null && ipAddress == null) {
+        val addressCache = AppConfig.addressCache
+        val hasDns = addressCache.isNotEmpty() && (isExo || addressCache[host] != null)
+        if (readTimeout == null && callTimeout == null && !hasDns) {
             return client
-        }
-        val dns = ipAddress?.let { ip ->
-            getCachedDns(host, ip)
         }
         return client.newBuilder().run {
             if (readTimeout != null) {
@@ -586,8 +581,11 @@ class AnalyzeUrl(
             if (callTimeout != null) {
                 callTimeout(callTimeout, TimeUnit.MILLISECONDS)
             }
-            if (dns != null) {
-                dns(dns)
+            if (hasDns) {
+                dns { hostname ->
+                    val cachedAddress = addressCache[hostname]
+                    cachedAddress ?: Dns.SYSTEM.lookup(hostname)
+                }
             }
             build()
         }
@@ -597,53 +595,6 @@ class AnalyzeUrl(
         return AppPattern.domainRegex.find(url)?.groupValues?.getOrNull(1)
     }
 
-    private fun parseCustomHosts(host: String):  List<InetAddress>? {
-        val configMap = AppConfig.hostMap ?: return null
-        val configIps = configMap[host] ?: return null
-        return addressCache.getOrPut(host) {
-                when (configIps) {
-                    is String -> try {
-                        configIps.split(",")
-                            .map { it.trim() }
-                            .filter { it.isNotEmpty() }
-                            .map { InetAddress.getByName(it) }
-                    } catch (e: Exception) {
-                        log(e)
-                        null
-                    }
-
-                    is List<*> -> configIps.mapNotNull { element ->
-                        val ipStr = when (element) {
-                            is String -> element.trim().takeIf { it.isNotEmpty() }
-                            else -> null
-                        }
-                        ipStr?.let {
-                            try {
-                                InetAddress.getByName(it)
-                            } catch (e: Exception) {
-                                log(e)
-                                null
-                            }
-                        }
-                    }
-
-                    else -> {
-                        log("Unsupported IP format for $host: ${configIps::class.java.simpleName}")
-                        null
-                    }
-                }
-
-        }
-    }
-
-    private fun getCachedDns(host: String, ipAddress: List<InetAddress>): Dns {
-        return dnsCache.getOrPut(host) {
-            Dns { hostname ->
-                if (hostname == host) ipAddress
-                else Dns.SYSTEM.lookup(hostname)
-            }
-        }
-    }
 
     fun getResponse(): Response {
         return runBlocking(coroutineContext) {
@@ -785,8 +736,6 @@ class AnalyzeUrl(
         private val pagePattern = Pattern.compile("<(.*?)>")
         private val queryEncoder =
             RFC3986.UNRESERVED.orNew(PercentCodec.of("!$%&()*+,/:;=?@[\\]^`{|}"))
-        private val dnsCache = Collections.synchronizedMap(mutableMapOf<String, Dns>())
-        private val addressCache = Collections.synchronizedMap(mutableMapOf<String, List<InetAddress>?>())
         private val isCronet: Boolean by lazy {AppConfig.isCronet}
 
         fun AnalyzeUrl.getMediaItem(): MediaItem {

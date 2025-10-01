@@ -22,6 +22,7 @@ import io.legado.app.utils.removePref
 import io.legado.app.utils.sysConfiguration
 import io.legado.app.utils.toastOnUi
 import splitties.init.appCtx
+import java.net.InetAddress
 
 @Suppress("MemberVisibilityCanBePrivate", "ConstPropertyName")
 object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
@@ -97,6 +98,7 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             PreferKey.customHosts -> {
                 customHosts = appCtx.getPrefString(PreferKey.customHosts) ?: ""
                 hostMap = GSON.fromJsonObject<Map<String, Any?>>(customHosts).getOrNull()
+                _addressCache = null
             }
 
             PreferKey.editTheme -> editTheme = appCtx.getPrefInt(PreferKey.editTheme, 0)
@@ -113,6 +115,34 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
 
         }
     }
+
+    //dns配置
+    private var _addressCache: Map<String, List<InetAddress>>? = null
+    val addressCache: Map<String, List<InetAddress>>
+        get() = _addressCache ?: run {
+            val cache = hostMap?.mapNotNull { (host, ipValue) ->
+                val addresses = when (ipValue) {
+                    is String -> ipValue.parseIpsFromString()
+                    is List<*> -> ipValue.parseIpsFromList()
+                    else -> null
+                }
+                addresses?.let { host to it }
+            }?.toMap() ?: emptyMap()
+            _addressCache = cache
+            cache
+        }
+    private fun String.parseIpsFromString(): List<InetAddress>? =
+        split(",")
+            .map { it.trim() }
+            .filter { it.isNotEmpty() }
+            .mapNotNull { it.runCatching { InetAddress.getByName(this) }.getOrNull() }
+            .takeIf { it.isNotEmpty() }
+    private fun List<*>.parseIpsFromList(): List<InetAddress> =
+        mapNotNull { element ->
+            (element as? String)?.trim()?.takeIf { it.isNotEmpty() }
+                ?.runCatching { InetAddress.getByName(this) }
+                ?.getOrNull()
+        }
 
     var isNightTheme: Boolean
         get() = when (themeMode) {
