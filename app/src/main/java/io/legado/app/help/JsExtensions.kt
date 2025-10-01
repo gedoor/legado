@@ -18,8 +18,7 @@ import io.legado.app.help.http.CookieManager.cookieJarHeader
 import io.legado.app.help.http.CookieStore
 import io.legado.app.help.http.SSLHelper
 import io.legado.app.help.http.StrResponse
-import io.legado.app.help.http.get
-import io.legado.app.help.http.newCallStrResponse
+import io.legado.app.help.source.SourceHelp
 import io.legado.app.help.source.SourceVerificationHelp
 import io.legado.app.help.source.getSourceType
 import io.legado.app.model.Debug
@@ -242,6 +241,16 @@ interface JsExtensions : JsEncodeUtils {
                 overrideUrlRegex = overrideUrlRegex
             ).getStrResponse().body
         }
+    }
+
+    /**
+     * 打开内置视频播放器
+     * @param url 视频播放连接
+     * @param title 视频的标题
+     * @param float 是否悬浮窗打开
+     */
+    fun openVideoPlayer(url: String, title: String, float: Boolean) {
+        SourceHelp.openVideoPlayer(getSource(), url, title, float)
     }
 
     /**

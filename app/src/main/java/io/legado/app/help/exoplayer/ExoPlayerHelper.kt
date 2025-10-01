@@ -29,6 +29,7 @@ import java.util.concurrent.TimeUnit
 @Suppress("unused")
 @SuppressLint("UnsafeOptInUsageError")
 object ExoPlayerHelper {
+    private var exoPlayer: ExoPlayer? = null
 
     private const val SPLIT_TAG = "\uD83D\uDEA7"
 
@@ -55,6 +56,19 @@ object ExoPlayerHelper {
                 .setDataSourceFactory(resolvingDataSource)
                 .setLiveTargetOffsetMs(5000)
         ).build()
+    }
+
+    fun getExoPlayer(context: Context): ExoPlayer {
+        if (exoPlayer == null) {
+            val appContext = context.applicationContext
+            exoPlayer = createHttpExoPlayer(appContext)
+        }
+        return exoPlayer!!
+    }
+
+    fun release() {
+        exoPlayer?.release()
+        exoPlayer = null
     }
 
 

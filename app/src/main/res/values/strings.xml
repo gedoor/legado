@@ -1268,4 +1268,8 @@
     <string name="font_size">字体大小</string>
     <string name="view_code">查看代码</string>
     <string name="show_bookname">显示书名</string>
+    <string name="float_permission_rationale">阅读需要悬浮窗权限来显示播放窗口</string>
+    <string name="video">视频</string>
+    <string name="float_window">悬浮窗</string>
+    <string name="video_play">视频播放</string>
 </resources>

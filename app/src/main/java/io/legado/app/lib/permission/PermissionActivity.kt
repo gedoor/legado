@@ -19,6 +19,7 @@ import io.legado.app.utils.registerForActivityResult
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.launch
 import androidx.core.content.edit
+import androidx.core.net.toUri
 
 class PermissionActivity : AppCompatActivity() {
 
@@ -134,6 +135,21 @@ class PermissionActivity : AppCompatActivity() {
                         AppLog.put("请求后台权限出错\n$e", e, true)
                         RequestPlugins.sRequestCallback?.onError(e)
                         finish()
+                    }
+                }
+            }
+            Request.TYPE_SYSTEM_ALERT_WINDOW -> showSettingDialog(permissions, rationale) {
+                lifecycleScope.launch {
+                    try {
+                        if (requestPermissionResult.launch(Permissions.SYSTEM_ALERT_WINDOW)) {
+                            onRequestPermissionFinish()
+                        } else {
+                            val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, "package:$packageName".toUri())
+                            settingActivityResult.launch(intent)
+                        }
+                    } catch (e: Exception) {
+                        AppLog.put("请求悬浮窗权限出错\n$e", e, true)
+                        RequestPlugins.sRequestCallback?.onError(e)
                     }
                 }
             }
