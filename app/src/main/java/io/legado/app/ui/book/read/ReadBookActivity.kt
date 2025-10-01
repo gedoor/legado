@@ -1386,8 +1386,13 @@ class ReadBookActivity : BaseReadBookActivity(),
                 ReadAloud.upReadAloudClass()
                 val scrollPageAnim = ReadBook.pageAnim() == 3
                 if (scrollPageAnim) {
-                    val startPos = binding.readView.getCurPagePosition()
-                    ReadBook.readAloud(startPos = startPos)
+                    val line = binding.readView.getCurVisibleFirstLine()
+                    if (line != null) {
+                        ReadBook.durChapterPos = line.chapterPosition
+                        ReadBook.readAloud(startPos = line.pagePosition)
+                    } else {
+                        ReadBook.readAloud()
+                    }
                 } else {
                     ReadBook.readAloud()
                 }
@@ -1397,8 +1402,13 @@ class ReadBookActivity : BaseReadBookActivity(),
                 val scrollPageAnim = ReadBook.pageAnim() == 3
                 if (scrollPageAnim && pageChanged) {
                     pageChanged = false
-                    val startPos = binding.readView.getCurPagePosition()
-                    ReadBook.readAloud(startPos = startPos)
+                    val line = binding.readView.getCurVisibleFirstLine()
+                    if (line != null) {
+                        ReadBook.durChapterPos = line.chapterPosition
+                        ReadBook.readAloud(startPos = line.pagePosition)
+                    } else {
+                        ReadBook.readAloud()
+                    }
                 } else {
                     ReadAloud.resume(this)
                 }
@@ -1701,6 +1711,7 @@ class ReadBookActivity : BaseReadBookActivity(),
             lifecycleScope.launch(IO) {
                 if (BaseReadAloudService.isPlay()) {
                     ReadBook.curTextChapter?.let { textChapter ->
+                        ReadBook.durChapterPos = chapterStart
                         val pageIndex = ReadBook.durPageIndex
                         val aloudSpanStart = chapterStart - textChapter.getReadLength(pageIndex)
                         textChapter.getPage(pageIndex)
