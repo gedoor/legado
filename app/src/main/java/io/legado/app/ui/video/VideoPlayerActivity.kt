@@ -1,10 +1,14 @@
 package io.legado.app.ui.video
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.view.GestureDetector
 import android.view.Menu
 import android.view.MenuItem
+import android.view.MotionEvent
+import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.annotation.OptIn
@@ -46,7 +50,22 @@ class VideoPlayerActivity : VMBaseActivity<ActivityVideoPlayerBinding, VideoPlay
             }
         }
     private var isFullScreen = false
-    val originalOrientation = requestedOrientation
+    private val originalOrientation = requestedOrientation
+    private var originalSpeed = 1.0f
+    private var isLongPressTriggered = false
+    private val gestureDetector: GestureDetector by lazy {
+        GestureDetector(
+            this,
+            object : GestureDetector.SimpleOnGestureListener() {
+                override fun onLongPress(e: MotionEvent) {
+                    super.onLongPress(e)
+                    isLongPressTriggered = true
+                    originalSpeed = exoPlayer.playbackParameters.speed
+                    exoPlayer.setPlaybackSpeed(3.0f)
+                }
+            }
+        )
+    }
 
     @OptIn(UnstableApi::class)
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -63,22 +82,27 @@ class VideoPlayerActivity : VMBaseActivity<ActivityVideoPlayerBinding, VideoPlay
             finish()
         }
     }
+
     private fun toggleFullScreen() {
         isFullScreen = !isFullScreen
         toggleSystemBar(!isFullScreen)
+        val layoutParams = playerView.layoutParams
         requestedOrientation = if (isFullScreen) {
             supportActionBar?.hide()
+            layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
+            playerView.layoutParams = layoutParams
             ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
         } else {
             supportActionBar?.show()
+            layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
+            playerView.layoutParams = layoutParams
             originalOrientation
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @OptIn(UnstableApi::class)
     private fun setupPlayerView() {
-//        playerView.setShowFastForwardButton(false)
-//        playerView.setShowRewindButton(false)
         playerView.setShowPreviousButton(false)
         playerView.setShowNextButton(false)
         playerView.useController = true
@@ -86,6 +110,19 @@ class VideoPlayerActivity : VMBaseActivity<ActivityVideoPlayerBinding, VideoPlay
         playerView.controllerShowTimeoutMs = 3000
         playerView.setFullscreenButtonClickListener {
             toggleFullScreen()
+        }
+        playerView.setOnTouchListener { _, event ->
+            gestureDetector.onTouchEvent(event)
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    isLongPressTriggered = false
+                }
+
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    exoPlayer.setPlaybackSpeed(originalSpeed)
+                }
+            }
+            isLongPressTriggered
         }
     }
 
@@ -121,7 +158,7 @@ class VideoPlayerActivity : VMBaseActivity<ActivityVideoPlayerBinding, VideoPlay
     private fun setupPlayer() {
         exoPlayer.run {
             playerView.player = this
-            if (viewModel.isNew){
+            if (viewModel.isNew) {
                 setMediaItem(
                     AnalyzeUrl(
                         viewModel.videoUrl,
@@ -137,8 +174,6 @@ class VideoPlayerActivity : VMBaseActivity<ActivityVideoPlayerBinding, VideoPlay
             playWhenReady = true
         }
     }
-
-
 
     private fun startFloatingWindow() {
         //解绑
@@ -156,11 +191,6 @@ class VideoPlayerActivity : VMBaseActivity<ActivityVideoPlayerBinding, VideoPlay
         finish()
     }
 
-
-//    override fun onPause() {
-//        super.onPause()
-//        exoPlayer.pause()
-//    }
 
     override fun onResume() {
         super.onResume()

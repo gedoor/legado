@@ -5,6 +5,8 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.PixelFormat
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
@@ -13,6 +15,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewConfiguration
 import android.view.WindowManager
 import androidx.annotation.OptIn
 import androidx.core.app.NotificationCompat
@@ -61,6 +64,7 @@ class VideoPlayService : BaseService() {
     private var type: String? = null
     private var bookUrl: String? = null
     private var upNotificationJob: Coroutine<*>? = null
+    private var isControlsVisible = false
     private val exoPlayer: ExoPlayer by lazy {
         ExoPlayerHelper.getExoPlayer(this)
     }
@@ -262,8 +266,6 @@ class VideoPlayService : BaseService() {
         playerView.useController = true
         playerView.controllerAutoShow = false
         playerView.controllerShowTimeoutMs = 3000
-        var isControlsVisible = false
-//        val playButton = playerView.findViewById<View?>(Media3R.id.exo_play)
         playerView.setControllerVisibilityListener(
             PlayerView.ControllerVisibilityListener { visibility ->
                 if (visibility == View.VISIBLE) {
@@ -282,53 +284,68 @@ class VideoPlayService : BaseService() {
     }
 
     private fun setupDragListener(params: WindowManager.LayoutParams) {
-        floatingView.findViewById<View>(R.id.dragLayer)
-            .setOnTouchListener(object : View.OnTouchListener {
-                private var initialX = 0
-                private var initialY = 0
-                private var initialTouchX = 0f
-                private var initialTouchY = 0f
-                private var isDragging = false
-                private val dragThreshold = 10
+        dragLayer.setOnTouchListener(object : View.OnTouchListener {
+            private var initialX = 0
+            private var initialY = 0
+            private var initialTouchX = 0f
+            private var initialTouchY = 0f
+            private var isDragging = false
+            private val dragThreshold = 10
+            private val handler = Handler(Looper.getMainLooper())
+            private var isLongPressed = false
+            private val longPressTimeout = ViewConfiguration.getLongPressTimeout()
+            private val longPressRunnable = Runnable {
+                exoPlayer.setPlaybackSpeed(2.0f)
+                isLongPressed = true
+            }
 
-                @OptIn(UnstableApi::class)
-                @SuppressLint("ClickableViewAccessibility")
-                override fun onTouch(v: View, event: MotionEvent): Boolean {
-                    return when (event.action) {
-                        MotionEvent.ACTION_DOWN -> {
-                            initialX = params.x
-                            initialY = params.y
-                            initialTouchX = event.rawX
-                            initialTouchY = event.rawY
-                            isDragging = false
-                            true
-                        }
-
-                        MotionEvent.ACTION_MOVE -> {
-                            val deltaX = event.rawX - initialTouchX
-                            val deltaY = event.rawY - initialTouchY
-
-                            if (abs(deltaX) > dragThreshold || abs(deltaY) > dragThreshold) {
-                                isDragging = true
-                            }
-                            params.x = initialX + deltaX.toInt()
-                            params.y = initialY + deltaY.toInt()
-                            windowManager.updateViewLayout(floatingView, params)
-                            isDragging
-                        }
-
-                        MotionEvent.ACTION_UP -> {
-                            if (!isDragging) {
-                                playerView.showController()
-                            }
-                            true
-                        }
-
-                        MotionEvent.ACTION_CANCEL -> isDragging
-                        else -> false
+            @OptIn(UnstableApi::class)
+            @SuppressLint("ClickableViewAccessibility")
+            override fun onTouch(v: View, event: MotionEvent): Boolean {
+                return when (event.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        initialX = params.x
+                        initialY = params.y
+                        initialTouchX = event.rawX
+                        initialTouchY = event.rawY
+                        isDragging = false
+                        handler.postDelayed(longPressRunnable, longPressTimeout.toLong())
+                        true
                     }
+
+                    MotionEvent.ACTION_MOVE -> {
+                        val deltaX = event.rawX - initialTouchX
+                        val deltaY = event.rawY - initialTouchY
+
+                        if (abs(deltaX) > dragThreshold || abs(deltaY) > dragThreshold) {
+                            isDragging = true
+                            handler.removeCallbacks(longPressRunnable)
+                        }
+                        params.x = initialX + deltaX.toInt()
+                        params.y = initialY + deltaY.toInt()
+                        windowManager.updateViewLayout(floatingView, params)
+                        isDragging
+                    }
+
+                    MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                        handler.removeCallbacks(longPressRunnable)
+                        if (!isDragging && !isLongPressed) {
+                            playerView.showController()
+                        }
+                        if (isLongPressed) {
+                            exoPlayer.setPlaybackSpeed(1.0f)
+                            isLongPressed = false
+                        }
+                        true
+                    }
+                    else -> false
                 }
-            })
+            }
+        })
+        dragLayer.setOnLongClickListener {
+            exoPlayer.setPlaybackSpeed(2.0f)
+            true
+        }
     }
 
     private fun setupControls() {
