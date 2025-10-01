@@ -435,7 +435,9 @@ class VideoPlayService : BaseService() {
     override fun onDestroy() {
         super.onDestroy()
         try {
-            playerView.player?.release()
+            if (playerView.player != null) {
+                ExoPlayerHelper.release()
+            }
             if (::windowManager.isInitialized) {
                 windowManager.removeView(floatingView)
             }

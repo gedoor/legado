@@ -170,6 +170,8 @@ class VideoPlayerActivity : VMBaseActivity<ActivityVideoPlayerBinding, VideoPlay
     override fun onDestroy() {
         super.onDestroy()
         // 释放
-        playerView.player?.release()
+        if (playerView.player != null) {
+            ExoPlayerHelper.release()
+        }
     }
 }
