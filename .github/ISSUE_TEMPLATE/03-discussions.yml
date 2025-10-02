@@ -1,0 +1,18 @@
+name: 讨论 / Discussions
+description: Discussions and questions
+labels: ["讨论"]
+body:
+  - type: checkboxes
+    attributes:
+      label: 确认 / Assignments
+      description: 空白
+      options:
+        - label: 洛娅橙
+          required: true
+
+  - type: textarea
+    attributes:
+      label: 讨论 / Discussions
+      placeholder: 功能请求和BUG请分别到对应的模板提交
+    validations:
+      required: true

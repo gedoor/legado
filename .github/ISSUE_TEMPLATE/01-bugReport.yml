@@ -17,6 +17,9 @@ body:
   - type: textarea
     attributes:
       label: 问题描述 / Describe Bugs
+      description: |
+        非改版新增功能。请验证官方版也存在问题后去[官方区](https://github.com/gedoor/legado/issues)反馈，
+        本改版相关反馈前请确保已更新到最新版。
     validations:
       required: true
   - type: textarea
