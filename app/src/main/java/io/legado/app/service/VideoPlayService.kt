@@ -91,7 +91,9 @@ class VideoPlayService : BaseService() {
             type = intent.getStringExtra("type")
             bookUrl = intent.getStringExtra("bookUrl")
         }
-        createFloatingWindow()
+        if (floatingView.parent == null) {
+            createFloatingWindow()
+        }
         setupPlayer()
         startPlayback()
         return super.onStartCommand(intent, flags, startId)
@@ -452,11 +454,11 @@ class VideoPlayService : BaseService() {
     override fun onDestroy() {
         super.onDestroy()
         try {
+            if (::windowManager.isInitialized && floatingView.parent != null) {
+                windowManager.removeView(floatingView)
+            }
             if (playerView.player != null) {
                 ExoPlayerHelper.release()
-            }
-            if (::windowManager.isInitialized) {
-                windowManager.removeView(floatingView)
             }
             upNotificationJob?.invokeOnCompletion {
                 notificationManager.cancel(NotificationId.VideoPlayService)

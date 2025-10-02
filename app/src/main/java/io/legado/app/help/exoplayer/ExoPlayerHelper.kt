@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MimeTypes
 import androidx.media3.database.StandaloneDatabaseProvider
 import androidx.media3.datasource.FileDataSource
 import androidx.media3.datasource.ResolvingDataSource
@@ -39,7 +40,11 @@ object ExoPlayerHelper {
 
     fun createMediaItem(url: String, headers: Map<String, String>): MediaItem {
         val formatUrl = url + SPLIT_TAG + GSON.toJson(headers, mapType)
-        return MediaItem.Builder().setUri(formatUrl).build()
+        val mediaItemBuilder = MediaItem.Builder().setUri(formatUrl)
+        if (url.contains(".m3u8")) {
+            mediaItemBuilder.setMimeType(MimeTypes.APPLICATION_M3U8)
+        }
+        return mediaItemBuilder.build()
     }
 
     fun createHttpExoPlayer(context: Context): ExoPlayer {
