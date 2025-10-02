@@ -187,20 +187,21 @@ interface BaseSource : JsExtensions {
             } else {
                 val loginUiJson = loginUi?.let {
                     when {
-                        it.startsWith("@js:") -> evalJS(
+                        it.startsWith("@js:") -> evalJS((getLoginJs()?: "") +
                             it.substring(4),
                             configureScriptBindings()
                         ).toString()
 
-                        it.startsWith("<js>") -> evalJS(
+                        it.startsWith("<js>") -> evalJS((getLoginJs()?: "") +
                             it.substring(4, it.lastIndexOf("<")),
                             configureScriptBindings()
                         ).toString()
 
-                        else -> loginUi
+                        else -> it
                     }
                 }
                 val longinInfo = GSON.fromJsonArray<RowUi>(loginUiJson).getOrNull()
+                    ?.filter { it.type != "button" }
                     ?.associate { it.name to (it.default ?: "") }?.also {
                         putLoginInfo(GSON.toJson(it))
                     }

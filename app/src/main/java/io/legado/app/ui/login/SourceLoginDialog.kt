@@ -147,7 +147,7 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
                     rowUi.style().apply(it.root)
                     it.root.id = index + 1000
                     val chars = rowUi.chars ?: arrayOf("chars is null")
-                    var char = loginInfo[rowUi.name] ?: rowUi.default ?: chars.getOrNull(0) ?: "chars is []"
+                    var char = loginInfo[rowUi.name]?.takeIf { it -> it.isNotEmpty() } ?: rowUi.default ?: chars.getOrNull(0) ?: "chars is []"
                     rowUi.default = char
                     it.textView.text = char + rowUi.name
                     it.textView.setPadding(16.dpToPx())

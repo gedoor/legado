@@ -44,7 +44,8 @@
 [
     {
         "name": "telephone",
-        "type": "text"
+        "type": "text",
+        "default": "123"
     },
     {
         "name": "password",
@@ -66,6 +67,12 @@
             "layout_flexBasisPercent": -1,
             "layout_wrapBefore": false
         }
+    },
+    {
+        "name": "评论开关",
+        "type": "toggle",
+        "chars": ["❎", "☑️"],
+        "default": "☑️"
     }
 ]
 ```
