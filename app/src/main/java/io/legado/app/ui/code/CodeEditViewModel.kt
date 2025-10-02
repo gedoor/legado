@@ -49,7 +49,7 @@ class CodeEditViewModel(application: Application) : BaseViewModel(application) {
             } else {
                 intent.getStringExtra("languageName")?.let { languageName = it }
             }
-            language = TextMateLanguage.create(languageName, true)
+            language = TextMateLanguage.create(languageName, AppConfig.editAutoComplete)
             cursorPosition = intent.getIntExtra("cursorPosition", 0)
             writable = intent.getBooleanExtra("writable", true)
         }.onSuccess {

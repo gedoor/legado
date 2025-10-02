@@ -66,7 +66,7 @@ class CodeEditActivity :
         viewModel.initData(intent) {
             editor.apply {
                 setEditorLanguage(viewModel.language)
-                upEdit()
+                upEdit(AppConfig.editFontScale, null, AppConfig.editAutoWrap)
                 setText(viewModel.initialText)
                 if (!viewModel.writable) {
                     editor.editable = false
@@ -114,9 +114,17 @@ class CodeEditActivity :
         }
     }
 
-    override fun upEdit() {
-        editor.isWordwrap = AppConfig.editAutoWrap
-        editor.setTextSize(AppConfig.editFontScale.toFloat())
+    override fun upEdit(fontSize: Int?, autoComplete: Boolean?, autoWarp: Boolean?) {
+        if (fontSize != null) {
+            editor.setTextSize(fontSize.toFloat())
+        }
+        if (autoComplete != null) {
+            viewModel.language?.isAutoCompleteEnabled = autoComplete
+            editor.setEditorLanguage(viewModel.language)
+        }
+        if (autoWarp != null) {
+            editor.isWordwrap = autoWarp
+        }
     }
 
     override fun upTheme(index: Int) {
@@ -232,9 +240,9 @@ class CodeEditActivity :
             R.id.menu_change_theme -> showDialogFragment(ChangeThemeDialog(this))
             R.id.menu_config_settings -> showDialogFragment(SettingsDialog(this))
             R.id.menu_auto_wrap -> {
-                putPrefBoolean(PreferKey.editAutoWrap, !AppConfig.editAutoWrap)
                 item.isChecked = !AppConfig.editAutoWrap
-                upEdit()
+                upEdit(null, null, !AppConfig.editAutoWrap)
+                putPrefBoolean(PreferKey.editAutoWrap, !AppConfig.editAutoWrap)
             }
             R.id.menu_log -> showDialogFragment<AppLogDialog>()
         }

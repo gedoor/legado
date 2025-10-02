@@ -9,6 +9,7 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.DialogEditSettingsBinding
 import io.legado.app.help.config.AppConfig
 import io.legado.app.ui.widget.number.NumberPickerDialog
+import io.legado.app.utils.putPrefBoolean
 import io.legado.app.utils.putPrefInt
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
@@ -27,6 +28,7 @@ class SettingsDialog(private val callBack: CallBack) :
     private fun initData() {
         binding.run {
             tvFontSize.text = fontSizeStr + AppConfig.editFontScale
+            cbAutoComplete.isChecked = AppConfig.editAutoComplete
         }
     }
 
@@ -40,21 +42,25 @@ class SettingsDialog(private val callBack: CallBack) :
                     .setMinValue(9)
                     .setValue(AppConfig.editFontScale)
                     .setCustomButton((R.string.btn_default_s)) {
-                        putPrefInt(PreferKey.editFontScale, 18)
-                        callBack.upEdit()
-                        tvFontSize.text = fontSizeStr + "18"
+                        putPrefInt(PreferKey.editFontScale, 16)
+                        callBack.upEdit(16, null, null)
+                        tvFontSize.text = fontSizeStr + "16"
                     }
                     .show {
                         putPrefInt(PreferKey.editFontScale, it)
-                        callBack.upEdit()
+                        callBack.upEdit(it, null, null)
                         tvFontSize.text = fontSizeStr + it
                     }
+            }
+            cbAutoComplete.setOnCheckedChangeListener { _, isChecked ->
+                putPrefBoolean(PreferKey.editAutoComplete, isChecked)
+                callBack.upEdit(null, isChecked, null)
             }
         }
     }
 
     interface CallBack {
-        fun upEdit()
+        fun upEdit(fontSize: Int?, autoComplete: Boolean?, autoWarp: Boolean?)
     }
 
 }

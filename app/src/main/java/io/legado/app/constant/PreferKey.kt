@@ -189,4 +189,5 @@ object PreferKey {
     const val contentSelectSpeakMod = "contentReadAloudMod"
     const val editFontScale = "editFontScale"
     const val editAutoWrap = "editAutoWrap"
+    const val editAutoComplete = "editAutoComplete"
 }
