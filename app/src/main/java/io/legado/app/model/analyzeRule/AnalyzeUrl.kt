@@ -564,12 +564,11 @@ class AnalyzeUrl(
         }
     }
 
-    fun getClient(isExo : Boolean = false): OkHttpClient {
+    private fun getClient(): OkHttpClient {
         val client = getProxyClient(proxy)
         val host = extractHostFromUrl(urlNoQuery)
         if (host.isNullOrEmpty()) return client
-        val addressCache = AppConfig.addressCache
-        val hasDns = addressCache.isNotEmpty() && (isExo || addressCache[host] != null)
+        val hasDns = AppConfig.addressCache[host] != null
         if (readTimeout == null && callTimeout == null && !hasDns) {
             return client
         }
@@ -583,7 +582,7 @@ class AnalyzeUrl(
             }
             if (hasDns) {
                 dns { hostname ->
-                    val cachedAddress = addressCache[hostname]
+                    val cachedAddress = AppConfig.addressCache[hostname]
                     cachedAddress ?: Dns.SYSTEM.lookup(hostname)
                 }
             }
