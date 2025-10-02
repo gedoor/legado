@@ -1,5 +1,6 @@
 package io.legado.app.ui.login
 
+import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.os.Bundle
 import android.text.InputType
@@ -40,6 +41,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
 import splitties.views.onClick
+import kotlin.collections.mutableMapOf
 import kotlin.text.lastIndexOf
 import kotlin.text.startsWith
 import kotlin.text.substring
@@ -50,6 +52,8 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
     private val binding by viewBinding(DialogLoginBinding::bind)
     private val viewModel by activityViewModels<SourceLoginViewModel>()
     private var lastClickTime: Long = 0
+    private var oKToClose = false
+    private var rowUis: List<RowUi>? = null
 
     companion object {
         private val loginUiData = mutableMapOf<String, List<RowUi>?>()
@@ -65,7 +69,7 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
         val loginJS = source.getLoginJs() ?: ""
         try {
             source.evalJS("$loginJS\n$jsStr") {
-                put("result", source.getLoginInfoMap())
+                put("result", viewModel.loginInfo)
                 put("book", viewModel.book)
                 put("chapter", viewModel.chapter)
             }.toString()
@@ -81,9 +85,10 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
         }.getOrNull()
     }
 
-    private fun buttonUi(source: BaseSource, loginUi: List<RowUi>?) {
-        val loginInfo = source.getLoginInfoMap()
-        loginUi?.forEachIndexed { index, rowUi ->
+    @SuppressLint("SetTextI18n")
+    private fun buttonUi(source: BaseSource, rowUis: List<RowUi>?) {
+        val loginInfo = viewModel.loginInfo
+        rowUis?.forEachIndexed { index, rowUi ->
             when (rowUi.type) {
                 RowUi.Type.text -> ItemSourceEditBinding.inflate(
                     layoutInflater,
@@ -119,17 +124,56 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
                     it.root.id = index + 1000
                     it.textView.text = rowUi.name
                     it.textView.setPadding(16.dpToPx())
-                    it.root.onClick { it ->
+                    it.root.onClick { view ->
                         val currentTime = System.currentTimeMillis()
-                        if (currentTime - lastClickTime < 300) {
-                            return@onClick // 按钮300ms防抖
+                        if (currentTime - lastClickTime < 200) {
+                            return@onClick // 按钮200ms防抖
                         }
                         lastClickTime = currentTime
-                        it.isSelected = true
-                        it.postDelayed({
-                            it.isSelected = false
+                        view.isSelected = true
+                        view.postDelayed({
+                            view.isSelected = false
                         }, 120) // 点击动效还原
-                        handleButtonClick(source, rowUi, loginUi)
+                        handleButtonClick(source, rowUi, rowUis)
+                    }
+                }
+
+                RowUi.Type.toggle -> ItemFilletTextBinding.inflate(
+                    layoutInflater,
+                    binding.root,
+                    false
+                ).let {
+                    binding.flexbox.addView(it.root)
+                    rowUi.style().apply(it.root)
+                    it.root.id = index + 1000
+                    val chars = rowUi.chars ?: arrayOf("chars is null")
+                    var char = loginInfo[rowUi.name] ?: rowUi.default ?: chars.getOrNull(0) ?: "chars is []"
+                    rowUi.default = char
+                    it.textView.text = char + rowUi.name
+                    it.textView.setPadding(16.dpToPx())
+                    it.root.onClick { view ->
+                        val currentTime = System.currentTimeMillis()
+                        if (currentTime - lastClickTime < 200) {
+                            return@onClick // 按钮200ms防抖
+                        }
+                        lastClickTime = currentTime
+                        val currentIndex = chars.indexOf(char)
+                        if (currentIndex == -1) {
+                            char = chars.getOrNull(0) ?: ""
+                            rowUi.default = char
+                            it.textView.text = char + rowUi.name
+                        }
+                        else {
+                            val nextIndex = (currentIndex + 1) % chars.size
+                            char = chars.getOrNull(nextIndex) ?: ""
+                            rowUi.default = char
+                            it.textView.text = char + rowUi.name
+                        }
+                        view.isSelected = true
+                        view.postDelayed({
+                            view.isSelected = false
+                        }, 120) // 点击动效还原
+                        handleButtonClick(source, rowUi, rowUis)
                     }
                 }
             }
@@ -137,7 +181,8 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
         binding.toolBar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.menu_ok -> {
-                    val loginData = getLoginData(loginUi)
+                    oKToClose = true
+                    val loginData = getLoginData(rowUis)
                     login(source, loginData)
                 }
 
@@ -166,8 +211,8 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
         } else {
             MD5Utils.md5Encode16(loginUiStr)
         }
-        var loginUi = loginUiData[key]
-        if (loginUi == null) {
+        rowUis = loginUiData[key]
+        if (rowUis == null) {
             val jsCode = loginUiStr.let {
                 when {
                     it.startsWith("@js:") -> it.substring(4)
@@ -177,19 +222,19 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
             }
             if (jsCode != null) {
                 lifecycleScope.launch(Main) {
-                    loginUi = loginUi(evalUiJs(jsCode))
-                    buttonUi(source, loginUi)
-                    loginUiData[key] = loginUi
+                    rowUis = loginUi(evalUiJs(jsCode))
+                    buttonUi(source, rowUis)
+                    loginUiData[key] = rowUis
                 }
             }
             else {
-                loginUi = loginUi(loginUiStr)
-                buttonUi(source, loginUi)
-                loginUiData[key] = loginUi
+                rowUis = loginUi(loginUiStr)
+                buttonUi(source, rowUis)
+                loginUiData[key] = rowUis
             }
         }
         else {
-            buttonUi(source, loginUi)
+            buttonUi(source, rowUis)
         }
         binding.toolBar.setBackgroundColor(primaryColor)
         binding.toolBar.title = getString(R.string.login_source, source.getTag())
@@ -197,7 +242,7 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
         binding.toolBar.menu.applyTint(requireContext())
     }
 
-    private fun handleButtonClick(source: BaseSource, rowUi: RowUi, loginUi: List<RowUi>) {
+    private fun handleButtonClick(source: BaseSource, rowUi: RowUi, rowUis: List<RowUi>) {
         lifecycleScope.launch(IO) {
             if (rowUi.action.isAbsUrl()) {
                 context?.openUrl(rowUi.action!!)
@@ -208,7 +253,7 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
                 kotlin.runCatching {
                     runScriptWithContext {
                         source.evalJS("$loginJS\n$buttonFunctionJS") {
-                            put("result", getLoginData(loginUi))
+                            put("result", getLoginData(rowUis))
                             put("book", viewModel.book)
                             put("chapter", viewModel.chapter)
                         }
@@ -221,15 +266,18 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
         }
     }
 
-    private fun getLoginData(loginUi: List<RowUi>?): HashMap<String, String> {
+    private fun getLoginData(rowUis: List<RowUi>?): HashMap<String, String> {
         val loginData = hashMapOf<String, String>()
-        loginUi?.forEachIndexed { index, rowUi ->
+        rowUis?.forEachIndexed { index, rowUi ->
             when (rowUi.type) {
                 "text", "password" -> {
                     val rowView = binding.root.findViewById<View>(index + 1000)
                     ItemSourceEditBinding.bind(rowView).editText.text?.let {
                         loginData[rowUi.name] = it.toString()
                     }
+                }
+                "toggle" -> {
+                    loginData[rowUi.name] = rowUi.default.toString()
                 }
             }
         }
@@ -262,6 +310,19 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
     }
 
     override fun onDismiss(dialog: DialogInterface) {
+        if (!oKToClose) {
+            execute {
+                val loginInfo = viewModel.loginInfo.toMutableMap()
+                rowUis?.forEachIndexed { index, rowUi ->
+                    when (rowUi.type) {
+                        "toggle" -> {
+                            loginInfo[rowUi.name] = rowUi.default.toString()
+                        }
+                    }
+                }
+                viewModel.source?.putLoginInfo(GSON.toJson(loginInfo))
+            }
+        }
         super.onDismiss(dialog)
         activity?.finish()
     }

@@ -6,21 +6,23 @@ import com.script.buildScriptBindings
 import com.script.rhino.RhinoScriptEngine
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppLog
+import io.legado.app.data.entities.rule.RowUi
 import io.legado.app.help.CacheManager
 import io.legado.app.help.JsExtensions
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.crypto.SymmetricCryptoAndroid
 import io.legado.app.help.http.CookieStore
+import io.legado.app.help.source.clearExploreKindsCache
 import io.legado.app.help.source.getShareScope
+import io.legado.app.model.SharedJsScope.remove
 import io.legado.app.utils.GSON
 import io.legado.app.utils.GSONStrict
+import io.legado.app.utils.fromJsonArray
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.has
-import org.intellij.lang.annotations.Language
-import io.legado.app.help.source.clearExploreKindsCache
-import io.legado.app.model.SharedJsScope.remove
 import io.legado.app.utils.isMainThread
 import kotlinx.coroutines.runBlocking
+import org.intellij.lang.annotations.Language
 
 /**
  * 可在js里调用,source.xxx()
@@ -171,8 +173,40 @@ interface BaseSource : JsExtensions {
         }
     }
 
+    private fun configureScriptBindings(): ScriptBindings.() -> Unit = {
+        put("result", mutableMapOf<String, String>())
+        put("book", null)
+        put("chapter", null)
+    }
+
     fun getLoginInfoMap(): Map<String, String> {
-        val json = getLoginInfo() ?: return mutableMapOf()
+        val json = getLoginInfo()
+        if (json == null) {
+            if (loginUi.isNullOrBlank()) {
+                return mutableMapOf()
+            } else {
+                val loginUiJson = loginUi?.let {
+                    when {
+                        it.startsWith("@js:") -> evalJS(
+                            it.substring(4),
+                            configureScriptBindings()
+                        ).toString()
+
+                        it.startsWith("<js>") -> evalJS(
+                            it.substring(4, it.lastIndexOf("<")),
+                            configureScriptBindings()
+                        ).toString()
+
+                        else -> loginUi
+                    }
+                }
+                val longinInfo = GSON.fromJsonArray<RowUi>(loginUiJson).getOrNull()
+                    ?.associate { it.name to (it.default ?: "") }?.also {
+                        putLoginInfo(GSON.toJson(it))
+                    }
+                return longinInfo ?: mutableMapOf()
+            }
+        }
         return GSON.fromJsonObject<Map<String, String>>(json).getOrNull() ?: mutableMapOf()
     }
 
