@@ -257,7 +257,8 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
                         scrollToBottom()
                         return
                     }
-                    val bottom = abs(lastView.bottom - recyclerView.height)
+                    val bottom =
+                        abs(lastView.bottom - recyclerView.height) - recyclerView.paddingBottom
                     if (bottom <= 1) {
                         scrollToBottom()
                     }
