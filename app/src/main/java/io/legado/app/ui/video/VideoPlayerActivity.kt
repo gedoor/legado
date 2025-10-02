@@ -19,14 +19,15 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.constant.SourceType
 import io.legado.app.databinding.ActivityVideoPlayerBinding
 import io.legado.app.help.exoplayer.ExoPlayerHelper
-import io.legado.app.model.AudioPlay
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.analyzeRule.AnalyzeUrl.Companion.getMediaItem
 import io.legado.app.service.VideoPlayService
 import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
+import io.legado.app.ui.rss.source.edit.RssSourceEditActivity
 import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.utils.StartActivityContract
 import io.legado.app.utils.sendToClip
@@ -43,8 +44,14 @@ class VideoPlayerActivity : VMBaseActivity<ActivityVideoPlayerBinding, VideoPlay
         ExoPlayerHelper.getExoPlayer(this)
     }
     private val playerView: PlayerView by lazy { binding.playerView }
-    private val sourceEditResult =
+    private val bookSourceEditResult =
         registerForActivityResult(StartActivityContract(BookSourceEditActivity::class.java)) {
+            if (it.resultCode == RESULT_OK) {
+                viewModel.upSource()
+            }
+        }
+    private val rssSourceEditResult =
+        registerForActivityResult(StartActivityContract(RssSourceEditActivity::class.java)) {
             if (it.resultCode == RESULT_OK) {
                 viewModel.upSource()
             }
@@ -134,18 +141,28 @@ class VideoPlayerActivity : VMBaseActivity<ActivityVideoPlayerBinding, VideoPlay
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_float_window -> startFloatingWindow()
-            R.id.menu_login -> AudioPlay.bookSource?.let {
-                startActivity<SourceLoginActivity> {
-                    putExtra("type", "bookSource")
-                    putExtra("key", it.bookSourceUrl)
-                    putExtra("bookUrl", AudioPlay.book?.bookUrl)
+            R.id.menu_login -> viewModel.source?.let {
+                when (viewModel.sourceType) {
+                    SourceType.book -> "bookSource"
+                    SourceType.rss -> "rssSource"
+                    else -> null
+                }?.let {
+                    startActivity<SourceLoginActivity> {
+                        putExtra("type", it)
+                        putExtra("key", viewModel.sourceKey)
+                    }
                 }
             }
 
             R.id.menu_copy_video_url -> sendToClip(viewModel.videoUrl)
             R.id.menu_edit_source -> viewModel.sourceKey?.let {
-                sourceEditResult.launch {
-                    putExtra("sourceUrl", it)
+                when (viewModel.sourceType) {
+                    SourceType.book -> bookSourceEditResult.launch {
+                        putExtra("sourceUrl", it)
+                    }
+                    SourceType.rss -> rssSourceEditResult.launch {
+                        putExtra("sourceUrl", it)
+                    }
                 }
             }
 
@@ -184,7 +201,7 @@ class VideoPlayerActivity : VMBaseActivity<ActivityVideoPlayerBinding, VideoPlay
             putExtra("isNew", false)
             putExtra("videoTitle", viewModel.videoTitle)
             putExtra("sourceKey", viewModel.sourceKey)
-            putExtra("type", viewModel.type)
+            putExtra("sourceType", viewModel.sourceType)
             putExtra("bookUrl", viewModel.bookUrl)
         }
         ContextCompat.startForegroundService(this, intent)

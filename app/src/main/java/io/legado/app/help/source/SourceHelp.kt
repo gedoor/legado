@@ -188,7 +188,7 @@ object SourceHelp {
                 putExtra("videoUrl", url)
                 putExtra("videoTitle", title)
                 putExtra("sourceKey", source?.getKey())
-                putExtra("type", source?.getSourceType())
+                putExtra("sourceType", source?.getSourceType())
             }
             ContextCompat.startForegroundService(appCtx, intent)
         } else {
@@ -196,7 +196,7 @@ object SourceHelp {
                 putExtra("videoUrl", url)
                 putExtra("videoTitle", title)
                 putExtra("sourceKey", source?.getKey())
-                putExtra("type", source?.getSourceType())
+                putExtra("sourceType", source?.getSourceType())
             }
         }
     }

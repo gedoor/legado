@@ -1,6 +1,5 @@
 package io.legado.app.service
 
-//import androidx.media3.ui.R as Media3R
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.PixelFormat
@@ -30,6 +29,7 @@ import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.IntentAction
 import io.legado.app.constant.NotificationId
+import io.legado.app.constant.SourceType
 import io.legado.app.data.appDb
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.help.exoplayer.ExoPlayerHelper
@@ -61,7 +61,7 @@ class VideoPlayService : BaseService() {
     private var isNew = true
     private var videoTitle: String? = null
     private var sourceKey: String? = null
-    private var type: String? = null
+    private var sourceType: Int? = null
     private var bookUrl: String? = null
     private var upNotificationJob: Coroutine<*>? = null
     private var isControlsVisible = false
@@ -71,8 +71,8 @@ class VideoPlayService : BaseService() {
 
     override fun onCreate() {
         super.onCreate()
-        startForegroundNotification()
         initMediaSession()
+        startForegroundNotification()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -88,7 +88,7 @@ class VideoPlayService : BaseService() {
             isNew = intent.getBooleanExtra("isNew", true)
             videoTitle = intent.getStringExtra("videoTitle")
             sourceKey = intent.getStringExtra("sourceKey")
-            type = intent.getStringExtra("type")
+            sourceType = intent.getIntExtra("sourceType", 0)
             bookUrl = intent.getStringExtra("bookUrl")
         }
         if (floatingView.parent == null) {
@@ -219,11 +219,13 @@ class VideoPlayService : BaseService() {
         )
 
         // 关联媒体会话到通知
-        builder.setStyle(
-            androidx.media.app.NotificationCompat.MediaStyle()
-                .setMediaSession(mediaSessionCompat?.sessionToken)
-                .setShowActionsInCompactView(0, 1)
-        )
+        mediaSessionCompat?.sessionToken?.let { token ->
+            builder.setStyle(
+                androidx.media.app.NotificationCompat.MediaStyle()
+                    .setMediaSession(token)
+                    .setShowActionsInCompactView(0, 1)
+            )
+        }
         builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
         return builder
     }
@@ -234,7 +236,7 @@ class VideoPlayService : BaseService() {
         windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
         val displayMetrics = resources.displayMetrics
         val screenWidth = displayMetrics.widthPixels
-        val windowWidth = screenWidth //(screenWidth * 2 / 3) // 默认宽为屏幕的2/3
+        val windowWidth = screenWidth //默认为屏幕宽
         val windowHeight = (windowWidth * 9 / 16) // 默认16:9比例
         // 设置窗口参数
         val params = WindowManager.LayoutParams(
@@ -373,7 +375,6 @@ class VideoPlayService : BaseService() {
 
 
     private fun toggleFullscreen() {
-        // 释放
         playerView.player = null
         val fullscreenIntent = Intent(this, VideoPlayerActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -381,6 +382,7 @@ class VideoPlayService : BaseService() {
             putExtra("isNew", false)
             putExtra("videoTitle", videoTitle)
             putExtra("sourceKey", sourceKey)
+            putExtra("sourceType", sourceType)
             putExtra("bookUrl", bookUrl)
         }
         startActivity(fullscreenIntent)
@@ -391,9 +393,9 @@ class VideoPlayService : BaseService() {
     private fun startPlayback() {
         if (isNew) {
             val source = sourceKey?.let { it ->
-                when (type) {
-                    "bookSource" -> appDb.bookSourceDao.getBookSource(it)
-                    "rssSource" -> appDb.rssSourceDao.getByKey(it)
+                when (sourceType) {
+                    SourceType.book -> appDb.bookSourceDao.getBookSource(it)
+                    SourceType.rss -> appDb.rssSourceDao.getByKey(it)
                     else -> null
                 }
             }
@@ -460,6 +462,7 @@ class VideoPlayService : BaseService() {
             if (playerView.player != null) {
                 ExoPlayerHelper.release()
             }
+            mediaSessionCompat?.release()
             upNotificationJob?.invokeOnCompletion {
                 notificationManager.cancel(NotificationId.VideoPlayService)
             }
