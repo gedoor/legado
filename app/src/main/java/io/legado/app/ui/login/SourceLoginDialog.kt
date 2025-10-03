@@ -123,6 +123,11 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
                     rowUi.style().apply(it.root)
                     it.root.id = index + 1000
                     it.textView.text = rowUi.name
+                    rowUi.viewName?.let { jsStr ->
+                        execute {
+                            evalUiJs(jsStr)
+                        }.onSuccess { name -> it.textView.text = name }
+                    }
                     it.textView.setPadding(16.dpToPx())
                     it.root.onClick { view ->
                         val currentTime = System.currentTimeMillis()
@@ -150,6 +155,11 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
                     var char = loginInfo[rowUi.name]?.takeIf { it -> it.isNotEmpty() } ?: rowUi.default ?: chars.getOrNull(0) ?: "chars is []"
                     rowUi.default = char
                     it.textView.text = char + rowUi.name
+                    rowUi.viewName?.let { jsStr ->
+                        execute {
+                            evalUiJs(jsStr)
+                        }.onSuccess { name -> it.textView.text = char + name }
+                    }
                     it.textView.setPadding(16.dpToPx())
                     it.root.onClick { view ->
                         val currentTime = System.currentTimeMillis()

@@ -73,6 +73,11 @@
         "type": "toggle",
         "chars": ["❎", "☑️"],
         "default": "☑️"
+    },
+    {
+        "name": "显示书名",
+        "viewName": "book?.name||'未获取到书名'",
+        "type": "button"
     }
 ]
 ```
