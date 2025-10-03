@@ -273,7 +273,7 @@ fun Book.updateTo(newBook: Book): Book {
         newBook.hasVariable(it)
     }
     newBook.variableMap.putAll(variableMap)
-    newBook.variable = GSON.toJson(variableMap)
+    newBook.variable = GSON.toJson(newBook.variableMap)
     return newBook
 }
 
