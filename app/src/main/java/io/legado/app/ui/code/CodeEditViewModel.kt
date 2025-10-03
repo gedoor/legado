@@ -16,6 +16,7 @@ import io.legado.app.utils.escapeForJs
 import io.legado.app.utils.printOnDebug
 import io.legado.app.utils.toastOnUi
 import org.eclipse.tm4e.core.registry.IThemeSource
+import org.jsoup.Jsoup
 
 class CodeEditViewModel(application: Application) : BaseViewModel(application) {
     companion object {
@@ -93,12 +94,12 @@ class CodeEditViewModel(application: Application) : BaseViewModel(application) {
                 return@execute text
             }
             val isHtml = languageName.contains("html")
-            val beautifyJs = FileProviderRegistry.getInstance()
-                .tryGetInputStream(if (isHtml) "beautify-html.min.js" else "beautify.min.js")
-                ?.use { inputStream -> inputStream.bufferedReader().readText() } ?: ""
             if (isHtml) {
-                return@execute webFormatCodeHtml(beautifyJs, text)
+                return@execute webFormatCodeHtml(text)
             }
+            val beautifyJs = FileProviderRegistry.getInstance()
+                .tryGetInputStream("beautify.min.js")
+                ?.use { inputStream -> inputStream.bufferedReader().readText() } ?: ""
             var start = 0
             val jsMatcher = JS_PATTERN.matcher(text)
             var result = ""
@@ -162,29 +163,13 @@ class CodeEditViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    private suspend fun webFormatCodeHtml(beautifyJs: String, html: String): String? {
+    private fun webFormatCodeHtml(html: String): String? {
         return try {
-            BackstageWebView(
-                url = null,
-                html = "<body>",
-                javaScript = """$beautifyJs
-                html_beautify("${html.escapeForJs()}", {
-                indent_size: 4,
-                indent_char: ' ',
-                indent_with_tabs: false,
-                preserve_newlines: true,
-                max_preserve_newlines: 5,
-                wrap_line_length: 80,
-                wrap_attributes: 'auto',
-                wrap_attributes_indent_size: 4,
-                unformatted: ['code', 'pre'],
-                indent_inner_html: true,
-                indent_scripts: 'keep',
-                extra_liners: []
-                });""".trimIndent(),
-                headerMap = null,
-                tag = null
-            ).getStrResponse().body
+            val doc = Jsoup.parse(html)
+            doc.outputSettings()
+                .indentAmount(4)
+                .prettyPrint(true)
+            doc.outerHtml()
         } catch (e: Exception) {
             context.toastOnUi("格式化失败")
             html

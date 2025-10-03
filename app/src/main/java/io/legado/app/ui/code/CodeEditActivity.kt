@@ -7,11 +7,13 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.EditText
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.core.view.isGone
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.textfield.TextInputEditText
 import io.github.rosemoe.sora.event.PublishSearchResultEvent
 import io.github.rosemoe.sora.event.SelectionChangeEvent
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
@@ -270,7 +272,22 @@ class CodeEditActivity :
     }
 
     override fun sendText(text: String) {
-        editor.insertText(text, text.length)
+        val view = window.decorView.findFocus()
+        if (view is TextInputEditText) {
+            val start = view.selectionStart
+            val end = view.selectionEnd
+            if (text.isNotEmpty()) {
+                val edit = view.editableText//获取EditText的文字
+                if (start < 0 || start >= edit.length) {
+                    edit.append(text)
+                } else {
+                    edit.replace(start, end, text)//光标所在位置插入文字
+                }
+            }
+        }
+        else {
+            editor.insertText(text, text.length)
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
