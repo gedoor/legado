@@ -24,6 +24,7 @@ import io.legado.app.help.source.getSourceType
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.analyzeRule.QueryTTF
+import io.legado.app.ui.association.OnLineImportActivity
 import io.legado.app.ui.association.OpenUrlConfirmActivity
 import io.legado.app.utils.ArchiveUtils
 import io.legado.app.utils.ChineseUtils
@@ -72,6 +73,7 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
+import androidx.core.net.toUri
 
 /**
  * js扩展类, 在js中通过java变量调用
@@ -1027,6 +1029,12 @@ interface JsExtensions : JsEncodeUtils {
     fun openUrl(url: String, mimeType: String? = null) {
         require(url.length < 64 * 1024) { "openUrl parameter url too long" }
         rhinoContext.ensureActive()
+        if (url.startsWith("legado://") || url.startsWith("yuedu://")) {
+            appCtx.startActivity<OnLineImportActivity> {
+                data = url.toUri()
+            }
+            return
+        }
         val source = getSource() ?: throw NoStackTraceException("openUrl source cannot be null")
         appCtx.startActivity<OpenUrlConfirmActivity> {
             putExtra("uri", url)
