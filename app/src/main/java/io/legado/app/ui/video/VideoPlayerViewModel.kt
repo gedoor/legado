@@ -9,26 +9,31 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.BaseSource
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
+import io.legado.app.data.entities.BookSource
 import io.legado.app.exception.NoStackTraceException
+import io.legado.app.help.book.ContentProcessor
+import io.legado.app.help.book.update
+import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.printOnDebug
 import io.legado.app.utils.toastOnUi
 
 class VideoPlayerViewModel(application: Application) : BaseViewModel(application) {
     var videoUrl = ""
-    var videoTitle = application.getString(R.string.video_play)
-    var source : BaseSource? = null
+    var videoTitle: String? = null
+    var source: BaseSource? = null
     var book: Book? = null
     var chapter: BookChapter? = null
-    var sourceKey : String? = null
-    var sourceType : Int? = null
-    var bookUrl : String? = null
+    var sourceKey: String? = null
+    var sourceType: Int? = null
+    var bookUrl: String? = null
+    var durChapterIndex = 0
     var isNew = true
     fun initData(intent: Intent, success: () -> Unit) {
         execute {
-            videoUrl = intent.getStringExtra("videoUrl")?.takeIf { it.isNotBlank() }
-                ?: throw NoStackTraceException("videoUrl is null or empty")
+            videoUrl = intent.getStringExtra("videoUrl") ?: ""
             isNew = intent.getBooleanExtra("isNew", true)
-            intent.getStringExtra("videoTitle")?.let { videoTitle = it }
+            videoTitle =
+                intent.getStringExtra("videoTitle") ?: context.getString(R.string.video_play)
             sourceKey = intent.getStringExtra("sourceKey")?.also {
                 sourceType = intent.getIntExtra("sourceType", 0)
                 source = when (sourceType) {
@@ -40,15 +45,16 @@ class VideoPlayerViewModel(application: Application) : BaseViewModel(application
             bookUrl = intent.getStringExtra("bookUrl")
             book = bookUrl?.let {
                 appDb.bookDao.getBook(it) ?: appDb.searchBookDao.getSearchBook(it)?.toBook()
+            }?.also {
+                durChapterIndex = it.durChapterIndex
+                source = appDb.bookSourceDao.getBookSource(it.origin)
             }
-            chapter = book?.let { appDb.bookChapterDao.getChapter(it.bookUrl, it.durChapterIndex) }
         }.onSuccess {
             success.invoke()
         }.onError {
             context.toastOnUi("error\n${it.localizedMessage}")
             it.printOnDebug()
         }
-
     }
 
     fun upSource() {
@@ -60,6 +66,38 @@ class VideoPlayerViewModel(application: Application) : BaseViewModel(application
                     else -> null
                 }
             }
+        }
+    }
+
+    fun upVideoUrl(success: (() -> Unit)? = null) {
+        execute {
+            if (source is BookSource) {
+                book?.let { b -> chapter?.let { c -> videoUrl = WebBook.getContentAwait(source as BookSource, b, c) } }
+            }
+        }.onSuccess {
+            success?.invoke()
+        }
+    }
+
+    fun saveRead(first: Boolean = false, success: (() -> Unit)? = null) {
+        val book = book ?: return
+        execute {
+            book.lastCheckCount = 0
+            book.durChapterTime = System.currentTimeMillis()
+            val chapterChanged = book.durChapterIndex != durChapterIndex
+            book.durChapterIndex = durChapterIndex
+            book.durChapterPos = 0
+            if (first || chapterChanged) {
+                chapter = appDb.bookChapterDao.getChapter(book.bookUrl, book.durChapterIndex)?.also {
+                    book.durChapterTitle = it.getDisplayTitle(
+                        ContentProcessor.get(book.name, book.origin).getTitleReplaceRules(),
+                        book.getUseReplaceRule()
+                    )
+                }
+            }
+            book.update()
+        }.onSuccess {
+            success?.invoke()
         }
     }
 }

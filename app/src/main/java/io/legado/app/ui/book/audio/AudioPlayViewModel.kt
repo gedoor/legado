@@ -35,7 +35,7 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
             }
             initBook(targetBook)
         }.onFinally {
-            saveRead()
+            saveRead(true)
         }
     }
 

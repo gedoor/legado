@@ -32,4 +32,17 @@
 
     </androidx.media3.ui.AspectRatioFrameLayout>
 
+    <io.legado.app.ui.widget.image.ImageButton
+        android:id="@+id/iv_chapter"
+        android:layout_width="46dp"
+        android:layout_height="46dp"
+        android:background="@drawable/selector_circle_btn_bg"
+        android:contentDescription="@string/chapter_list"
+        android:padding="5dp"
+        android:src="@drawable/ic_chapter_list"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:tint="@color/md_white_1000"
+        tools:ignore="ImageContrastCheck,MissingConstraints" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

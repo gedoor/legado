@@ -363,7 +363,7 @@ object AudioPlay : CoroutineScope by MainScope() {
         }
     }
 
-    fun saveRead() {
+    fun saveRead(first: Boolean = false) {
         val book = book ?: return
         Coroutine.async {
             book.lastCheckCount = 0
@@ -371,7 +371,7 @@ object AudioPlay : CoroutineScope by MainScope() {
             val chapterChanged = book.durChapterIndex != durChapterIndex
             book.durChapterIndex = durChapterIndex
             book.durChapterPos = durChapterPos
-            if (chapterChanged) {
+            if (first || chapterChanged) {
                 appDb.bookChapterDao.getChapter(book.bookUrl, book.durChapterIndex)?.let {
                     book.durChapterTitle = it.getDisplayTitle(
                         ContentProcessor.get(book.name, book.origin).getTitleReplaceRules(),

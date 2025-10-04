@@ -27,14 +27,18 @@ import io.legado.app.model.analyzeRule.AnalyzeUrl.Companion.getMediaItem
 import io.legado.app.service.VideoPlayService
 import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
+import io.legado.app.ui.book.toc.TocActivityResult
 import io.legado.app.ui.rss.source.edit.RssSourceEditActivity
 import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.utils.StartActivityContract
+import io.legado.app.utils.gone
 import io.legado.app.utils.sendToClip
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.startActivity
+import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.toggleSystemBar
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import io.legado.app.utils.visible
 
 class VideoPlayerActivity : VMBaseActivity<ActivityVideoPlayerBinding, VideoPlayerViewModel>() {
     override val binding by viewBinding(ActivityVideoPlayerBinding::inflate)
@@ -56,6 +60,19 @@ class VideoPlayerActivity : VMBaseActivity<ActivityVideoPlayerBinding, VideoPlay
                 viewModel.upSource()
             }
         }
+    private val tocActivityResult = registerForActivityResult(TocActivityResult()) {
+        it?.let {
+            if (it.first != viewModel.durChapterIndex) {
+                viewModel.durChapterIndex = it.first
+                viewModel.saveRead {
+                    viewModel.upVideoUrl {
+                        upPlayer()
+                        upView()
+                    }
+                }
+            }
+        }
+    }
     private var isFullScreen = false
     private val originalOrientation = requestedOrientation
     private var originalSpeed = 1.0f
@@ -77,10 +94,20 @@ class VideoPlayerActivity : VMBaseActivity<ActivityVideoPlayerBinding, VideoPlay
     @OptIn(UnstableApi::class)
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         viewModel.initData(intent) {
-            setupPlayer()
-            setupPlayerView()
-            binding.titleBar.title = viewModel.videoTitle
+            viewModel.saveRead(true) {
+                viewModel.upVideoUrl {
+                    if (viewModel.videoUrl.isBlank()) {
+                        toastOnUi("视频链接为空")
+                        finish()
+                        return@upVideoUrl
+                    }
+                    setupPlayer()
+                    setupPlayerView()
+                    upView()
+                }
+            }
         }
+        initView()
         onBackPressedDispatcher.addCallback(this) {
             if (isFullScreen) {
                 playerView.setFullscreenButtonState(false)
@@ -90,17 +117,30 @@ class VideoPlayerActivity : VMBaseActivity<ActivityVideoPlayerBinding, VideoPlay
         }
     }
 
+    private fun initView() {
+        binding.ivChapter.setOnClickListener {
+            viewModel.bookUrl?.let {
+                tocActivityResult.launch(it)
+            }
+        }
+    }
+    private fun upView() {
+        binding.titleBar.title = viewModel.book?.durChapterTitle ?: viewModel.videoTitle
+    }
+
     private fun toggleFullScreen() {
         isFullScreen = !isFullScreen
         toggleSystemBar(!isFullScreen)
         val layoutParams = playerView.layoutParams
         requestedOrientation = if (isFullScreen) {
             supportActionBar?.hide()
+            binding.ivChapter.gone()
             layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
             playerView.layoutParams = layoutParams
             ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
         } else {
             supportActionBar?.show()
+            binding.ivChapter.visible()
             layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
             playerView.layoutParams = layoutParams
             originalOrientation
@@ -171,7 +211,6 @@ class VideoPlayerActivity : VMBaseActivity<ActivityVideoPlayerBinding, VideoPlay
         return super.onCompatOptionsItemSelected(item)
     }
 
-    @OptIn(UnstableApi::class)
     private fun setupPlayer() {
         exoPlayer.run {
             playerView.player = this
@@ -186,6 +225,24 @@ class VideoPlayerActivity : VMBaseActivity<ActivityVideoPlayerBinding, VideoPlay
                     ).getMediaItem()
                 )
             }
+            prepare()
+            // 自动开始播放
+            playWhenReady = true
+        }
+    }
+    private fun upPlayer() {
+        exoPlayer.run {
+            stop()
+            clearMediaItems()
+            setMediaItem(
+                AnalyzeUrl(
+                    viewModel.videoUrl,
+                    source = viewModel.source,
+                    ruleData = viewModel.book,
+                    chapter = viewModel.chapter,
+                    coroutineContext = viewModel.viewModelScope.coroutineContext
+                ).getMediaItem()
+            )
             prepare()
             // 自动开始播放
             playWhenReady = true

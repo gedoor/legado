@@ -296,6 +296,7 @@ class BookSourceEditActivity :
             binding.cbIsEnableCookie.isChecked = it.enabledCookieJar ?: false
             binding.spType.setSelection(
                 when (it.bookSourceType) {
+                    BookSourceType.video -> 4
                     BookSourceType.file -> 3
                     BookSourceType.image -> 2
                     BookSourceType.audio -> 1
@@ -421,6 +422,7 @@ class BookSourceEditActivity :
         source.enabledExplore = binding.cbIsEnableExplore.isChecked
         source.enabledCookieJar = binding.cbIsEnableCookie.isChecked
         source.bookSourceType = when (binding.spType.selectedItemPosition) {
+            4 -> BookSourceType.video
             3 -> BookSourceType.file
             2 -> BookSourceType.image
             1 -> BookSourceType.audio
