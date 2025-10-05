@@ -22,6 +22,7 @@ class VideoPlayerViewModel(application: Application) : BaseViewModel(application
     var videoTitle: String? = null
     var source: BaseSource? = null
     var book: Book? = null
+    var toc: List<BookChapter>? = null
     var chapter: BookChapter? = null
     var sourceKey: String? = null
     var sourceType: Int? = null
@@ -44,6 +45,7 @@ class VideoPlayerViewModel(application: Application) : BaseViewModel(application
             }
             bookUrl = intent.getStringExtra("bookUrl")
             book = bookUrl?.let {
+                toc = appDb.bookChapterDao.getChapterList(it)
                 appDb.bookDao.getBook(it) ?: appDb.searchBookDao.getSearchBook(it)?.toBook()
             }?.also {
                 durChapterIndex = it.durChapterIndex
@@ -80,24 +82,35 @@ class VideoPlayerViewModel(application: Application) : BaseViewModel(application
     }
 
     fun saveRead(first: Boolean = false, success: (() -> Unit)? = null) {
-        val book = book ?: return
         execute {
-            book.lastCheckCount = 0
-            book.durChapterTime = System.currentTimeMillis()
-            val chapterChanged = book.durChapterIndex != durChapterIndex
-            book.durChapterIndex = durChapterIndex
-            book.durChapterPos = 0
-            if (first || chapterChanged) {
-                chapter = appDb.bookChapterDao.getChapter(book.bookUrl, book.durChapterIndex)?.also {
-                    book.durChapterTitle = it.getDisplayTitle(
-                        ContentProcessor.get(book.name, book.origin).getTitleReplaceRules(),
-                        book.getUseReplaceRule()
-                    )
+            book?.let { book ->
+                book.lastCheckCount = 0
+                book.durChapterTime = System.currentTimeMillis()
+                val chapterChanged = book.durChapterIndex != durChapterIndex
+                book.durChapterIndex = durChapterIndex
+                book.durChapterPos = 0
+                if (first || chapterChanged) {
+                    chapter = toc?.getOrNull(durChapterIndex)?.also {
+                        book.durChapterTitle = it.getDisplayTitle(
+                            ContentProcessor.get(book.name, book.origin).getTitleReplaceRules(),
+                            book.getUseReplaceRule()
+                        )
+                    }
                 }
+                book.update()
             }
-            book.update()
         }.onSuccess {
             success?.invoke()
         }
+    }
+
+    fun upDurIndex (offset: Int): Boolean {
+        val index = durChapterIndex + offset
+        if (index < 0 || index >= (toc?.size ?: 0)) {
+            context.toastOnUi("没有更多章节了")
+            return false
+        }
+        durChapterIndex = index
+        return true
     }
 }

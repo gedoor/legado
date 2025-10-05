@@ -1272,4 +1272,5 @@
     <string name="video">视频</string>
     <string name="float_window">悬浮窗</string>
     <string name="video_play">视频播放</string>
+    <string name="no_more_chapter">没有更多章节</string>
 </resources>

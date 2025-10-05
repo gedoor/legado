@@ -9,11 +9,14 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.annotation.OptIn
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewModelScope
+import androidx.media3.common.Player
+import androidx.media3.common.VideoSize
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
@@ -28,8 +31,8 @@ import io.legado.app.service.VideoPlayService
 import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.book.toc.TocActivityResult
-import io.legado.app.ui.rss.source.edit.RssSourceEditActivity
 import io.legado.app.ui.login.SourceLoginActivity
+import io.legado.app.ui.rss.source.edit.RssSourceEditActivity
 import io.legado.app.utils.StartActivityContract
 import io.legado.app.utils.gone
 import io.legado.app.utils.sendToClip
@@ -46,6 +49,38 @@ class VideoPlayerActivity : VMBaseActivity<ActivityVideoPlayerBinding, VideoPlay
 
     private val exoPlayer: ExoPlayer by lazy {
         ExoPlayerHelper.getExoPlayer(this)
+    }
+    private val playerListener = object : Player.Listener {
+        override fun onVideoSizeChanged(videoSize: VideoSize) {
+            calculateAspectRatio(videoSize)
+        }
+        override fun onPlaybackStateChanged(playbackState: Int) {
+            when (playbackState) {
+                Player.STATE_ENDED -> {
+                    window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                    if (viewModel.upDurIndex(1)) {
+                        viewModel.saveRead {
+                            viewModel.upVideoUrl {
+                                if (viewModel.chapter != null) {
+                                    upPlayer()
+                                    upView()
+                                }
+                            }
+                        }
+                    }
+                }
+
+                Player.STATE_READY -> {
+                    window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                }
+
+                Player.STATE_BUFFERING -> {
+                }
+
+                Player.STATE_IDLE -> {
+                }
+            }
+        }
     }
     private val playerView: PlayerView by lazy { binding.playerView }
     private val bookSourceEditResult =
@@ -74,6 +109,7 @@ class VideoPlayerActivity : VMBaseActivity<ActivityVideoPlayerBinding, VideoPlay
         }
     }
     private var isFullScreen = false
+    private var aspectRatio = 1f
     private val originalOrientation = requestedOrientation
     private var originalSpeed = 1.0f
     private var isLongPressTriggered = false
@@ -124,6 +160,7 @@ class VideoPlayerActivity : VMBaseActivity<ActivityVideoPlayerBinding, VideoPlay
             }
         }
     }
+
     private fun upView() {
         binding.titleBar.title = viewModel.book?.durChapterTitle ?: viewModel.videoTitle
     }
@@ -137,7 +174,11 @@ class VideoPlayerActivity : VMBaseActivity<ActivityVideoPlayerBinding, VideoPlay
             binding.ivChapter.gone()
             layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
             playerView.layoutParams = layoutParams
-            ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+            if (aspectRatio > 1.2) {
+                ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+            } else {
+                ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+            }
         } else {
             supportActionBar?.show()
             binding.ivChapter.visible()
@@ -200,6 +241,7 @@ class VideoPlayerActivity : VMBaseActivity<ActivityVideoPlayerBinding, VideoPlay
                     SourceType.book -> bookSourceEditResult.launch {
                         putExtra("sourceUrl", it)
                     }
+
                     SourceType.rss -> rssSourceEditResult.launch {
                         putExtra("sourceUrl", it)
                     }
@@ -212,24 +254,13 @@ class VideoPlayerActivity : VMBaseActivity<ActivityVideoPlayerBinding, VideoPlay
     }
 
     private fun setupPlayer() {
-        exoPlayer.run {
-            playerView.player = this
-            if (viewModel.isNew) {
-                setMediaItem(
-                    AnalyzeUrl(
-                        viewModel.videoUrl,
-                        source = viewModel.source,
-                        ruleData = viewModel.book,
-                        chapter = viewModel.chapter,
-                        coroutineContext = viewModel.viewModelScope.coroutineContext
-                    ).getMediaItem()
-                )
-            }
-            prepare()
-            // 自动开始播放
-            playWhenReady = true
+        playerView.player = exoPlayer
+        if (viewModel.isNew) {
+            upPlayer()
         }
+        exoPlayer.addListener(playerListener)
     }
+
     private fun upPlayer() {
         exoPlayer.run {
             stop()
@@ -249,8 +280,25 @@ class VideoPlayerActivity : VMBaseActivity<ActivityVideoPlayerBinding, VideoPlay
         }
     }
 
+    private fun calculateAspectRatio(videoSize: VideoSize) {
+        if (videoSize.width > 0 && videoSize.height > 0) {
+            try {
+                // 视频内容帧宽高比
+                var ratio = videoSize.width.toFloat() / videoSize.height.toFloat()
+                // 像素宽高比校正
+                val pixelRatio = videoSize.pixelWidthHeightRatio
+                if (pixelRatio > 0) {
+                    ratio *= pixelRatio
+                }
+                aspectRatio = ratio
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
     private fun startFloatingWindow() {
-        //解绑
+        exoPlayer.removeListener(playerListener)
         playerView.player = null
         // 启动悬浮窗服务
         val intent = Intent(this, VideoPlayService::class.java).apply {
@@ -273,7 +321,7 @@ class VideoPlayerActivity : VMBaseActivity<ActivityVideoPlayerBinding, VideoPlay
 
     override fun onDestroy() {
         super.onDestroy()
-        // 释放
+        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         if (playerView.player != null) {
             ExoPlayerHelper.release()
         }

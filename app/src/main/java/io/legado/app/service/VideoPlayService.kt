@@ -68,6 +68,39 @@ class VideoPlayService : BaseService() {
     private val exoPlayer: ExoPlayer by lazy {
         ExoPlayerHelper.getExoPlayer(this)
     }
+    private val playerListener = object : Player.Listener {
+        override fun onVideoSizeChanged(videoSize: VideoSize) {
+            adjustWindowSize(videoSize)
+        }
+
+        override fun onPlaybackStateChanged(playbackState: Int) {
+            when (playbackState) {
+                Player.STATE_ENDED -> {
+                    // 播放结束自动关闭悬浮窗
+                    stopSelf()
+                }
+
+                Player.STATE_READY -> {
+                    // 播放准备就绪后也调整窗口大小
+                    adjustWindowSize(exoPlayer.videoSize)
+                    // 更新媒体会话元数据
+                    updateMediaMetadata()
+                    // 更新播放状态
+                    updateMediaSessionState()
+                }
+
+                Player.STATE_BUFFERING -> {
+                }
+
+                Player.STATE_IDLE -> {
+                }
+            }
+        }
+
+        override fun onIsPlayingChanged(isPlaying: Boolean) {
+            updateMediaSessionState()
+        }
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -95,7 +128,9 @@ class VideoPlayService : BaseService() {
             createFloatingWindow()
         }
         setupPlayer()
-        startPlayback()
+        if (isNew) {
+            startPlayback()
+        }
         return super.onStartCommand(intent, flags, startId)
     }
 
@@ -104,39 +139,7 @@ class VideoPlayService : BaseService() {
             playerView.player = this
             playWhenReady = true
             repeatMode = Player.REPEAT_MODE_OFF
-            addListener(object : Player.Listener {
-                override fun onVideoSizeChanged(videoSize: VideoSize) {
-                    adjustWindowSize(videoSize)
-                }
-
-                override fun onPlaybackStateChanged(playbackState: Int) {
-                    when (playbackState) {
-                        Player.STATE_ENDED -> {
-                            // 播放结束自动关闭悬浮窗
-                            stopSelf()
-                        }
-
-                        Player.STATE_READY -> {
-                            // 播放准备就绪后也调整窗口大小
-                            adjustWindowSize(exoPlayer.videoSize)
-                            // 更新媒体会话元数据
-                            updateMediaMetadata()
-                            // 更新播放状态
-                            updateMediaSessionState()
-                        }
-
-                        Player.STATE_BUFFERING -> {
-                        }
-
-                        Player.STATE_IDLE -> {
-                        }
-                    }
-                }
-
-                override fun onIsPlayingChanged(isPlaying: Boolean) {
-                    updateMediaSessionState()
-                }
-            })
+            addListener(playerListener)
         }
     }
 
@@ -375,6 +378,7 @@ class VideoPlayService : BaseService() {
 
 
     private fun toggleFullscreen() {
+        exoPlayer.removeListener(playerListener)
         playerView.player = null
         val fullscreenIntent = Intent(this, VideoPlayerActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -391,28 +395,26 @@ class VideoPlayService : BaseService() {
     }
 
     private fun startPlayback() {
-        if (isNew) {
-            val source = sourceKey?.let { it ->
-                when (sourceType) {
-                    SourceType.book -> appDb.bookSourceDao.getBookSource(it)
-                    SourceType.rss -> appDb.rssSourceDao.getByKey(it)
-                    else -> null
-                }
+        val source = sourceKey?.let { it ->
+            when (sourceType) {
+                SourceType.book -> appDb.bookSourceDao.getBookSource(it)
+                SourceType.rss -> appDb.rssSourceDao.getByKey(it)
+                else -> null
             }
-            val book = bookUrl?.let { it ->
-                appDb.bookDao.getBook(it) ?: appDb.searchBookDao.getSearchBook(it)?.toBook()
-            }
-            val chapter =
-                book?.let { it -> appDb.bookChapterDao.getChapter(it.bookUrl, it.durChapterIndex) }
-            exoPlayer.setMediaItem(
-                AnalyzeUrl(
-                    videoUrl,
-                    source = source,
-                    ruleData = book,
-                    chapter = chapter
-                ).getMediaItem()
-            )
         }
+        val book = bookUrl?.let { it ->
+            appDb.bookDao.getBook(it) ?: appDb.searchBookDao.getSearchBook(it)?.toBook()
+        }
+        val chapter =
+            book?.let { it -> appDb.bookChapterDao.getChapter(it.bookUrl, it.durChapterIndex) }
+        exoPlayer.setMediaItem(
+            AnalyzeUrl(
+                videoUrl,
+                source = source,
+                ruleData = book,
+                chapter = chapter
+            ).getMediaItem()
+        )
         exoPlayer.prepare()
         exoPlayer.play()
     }
