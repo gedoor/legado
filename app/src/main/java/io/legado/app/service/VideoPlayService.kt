@@ -350,7 +350,7 @@ class VideoPlayService : BaseService() {
             }
         })
         dragLayer.setOnLongClickListener {
-            exoPlayer.setPlaybackSpeed(2.0f)
+            exoPlayer.setPlaybackSpeed(3.0f)
             true
         }
     }

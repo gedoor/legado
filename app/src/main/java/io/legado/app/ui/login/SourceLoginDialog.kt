@@ -167,6 +167,7 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
                             return@onClick // 按钮200ms防抖
                         }
                         lastClickTime = currentTime
+                        view.isSelected = true
                         val currentIndex = chars.indexOf(char)
                         if (currentIndex == -1) {
                             char = chars.getOrNull(0) ?: ""
@@ -179,7 +180,6 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
                             rowUi.default = char
                             it.textView.text = char + rowUi.name
                         }
-                        view.isSelected = true
                         view.postDelayed({
                             view.isSelected = false
                         }, 120) // 点击动效还原

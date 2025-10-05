@@ -3,6 +3,7 @@ package io.legado.app.ui.video
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.GestureDetector
 import android.view.Menu
@@ -185,6 +186,23 @@ class VideoPlayerActivity : VMBaseActivity<ActivityVideoPlayerBinding, VideoPlay
             layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
             playerView.layoutParams = layoutParams
             originalOrientation
+        }
+    }
+
+    @Suppress("DEPRECATION")
+    @SuppressLint("SwitchIntDef")
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        when (newConfig.orientation) {
+            Configuration.ORIENTATION_LANDSCAPE -> {
+                window.clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN)
+                window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+            }
+
+            Configuration.ORIENTATION_PORTRAIT -> {
+                window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+                window.addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN)
+            }
         }
     }
 
