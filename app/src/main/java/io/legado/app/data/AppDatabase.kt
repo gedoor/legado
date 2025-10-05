@@ -203,6 +203,13 @@ abstract class AppDatabase : RoomDatabase() {
                 """.trimIndent()
                 db.execSQL(insertBookGroupLocalNoneGroupSql)
                 @Language("sql")
+                val insertBookGroupVideoSql = """
+                    insert into book_groups(groupId, groupName, 'order', show) 
+                    select ${BookGroup.IdVideo}, '视频', -5, 1
+                    where not exists (select * from book_groups where groupId = ${BookGroup.IdVideo})
+                    """.trimIndent()
+                db.execSQL(insertBookGroupVideoSql)
+                @Language("sql")
                 val insertBookGroupErrorSql = """
                     insert into book_groups(groupId, groupName, 'order', show) 
                     select ${BookGroup.IdError}, '更新失败', -1, 1

@@ -225,7 +225,6 @@ fun Book.isType(@BookType.Type bookType: Int): Boolean = type and bookType > 0
 fun Book.upType() {
     if (type < 4) {
         type = when (type) {
-            BookSourceType.video -> BookType.video
             BookSourceType.image -> BookType.image
             BookSourceType.audio -> BookType.audio
             BookSourceType.file -> BookType.webFile

@@ -26,6 +26,7 @@ interface BookDao {
             BookGroup.IdAudio -> flowAudio()
             BookGroup.IdNetNone -> flowNetNoGroup()
             BookGroup.IdLocalNone -> flowLocalNoGroup()
+            BookGroup.IdVideo -> flowVideo()
             BookGroup.IdError -> flowUpdateError()
             else -> flowByUserGroup(groupId)
         }.map { list ->
@@ -49,12 +50,15 @@ interface BookDao {
     @Query("SELECT * FROM books WHERE type & ${BookType.audio} > 0")
     fun flowAudio(): Flow<List<Book>>
 
+    @Query("SELECT * FROM books WHERE type & ${BookType.video} > 0")
+    fun flowVideo(): Flow<List<Book>>
+
     @Query("SELECT * FROM books WHERE type & ${BookType.local} > 0")
     fun flowLocal(): Flow<List<Book>>
 
     @Query(
         """
-        select * from books where type & ${BookType.audio} = 0 and type & ${BookType.local} = 0
+        select * from books where type & ${BookType.audio} = 0 and type & ${BookType.local} = 0 and type & ${BookType.video} = 0
         and ((SELECT sum(groupId) FROM book_groups where groupId > 0) & `group`) = 0
         """
     )
