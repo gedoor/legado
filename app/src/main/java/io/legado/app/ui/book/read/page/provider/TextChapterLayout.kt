@@ -39,6 +39,10 @@ import android.util.Size
 import io.legado.app.constant.AppPattern.noWordCountRegex
 import io.legado.app.data.appDb
 import io.legado.app.help.book.isOnLineTxt
+import io.legado.app.ui.book.read.page.provider.ChapterProvider.reviewChar
+import io.legado.app.ui.book.read.page.provider.ChapterProvider.srcReplaceChar
+import io.legado.app.ui.book.read.page.provider.ChapterProvider.srcReplaceCharC
+import io.legado.app.ui.book.read.page.provider.ChapterProvider.srcReplaceCharD
 import io.legado.app.utils.StringUtils
 
 class TextChapterLayout(
@@ -213,9 +217,9 @@ class TextChapterLayout(
                 if (reviewImg != null) {
                     srcList.add(reviewImg)
                     reviewTxt = if (reviewImg.contains("TEXT")) {
-                        ChapterProvider.reviewChar
+                        reviewChar
                     } else {
-                        ChapterProvider.srcReplaceChar
+                        srcReplaceChar
                     }
                 }
                 setTypeText(
@@ -246,16 +250,16 @@ class TextChapterLayout(
         var wordCount = 0
         contents.forEach { content ->
             coroutineContext.ensureActive()
+            var text = content.replace(srcReplaceCharC, srcReplaceCharD)
             if (isTextImageStyle) {
                 //图片样式为文字嵌入类型
-                var text = content.replace(ChapterProvider.srcReplaceChar, "丨") //▣
                 val srcList = LinkedList<String>()
                 sb.setLength(0)
                 val matcher = AppPattern.imgPattern.matcher(text)
                 while (matcher.find()) {
                     matcher.group(1)?.let { src ->
                         srcList.add(src)
-                        matcher.appendReplacement(sb, ChapterProvider.srcReplaceChar)
+                        matcher.appendReplacement(sb, srcReplaceChar)
                     }
                 }
                 matcher.appendTail(sb)
@@ -280,7 +284,6 @@ class TextChapterLayout(
                 sb.setLength(0)
                 var isFirstLine = true
                 if (content.contains("<img")) {
-                    val text = content.replace(ChapterProvider.srcReplaceChar, "丨")
                     val matcher = AppPattern.imgPattern.matcher(text)
                     while (matcher.find()) {
                         coroutineContext.ensureActive()
@@ -319,9 +322,9 @@ class TextChapterLayout(
                         if (isSmallImage) {
                             sb.append(
                                 if (iStyle == "TEXT")
-                                    ChapterProvider.reviewChar
+                                    reviewChar
                                 else
-                                    ChapterProvider.srcReplaceChar
+                                    srcReplaceChar
                             )
                             srcList.add(imgSrc)
                         } else {
@@ -361,12 +364,12 @@ class TextChapterLayout(
                     val textAfter = content.substring(start, content.length)
                     sb.append(textAfter)
                 }
-                val text = sb.toString()
+                text = sb.toString()
                 if (text.isNotBlank()) {
                     wordCount += text.replace(noWordCountRegex,"").length
                     setTypeText(
                         book,
-                        if (AppConfig.enableReview) text + ChapterProvider.reviewChar else text,
+                        if (AppConfig.enableReview) text + reviewChar else text,
                         contentPaint,
                         contentPaintTextHeight,
                         contentPaintFontMetrics,
@@ -780,7 +783,7 @@ class TextChapterLayout(
         srcList: LinkedList<String>?
     ) {
         val column = when {
-            !srcList.isNullOrEmpty() && (char == ChapterProvider.srcReplaceChar || char == ChapterProvider.reviewChar && isLineEnd) -> {
+            !srcList.isNullOrEmpty() && (char == srcReplaceChar || char == reviewChar && isLineEnd) -> {
                 val src = srcList.removeFirst()
                 ImageProvider.cacheImage(book, src, ReadBook.bookSource)
                 ImageColumn(
