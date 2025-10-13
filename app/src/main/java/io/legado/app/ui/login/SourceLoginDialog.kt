@@ -282,8 +282,8 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
             when (rowUi.type) {
                 "text", "password" -> {
                     val rowView = binding.root.findViewById<View>(index + 1000)
-                    ItemSourceEditBinding.bind(rowView).editText.text?.let {
-                        loginData[rowUi.name] = it.toString()
+                    ItemSourceEditBinding.bind(rowView).editText.text.let {
+                        loginData[rowUi.name] = it?.toString() ?: "" //没文本的时候存空字符串,而不是删除loginInfo
                     }
                 }
                 "toggle" -> {
