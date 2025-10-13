@@ -330,7 +330,11 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
                         }
                     }
                 }
-                viewModel.source?.putLoginInfo(GSON.toJson(loginInfo))
+                if (loginInfo.isEmpty()) {
+                    viewModel.source?.removeLoginInfo()
+                } else {
+                    viewModel.source?.putLoginInfo(GSON.toJson(loginInfo))
+                }
             }
         }
         super.onDismiss(dialog)
