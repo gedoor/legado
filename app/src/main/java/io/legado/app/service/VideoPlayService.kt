@@ -70,7 +70,7 @@ class VideoPlayService : BaseService() {
     private val activityLifecycleCallbacks = object : Application.ActivityLifecycleCallbacks {
         override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
             if (activity is VideoPlayerActivity) {
-                // 确保 Activity 创建完成后才停止服务,留够事件复制播放器
+                // 确保 Activity 创建完成后才停止服务,留够时间复制播放器
                 stopSelf()
             }
         }
@@ -272,8 +272,14 @@ class VideoPlayService : BaseService() {
     private fun createFloatingWindow() {
         windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
         val screenWidth = resources.displayMetrics.widthPixels
-        val windowWidth = screenWidth * 3 / 4 //默认为屏幕3/4宽
-        val windowHeight = (windowWidth * 9 / 16) // 默认16:9比例
+        val videoWidth = playerView.currentVideoWidth
+        val videoHeight = playerView.currentVideoHeight
+        val windowWidth = if (videoHeight > videoWidth * 1.2) {
+            screenWidth / 2 //竖屏时为屏幕的1/2
+        } else {
+            screenWidth * 3 / 4 //默认为屏幕3/4宽
+        }
+        val windowHeight = if (videoWidth > 0 && videoHeight > 0) (windowWidth * videoHeight / videoWidth) else (windowWidth * 9 / 16) // 默认16:9比例
         // 设置窗口参数
         params = WindowManager.LayoutParams(
             windowWidth,
@@ -357,6 +363,21 @@ class VideoPlayService : BaseService() {
                 updateMediaMetadata()
                 // 更新播放状态
                 updateMediaSessionState()
+                //根据实际视频比例再次调整悬浮窗高度,来适配竖屏视频。如果是全屏切换过来的时候不会触发
+                val videoWidth = playerView.currentVideoWidth
+                val videoHeight = playerView.currentVideoHeight
+                val screenWidth = resources.displayMetrics.widthPixels
+                if (videoWidth > 0 && videoHeight > 0) {
+                    val parentWidth = if (videoHeight > videoWidth * 1.2) {
+                        screenWidth / 2 //竖屏时为屏幕的1/2
+                    } else {
+                        params.width
+                    }
+                    val aspectRatio = videoHeight.toFloat() / videoWidth.toFloat()
+                    val height = (parentWidth * aspectRatio).toInt()
+                    params.height = height
+                    windowManager.updateViewLayout(floatingView, params)
+                }
             }
 
             override fun onClickStartIcon(url: String?, vararg objects: Any?) {}

@@ -6,7 +6,6 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.activity.addCallback
 import androidx.activity.viewModels
@@ -39,14 +38,12 @@ import io.legado.app.utils.toggleSystemBar
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
 
-
 class VideoPlayerActivity : VMBaseActivity<ActivityVideoPlayerBinding, VideoPlayerViewModel>() {
     override val binding by viewBinding(ActivityVideoPlayerBinding::inflate)
     override val viewModel by viewModels<VideoPlayerViewModel>()
     private var orientationUtils: OrientationUtils? = null
     private val playerView: VideoPlayer by lazy { binding.playerView }
     private var isNew = true
-    private var heightNormal = 0
     private val bookSourceEditResult =
         registerForActivityResult(StartActivityContract(BookSourceEditActivity::class.java)) {
             if (it.resultCode == RESULT_OK) {
@@ -96,9 +93,8 @@ class VideoPlayerActivity : VMBaseActivity<ActivityVideoPlayerBinding, VideoPlay
             }
             finish()
         }
-        //外部辅助的旋转，帮助全屏
-        orientationUtils = OrientationUtils(this, playerView)
-        orientationUtils?.isOnlyRotateLand = true
+        orientationUtils = OrientationUtils(this, playerView) //旋转辅助
+        orientationUtils?.isOnlyRotateLand = true //旋转时仅处理横屏
     }
 
     private fun initView() {
@@ -159,17 +155,13 @@ class VideoPlayerActivity : VMBaseActivity<ActivityVideoPlayerBinding, VideoPlay
             supportActionBar?.hide()
             binding.chaptersContainer.gone()
             binding.data.gone()
-            val layoutParams = playerView.layoutParams
-            layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
-            playerView.layoutParams = layoutParams
+            playerView.startWindowFullscreen(this, false, false)
         } else {
             orientationUtils?.isRotateWithSystem = true
             supportActionBar?.show()
             binding.chaptersContainer.visible()
             binding.data.visible()
-            val layoutParams = playerView.layoutParams
-            layoutParams.height = heightNormal
-            playerView.layoutParams = layoutParams
+            playerView.backFromFull(this)
         }
     }
 
@@ -178,13 +170,13 @@ class VideoPlayerActivity : VMBaseActivity<ActivityVideoPlayerBinding, VideoPlay
     @SuppressLint("SwitchIntDef")
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        playerView.onConfigurationChanged(
-            this,
-            newConfig,
-            orientationUtils,
-            false,
-            false
-        ) // bar依靠这边进行隐藏处理
+//        playerView.onConfigurationChanged(
+//            this,
+//            newConfig,
+//            orientationUtils,
+//            false,
+//            false
+//        ) // bar依靠这边进行隐藏处理
         when (newConfig.orientation) {
             Configuration.ORIENTATION_LANDSCAPE -> {
                 window.clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN)
@@ -210,8 +202,14 @@ class VideoPlayerActivity : VMBaseActivity<ActivityVideoPlayerBinding, VideoPlay
     private fun setupPlayerView() {
         val layoutParams = playerView.layoutParams
         val parentWidth = playerView.width
-        layoutParams.height = (parentWidth * 9f / 16f).toInt()
-        playerView.layoutParams = layoutParams //默认16:9
+        val videoWidth = playerView.currentVideoWidth
+        val videoHeight = playerView.currentVideoHeight
+        val height = if (videoWidth > 0 && videoHeight > 0) (parentWidth * videoHeight / videoWidth) else (parentWidth * 9 / 16) //默认16:9
+        //高度不超过一半屏幕
+        val displayMetrics = resources.displayMetrics
+        val screenHeight = displayMetrics.heightPixels
+        layoutParams.height = if (height < screenHeight / 2) height else screenHeight / 2
+        playerView.layoutParams = layoutParams
         //是否根据视频尺寸，自动选择竖屏全屏或者横屏全屏
         playerView.isAutoFullWithSize = true
         playerView.fullscreenButton.setOnClickListener { toggleFullScreen() }
@@ -230,9 +228,8 @@ class VideoPlayerActivity : VMBaseActivity<ActivityVideoPlayerBinding, VideoPlay
                         val height = (parentWidth * aspectRatio).toInt()
                         val displayMetrics = resources.displayMetrics
                         val screenHeight = displayMetrics.heightPixels
-                        heightNormal = if (height < screenHeight / 2) height else screenHeight / 2
                         //高度不超过一半屏幕
-                        layoutParams.height = heightNormal
+                        layoutParams.height = if (height < screenHeight / 2) height else screenHeight / 2
                         playerView.layoutParams = layoutParams
                     }
                 }

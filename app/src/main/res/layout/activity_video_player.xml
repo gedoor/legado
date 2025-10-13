@@ -16,13 +16,13 @@
     <io.legado.app.help.gsyVideo.VideoPlayer
         android:id="@+id/playerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         tools:layout_height="300dp"/>
 
     <LinearLayout
         android:id="@+id/data"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_margin="8dp"
         android:layout_weight="1"
         android:orientation="horizontal"
