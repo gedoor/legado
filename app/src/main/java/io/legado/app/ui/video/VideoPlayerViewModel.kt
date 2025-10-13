@@ -9,11 +9,7 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.BaseSource
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
-import io.legado.app.data.entities.BookSource
-import io.legado.app.exception.NoStackTraceException
-import io.legado.app.help.book.ContentProcessor
 import io.legado.app.help.book.update
-import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.printOnDebug
 import io.legado.app.utils.toastOnUi
 
@@ -28,11 +24,10 @@ class VideoPlayerViewModel(application: Application) : BaseViewModel(application
     var sourceType: Int? = null
     var bookUrl: String? = null
     var durChapterIndex = 0
-    var isNew = true
+    var durChapterPos = 0
     fun initData(intent: Intent, success: () -> Unit) {
         execute {
             videoUrl = intent.getStringExtra("videoUrl") ?: ""
-            isNew = intent.getBooleanExtra("isNew", true)
             videoTitle =
                 intent.getStringExtra("videoTitle") ?: context.getString(R.string.video_play)
             sourceKey = intent.getStringExtra("sourceKey")?.also {
@@ -47,9 +42,13 @@ class VideoPlayerViewModel(application: Application) : BaseViewModel(application
             book = bookUrl?.let {
                 toc = appDb.bookChapterDao.getChapterList(it)
                 appDb.bookDao.getBook(it) ?: appDb.searchBookDao.getSearchBook(it)?.toBook()
-            }?.also {
-                durChapterIndex = it.durChapterIndex
-                source = appDb.bookSourceDao.getBookSource(it.origin)
+            }?.also { b ->
+                durChapterIndex = b.durChapterIndex
+                durChapterPos = b.durChapterPos
+                source = appDb.bookSourceDao.getBookSource(b.origin)?.also {
+                    sourceKey = b.origin
+                    sourceType = SourceType.book
+                }
             }
         }.onSuccess {
             success.invoke()
@@ -71,46 +70,30 @@ class VideoPlayerViewModel(application: Application) : BaseViewModel(application
         }
     }
 
-    fun upVideoUrl(success: (() -> Unit)? = null) {
-        execute {
-            if (source is BookSource) {
-                book?.let { b -> chapter?.let { c -> videoUrl = WebBook.getContentAwait(source as BookSource, b, c) } }
-            }
-        }.onSuccess {
-            success?.invoke()
-        }
-    }
-
-    fun saveRead(first: Boolean = false, success: (() -> Unit)? = null) {
-        execute {
-            book?.let { book ->
-                book.lastCheckCount = 0
-                book.durChapterTime = System.currentTimeMillis()
-                val chapterChanged = book.durChapterIndex != durChapterIndex
-                book.durChapterIndex = durChapterIndex
-                book.durChapterPos = 0
-                if (first || chapterChanged) {
-                    chapter = toc?.getOrNull(durChapterIndex)?.also {
-                        book.durChapterTitle = it.getDisplayTitle(
-                            ContentProcessor.get(book.name, book.origin).getTitleReplaceRules(),
-                            book.getUseReplaceRule()
-                        )
-                    }
+    fun saveRead(first: Boolean = false) {
+        book?.let { book ->
+            book.lastCheckCount = 0
+            book.durChapterTime = System.currentTimeMillis()
+            val chapterChanged = book.durChapterIndex != durChapterIndex
+            book.durChapterIndex = durChapterIndex
+            book.durChapterPos = durChapterPos
+            if (first || chapterChanged) {
+                chapter = toc?.getOrNull(durChapterIndex)?.also {
+                    book.durChapterTitle = it.title
                 }
-                book.update()
             }
-        }.onSuccess {
-            success?.invoke()
+            book.update()
         }
     }
 
-    fun upDurIndex (offset: Int): Boolean {
+    fun upDurIndex(offset: Int): Boolean {
         val index = durChapterIndex + offset
         if (index < 0 || index >= (toc?.size ?: 0)) {
             context.toastOnUi("没有更多章节了")
             return false
         }
         durChapterIndex = index
+        durChapterPos = 0
         return true
     }
 }

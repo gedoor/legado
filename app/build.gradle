@@ -209,6 +209,10 @@ dependencies {
     // For exposing and controlling media sessions
     //implementation "androidx.media3:media3-session:$media3_version"
 
+    //videoPlayer
+    implementation(libs.gsyVideoPlayer.java)
+    implementation(libs.gsyVideoPlayer.exo2)
+
     //Splitties
     implementation(libs.splitties.appctx)
     implementation(libs.splitties.systemservices)

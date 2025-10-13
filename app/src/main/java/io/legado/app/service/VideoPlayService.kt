@@ -1,11 +1,13 @@
 package io.legado.app.service
 
+import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.app.Application
 import android.content.Intent
 import android.graphics.PixelFormat
 import android.os.Build
-import android.os.Handler
-import android.os.Looper
+import android.os.Bundle
 import android.provider.Settings
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
@@ -14,15 +16,17 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
-import android.view.ViewConfiguration
+import android.view.View.OnTouchListener
 import android.view.WindowManager
+import android.view.animation.DecelerateInterpolator
+import android.widget.FrameLayout
 import androidx.annotation.OptIn
 import androidx.core.app.NotificationCompat
-import androidx.media3.common.Player
-import androidx.media3.common.VideoSize
+import androidx.dynamicanimation.animation.FloatPropertyCompat
+import androidx.dynamicanimation.animation.SpringAnimation
+import androidx.dynamicanimation.animation.SpringForce
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.ui.PlayerView
+import com.shuyu.gsyvideoplayer.listener.VideoAllCallBack
 import io.legado.app.R
 import io.legado.app.base.BaseService
 import io.legado.app.constant.AppConst
@@ -31,10 +35,10 @@ import io.legado.app.constant.IntentAction
 import io.legado.app.constant.NotificationId
 import io.legado.app.constant.SourceType
 import io.legado.app.data.appDb
+import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.coroutine.Coroutine
-import io.legado.app.help.exoplayer.ExoPlayerHelper
-import io.legado.app.model.analyzeRule.AnalyzeUrl
-import io.legado.app.model.analyzeRule.AnalyzeUrl.Companion.getMediaItem
+import io.legado.app.help.gsyVideo.ExoVideoManager
+import io.legado.app.help.gsyVideo.FloatingPlayer
 import io.legado.app.receiver.MediaButtonReceiver
 import io.legado.app.ui.video.VideoPlayerActivity
 import io.legado.app.utils.activityPendingIntent
@@ -43,20 +47,18 @@ import io.legado.app.utils.servicePendingIntent
 import splitties.systemservices.notificationManager
 import kotlin.math.abs
 
-
 /**
  * 视频悬浮窗服务
  */
 
 class VideoPlayService : BaseService() {
     private lateinit var windowManager: WindowManager
+    private lateinit var params: WindowManager.LayoutParams
     private var mediaSessionCompat: MediaSessionCompat? = null
     private val floatingView by lazy {
-        LayoutInflater.from(this).inflate(R.layout.floating_video_player, null)
+        LayoutInflater.from(this).inflate(R.layout.floating_video_player, FrameLayout(this), false)
     }
-    private val dragLayer by lazy { floatingView.findViewById<View>(R.id.dragLayer) }
-    private val controlsLayout by lazy { floatingView.findViewById<View>(R.id.controlsLayout) }
-    private val playerView by lazy { floatingView.findViewById<PlayerView>(R.id.floatingPlayerView) }
+    private val playerView by lazy { floatingView.findViewById<FloatingPlayer>(R.id.floatingPlayerView) }
     private var videoUrl = ""
     private var isNew = true
     private var videoTitle: String? = null
@@ -64,41 +66,83 @@ class VideoPlayService : BaseService() {
     private var sourceType: Int? = null
     private var bookUrl: String? = null
     private var upNotificationJob: Coroutine<*>? = null
-    private var isControlsVisible = false
-    private val exoPlayer: ExoPlayer by lazy {
-        ExoPlayerHelper.getExoPlayer(this)
-    }
-    private val playerListener = object : Player.Listener {
-        override fun onVideoSizeChanged(videoSize: VideoSize) {
-            adjustWindowSize(videoSize)
-        }
-
-        override fun onPlaybackStateChanged(playbackState: Int) {
-            when (playbackState) {
-                Player.STATE_ENDED -> {
-                    // 播放结束自动关闭悬浮窗
-                    stopSelf()
-                }
-
-                Player.STATE_READY -> {
-                    // 播放准备就绪后也调整窗口大小
-                    adjustWindowSize(exoPlayer.videoSize)
-                    // 更新媒体会话元数据
-                    updateMediaMetadata()
-                    // 更新播放状态
-                    updateMediaSessionState()
-                }
-
-                Player.STATE_BUFFERING -> {
-                }
-
-                Player.STATE_IDLE -> {
-                }
+    private var animator: SpringAnimation? = null
+    private val activityLifecycleCallbacks = object : Application.ActivityLifecycleCallbacks {
+        override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+            if (activity is VideoPlayerActivity) {
+                // 确保 Activity 创建完成后才停止服务,留够事件复制播放器
+                stopSelf()
             }
         }
 
-        override fun onIsPlayingChanged(isPlaying: Boolean) {
-            updateMediaSessionState()
+        override fun onActivityStarted(activity: Activity) {}
+        override fun onActivityResumed(activity: Activity) {}
+        override fun onActivityPaused(activity: Activity) {}
+        override fun onActivityStopped(activity: Activity) {}
+        override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
+        override fun onActivityDestroyed(activity: Activity) {}
+    }
+
+    private fun updateViewPosition() {
+        try {
+            windowManager.updateViewLayout(floatingView, params)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun cancelAnimator() {
+        animator?.cancel()
+    }
+
+    private val layoutParamsXProperty =
+        object : FloatPropertyCompat<WindowManager.LayoutParams>("x") {
+            override fun getValue(layoutParams: WindowManager.LayoutParams): Float {
+                return layoutParams.x.toFloat()
+            }
+
+            override fun setValue(layoutParams: WindowManager.LayoutParams, value: Float) {
+                layoutParams.x = value.toInt()
+                updateViewPosition()
+            }
+        }
+
+    private fun startEdgeAnimation() {
+        val displayMetrics = resources.displayMetrics
+        val screenWidth = displayMetrics.widthPixels
+        val screenHeight = displayMetrics.heightPixels
+        val viewWidth = floatingView.width
+        val viewHeight = floatingView.height
+        val currentX = params.x
+        val endX = if (viewWidth == screenWidth) {
+            0
+        } else if (currentX + viewWidth / 2 > screenWidth / 2) {
+            screenWidth - viewWidth - 30
+        } else {
+            30
+        }
+        val currentY = params.y
+        var endY = currentY
+        if (currentY < 30) {
+            endY = 30
+        } else if (currentY > screenHeight - viewHeight - 60) {
+            endY = screenHeight - viewHeight - 60
+        }
+        if (endY != currentY) {
+            ObjectAnimator.ofInt(currentY, endY).apply {
+                duration = 200
+                interpolator = DecelerateInterpolator()
+                addUpdateListener { animation ->
+                    params.y = animation.animatedValue as Int
+                    updateViewPosition()
+                }
+                start()
+            }
+        }
+        animator = SpringAnimation(params, layoutParamsXProperty, endX.toFloat()).apply {
+            spring.stiffness = SpringForce.STIFFNESS_LOW  // 低刚度更Q弹
+            spring.dampingRatio = SpringForce.DAMPING_RATIO_MEDIUM_BOUNCY  // 中等阻尼
+            start()
         }
     }
 
@@ -106,6 +150,7 @@ class VideoPlayService : BaseService() {
         super.onCreate()
         initMediaSession()
         startForegroundNotification()
+        application.registerActivityLifecycleCallbacks(activityLifecycleCallbacks)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -124,43 +169,18 @@ class VideoPlayService : BaseService() {
             sourceType = intent.getIntExtra("sourceType", 0)
             bookUrl = intent.getStringExtra("bookUrl")
         }
+        if (isNew) {
+            startPlayback()
+        } else {
+            ExoVideoManager.clonePlayState(playerView)
+            playerView.setSurfaceToPlay()
+            playerView.startAfterPrepared()
+        }
+        setupPlayerView()
         if (floatingView.parent == null) {
             createFloatingWindow()
         }
-        setupPlayer()
-        if (isNew) {
-            startPlayback()
-        }
         return super.onStartCommand(intent, flags, startId)
-    }
-
-    private fun setupPlayer() {
-        exoPlayer.run {
-            playerView.player = this
-            playWhenReady = true
-            repeatMode = Player.REPEAT_MODE_OFF
-            addListener(playerListener)
-        }
-    }
-
-    private fun updateMediaSessionState() {
-        val state = if (exoPlayer.isPlaying) {
-            PlaybackStateCompat.STATE_PLAYING
-        } else {
-            PlaybackStateCompat.STATE_PAUSED
-        }
-
-        val playbackState = PlaybackStateCompat.Builder()
-            .setActions(
-                PlaybackStateCompat.ACTION_PLAY or
-                        PlaybackStateCompat.ACTION_PAUSE or
-                        PlaybackStateCompat.ACTION_PLAY_PAUSE or
-                        PlaybackStateCompat.ACTION_SEEK_TO
-            )
-            .setState(state, exoPlayer.currentPosition, 1.0f)
-            .build()
-
-        mediaSessionCompat?.setPlaybackState(playbackState)
     }
 
     @SuppressLint("UnspecifiedImmutableFlag")
@@ -178,10 +198,24 @@ class VideoPlayService : BaseService() {
         }
     }
 
+    private fun updateMediaSessionState() {
+        val playbackState = PlaybackStateCompat.Builder()
+            .setActions(
+                PlaybackStateCompat.ACTION_PLAY or
+                        PlaybackStateCompat.ACTION_PAUSE or
+                        PlaybackStateCompat.ACTION_PLAY_PAUSE or
+                        PlaybackStateCompat.ACTION_SEEK_TO
+            )
+            .setState(playerView.currentState, playerView.getCurrentPositionWhenPlaying(), 1.0f)
+            .build()
+        mediaSessionCompat?.setPlaybackState(playbackState)
+    }
+
+
     private fun createMediaSessionCallback() = object : MediaSessionCompat.Callback() {
-        override fun onSeekTo(pos: Long) = exoPlayer.seekTo(pos)
-        override fun onPlay() = exoPlayer.play()
-        override fun onPause() = exoPlayer.pause()
+        override fun onSeekTo(pos: Long) = playerView.seekTo(pos)
+        override fun onPlay() = playerView.onVideoResume()
+        override fun onPause() = playerView.onVideoPause()
     }
 
     override fun startForegroundNotification() {
@@ -237,149 +271,123 @@ class VideoPlayService : BaseService() {
     @SuppressLint("ClickableViewAccessibility", "InflateParams")
     private fun createFloatingWindow() {
         windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
-        val displayMetrics = resources.displayMetrics
-        val screenWidth = displayMetrics.widthPixels
-        val windowWidth = screenWidth //默认为屏幕宽
+        val screenWidth = resources.displayMetrics.widthPixels
+        val windowWidth = screenWidth * 3 / 4 //默认为屏幕3/4宽
         val windowHeight = (windowWidth * 9 / 16) // 默认16:9比例
         // 设置窗口参数
-        val params = WindowManager.LayoutParams(
+        params = WindowManager.LayoutParams(
             windowWidth,
             windowHeight,
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
             } else {
-                @Suppress("DEPRECATION") WindowManager.LayoutParams.TYPE_PHONE
+                @Suppress("DEPRECATION")
+                WindowManager.LayoutParams.TYPE_PHONE
             },
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+                    WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED or
+                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
             PixelFormat.TRANSLUCENT
         ).apply {
             gravity = Gravity.START or Gravity.TOP
-            x = screenWidth / 10
+            x = 30
             y = screenWidth / 10
         }
+        floatingView.setOnTouchListener(FloatingTouchListener())
         windowManager.addView(floatingView, params)
-        setupPlayerView()
-        setupDragListener(params)
-        setupControls()
+
+    }
+
+    inner class FloatingTouchListener : OnTouchListener {
+        private var initialTouchX = 0f
+        private var initialTouchY = 0f
+        private var initialX = 0
+        private var initialY = 0
+        private var isClick = true
+
+        @SuppressLint("ClickableViewAccessibility")
+        override fun onTouch(v: View, event: MotionEvent): Boolean {
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    isClick = true
+                    initialTouchX = event.rawX
+                    initialTouchY = event.rawY
+                    initialX = params.x
+                    initialY = params.y
+                    cancelAnimator()
+                }
+
+                MotionEvent.ACTION_MOVE -> {
+                    val deltaX = event.rawX - initialTouchX
+                    val deltaY = event.rawY - initialTouchY
+                    if (abs(deltaX) > 20 || abs(deltaY) > 20) {
+                        isClick = false
+                        params.x = (initialX + (event.rawX - initialTouchX)).toInt()
+                        params.y = (initialY + (event.rawY - initialTouchY)).toInt()
+                        updateViewPosition()
+                        cancelAnimator()
+                    } else {
+                        isClick = true
+                    }
+                }
+
+                MotionEvent.ACTION_UP -> {
+                    if (isClick) {
+                        playerView.showControlUi()
+                    } else {
+                        startEdgeAnimation()
+                    }
+
+                }
+            }
+            return false
+        }
     }
 
 
-    @OptIn(UnstableApi::class)
     private fun setupPlayerView() {
-        playerView.setShowFastForwardButton(false)
-        playerView.setShowRewindButton(false)
-        playerView.setShowPreviousButton(false)
-        playerView.setShowNextButton(false)
-        playerView.useController = true
-        playerView.controllerAutoShow = false
-        playerView.controllerShowTimeoutMs = 3000
-        playerView.setControllerVisibilityListener(
-            PlayerView.ControllerVisibilityListener { visibility ->
-                if (visibility == View.VISIBLE) {
-                    if (!isControlsVisible) {
-                        isControlsVisible = true
-                        showControls()
-                    }
-                } else {
-                    if (isControlsVisible) {
-                        isControlsVisible = false
-                        hideControls()
-                    }
-                }
-            }
-        )
-    }
-
-    private fun setupDragListener(params: WindowManager.LayoutParams) {
-        dragLayer.setOnTouchListener(object : View.OnTouchListener {
-            private var initialX = 0
-            private var initialY = 0
-            private var initialTouchX = 0f
-            private var initialTouchY = 0f
-            private var isDragging = false
-            private val dragThreshold = 10
-            private val handler = Handler(Looper.getMainLooper())
-            private var isLongPressed = false
-            private val longPressTimeout = ViewConfiguration.getLongPressTimeout()
-            private val longPressRunnable = Runnable {
-                exoPlayer.setPlaybackSpeed(2.0f)
-                isLongPressed = true
+        playerView.fullscreenB.setOnClickListener {
+            toggleFullScreen()
+        }
+        playerView.backButton.setOnClickListener { stopSelf() }
+        playerView.setVideoAllCallBack(object : VideoAllCallBack {
+            override fun onStartPrepared(url: String?, vararg objects: Any?) {}
+            override fun onPrepared(url: String?, vararg objects: Any?) {
+                // 更新媒体会话元数据
+                updateMediaMetadata()
+                // 更新播放状态
+                updateMediaSessionState()
             }
 
-            @OptIn(UnstableApi::class)
-            @SuppressLint("ClickableViewAccessibility")
-            override fun onTouch(v: View, event: MotionEvent): Boolean {
-                return when (event.action) {
-                    MotionEvent.ACTION_DOWN -> {
-                        initialX = params.x
-                        initialY = params.y
-                        initialTouchX = event.rawX
-                        initialTouchY = event.rawY
-                        isDragging = false
-                        handler.postDelayed(longPressRunnable, longPressTimeout.toLong())
-                        true
-                    }
-
-                    MotionEvent.ACTION_MOVE -> {
-                        val deltaX = event.rawX - initialTouchX
-                        val deltaY = event.rawY - initialTouchY
-
-                        if (abs(deltaX) > dragThreshold || abs(deltaY) > dragThreshold) {
-                            isDragging = true
-                            handler.removeCallbacks(longPressRunnable)
-                        }
-                        params.x = initialX + deltaX.toInt()
-                        params.y = initialY + deltaY.toInt()
-                        windowManager.updateViewLayout(floatingView, params)
-                        isDragging
-                    }
-
-                    MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                        handler.removeCallbacks(longPressRunnable)
-                        if (!isDragging && !isLongPressed) {
-                            playerView.showController()
-                        }
-                        if (isLongPressed) {
-                            exoPlayer.setPlaybackSpeed(1.0f)
-                            isLongPressed = false
-                        }
-                        true
-                    }
-                    else -> false
-                }
+            override fun onClickStartIcon(url: String?, vararg objects: Any?) {}
+            override fun onAutoComplete(url: String?, vararg objects: Any?) {
+                stopSelf()
             }
+
+            override fun onComplete(url: String?, vararg objects: Any?) {}
+            override fun onEnterFullscreen(url: String?, vararg objects: Any?) {}
+            override fun onQuitFullscreen(url: String?, vararg objects: Any?) {}
+            override fun onQuitSmallWidget(url: String?, vararg objects: Any?) {}
+            override fun onEnterSmallWidget(url: String?, vararg objects: Any?) {}
+            override fun onTouchScreenSeekVolume(url: String?, vararg objects: Any?) {}
+            override fun onTouchScreenSeekPosition(url: String?, vararg objects: Any?) {}
+            override fun onTouchScreenSeekLight(url: String?, vararg objects: Any?) {}
+            override fun onPlayError(url: String?, vararg objects: Any?) {}
+            override fun onClickStartThumb(url: String?, vararg objects: Any?) {}
+            override fun onClickBlank(url: String?, vararg objects: Any?) {}
+            override fun onClickBlankFullscreen(url: String?, vararg objects: Any?) {}
+            override fun onClickStartError(url: String?, vararg objects: Any?) {}
+            override fun onClickStop(url: String?, vararg objects: Any?) {}
+            override fun onClickStopFullscreen(url: String?, vararg objects: Any?) {}
+            override fun onClickResume(url: String?, vararg objects: Any?) {}
+            override fun onClickResumeFullscreen(url: String?, vararg objects: Any?) {}
+            override fun onClickSeekbar(url: String?, vararg objects: Any?) {}
+            override fun onClickSeekbarFullscreen(url: String?, vararg objects: Any?) {}
         })
-        dragLayer.setOnLongClickListener {
-            exoPlayer.setPlaybackSpeed(3.0f)
-            true
-        }
     }
 
-    private fun setupControls() {
-        floatingView.findViewById<View>(R.id.btnClose).setOnClickListener {
-            stopSelf()
-        }
-        floatingView.findViewById<View>(R.id.btnFullscreen).setOnClickListener {
-            toggleFullscreen()
-        }
-    }
-
-    private fun showControls() {
-        controlsLayout.visibility = View.VISIBLE
-        dragLayer.visibility = View.GONE
-    }
-
-    @OptIn(UnstableApi::class)
-    private fun hideControls() {
-        controlsLayout.visibility = View.GONE
-        dragLayer.visibility = View.VISIBLE
-
-    }
-
-
-    private fun toggleFullscreen() {
-        exoPlayer.removeListener(playerListener)
-        playerView.player = null
+    private fun toggleFullScreen() {
+        ExoVideoManager.savePlayState(playerView)
         val fullscreenIntent = Intent(this, VideoPlayerActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
             putExtra("videoUrl", videoUrl)
@@ -390,8 +398,9 @@ class VideoPlayService : BaseService() {
             putExtra("bookUrl", bookUrl)
         }
         startActivity(fullscreenIntent)
+        playerView.needDestroy = false
         // 停止服务（关闭悬浮窗）
-        stopSelf()
+//        stopSelf()
     }
 
     private fun startPlayback() {
@@ -402,56 +411,24 @@ class VideoPlayService : BaseService() {
                 else -> null
             }
         }
+        var toc: List<BookChapter>? = null
         val book = bookUrl?.let { it ->
+            toc = appDb.bookChapterDao.getChapterList(it)
             appDb.bookDao.getBook(it) ?: appDb.searchBookDao.getSearchBook(it)?.toBook()
         }
-        val chapter =
-            book?.let { it -> appDb.bookChapterDao.getChapter(it.bookUrl, it.durChapterIndex) }
-        exoPlayer.setMediaItem(
-            AnalyzeUrl(
-                videoUrl,
-                source = source,
-                ruleData = book,
-                chapter = chapter
-            ).getMediaItem()
-        )
-        exoPlayer.prepare()
-        exoPlayer.play()
+        playerView.setUp(toc, source, book)
+        playerView.startPlayLogic()
     }
+
 
     private fun updateMediaMetadata() {
         videoTitle?.let { title ->
             val metadata = MediaMetadataCompat.Builder()
                 .putString(MediaMetadataCompat.METADATA_KEY_TITLE, title)
                 .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, "视频播放")
-                .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, exoPlayer.duration)
+                .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, playerView.getDuration())
                 .build()
             mediaSessionCompat?.setMetadata(metadata)
-        }
-    }
-
-
-    private fun adjustWindowSize(videoSize: VideoSize) {
-        if (videoSize.width > 0 && videoSize.height > 0) {
-            try {
-                val displayMetrics = resources.displayMetrics
-                val screenWidth = displayMetrics.widthPixels
-                val windowWidth = screenWidth //和屏幕宽度一致
-                // 视频内容帧宽高比
-                var aspectRatio = videoSize.width.toFloat() / videoSize.height.toFloat()
-                // 像素宽高比校正
-                val pixelRatio = videoSize.pixelWidthHeightRatio
-                if (pixelRatio > 0) {
-                    aspectRatio *= pixelRatio
-                }
-                val windowHeight = (windowWidth / aspectRatio).toInt()
-                val params = floatingView.layoutParams as WindowManager.LayoutParams
-                params.width = windowWidth
-                params.height = windowHeight
-                windowManager.updateViewLayout(floatingView, params)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
         }
     }
 
@@ -461,13 +438,12 @@ class VideoPlayService : BaseService() {
             if (::windowManager.isInitialized && floatingView.parent != null) {
                 windowManager.removeView(floatingView)
             }
-            if (playerView.player != null) {
-                ExoPlayerHelper.release()
-            }
             mediaSessionCompat?.release()
             upNotificationJob?.invokeOnCompletion {
                 notificationManager.cancel(NotificationId.VideoPlayService)
             }
+            application.unregisterActivityLifecycleCallbacks(activityLifecycleCallbacks)
+            playerView.getCurrentPlayer().release()
         } catch (e: Exception) {
             e.printStackTrace()
         }

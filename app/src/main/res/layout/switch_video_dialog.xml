@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#B43A3A3A"
+    android:orientation="vertical">
+
+    <ListView
+        android:id="@+id/switch_dialog_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@null"
+        android:cacheColorHint="#00000000"
+        android:divider="#ccc"
+        android:dividerHeight="1px"
+        android:listSelector="#00000000" />
+
+</LinearLayout>

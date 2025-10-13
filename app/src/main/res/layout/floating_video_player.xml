@@ -1,66 +1,10 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:elevation="8dp"
-    tools:layout_height="180dp"
-    tools:layout_width="320dp">
+    android:layout_height="wrap_content">
 
-    <androidx.media3.ui.PlayerView
+    <io.legado.app.help.gsyVideo.FloatingPlayer
         android:id="@+id/floatingPlayerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/black"
-        android:visibility="visible"
-        tools:visibility="gone" />
-
-    <View
-        android:id="@+id/dragLayer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/transparent" />
-
-    <!-- 顶部控制栏 -->
-    <LinearLayout
-        android:id="@+id/controlsLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="8dp"
-        android:visibility="gone"
-        tools:visibility="visible">
-
-        <ImageButton
-            android:id="@+id/btnClose"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginStart="8dp"
-            android:background="@color/transparent"
-            android:contentDescription="@string/close"
-            android:src="@drawable/ic_baseline_close" />
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_weight="1" />
-
-        <ImageButton
-            android:id="@+id/btnFullscreen"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginStart="8dp"
-            android:background="@color/transparent"
-            android:contentDescription="@string/full_screen"
-            android:src="@drawable/ic_fullscreen" />
-
-    </LinearLayout>
-
-<!--    &lt;!&ndash; 底部进度条 &ndash;&gt;-->
-<!--    <androidx.media3.ui.DefaultTimeBar-->
-<!--        android:id="@+id/timeBar"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="4dp"-->
-<!--        android:layout_gravity="bottom"-->
-<!--        android:layout_margin="4dp" />-->
-
+        android:layout_gravity="center" />
 </FrameLayout>
