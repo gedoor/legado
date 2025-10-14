@@ -55,10 +55,6 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
     private var oKToClose = false
     private var rowUis: List<RowUi>? = null
 
-    companion object {
-        private val loginUiData = mutableMapOf<String, List<RowUi>?>()
-    }
-
     override fun onStart() {
         super.onStart()
         setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
@@ -216,34 +212,21 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         val source = viewModel.source ?: return
         val loginUiStr = source.loginUi ?: return
-        val key = if (loginUiStr.length < 1024) {
-            loginUiStr
-        } else {
-            MD5Utils.md5Encode16(loginUiStr)
+        val jsCode = loginUiStr.let {
+            when {
+                it.startsWith("@js:") -> it.substring(4)
+                it.startsWith("<js>") -> it.substring(4, it.lastIndexOf("<"))
+                else -> null
+            }
         }
-        rowUis = loginUiData[key]
-        if (rowUis == null) {
-            val jsCode = loginUiStr.let {
-                when {
-                    it.startsWith("@js:") -> it.substring(4)
-                    it.startsWith("<js>") -> it.substring(4, it.lastIndexOf("<"))
-                    else -> null
-                }
-            }
-            if (jsCode != null) {
-                lifecycleScope.launch(Main) {
-                    rowUis = loginUi(evalUiJs(jsCode))
-                    buttonUi(source, rowUis)
-                    loginUiData[key] = rowUis
-                }
-            }
-            else {
-                rowUis = loginUi(loginUiStr)
+        if (jsCode != null) {
+            lifecycleScope.launch(Main) {
+                rowUis = loginUi(evalUiJs(jsCode))
                 buttonUi(source, rowUis)
-                loginUiData[key] = rowUis
             }
         }
         else {
+            rowUis = loginUi(loginUiStr)
             buttonUi(source, rowUis)
         }
         binding.toolBar.setBackgroundColor(primaryColor)
