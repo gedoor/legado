@@ -67,7 +67,8 @@
         app:layout_constraintBottom_toTopOf="@+id/ll_player_progress"
         app:layout_constraintEnd_toStartOf="@+id/lyricViewX"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title_bar" />
+        app:layout_constraintTop_toBottomOf="@+id/title_bar"
+        tools:src="@drawable/image_rss_article" />
 
     <com.dirror.lyricviewx.LyricViewX
         android:id="@+id/lyricViewX"
@@ -78,7 +79,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/iv_cover"
         app:layout_constraintTop_toTopOf="@+id/iv_bg"
-        app:lrcPadding="16dp" />
+        app:lrcCurrentTextColor="@color/md_white_1000"
+        app:lrcPadding="16dp"
+        tools:visibility="visible"
+        tools:lrcLabel="歌词文本区" />
 
     <TextView
         android:id="@+id/tv_sub_title"

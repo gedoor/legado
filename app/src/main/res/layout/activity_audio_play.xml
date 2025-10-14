@@ -67,7 +67,8 @@
         app:layout_constraintBottom_toTopOf="@+id/lyricViewX"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title_bar"/>
+        app:layout_constraintTop_toBottomOf="@+id/title_bar"
+        tools:src="@drawable/image_rss_article" />
 
     <com.dirror.lyricviewx.LyricViewX
         android:id="@+id/lyricViewX"
@@ -76,7 +77,10 @@
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/tv_sub_title"
         app:layout_constraintTop_toBottomOf="@+id/iv_cover"
-        app:lrcPadding="16dp" />
+        app:lrcCurrentTextColor="@color/md_white_1000"
+        app:lrcPadding="16dp"
+        tools:visibility="visible"
+        tools:lrcLabel="歌词文本区" />
 
     <TextView
         android:id="@+id/tv_sub_title"
