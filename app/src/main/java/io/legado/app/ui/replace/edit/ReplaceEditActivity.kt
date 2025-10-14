@@ -174,7 +174,7 @@ class ReplaceEditActivity :
     }
 
     override fun sendText(text: String) {
-        if (text.isNotEmpty()) return
+        if (text.isEmpty()) return
         val view = window?.decorView?.findFocus()
         if (view is EditText) {
             val start = view.selectionStart
