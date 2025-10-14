@@ -3,10 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="100dp"
-    android:layout_height="40dp"
-    android:layout_margin="8dp"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="4dp"
+    android:layout_height="50dp"
+    app:cardCornerRadius="4dp"
+    app:cardElevation="0dp"
+    app:cardUseCompatPadding="true"
+    app:cardBackgroundColor="@android:color/transparent"
     tools:ignore="NamespaceTypo">
 
     <TextView
@@ -17,6 +18,6 @@
         android:padding="4dp"
         android:textSize="12sp"
         android:textStyle="bold"
-        android:background="@drawable/bg_video_chapter_item" />
-
+        android:background="@drawable/card_video_background" />
+<!--    android:textColor="@color/primaryText"-->
 </androidx.cardview.widget.CardView>

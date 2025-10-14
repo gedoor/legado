@@ -13,6 +13,8 @@ import androidx.annotation.OptIn
 import androidx.core.content.ContextCompat
 import androidx.media3.common.util.UnstableApi
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSmoothScroller
+import androidx.recyclerview.widget.RecyclerView
 import com.shuyu.gsyvideoplayer.listener.VideoAllCallBack
 import com.shuyu.gsyvideoplayer.utils.OrientationUtils
 import io.legado.app.R
@@ -23,6 +25,7 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.databinding.ActivityVideoPlayerBinding
 import io.legado.app.help.gsyVideo.ExoVideoManager
 import io.legado.app.help.gsyVideo.VideoPlayer
+import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.service.VideoPlayService
 import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
@@ -98,6 +101,7 @@ class VideoPlayerActivity : VMBaseActivity<ActivityVideoPlayerBinding, VideoPlay
     }
 
     private fun initView() {
+        binding.root.setBackgroundColor(backgroundColor)
         binding.ivChapter.setOnClickListener {
             viewModel.bookUrl?.let {
                 tocActivityResult.launch(it)
@@ -124,9 +128,10 @@ class VideoPlayerActivity : VMBaseActivity<ActivityVideoPlayerBinding, VideoPlay
         val recyclerView = binding.chapters
         val layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         recyclerView.layoutManager = layoutManager
-        val adapter = ChapterAdapter(toc) { chapter ->
+        val adapter = ChapterAdapter(toc,viewModel.durChapterIndex) { chapter ->
             if (chapter.index != viewModel.durChapterIndex) {
                 viewModel.durChapterIndex = chapter.index
+                scrollToDurChapter(recyclerView)
                 viewModel.durChapterPos = 0
                 viewModel.saveRead()
                 upView()
@@ -134,11 +139,21 @@ class VideoPlayerActivity : VMBaseActivity<ActivityVideoPlayerBinding, VideoPlay
             }
         }
         recyclerView.adapter = adapter
+        scrollToDurChapter(recyclerView)
+    }
+
+    private fun scrollToDurChapter(recyclerView: RecyclerView) {
         recyclerView.post {
-            (recyclerView.layoutManager as? LinearLayoutManager)?.scrollToPositionWithOffset(
-                viewModel.durChapterIndex,
-                0
-            )
+            val layoutManager = recyclerView.layoutManager as? LinearLayoutManager
+            layoutManager?.run {
+                val smoothScroller = object : LinearSmoothScroller(this@VideoPlayerActivity) {
+                    override fun getHorizontalSnapPreference(): Int {
+                        return SNAP_TO_START // 滚动到最左边
+                    }
+                }
+                smoothScroller.targetPosition = viewModel.durChapterIndex
+                this.startSmoothScroll(smoothScroller)
+            }
         }
     }
 
