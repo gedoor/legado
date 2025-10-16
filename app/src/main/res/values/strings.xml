@@ -1273,4 +1273,6 @@
     <string name="float_window">悬浮窗</string>
     <string name="video_play">视频播放</string>
     <string name="no_more_chapter">没有更多章节</string>
+    <string name="overlay">叠加</string>
+    <string name="margin">间距</string>
 </resources>

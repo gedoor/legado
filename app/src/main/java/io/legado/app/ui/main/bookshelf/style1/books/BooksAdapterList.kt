@@ -32,9 +32,7 @@ class BooksAdapterList(
         payloads: MutableList<Any>
     ) = binding.run {
         if (payloads.isEmpty()) {
-            if (AppConfig.showBookname) {
-                tvName.text = item.name
-            }
+            tvName.text = item.name
             tvAuthor.text = item.author
             tvRead.text = item.durChapterTitle
             tvLast.text = item.latestChapterTitle

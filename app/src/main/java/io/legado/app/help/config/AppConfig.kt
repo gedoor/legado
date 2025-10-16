@@ -162,10 +162,15 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
                 }
             }
         }
-    var showBookname: Boolean
-        get() = appCtx.getPrefBoolean(PreferKey.showBookname, true)
+    var showBookname: Int
+        get() = appCtx.getPrefInt(PreferKey.showBooknameLayout, 0)
         set(value) {
-            appCtx.putPrefBoolean(PreferKey.showBookname, value)
+            appCtx.putPrefInt(PreferKey.showBooknameLayout, value)
+        }
+    var bookshelfMargin: Int
+        get() = appCtx.getPrefInt(PreferKey.bookshelfMargin, 12)
+        set(value) {
+            appCtx.putPrefInt(PreferKey.bookshelfMargin, value)
         }
 
     var showUnread: Boolean

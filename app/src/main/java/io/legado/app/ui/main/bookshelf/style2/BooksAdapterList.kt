@@ -48,9 +48,7 @@ class BooksAdapterList(context: Context, callBack: CallBack) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun onBind(item: Book, position: Int) = binding.run {
-            if (AppConfig.showBookname) {
-                tvName.text = item.name
-            }
+            tvName.text = item.name
             tvAuthor.text = item.author
             tvRead.text = item.durChapterTitle
             tvLast.text = item.latestChapterTitle

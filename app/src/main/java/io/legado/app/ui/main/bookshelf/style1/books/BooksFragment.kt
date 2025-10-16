@@ -1,6 +1,7 @@
 package io.legado.app.ui.main.bookshelf.style1.books
 
 import android.annotation.SuppressLint
+import android.graphics.Rect
 import android.os.Bundle
 import android.view.View
 import android.view.ViewConfiguration
@@ -79,6 +80,7 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
         private set
     private var upLastUpdateTimeJob: Job? = null
     private var enableRefresh = true
+    private val bookshelfMargin = AppConfig.bookshelfMargin
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         arguments?.let {
@@ -126,6 +128,20 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
                 if (toPosition == 0 && itemCount == 1 && layoutManager is LinearLayoutManager) {
                     val scrollTo = layoutManager.findFirstVisibleItemPosition() - itemCount
                     binding.rvBookshelf.scrollToPosition(max(0, scrollTo))
+                }
+            }
+        })
+        binding.rvBookshelf.addItemDecoration( object : RecyclerView.ItemDecoration() {
+            override fun getItemOffsets(
+                outRect: Rect,
+                view: View,
+                parent: RecyclerView,
+                state: RecyclerView.State
+            ) {
+                if (bookshelfLayout == 0) {
+                    outRect.set(0, bookshelfMargin, 0, bookshelfMargin)
+                } else {
+                    outRect.set(bookshelfMargin, bookshelfMargin, bookshelfMargin, bookshelfMargin)
                 }
             }
         })

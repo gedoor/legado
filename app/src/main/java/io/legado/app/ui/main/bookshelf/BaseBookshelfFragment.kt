@@ -3,6 +3,7 @@ package io.legado.app.ui.main.bookshelf
 import android.annotation.SuppressLint
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
@@ -166,17 +167,27 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
         alert(titleResource = R.string.bookshelf_layout) {
             val bookshelfLayout = AppConfig.bookshelfLayout
             val bookshelfSort = AppConfig.bookshelfSort
+            val showBookname = AppConfig.showBookname
             val alertBinding =
                 DialogBookshelfConfigBinding.inflate(layoutInflater)
                     .apply {
                         spGroupStyle.setSelection(AppConfig.bookGroupStyle)
-                        swShowBookname.isChecked = AppConfig.showBookname
                         swShowUnread.isChecked = AppConfig.showUnread
                         swShowLastUpdateTime.isChecked = AppConfig.showLastUpdateTime
                         swShowWaitUpBooks.isChecked = AppConfig.showWaitUpCount
                         swShowBookshelfFastScroller.isChecked = AppConfig.showBookshelfFastScroller
                         rgLayout.checkByIndex(bookshelfLayout)
+                        if (bookshelfLayout != 0) {
+                            rgbLayout.checkByIndex(showBookname)
+                        } else {
+                            bookNameChoice.visibility = View.GONE
+                        }
+                        rgLayout.setOnCheckedChangeListener { group, checkedId ->
+                            val index = group.getCheckedIndex()
+                            bookNameChoice.visibility = if (index == 0) View.GONE else View.VISIBLE
+                        }
                         rgSort.checkByIndex(bookshelfSort)
+                        margin.progress = AppConfig.bookshelfMargin
                     }
             customView { alertBinding.root }
             okButton {
@@ -187,9 +198,13 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
                         AppConfig.bookGroupStyle = spGroupStyle.selectedItemPosition
                         notifyMain = true
                     }
-                    if (AppConfig.showBookname != swShowBookname.isChecked) {
-                        AppConfig.showBookname = swShowBookname.isChecked
-                        postEvent(EventBus.BOOKSHELF_REFRESH, "")
+                    if (showBookname != rgbLayout.getCheckedIndex()) {
+                        AppConfig.showBookname = rgbLayout.getCheckedIndex()
+                        recreate = true
+                    }
+                    if (AppConfig.bookshelfMargin != margin.progress) {
+                        AppConfig.bookshelfMargin = margin.progress
+                        recreate = true
                     }
                     if (AppConfig.showUnread != swShowUnread.isChecked) {
                         AppConfig.showUnread = swShowUnread.isChecked
