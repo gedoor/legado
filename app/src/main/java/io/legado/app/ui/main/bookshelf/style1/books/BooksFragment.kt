@@ -203,7 +203,7 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
         if (!AppConfig.showLastUpdateTime || bookshelfLayout != 0) {
             return
         }
-        upLastUpdateTimeJob = lifecycleScope.launch {
+        upLastUpdateTimeJob = viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 while (isActive) {
                     booksAdapter.upLastUpdateTime()
