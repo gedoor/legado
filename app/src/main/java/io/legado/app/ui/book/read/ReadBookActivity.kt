@@ -6,6 +6,7 @@ import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.os.Looper
+import android.util.Log
 import android.view.Gravity
 import android.view.InputDevice
 import android.view.KeyEvent
@@ -13,14 +14,17 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
+import android.view.animation.AnimationUtils
 import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.content.ContextCompat
 import androidx.core.view.get
 import androidx.core.view.size
 import androidx.lifecycle.lifecycleScope
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
+import com.google.android.material.snackbar.Snackbar
 import io.legado.app.BuildConfig
 import io.legado.app.R
 import io.legado.app.constant.AppConst
@@ -57,6 +61,7 @@ import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.model.AiSummaryState
 import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook
 import io.legado.app.model.analyzeRule.AnalyzeRule
@@ -72,6 +77,7 @@ import io.legado.app.ui.book.bookmark.BookmarkDialog
 import io.legado.app.ui.book.changesource.ChangeBookSourceDialog
 import io.legado.app.ui.book.changesource.ChangeChapterSourceDialog
 import io.legado.app.ui.book.info.BookInfoActivity
+
 import io.legado.app.ui.book.read.config.AutoReadDialog
 import io.legado.app.ui.book.read.config.BgTextConfigDialog.Companion.BG_COLOR
 import io.legado.app.ui.book.read.config.BgTextConfigDialog.Companion.TEXT_COLOR
@@ -99,6 +105,7 @@ import io.legado.app.ui.replace.ReplaceRuleActivity
 import io.legado.app.ui.replace.edit.ReplaceEditActivity
 import io.legado.app.ui.widget.PopupAction
 import io.legado.app.ui.widget.dialog.PhotoDialog
+import io.legado.app.ui.book.read.content.AiSummaryProvider
 import io.legado.app.utils.ACache
 import io.legado.app.utils.Debounce
 import io.legado.app.utils.LogUtils
@@ -127,6 +134,7 @@ import io.legado.app.utils.sysScreenOffTime
 import io.legado.app.utils.throttle
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.visible
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
@@ -138,6 +146,8 @@ import kotlinx.coroutines.withContext
 /**
  * 阅读界面
  */
+
+
 class ReadBookActivity : BaseReadBookActivity(),
     View.OnTouchListener,
     ReadView.CallBack,
@@ -153,7 +163,12 @@ class ReadBookActivity : BaseReadBookActivity(),
     AutoReadDialog.CallBack,
     TxtTocRuleDialog.CallBack,
     ColorPickerDialogListener,
+    
+    StreamingContentEditDialog.ContentReplaceListener,
     LayoutProgressListener {
+
+    internal var isAiSummaryReplaceMode = false
+    private var originalContentForAiReplace: String? = null
 
     private val tocActivity =
         registerForActivityResult(TocActivityResult()) {
@@ -246,6 +261,11 @@ class ReadBookActivity : BaseReadBookActivity(),
             binding.readMenu.upSeekBar()
         }
     }
+    private val blinkAnim by lazy {
+        AnimationUtils.loadAnimation(this, R.anim.blink)
+    }
+
+    private val aiSummaryHelper by lazy { AiSummaryHelper(this, lifecycleScope, binding) }
 
     //恢复跳转前进度对话框的交互结果
     private var confirmRestoreProcess: Boolean? = null
@@ -254,10 +274,16 @@ class ReadBookActivity : BaseReadBookActivity(),
     }
     private var justInitData: Boolean = false
     private var syncDialog: AlertDialog? = null
+    private var loadingSnackbar: Snackbar? = null
+    
+
+    
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
+        Log.d("AiSummary", "onActivityCreated (Activity创建)")
         super.onActivityCreated(savedInstanceState)
+        aiSummaryHelper.onActivityCreated()
         binding.cursorLeft.setColorFilter(accentColor)
         binding.cursorRight.setColorFilter(accentColor)
         binding.cursorLeft.setOnTouchListener(this)
@@ -512,6 +538,11 @@ class ReadBookActivity : BaseReadBookActivity(),
             R.id.menu_add_bookmark -> addBookmark()
             R.id.menu_simulated_reading -> showSimulatedReading()
             R.id.menu_edit_content -> showDialogFragment(ContentEditDialog())
+
+            
+
+            
+
             R.id.menu_update_toc -> ReadBook.book?.let {
                 if (it.isEpub) {
                     BookHelp.clearCache(it)
@@ -623,6 +654,10 @@ class ReadBookActivity : BaseReadBookActivity(),
         }
         return super.onCompatOptionsItemSelected(item)
     }
+
+    
+
+    
 
     private fun refreshContentAll(book: Book) {
         ReadBook.clearTextChapter()
@@ -994,7 +1029,10 @@ class ReadBookActivity : BaseReadBookActivity(),
             ReadBook.readAloud()
         }
         loadStates = true
+        aiSummaryHelper.contentLoadFinish()
     }
+
+    
 
     /**
      * 更新内容
@@ -1049,6 +1087,7 @@ class ReadBookActivity : BaseReadBookActivity(),
      * 页面改变
      */
     override fun pageChanged() {
+        aiSummaryHelper.onPageChanged()
         pageChanged = true
         binding.readView.onPageChange()
         handler.post {
@@ -1485,6 +1524,36 @@ class ReadBookActivity : BaseReadBookActivity(),
         binding.readView.autoPager.resume()
     }
 
+    override fun onEditContentClick() {
+        if (isAiSummaryReplaceMode) {
+            originalContentForAiReplace?.let {
+                replaceContent(it)
+                ReadBook.loadContent(false)
+            }
+            isAiSummaryReplaceMode = false
+            originalContentForAiReplace = null
+        } else {
+            val dialog = StreamingContentEditDialog()
+            dialog.setContentReplaceListener(this)
+            showDialogFragment(dialog)
+        }
+        aiSummaryHelper.upAiWordCount()
+    }
+
+    override fun onContentReplace(content: String) {
+        originalContentForAiReplace = ReadBook.curTextChapter?.let {
+            io.legado.app.help.book.BookHelp.getOriginalContent(ReadBook.book!!, it.chapter)
+        }
+        replaceContent(content)
+        ReadBook.loadContent(false)
+        isAiSummaryReplaceMode = true
+        aiSummaryHelper.upAiWordCount()
+    }
+
+    override fun onAiCoarseClick() {
+        aiSummaryHelper.onAiCoarseClick()
+    }
+
     override fun onLayoutPageCompleted(index: Int, page: TextPage) {
         upSeekBarThrottle.invoke()
         binding.readView.onLayoutPageCompleted(index, page)
@@ -1681,6 +1750,14 @@ class ReadBookActivity : BaseReadBookActivity(),
         }
         observeEvent<Boolean>(EventBus.UP_SEEK_BAR) {
             readMenu.upSeekBar()
+        }
+        observeEvent<Int>(EventBus.AI_SUMMARY_PRECACHE_FINISHED) {
+            chapterIndex ->
+            if (isFinishing || isDestroyed) return@observeEvent
+            aiSummaryHelper.dismissInProgressSnackbar()
+            if (AppConfig.aiSummaryModeEnabled && ReadBook.durChapterIndex == chapterIndex) {
+                ReadBook.loadContent(false)
+            }
         }
     }
 
