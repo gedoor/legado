@@ -43,7 +43,7 @@ splitties = "3.0.0"
 rhino = "1.8.0"
 desugar = "2.1.5"
 
-activity = "1.10.1"
+activity = "1.11.0"
 #kotlinxSerialization = "1.8.0"
 swiperefreshlayout = "1.1.0"
 #noinspection GradleDependency
