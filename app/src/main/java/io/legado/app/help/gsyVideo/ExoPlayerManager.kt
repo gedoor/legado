@@ -11,6 +11,7 @@ import androidx.annotation.RequiresApi
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.video.PlaceholderSurface
 import com.shuyu.gsyvideoplayer.cache.ICacheManager
+import com.shuyu.gsyvideoplayer.model.GSYModel
 import com.shuyu.gsyvideoplayer.model.VideoOptionModel
 import com.shuyu.gsyvideoplayer.player.BasePlayerManager
 import tv.danmaku.ijk.media.exo2.IjkExo2MediaPlayer
@@ -52,21 +53,14 @@ class ExoPlayerManager : BasePlayerManager() {
             dummySurface = PlaceholderSurface.newInstanceV17(context, false)
         }
         try {
-            val model = msg.obj as GSYExoModel
-            if (model.urls.isNullOrEmpty()) {
+            val model = msg.obj as GSYModel
+            if (model.url.isNullOrEmpty()) {
                 // 处理URL为空的情况
                 return
             }
             mediaPlayer!!.setLooping(model.isLooping)
             mediaPlayer!!.setOverrideExtension(model.getOverrideExtension())
-            mediaPlayer!!.setDataSource(
-                model.urls,
-                model.book,
-                model.source,
-                model.getMapHeadData(),
-                model.index,
-                model.isCache()
-            )
+            mediaPlayer!!.dataSource = model.url
             //很遗憾，EXO2的setSpeed只能在播放前生效
             if (model.getSpeed() != 1f && model.getSpeed() > 0) {
                 mediaPlayer!!.setSpeed(model.getSpeed(), 1f)
@@ -288,14 +282,14 @@ class ExoPlayerManager : BasePlayerManager() {
 
     override fun getVideoSarNum(): Int {
         if (mediaPlayer != null) {
-            return mediaPlayer!!.getVideoSarNum()
+            return mediaPlayer!!.videoSarNum
         }
         return 1
     }
 
     override fun getVideoSarDen(): Int {
         if (mediaPlayer != null) {
-            return mediaPlayer!!.getVideoSarDen()
+            return mediaPlayer!!.videoSarDen
         }
         return 1
     }

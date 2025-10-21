@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/black">
@@ -18,38 +20,59 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:background="#000000"
         android:scaleType="fitCenter" />
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_bottom"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="#99000000"
+        android:background="#80000000"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:visibility="invisible">
+        android:paddingBottom="12dp"
+        android:visibility="invisible"
+        tools:visibility="visible">
 
         <TextView
             android:id="@+id/current"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
+            android:layout_marginStart="12dp"
             android:text="00:00"
-            android:textColor="#ffffff" />
+            android:textColor="#ffffff"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/sprit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="/"
+            android:textColor="#ffffff"
+            app:layout_constraintStart_toEndOf="@+id/current"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/total"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00"
+            android:textColor="#ffffff"
+            app:layout_constraintStart_toEndOf="@+id/sprit"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="HardcodedText" />
 
         <SeekBar
             android:id="@+id/progress"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1.0"
             android:background="@null"
             android:max="100"
             android:maxHeight="4dp"
@@ -57,34 +80,45 @@
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
             android:progressDrawable="@drawable/video_seek_progress"
-            android:thumb="@drawable/video_seek_thumb" />
+            android:thumb="@drawable/video_seek_thumb"
+            app:layout_constraintTop_toBottomOf="@+id/sprit" />
 
-        <TextView
-            android:id="@+id/total"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="16dp"
-            android:text="00:00"
-            android:textColor="#ffffff" />
+        <ImageView
+            android:id="@+id/start"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="12dp"
+            android:src="@drawable/ic_play_24dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/progress" />
+
+        <ImageView
+            android:id="@+id/next"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="12dp"
+            android:src="@drawable/ic_skip_next"
+            app:layout_constraintStart_toEndOf="@+id/start"
+            app:layout_constraintTop_toBottomOf="@+id/progress" />
 
         <TextView
             android:id="@+id/switchSize"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginRight="16dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
             android:gravity="center"
             android:minEms="2"
-            android:text="标准"
-            android:textColor="#ffffff" />
-
-        <ImageView
-            android:id="@+id/fullscreen"
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:paddingRight="16dp"
-            android:scaleType="center"
-            android:src="@drawable/video_enlarge" />
-    </LinearLayout>
+            android:text="选集"
+            android:textColor="#ffffff"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/progress" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ProgressBar
         android:id="@+id/bottom_progressbar"
@@ -99,7 +133,7 @@
         android:id="@+id/back_tiny"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:layout_marginLeft="6dp"
+        android:layout_marginStart="6dp"
         android:layout_marginTop="6dp"
         android:visibility="gone" />
 
@@ -111,20 +145,12 @@
         android:layout_centerVertical="true"
         android:visibility="invisible" />
 
-    <moe.codeest.enviews.ENPlayView
-        android:id="@+id/start"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_gravity="center_vertical" />
-
 
     <ImageView
         android:id="@+id/small_close"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:paddingLeft="10dp"
+        android:paddingStart="10dp"
         android:paddingTop="10dp"
         android:scaleType="centerInside"
         android:src="@drawable/video_small_close"
@@ -134,9 +160,9 @@
         android:id="@+id/lock_screen"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        android:layout_marginRight="50dp"
+        android:layout_marginEnd="50dp"
         android:scaleType="centerInside"
         android:src="@drawable/unlock"
         android:visibility="gone" />
@@ -147,7 +173,6 @@
         android:layout_height="48dp"
         android:layout_alignParentTop="true"
         android:layout_toEndOf="@+id/back_tiny"
-        android:layout_toRightOf="@+id/back_tiny"
         android:background="@drawable/video_title_bg"
         android:gravity="center_vertical">
 
@@ -155,18 +180,20 @@
             android:id="@+id/back"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:paddingLeft="10dp"
+            android:paddingStart="10dp"
             android:scaleType="centerInside"
-            android:src="@drawable/video_back" />
+            android:src="@drawable/video_back"
+            tools:ignore="RtlSymmetry" />
 
         <TextView
             android:id="@+id/title"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:paddingLeft="10dp"
+            android:paddingStart="10dp"
             android:textColor="@android:color/white"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            tools:ignore="RtlSymmetry" />
 
     </LinearLayout>
 

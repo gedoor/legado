@@ -30,7 +30,6 @@ import java.util.concurrent.TimeUnit
 @Suppress("unused")
 @SuppressLint("UnsafeOptInUsageError")
 object ExoPlayerHelper {
-    private var exoPlayer: ExoPlayer? = null
 
     private const val SPLIT_TAG = "\uD83D\uDEA7"
 
@@ -41,9 +40,6 @@ object ExoPlayerHelper {
     fun createMediaItem(url: String, headers: Map<String, String>): MediaItem {
         val formatUrl = url + SPLIT_TAG + GSON.toJson(headers, mapType)
         val mediaItemBuilder = MediaItem.Builder().setUri(formatUrl)
-        if (url.contains(".m3u8")) {
-            mediaItemBuilder.setMimeType(MimeTypes.APPLICATION_M3U8)
-        }
         return mediaItemBuilder.build()
     }
 
@@ -62,18 +58,6 @@ object ExoPlayerHelper {
         ).build()
     }
 
-    fun getExoPlayer(context: Context): ExoPlayer {
-        if (exoPlayer == null) {
-            val appContext = context.applicationContext
-            exoPlayer = createHttpExoPlayer(appContext)
-        }
-        return exoPlayer!!
-    }
-
-    fun release() {
-        exoPlayer?.release()
-        exoPlayer = null
-    }
 
 
 
@@ -102,7 +86,7 @@ object ExoPlayerHelper {
     /**
      * 支持缓存的DataSource.Factory
      */
-    private val cacheDataSourceFactory by lazy {
+    val cacheDataSourceFactory by lazy {
         //使用自定义的CacheDataSource以支持设置UA
         return@lazy CacheDataSource.Factory()
             .setCache(cache)

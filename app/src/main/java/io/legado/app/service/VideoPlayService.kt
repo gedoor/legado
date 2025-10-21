@@ -33,12 +33,9 @@ import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.IntentAction
 import io.legado.app.constant.NotificationId
-import io.legado.app.constant.SourceType
-import io.legado.app.data.appDb
-import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.coroutine.Coroutine
-import io.legado.app.help.gsyVideo.ExoVideoManager
 import io.legado.app.help.gsyVideo.FloatingPlayer
+import io.legado.app.model.VideoPlay
 import io.legado.app.receiver.MediaButtonReceiver
 import io.legado.app.ui.video.VideoPlayerActivity
 import io.legado.app.utils.activityPendingIntent
@@ -59,12 +56,7 @@ class VideoPlayService : BaseService() {
         LayoutInflater.from(this).inflate(R.layout.floating_video_player, FrameLayout(this), false)
     }
     private val playerView by lazy { floatingView.findViewById<FloatingPlayer>(R.id.floatingPlayerView) }
-    private var videoUrl = ""
     private var isNew = true
-    private var videoTitle: String? = null
-    private var sourceKey: String? = null
-    private var sourceType: Int? = null
-    private var bookUrl: String? = null
     private var upNotificationJob: Coroutine<*>? = null
     private var animator: SpringAnimation? = null
     private val activityLifecycleCallbacks = object : Application.ActivityLifecycleCallbacks {
@@ -162,19 +154,21 @@ class VideoPlayService : BaseService() {
             }
         }
         intent?.let {
-            videoUrl = intent.getStringExtra("videoUrl") ?: ""
             isNew = intent.getBooleanExtra("isNew", true)
-            videoTitle = intent.getStringExtra("videoTitle")
-            sourceKey = intent.getStringExtra("sourceKey")
-            sourceType = intent.getIntExtra("sourceType", 0)
-            bookUrl = intent.getStringExtra("bookUrl")
-        }
-        if (isNew) {
-            startPlayback()
-        } else {
-            ExoVideoManager.clonePlayState(playerView)
-            playerView.setSurfaceToPlay()
-            playerView.startAfterPrepared()
+            VideoPlay.videoUrl = intent.getStringExtra("videoUrl")
+            VideoPlay.videoTitle = intent.getStringExtra("videoTitle")
+            val sourceKey = intent.getStringExtra("sourceKey")
+            val sourceType = intent.getIntExtra("sourceType", 0)
+            val bookUrl = intent.getStringExtra("bookUrl")
+            if (isNew) {
+                VideoPlay.initSource(sourceKey, sourceType, bookUrl) ?: stopSelf()
+                VideoPlay.saveRead()
+                VideoPlay.startPlay(playerView)
+            } else {
+                VideoPlay.clonePlayState(playerView)
+                playerView.setSurfaceToPlay()
+                playerView.startAfterPrepared()
+            }
         }
         setupPlayerView()
         if (floatingView.parent == null) {
@@ -230,7 +224,7 @@ class VideoPlayService : BaseService() {
     }
 
     private fun createNotification(): NotificationCompat.Builder {
-        val nTitle = getString(R.string.audio_play_t) + ": $videoTitle"
+        val nTitle = getString(R.string.audio_play_t) + ": $VideoPlay.videoTitle"
         val nSubtitle = getString(R.string.audio_play_s)
         val builder = NotificationCompat.Builder(this@VideoPlayService, AppConst.channelIdReadAloud)
             .setSmallIcon(R.drawable.ic_volume_up)
@@ -408,42 +402,18 @@ class VideoPlayService : BaseService() {
     }
 
     private fun toggleFullScreen() {
-        ExoVideoManager.savePlayState(playerView)
+        VideoPlay.savePlayState(playerView)
         val fullscreenIntent = Intent(this, VideoPlayerActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            putExtra("videoUrl", videoUrl)
             putExtra("isNew", false)
-            putExtra("videoTitle", videoTitle)
-            putExtra("sourceKey", sourceKey)
-            putExtra("sourceType", sourceType)
-            putExtra("bookUrl", bookUrl)
         }
         startActivity(fullscreenIntent)
         playerView.needDestroy = false
-        // 停止服务（关闭悬浮窗）
-//        stopSelf()
-    }
-
-    private fun startPlayback() {
-        val source = sourceKey?.let { it ->
-            when (sourceType) {
-                SourceType.book -> appDb.bookSourceDao.getBookSource(it)
-                SourceType.rss -> appDb.rssSourceDao.getByKey(it)
-                else -> null
-            }
-        }
-        var toc: List<BookChapter>? = null
-        val book = bookUrl?.let { it ->
-            toc = appDb.bookChapterDao.getChapterList(it)
-            appDb.bookDao.getBook(it) ?: appDb.searchBookDao.getSearchBook(it)?.toBook()
-        }
-        playerView.setUp(toc, source, book)
-        playerView.startPlayLogic()
     }
 
 
     private fun updateMediaMetadata() {
-        videoTitle?.let { title ->
+        VideoPlay.videoTitle?.let { title ->
             val metadata = MediaMetadataCompat.Builder()
                 .putString(MediaMetadataCompat.METADATA_KEY_TITLE, title)
                 .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, "视频播放")
