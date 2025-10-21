@@ -107,7 +107,6 @@ class VideoPlayerActivity : VMBaseActivity<ActivityVideoPlayerBinding, VideoPlay
             finish()
         }
         orientationUtils = OrientationUtils(this, playerView) //旋转辅助
-        orientationUtils?.isOnlyRotateLand = true //旋转时仅处理横屏
     }
 
     private fun initView() {
@@ -146,7 +145,6 @@ class VideoPlayerActivity : VMBaseActivity<ActivityVideoPlayerBinding, VideoPlay
         val adapter = ChapterAdapter(toc,VideoPlay.durChapterIndex) { chapter ->
             if (chapter.index != VideoPlay.durChapterIndex) {
                 VideoPlay.durChapterIndex = chapter.index
-                scrollToDurChapter(recyclerView)
                 VideoPlay.durChapterPos = 0
                 VideoPlay.saveRead()
                 upView()
@@ -169,10 +167,13 @@ class VideoPlayerActivity : VMBaseActivity<ActivityVideoPlayerBinding, VideoPlay
                 smoothScroller.targetPosition = VideoPlay.durChapterIndex
                 this.startSmoothScroll(smoothScroller)
             }
+            val adapter = recyclerView.adapter as? ChapterAdapter
+            adapter?.updateSelectedPosition(VideoPlay.durChapterIndex)
         }, 200)
     }
 
     private fun upView() {
+        scrollToDurChapter(binding.chapters)
         binding.titleBar.title = VideoPlay.videoTitle
     }
 
@@ -181,12 +182,14 @@ class VideoPlayerActivity : VMBaseActivity<ActivityVideoPlayerBinding, VideoPlay
         isFullScreen = !isFullScreen
         toggleSystemBar(!isFullScreen)
         if (isFullScreen) {
-            orientationUtils?.isRotateWithSystem = false
+            orientationUtils?.isOnlyRotateLand = true //旋转时仅处理横屏
+            orientationUtils?.isRotateWithSystem = false //跟随系统旋转
             supportActionBar?.hide()
             binding.chaptersContainer.gone()
             binding.data.gone()
             playerView.startWindowFullscreen(this, false, false)
         } else {
+            orientationUtils?.isOnlyRotateLand = false
             orientationUtils?.isRotateWithSystem = true
             supportActionBar?.show()
             if (VideoPlay.book != null) {
@@ -195,7 +198,6 @@ class VideoPlayerActivity : VMBaseActivity<ActivityVideoPlayerBinding, VideoPlay
             }
             playerView.backFromFull(this)
             upView()
-            scrollToDurChapter(binding.chapters)
         }
     }
 

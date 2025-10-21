@@ -31,6 +31,13 @@ class ChapterAdapter(
 
     override fun getItemCount(): Int = chapters.size
 
+    fun updateSelectedPosition(newPosition: Int) {
+        val oldPosition = selectedPosition
+        selectedPosition = newPosition
+        notifyItemChanged(oldPosition)
+        notifyItemChanged(newPosition)
+    }
+
     inner class ChapterViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val tvChapterName: TextView = itemView.findViewById(R.id.tvChapterName)
 
