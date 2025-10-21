@@ -3,6 +3,9 @@ package io.legado.app.utils
 import androidx.core.os.postDelayed
 import com.script.ScriptBindings
 import com.script.rhino.RhinoScriptEngine
+import io.legado.app.data.appDb
+import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookChapter
 import io.legado.app.exception.RegexTimeoutException
 import io.legado.app.help.CrashHandler
 import io.legado.app.help.coroutine.Coroutine
@@ -19,7 +22,7 @@ private val handler by lazy { buildMainHandler() }
 /**
  * 带有超时检测的正则替换
  */
-fun CharSequence.replace(regex: Regex, replacement: String, timeout: Long): String {
+fun CharSequence.replace(regex: Regex, replacement: String, timeout: Long, chapter: BookChapter? = null): String {
     val charSequence = this@replace
     val isJs = replacement.startsWith("@js:")
     val replacement1 = if (isJs) replacement.substring(4) else replacement
@@ -35,6 +38,8 @@ fun CharSequence.replace(regex: Regex, replacement: String, timeout: Long): Stri
                             val jsResult = RhinoScriptEngine.run {
                                 val bindings = ScriptBindings()
                                 bindings["result"] = matcher.group()
+                                bindings["chapter"] = chapter
+                                bindings["book"] = chapter?.bookUrl?.let {appDb.searchBookDao.getSearchBook(it) ?: appDb.bookDao.getBook(it)?.toSearchBook() }
                                 eval(replacement1, bindings)
                             }.toString()
                             val quotedResult = Matcher.quoteReplacement(jsResult)
