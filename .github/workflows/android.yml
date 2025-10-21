@@ -1,0 +1,58 @@
+name: Simple Android Build
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:  # 保留手动触发
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # 步骤1：检出代码
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 步骤2：设置Java环境
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 17
+
+      # 步骤3：设置Gradle
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      # 步骤4：构建Debug版本（无需签名）
+      - name: Build Debug APK
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleAppDebug --build-cache --parallel --daemon --warning-mode all
+
+      # 步骤5：整理输出文件
+      - name: Organize Output Files
+        run: |
+          mkdir -p ${{ github.workspace }}/apk/
+          # 复制所有APK文件到统一目录
+          find ${{ github.workspace }}/app/build/outputs/apk/ -name "*.apk" -exec cp {} ${{ github.workspace }}/apk/ \;
+          echo "构建完成的APK文件："
+          ls -la ${{ github.workspace }}/apk/
+
+      # 步骤6：上传APK作为制品
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apks
+          path: ${{ github.workspace }}/apk/*.apk
+          retention-days: 7  # 保留7天
+
+      # 步骤7：显示构建信息
+      - name: Display Build Info
+        run: |
+          echo "🎉 构建成功完成！"
+          echo "📱 APK文件已上传到工作流制品"
+          echo "👇 在Actions页面点击当前运行的工作流，即可下载APK文件"
