@@ -9,7 +9,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    if: ${{ github.repository == 'gedoor/legado' }}
+    if: ${{ github.repository == 'Luoyacheng/legado' }}
     steps:
       - uses: actions/checkout@v4
 
