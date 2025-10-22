@@ -8,7 +8,8 @@ colorpicker = "1.1.0"
 commonsText = "1.14.0"
 constraintlayout = "2.2.1"
 core = "1.17.0"
-firebaseBom = "34.4.0"
+#不要更新，提高了最低SDK
+firebaseBom = "33.2.0"
 flexbox = "3.0.0"
 fragment = "1.8.9"
 
@@ -36,9 +37,11 @@ gsyvideoplayer = "11.1.0"
 nanoHttpd = "2.3.1"
 okhttp = "5.1.0"
 preference = "1.2.1"
-protobufJavalite = "4.33.0"
+#不要更新，需要跟随firebaseBom
+protobufJavalite = "4.26.1"
 quickChineseTransfer = "0.2.16"
-room = "2.8.2"
+#不要更新，提高了最低SDK
+room = "2.7.1"
 splitties = "3.0.0"
 rhino = "1.8.0"
 desugar = "2.1.5"
