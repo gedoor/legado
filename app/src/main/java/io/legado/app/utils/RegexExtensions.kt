@@ -4,7 +4,6 @@ import androidx.core.os.postDelayed
 import com.script.ScriptBindings
 import com.script.rhino.RhinoScriptEngine
 import io.legado.app.data.appDb
-import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.exception.RegexTimeoutException
 import io.legado.app.help.CrashHandler
@@ -13,7 +12,6 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.suspendCancellableCoroutine
 import splitties.init.appCtx
-import java.util.regex.Matcher
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
@@ -42,7 +40,8 @@ fun CharSequence.replace(regex: Regex, replacement: String, timeout: Long, chapt
                                 bindings["book"] = chapter?.bookUrl?.let {appDb.searchBookDao.getSearchBook(it) ?: appDb.bookDao.getBook(it)?.toSearchBook() }
                                 eval(replacement1, bindings)
                             }.toString()
-                            val quotedResult = Matcher.quoteReplacement(jsResult)
+                            val quotedResult = quoteBackslash(jsResult)
+                            //Matcher.quoteReplacement(jsResult)
                             matcher.appendReplacement(stringBuffer, quotedResult)
                         } else {
                             matcher.appendReplacement(stringBuffer, replacement1)
@@ -73,3 +72,17 @@ fun CharSequence.replace(regex: Regex, replacement: String, timeout: Long, chapt
     }
 }
 
+fun quoteBackslash(s: String): String {
+    if (!s.contains('\\')) {
+        return s
+    }
+    val sb = StringBuilder()
+    for (c in s) {
+        if (c == '\\') {
+            sb.append("\\\\")
+        } else {
+            sb.append(c)
+        }
+    }
+    return sb.toString()
+}

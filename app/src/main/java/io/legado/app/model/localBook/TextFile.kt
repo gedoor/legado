@@ -1,5 +1,7 @@
 package io.legado.app.model.localBook
 
+import com.script.ScriptBindings
+import com.script.rhino.RhinoScriptEngine
 import io.legado.app.constant.AppLog
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
@@ -25,6 +27,7 @@ class TextFile(private var book: Book) {
     @Suppress("ConstPropertyName")
     companion object {
         private val padRegex = "^[\\n\\s]+".toRegex()
+        const val spaceChars = "🫅🈳🏻"
         private const val txtBufferSize = 8 * 1024 * 1024
         private var textFile: TextFile? = null
 
@@ -71,6 +74,9 @@ class TextFile(private var book: Book) {
     private var txtBuffer: ByteArray? = null
     private var bufferStart = -1L
     private var bufferEnd = -1L
+    //选中更好的目录规则判断阈值
+    private val overRuleCount = 2
+    private val toSearchBook = book.toSearchBook()
 
     /**
      * 获取目录
@@ -89,11 +95,12 @@ class TextFile(private var book: Book) {
                 charset = book.fileCharset()
                 if (book.tocUrl.isBlank() || modified) {
                     val blockContent = String(buffer, 0, length, charset)
-                    book.tocUrl = getTocRule(blockContent)?.pattern() ?: ""
+                    val tocRule = getTocRule(blockContent)
+                    book.tocUrl = tocRule?.let { it.rule + spaceChars + it.replacement } ?: ""
                 }
             }
         }
-        val (toc, wordCount) = analyze(book.tocUrl.toPattern(Pattern.MULTILINE))
+        val (toc, wordCount) = analyze(book.tocUrl.split(spaceChars, limit = 2))
         book.wordCount = StringUtils.wordCountFormat(wordCount)
         toc.forEachIndexed { index, bookChapter ->
             bookChapter.index = index
@@ -145,8 +152,10 @@ class TextFile(private var book: Book) {
     /**
      * 按规则解析目录
      */
-    private fun analyze(pattern: Pattern?): Pair<ArrayList<BookChapter>, Int> {
-        if (pattern == null || pattern.pattern().isNullOrEmpty()) {
+    private fun analyze(rr:List<String>): Pair<ArrayList<BookChapter>, Int> {
+        val pattern = rr[0].toPattern(Pattern.MULTILINE)
+        val jsStr = rr.getOrNull(1)
+        if (rr[0].isEmpty()) {
             return analyze()
         }
         val toc = arrayListOf<BookChapter>()
@@ -190,6 +199,8 @@ class TextFile(private var book: Book) {
                 val matcher: Matcher = pattern.matcher(blockContent)
                 //如果存在相应章节
                 while (matcher.find()) { //获取匹配到的字符在字符串中的起始位置
+                    val title = replacement(matcher.group(), jsStr)
+                    if (title.isEmpty()) continue
                     val chapterStart = matcher.start()
                     //获取章节内容
                     val chapterContent = blockContent.substring(seekPos, chapterStart)
@@ -215,7 +226,7 @@ class TextFile(private var book: Book) {
                         bookWordCount += wordCount
                         //创建当前章节
                         val curChapter = BookChapter()
-                        curChapter.title = matcher.group()
+                        curChapter.title = title
                         curChapter.start = curOffset + chapterLength
                         curChapter.end = curChapter.start
                         toc.add(curChapter)
@@ -243,7 +254,7 @@ class TextFile(private var book: Book) {
                             }
                             //创建当前章节
                             val curChapter = BookChapter()
-                            curChapter.title = matcher.group()
+                            curChapter.title = title
                             curChapter.start = curOffset + chapterLength
                             curChapter.end = curChapter.start
                             toc.add(curChapter)
@@ -259,7 +270,7 @@ class TextFile(private var book: Book) {
                                 StringUtils.wordCountFormat(lastChapterWordCount)
                             //创建当前章节
                             val curChapter = BookChapter()
-                            curChapter.title = matcher.group()
+                            curChapter.title = title
                             curChapter.start = lastChapter.end
                             curChapter.end = curChapter.start
                             toc.add(curChapter)
@@ -278,13 +289,13 @@ class TextFile(private var book: Book) {
                                 StringUtils.wordCountFormat(chapterContent.length)
                             //创建当前章节
                             val curChapter = BookChapter()
-                            curChapter.title = matcher.group()
+                            curChapter.title = title
                             curChapter.start = lastChapter.end
                             curChapter.end = curChapter.start
                             toc.add(curChapter)
                         } else { //如果章节不存在则创建章节
                             val curChapter = BookChapter()
-                            curChapter.title = matcher.group()
+                            curChapter.title = title
                             curChapter.start = curOffset
                             curChapter.end = curOffset
                             curChapter.wordCount =
@@ -435,10 +446,10 @@ class TextFile(private var book: Book) {
     /**
      * 获取合适的目录规则
      */
-    private fun getTocRule(content: String): Pattern? {
-        val rules = getTocRules().reversed()
+    private fun getTocRule(content: String): TxtTocRule? {
+        val rules = getTocRules() //.reversed() 改动num >= maxNum条件，不需要再反转
         var maxNum = 1
-        var tocPattern: Pattern? = null
+        var mTocRule: TxtTocRule? = null
         for (tocRule in rules) {
             val pattern = try {
                 tocRule.rule.toPattern(Pattern.MULTILINE)
@@ -451,17 +462,36 @@ class TextFile(private var book: Book) {
             var num = 0
             while (matcher.find()) {
                 if (start == 0 || matcher.start() - start > 1000) {
-                    num++
+                    if (replacement(matcher.group(), tocRule.replacement).length > 1) {
+                        num++
+                    }
                     start = matcher.end()
                 }
             }
-            if (num >= maxNum) {
+            if (num > maxNum + overRuleCount) { //后面的规则匹配数量没超过最大值2个，那么依旧用前面那个
                 maxNum = num
-                tocPattern = pattern
+                mTocRule = tocRule
+                if (maxNum > 90) { break } //能获取90个章节，说明这个规则能基本匹配，并且排在前面，所以不考虑后面的规则
             }
         }
-        return tocPattern
+        return mTocRule
     }
+
+    /**
+     * 净化标题
+     */
+    private fun replacement(content: String,jsStr: String?): String {
+        if (jsStr.isNullOrBlank()) {
+            return content
+        }
+        return RhinoScriptEngine.run {
+            val bindings = ScriptBindings()
+            bindings["result"] = content
+            bindings["book"] = toSearchBook
+            eval(jsStr, bindings)
+        }.toString()
+    }
+
 
     /**
      * 获取启用的目录规则

@@ -91,6 +91,7 @@ class TxtTocRuleEditDialog() : BaseDialogFragment(R.layout.dialog_toc_regex_edit
     private fun upRuleView(tocRule: TxtTocRule?) {
         binding.tvRuleName.setText(tocRule?.name)
         binding.tvRuleRegex.setText(tocRule?.rule)
+        binding.tvRuleReplacement.setText(tocRule?.replacement)
         binding.tvRuleExample.setText(tocRule?.example)
     }
 
@@ -101,6 +102,7 @@ class TxtTocRuleEditDialog() : BaseDialogFragment(R.layout.dialog_toc_regex_edit
         binding.run {
             tocRule.name = tvRuleName.text.toString()
             tocRule.rule = tvRuleRegex.text.toString()
+            tocRule.replacement = tvRuleReplacement.text.toString()
             tocRule.example = tvRuleExample.text.toString()
         }
         return tocRule

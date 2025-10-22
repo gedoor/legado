@@ -1,5 +1,6 @@
 package io.legado.app.data.entities
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -10,6 +11,8 @@ data class TxtTocRule(
     var id: Long = System.currentTimeMillis(),
     var name: String = "",
     var rule: String = "",
+    @ColumnInfo(defaultValue = "")
+    var replacement: String = "",
     var example: String? = null,
     var serialNumber: Int = -1,
     var enable: Boolean = true

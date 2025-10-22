@@ -1275,4 +1275,5 @@
     <string name="no_more_chapter">没有更多章节</string>
     <string name="overlay">叠加</string>
     <string name="margin">间距</string>
+    <string name="replace_to_js">js处理</string>
 </resources>
