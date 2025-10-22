@@ -76,18 +76,14 @@ import splitties.views.bottomPadding
 import java.io.ByteArrayInputStream
 import java.net.URLDecoder
 import java.util.regex.PatternSyntaxException
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.GlideException
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.analyzeRule.AnalyzeRule
 import io.legado.app.model.analyzeRule.AnalyzeRule.Companion.setCoroutineContext
 import io.legado.app.ui.rss.article.RssSortActivity
 import io.legado.app.utils.GSONStrict
 import io.legado.app.utils.fromJsonObject
-import java.io.FileInputStream
-import java.net.URLConnection
-import java.util.concurrent.ExecutionException
 import io.legado.app.ui.about.AppLogDialog
+import io.legado.app.ui.rss.article.ReadRecordDialog
 import io.legado.app.ui.rss.source.edit.RssSourceEditActivity
 import io.legado.app.utils.StartActivityContract
 import io.legado.app.utils.escapeForJs
@@ -227,6 +223,9 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                 }
             }
             R.id.menu_log -> showDialogFragment<AppLogDialog>()
+            R.id.menu_read_record -> {
+                showDialogFragment<ReadRecordDialog>()
+            }
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -269,6 +268,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         binding.webView.addJavascriptInterface(JSInterface(), "AndroidComm")
         binding.webView.webViewClient = CustomWebViewClient()
         binding.webView.settings.apply {
+            cacheMode = WebSettings.LOAD_DEFAULT
             mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
             domStorageEnabled = true
             mediaPlaybackRequiresUserGesture = false
@@ -337,7 +337,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                 "rss" -> {
                     GSONStrict.fromJsonObject<Map<String, String>>(url)
                         .getOrThrow().entries.firstOrNull()?.let {
-                            viewModel.readRss(it.key, it.value)
+                            viewModel.readRss(it.key, it.value, viewModel.origin)
                             start(this@ReadRssActivity, it.key, it.value, sourceUrl)
                         }
                 }
@@ -444,7 +444,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
         viewModel.contentLiveData.observe(this) { content ->
             viewModel.rssArticle?.let {
                 upJavaScriptEnable()
-                val url = NetworkUtils.getAbsoluteURL(it.origin, it.link)
+                val url = NetworkUtils.getAbsoluteURL(it.origin, it.link).substringBefore("@js")
                 val html = viewModel.clHtml(content)
                 binding.webView.settings.userAgentString =
                     viewModel.headerMap[AppConst.UA_NAME] ?: AppConfig.userAgent
@@ -662,55 +662,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
                     return createEmptyResource()
                 }
             }
-            if (isImageUrl(url)) {
-                return getGlideCachedImage(url)
-            }
             return super.shouldInterceptRequest(view, request)
-        }
-
-        private fun isImageUrl(url: String): Boolean {
-            val imageExtensions = listOf("jpg", "jpeg", "png", "gif", "webp")
-            return imageExtensions.any { url.contains(it, ignoreCase = true) }
-        }
-
-        private fun getMimeType(url: String): String? {
-            return try {
-                URLConnection.guessContentTypeFromName(url)?.takeIf { it.startsWith("image/") }
-            } catch (e: Exception) {
-                null
-            }
-        }
-
-        private fun getGlideCachedImage(url: String): WebResourceResponse? {
-            if (url.isBlank()) return null
-            return try {
-                // 同步获取Glide缓存
-                val future = Glide.with(this@ReadRssActivity).downloadOnly().load(url)
-                    .onlyRetrieveFromCache(true) // 只查缓存
-                    .submit()
-                val cacheFile = future.get() // 阻塞式获取
-                if (cacheFile.exists() && cacheFile.length() > 0) {
-                    val inputStream = FileInputStream(cacheFile)
-                    val mimeType = getMimeType(url) ?: "image/*"
-                    return WebResourceResponse(mimeType, "UTF-8", inputStream)
-                }
-                null
-            } catch (e: ExecutionException) {
-                when (e.cause) {
-                    is GlideException -> {
-                        // 未命中缓存
-                        null
-                    }
-
-                    else -> {
-                        AppLog.put("Glide加载失败: ${e.message} URL:$url")
-                        null
-                    }
-                }
-            } catch (e: Exception) {
-                AppLog.put("Glide加载异常: ${e.message} URL:$url")
-                null
-            }
         }
 
         override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
@@ -774,7 +726,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
 
                 "openrssurl" -> {
                     val decodedUrl = decodeUrl(url, "rssurl://")
-                    viewModel.readRss(source.sourceName, decodedUrl)
+                    viewModel.readRss(source.sourceName, decodedUrl, viewModel.origin)
                     start(this@ReadRssActivity, source.sourceName, decodedUrl, source.sourceUrl)
                     true
                 }
@@ -814,9 +766,9 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
     }
 
     companion object {
-        fun start(context: Context, title: String, url: String, origin: String) {
+        fun start(context: Context, title: String?, url: String, origin: String) {
             context.startActivity<ReadRssActivity> {
-                putExtra("title", title)
+                putExtra("title", title ?: "")
                 putExtra("origin", origin)
                 putExtra("openUrl", url)
             }

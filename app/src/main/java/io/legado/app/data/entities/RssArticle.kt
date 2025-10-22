@@ -24,6 +24,8 @@ data class RssArticle(
     @ColumnInfo(defaultValue = "默认分组")
     var group: String = "默认分组",
     var read: Boolean = false,
+    @ColumnInfo(defaultValue = "0")
+    var ratio: Int = 0,
     override var variable: String? = null
 ) : BaseRssArticle {
 

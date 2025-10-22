@@ -43,23 +43,24 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
     val upTtsMenuData = MutableLiveData<Boolean>()
     val upStarMenuData = MutableLiveData<Boolean>()
     var headerMap: Map<String, String> = emptyMap()
+    var origin: String? = null
 
     fun initData(intent: Intent) {
         execute {
-            val origin = intent.getStringExtra("origin") ?: return@execute
+            origin = intent.getStringExtra("origin") ?: return@execute
             val link = intent.getStringExtra("link")
-            rssSource = appDb.rssSourceDao.getByKey(origin)
+            rssSource = appDb.rssSourceDao.getByKey(origin!!)
             headerMap = runScriptWithContext {
                 rssSource?.getHeaderMap() ?: emptyMap()
             }
             if (link != null) {
-                rssStar = appDb.rssStarDao.get(origin, link)
+                rssStar = appDb.rssStarDao.get(origin!!, link)
                 val sort = intent.getStringExtra("sort")
                 rssArticle = rssStar?.toRssArticle()
                     ?: if (sort == null) {
-                        appDb.rssArticleDao.getByLink(origin, link)
+                        appDb.rssArticleDao.getByLink(origin!!, link)
                     } else {
-                        appDb.rssArticleDao.get(origin, link, sort)
+                        appDb.rssArticleDao.get(origin!!, link, sort)
                     }
 
                 rssArticle?.let { article ->
@@ -84,14 +85,15 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
                     htmlLiveData.postValue(hbHtml())
                 }
                 else if (ruleContent.isNullOrBlank()) {
-                    loadUrl(openUrl ?: origin, origin)
+                    loadUrl(openUrl ?: origin!!, origin!!)
                 }
                 else if (rssSource!!.singleUrl) {
                     htmlLiveData.postValue(ruleContent)
                 }
                 else if (openUrl != null) {
                     val title = intent.getStringExtra("title") ?: rssSource!!.sourceName
-                    val rssArticle = appDb.rssArticleDao.getByLink(origin, openUrl) ?: RssArticle(origin, title, title, link = openUrl)
+                    val rssArticle = appDb.rssArticleDao.getByLink(origin!!, openUrl) ?: RssArticle(
+                        origin!!, title, title, link = openUrl)
                     loadContent(rssArticle, ruleContent)
                 }
             }
@@ -299,11 +301,12 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
         tts?.clearTts()
     }
 
-    fun readRss(title: String, link: String) {
+    fun readRss(title: String, link: String, origin: String?) {
         execute {
             val rssReadRecord = RssReadRecord(
                 record = link,
                 title = title,
+                origin = origin ?: "",
                 readTime = System.currentTimeMillis()
             )
             appDb.rssReadRecordDao.insertRecord(rssReadRecord)

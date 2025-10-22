@@ -16,6 +16,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:singleLine="true"
+            android:paddingBottom="8dp"
             android:ellipsize="none" />
     </HorizontalScrollView>
 

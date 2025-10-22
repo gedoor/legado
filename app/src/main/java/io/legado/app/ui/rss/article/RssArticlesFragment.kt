@@ -135,6 +135,7 @@ class RssArticlesFragment() : VMBaseFragment<RssArticlesViewModel>(R.layout.frag
             }.flowOn(IO).collect { newList ->
                 if (fullRefresh || newList.isEmpty()) {
                     adapter.setItems(newList)
+                    fullRefresh = false
                 } else {
                     // 用DiffUtil只对差异数据进行更新
                     adapter.setItems(newList, object : DiffUtil.ItemCallback<RssArticle>() {

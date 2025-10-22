@@ -17,6 +17,7 @@ import io.legado.app.databinding.DialogRecyclerViewBinding
 import io.legado.app.databinding.ItemRssReadRecordBinding
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
+import io.legado.app.ui.rss.read.ReadRssActivity
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
@@ -44,6 +45,11 @@ class ReadRecordDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
             recyclerView.adapter = adapter
         }
         adapter.setItems(viewModel.getRecords())
+        adapter.setOnRecordClickListener(object : OnRecordClickListener {
+            override fun onRecordClick(record: RssReadRecord?) {
+                record?.let { ReadRssActivity.start(requireContext(), it.title, it.record, it.origin) }
+            }
+        })
     }
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
@@ -66,6 +72,11 @@ class ReadRecordDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
     inner class ReadRecordAdapter(context: Context) :
         RecyclerAdapter<RssReadRecord, ItemRssReadRecordBinding>(context) {
 
+        private var recordClickListener: OnRecordClickListener? = null
+        fun setOnRecordClickListener(listener: OnRecordClickListener) {
+            this.recordClickListener = listener
+        }
+
         override fun getViewBinding(parent: ViewGroup): ItemRssReadRecordBinding {
             return ItemRssReadRecordBinding.inflate(inflater, parent, false)
         }
@@ -81,8 +92,16 @@ class ReadRecordDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
         }
 
         override fun registerListener(holder: ItemViewHolder, binding: ItemRssReadRecordBinding) {
+            binding.textTitle.setOnClickListener {
+                recordClickListener?.onRecordClick(getItem(holder.bindingAdapterPosition))
+                dismiss()
+            }
         }
 
+    }
+
+    interface OnRecordClickListener {
+        fun onRecordClick(record: RssReadRecord?)
     }
 
 }

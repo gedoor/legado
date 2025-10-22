@@ -55,6 +55,7 @@ class RssSortViewModel(application: Application) : BaseViewModel(application) {
             val rssReadRecord = RssReadRecord(
                 record = rssArticle.link,
                 title = rssArticle.title,
+                origin = rssArticle.origin,
                 readTime = System.currentTimeMillis()
             )
             appDb.rssReadRecordDao.insertRecord(rssReadRecord)
