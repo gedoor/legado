@@ -145,7 +145,7 @@ class TextFile(private var book: Book) {
         }
 
         return String(buffer, charset)
-            .substringAfter(chapter.title)
+            //.substringAfter(chapter.title) //之前裁切没有间隙，所以正文保留了标题，需要在这儿去掉
             .replace(padRegex, "　　")
     }
 
@@ -205,17 +205,18 @@ class TextFile(private var book: Book) {
                     //获取章节内容
                     val chapterContent = blockContent.substring(seekPos, chapterStart)
                     val chapterLength = chapterContent.toByteArray(charset).size.toLong()
+                    val titleLength = matcher.group().toByteArray(charset).size.toLong()
                     val lastStart = toc.lastOrNull()?.start ?: curOffset
                     if (book.getSplitLongChapter() && curOffset + chapterLength - lastStart > maxLengthWithToc) {
-                        toc.lastOrNull()?.let {
-                            it.end = it.start
-                            it.tag = null
-                        }
                         //章节字数太多进行拆分
-                        val lastTitle = toc.lastOrNull()?.title
-                        val lastTitleLength = lastTitle?.toByteArray(charset)?.size ?: 0
+                        val lastTitle = toc.lastOrNull()?.let {
+                            it.end = it.start
+                            it.isVolume = true
+                            it.tag = null
+                            it.title
+                        }
                         val (chapters, wordCount) = analyze(
-                            lastStart + lastTitleLength, curOffset + chapterLength
+                            lastStart, curOffset + chapterLength
                         )
                         lastTitle?.let {
                             chapters.forEachIndexed { index, bookChapter ->
@@ -255,7 +256,7 @@ class TextFile(private var book: Book) {
                             //创建当前章节
                             val curChapter = BookChapter()
                             curChapter.title = title
-                            curChapter.start = curOffset + chapterLength
+                            curChapter.start = curOffset + chapterLength + titleLength
                             curChapter.end = curChapter.start
                             toc.add(curChapter)
                         } else { //否则就block分割之后，上一个章节的剩余内容
@@ -271,7 +272,7 @@ class TextFile(private var book: Book) {
                             //创建当前章节
                             val curChapter = BookChapter()
                             curChapter.title = title
-                            curChapter.start = lastChapter.end
+                            curChapter.start = lastChapter.end!! + titleLength
                             curChapter.end = curChapter.start
                             toc.add(curChapter)
                         }
@@ -290,7 +291,7 @@ class TextFile(private var book: Book) {
                             //创建当前章节
                             val curChapter = BookChapter()
                             curChapter.title = title
-                            curChapter.start = lastChapter.end
+                            curChapter.start = lastChapter.end!! + titleLength
                             curChapter.end = curChapter.start
                             toc.add(curChapter)
                         } else { //如果章节不存在则创建章节
@@ -306,7 +307,7 @@ class TextFile(private var book: Book) {
                         lastChapterWordCount = 0
                     }
                     //设置指针偏移
-                    seekPos += chapterContent.length
+                    seekPos += chapterContent.length + matcher.group().length
                 }
                 val wordCount = blockContent.length - seekPos
                 bookWordCount += wordCount
@@ -324,11 +325,11 @@ class TextFile(private var book: Book) {
                 if (book.getSplitLongChapter() && chapter.end!! - chapter.start!! > maxLengthWithToc) {
                     val end = chapter.end!!
                     chapter.end = chapter.start
+                    chapter.isVolume = true
                     chapter.tag = null
                     val lastTitle = chapter.title
-                    val lastTitleLength = lastTitle.toByteArray(charset).size
                     val (chapters, _) = analyze(
-                        chapter.start!! + lastTitleLength, end
+                        chapter.start!!, end
                     )
                     chapters.forEachIndexed { index, bookChapter ->
                         bookChapter.title = "$lastTitle(${index + 1})"
