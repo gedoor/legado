@@ -1276,4 +1276,5 @@
     <string name="overlay">叠加</string>
     <string name="margin">间距</string>
     <string name="replace_to_js">js处理</string>
+    <string name="layout_type">样式：</string>
 </resources>

@@ -34,6 +34,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import androidx.viewpager.widget.ViewPager
+import io.legado.app.ui.rss.article.RssArticlesAdapter3.Companion.clearImageHeight
 import io.legado.app.utils.startActivity
 
 class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewModel>(),
@@ -260,6 +261,9 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
             R.id.menu_clear -> {
                 viewModel.url?.let {
                     viewModel.clearArticles()
+                    if (viewModel.rssSource?.articleStyle == 3) {
+                        clearImageHeight()
+                    }
                 }
             }
 

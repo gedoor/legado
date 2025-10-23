@@ -14,6 +14,7 @@ import com.google.android.material.tabs.TabLayout
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
+import io.legado.app.constant.BookSourceType
 import io.legado.app.data.entities.RssSource
 import io.legado.app.databinding.ActivityRssSourceEditBinding
 import io.legado.app.help.config.LocalConfig
@@ -263,6 +264,7 @@ class RssSourceEditActivity :
             binding.cbIsEnable.isChecked = rs.enabled
             binding.cbSingleUrl.isChecked = rs.singleUrl
             binding.cbIsEnableCookie.isChecked = rs.enabledCookieJar == true
+            binding.spType.setSelection(rs.articleStyle)
         }
         sourceEntities.clear()
         sourceEntities.apply {
@@ -345,6 +347,7 @@ class RssSourceEditActivity :
         source.enabled = binding.cbIsEnable.isChecked
         source.singleUrl = binding.cbSingleUrl.isChecked
         source.enabledCookieJar = binding.cbIsEnableCookie.isChecked
+        source.articleStyle = binding.spType.selectedItemPosition
         sourceEntities.forEach {
             it.value = it.value?.takeIf { s -> s.isNotBlank() }
             when (it.key) {

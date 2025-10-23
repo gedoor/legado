@@ -49,7 +49,7 @@ data class RssSource(
     /**是否单url源**/
     var singleUrl: Boolean = false,
     /*列表规则*/
-    /**列表样式,0,1,2**/
+    /**列表样式,0,1,2,3**/
     @ColumnInfo(defaultValue = "0")
     var articleStyle: Int = 0,
     /**列表规则**/

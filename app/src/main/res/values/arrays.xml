@@ -13,6 +13,13 @@
 		<item>Video</item>
 	</string-array>
 
+	<string-array name="layout_type">
+		<item>列表</item>
+		<item>单列</item>
+		<item>双列</item>
+		<item>瀑布</item>
+	</string-array>
+
 	<string-array name="group_style">
 		<item>Tab</item>
 		<item>Folder</item>

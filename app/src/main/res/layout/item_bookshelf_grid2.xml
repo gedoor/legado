@@ -39,7 +39,7 @@
                 android:transitionName="img_cover"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:ignore="UnusedAttribute,ImageContrastCheck"
-                tools:layout_editor_absoluteX="8dp" />
+                tools:layout_editor_absoluteX="4dp" />
 
             <TextView
                 android:id="@+id/tv_name"

@@ -14,6 +14,7 @@
             android:id="@+id/text_title"
             android:text="@string/title"
             android:layout_width="wrap_content"
+            android:minWidth="260dp"
             android:layout_height="wrap_content"
             android:singleLine="true"
             android:paddingBottom="8dp"

@@ -42,9 +42,9 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
                 rssArticle.order = order--
             }
             appDb.rssArticleDao.insert(*articles.toTypedArray())
-            if (!rssSource.ruleNextPage.isNullOrEmpty()) {
-                appDb.rssArticleDao.clearOld(rssSource.sourceUrl, sortName, order)
-            }
+//            if (!rssSource.ruleNextPage.isNullOrEmpty()) {  //没有下一页也清空过期内容
+            appDb.rssArticleDao.clearOld(rssSource.sourceUrl, sortName, order)
+//            }
             val hasMore = articles.isNotEmpty() && !rssSource.ruleNextPage.isNullOrEmpty()
             loadFinallyLiveData.postValue(hasMore)
             isLoading = false

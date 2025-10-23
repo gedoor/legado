@@ -1,6 +1,5 @@
 package io.legado.app.ui.rss.article
 
-
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.activityViewModels
@@ -8,6 +7,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -29,12 +29,13 @@ import io.legado.app.utils.setEdgeEffectColor
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
-import androidx.recyclerview.widget.DiffUtil
 
 class RssArticlesFragment() : VMBaseFragment<RssArticlesViewModel>(R.layout.fragment_rss_articles),
     BaseRssArticlesAdapter.CallBack {
@@ -117,37 +118,57 @@ class RssArticlesFragment() : VMBaseFragment<RssArticlesViewModel>(R.layout.frag
                 }
             }
         })
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                refreshLayout.isRefreshing = true
-                loadArticles()
-                this@launch.cancel()
-            }
+        refreshLayout.post {
+            refreshLayout.isRefreshing = true
+            loadArticles()
         }
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+//                refreshLayout.isRefreshing = true
+//                loadArticles()
+//                this@launch.cancel()
+//            }
+//        } //只刷新可见页面,注释掉,恢复原先预加载设计
     }
 
+    @OptIn(FlowPreview::class)
     private fun initData() {
         val rssUrl = activityViewModel.url ?: return
         articlesFlowJob?.cancel()
         articlesFlowJob = viewLifecycleOwner.lifecycleScope.launch {
-            appDb.rssArticleDao.flowByOriginSort(rssUrl, viewModel.sortName).catch {
-                AppLog.put("订阅文章界面获取数据失败\n${it.localizedMessage}", it)
-            }.flowOn(IO).collect { newList ->
-                if (fullRefresh || newList.isEmpty()) {
-                    adapter.setItems(newList)
-                    fullRefresh = false
-                } else {
-                    // 用DiffUtil只对差异数据进行更新
-                    adapter.setItems(newList, object : DiffUtil.ItemCallback<RssArticle>() {
-                        override fun areItemsTheSame(oldItem: RssArticle, newItem: RssArticle): Boolean {
-                            return oldItem.link == newItem.link
-                        }
-                        override fun areContentsTheSame(oldItem: RssArticle, newItem: RssArticle): Boolean {
-                            return oldItem == newItem
-                        }
-                    }, true)
+            appDb.rssArticleDao.flowByOriginSort(rssUrl, viewModel.sortName)
+                .debounce(200L) // 200毫秒防抖
+                .catch {
+                    AppLog.put("订阅文章界面获取数据失败\n${it.localizedMessage}", it)
+                }.flowOn(IO).collect { newList ->
+                    if (fullRefresh || newList.isEmpty()) {
+                        adapter.setItems(newList)
+                        fullRefresh = false
+                    } else {
+                        // 用DiffUtil只对差异数据进行更新
+                        adapter.setItems(newList, object : DiffUtil.ItemCallback<RssArticle>() {
+                            override fun areItemsTheSame(
+                                oldItem: RssArticle, newItem: RssArticle
+                            ): Boolean {
+                                return oldItem.link == newItem.link
+                            }
+
+                            override fun areContentsTheSame(
+                                oldItem: RssArticle, newItem: RssArticle
+                            ): Boolean {
+                                return oldItem.title == newItem.title && oldItem.image == newItem.image && oldItem.read == newItem.read
+                            }
+
+                            override fun getChangePayload(
+                                oldItem: RssArticle, newItem: RssArticle
+                            ): Any? {
+                                return if (oldItem.read != newItem.read) { "read" }
+                                else if (oldItem.title != newItem.title) { "title" }
+                                else { null }
+                            }
+                        }, true)
+                    }
                 }
-            }
         }
     }
 
