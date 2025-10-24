@@ -297,8 +297,8 @@ class TextFile(private var book: Book) {
                         } else { //如果章节不存在则创建章节
                             val curChapter = BookChapter()
                             curChapter.title = title
-                            curChapter.start = curOffset
-                            curChapter.end = curOffset
+                            curChapter.start = curOffset + titleLength
+                            curChapter.end = curChapter.start
                             curChapter.wordCount =
                                 StringUtils.wordCountFormat(chapterContent.length)
                             toc.add(curChapter)
@@ -461,18 +461,22 @@ class TextFile(private var book: Book) {
             val matcher = pattern.matcher(content)
             var start = 0
             var num = 0
+            var numE = 0
             while (matcher.find()) {
-                if (start == 0 || matcher.start() - start > 1000) {
-                    if (replacement(matcher.group(), tocRule.replacement).length > 1) {
+                val contentLength = matcher.start() - start
+                if (start == 0 || contentLength > 1000) {
+                    if (replacement(matcher.group(), tocRule.replacement).isNotEmpty()) {
                         num++
                     }
                     start = matcher.end()
+                } else if (contentLength < 500) {
+                    numE++
                 }
             }
-            if (num > maxNum + overRuleCount) { //后面的规则匹配数量没超过最大值2个，那么依旧用前面那个
+            if (num > numE && (num > maxNum + overRuleCount)) { //后面的规则匹配数量没超过最大值2个，那么依旧用前面那个
                 maxNum = num
                 mTocRule = tocRule
-                if (maxNum > 90) { break } //能获取90个章节，说明这个规则能基本匹配，并且排在前面，所以不考虑后面的规则
+                if (maxNum > 70) { break } //能获取60个章节，说明这个规则能基本匹配，并且排在前面，所以不考虑后面的规则
             }
         }
         return mTocRule

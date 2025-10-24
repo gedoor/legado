@@ -31,9 +31,9 @@ class RssArticlesAdapter3(context: Context, callBack: CallBack) :
         private val prefs: SharedPreferences by lazy {
             appCtx.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
         }
-        private fun getImageHeight(url: String): Int? {
-            var height = imageHigh[url]
-            if (height == null) {
+        private fun getImageHeight(url: String): Int {
+            var height = imageHigh[url] ?: 0
+            if (height == 0) {
                 if (prefs.contains(url)) {
                     height = prefs.getInt(url, 0)
                     if (height > 0) {
@@ -41,7 +41,7 @@ class RssArticlesAdapter3(context: Context, callBack: CallBack) :
                     }
                 }
             }
-            return if (height != null && height > 0) height else null
+            return height
         }
         private fun putImageHeight(url: String, height: Int) {
             if (height <= 0) return
@@ -83,6 +83,11 @@ class RssArticlesAdapter3(context: Context, callBack: CallBack) :
         }
         binding.run {
             tvTitle.text = item.title
+            if (item.read) {
+                tvTitle.setTextColor(context.getCompatColor(R.color.tv_text_summary))
+            } else {
+                tvTitle.setTextColor(context.getCompatColor(R.color.primaryText))
+            }
             tvPubDate.text = item.pubDate
             val imageUrl = item.image
             val options = RequestOptions()
@@ -90,9 +95,12 @@ class RssArticlesAdapter3(context: Context, callBack: CallBack) :
             val imageRequest = ImageLoader.load(context, imageUrl)
                 .apply(options)
                 .placeholder(R.drawable.transparent_placeholder) //svg图会依靠这个进行尺寸约束
+            if (imageUrl.isNullOrEmpty()) {
+                return
+            }
             val layoutParams = imageView.layoutParams
             layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
-            val height = imageUrl?.let { getImageHeight(it) } ?: 0
+            val height = getImageHeight(imageUrl)
             if (height == 0) {
                 layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
                 imageRequest.addListener(object : RequestListener<Drawable> {
@@ -116,7 +124,7 @@ class RssArticlesAdapter3(context: Context, callBack: CallBack) :
                         if (width > 0 && height > 0) {
                             val aspectRatio = height.toFloat() / width.toFloat()
                             if (target is ImageViewTarget) {
-                                putImageHeight(imageUrl!!, (target.view.width * aspectRatio).toInt())
+                                putImageHeight(imageUrl, (target.view.width * aspectRatio).toInt())
                             }
                         }
                         return false
@@ -128,11 +136,6 @@ class RssArticlesAdapter3(context: Context, callBack: CallBack) :
             imageView.layoutParams = layoutParams
             imageView.adjustViewBounds = true //自动调整ImageView的边界来适应图片的宽高比
             imageRequest.into(imageView)
-            if (item.read) {
-                tvTitle.setTextColor(context.getCompatColor(R.color.tv_text_summary))
-            } else {
-                tvTitle.setTextColor(context.getCompatColor(R.color.primaryText))
-            }
         }
     }
 
