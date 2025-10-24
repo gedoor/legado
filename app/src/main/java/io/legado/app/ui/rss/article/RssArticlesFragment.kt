@@ -22,10 +22,13 @@ import io.legado.app.databinding.ViewLoadMoreBinding
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.rss.read.ReadRssActivity
+import io.legado.app.ui.widget.dialog.PhotoDialog
 import io.legado.app.ui.widget.recycler.LoadMoreView
 import io.legado.app.ui.widget.recycler.VerticalDivider
+import io.legado.app.utils.activity
 import io.legado.app.utils.applyNavigationBarPadding
 import io.legado.app.utils.setEdgeEffectColor
+import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
@@ -204,6 +207,10 @@ class RssArticlesFragment() : VMBaseFragment<RssArticlesViewModel>(R.layout.frag
 
     override fun readRss(rssArticle: RssArticle) {
         activityViewModel.read(rssArticle)
+        if (activityViewModel.isWaterLayout && activityViewModel.rssSource!!.ruleContent.isNullOrBlank() && rssArticle.description.isNullOrEmpty()) {
+            rssArticle.image?.let { showDialogFragment(PhotoDialog(it)) }
+            return
+        }
         startActivity<ReadRssActivity> {
             putExtra("title", rssArticle.title)
             putExtra("origin", rssArticle.origin)
