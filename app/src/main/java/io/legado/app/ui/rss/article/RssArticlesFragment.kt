@@ -146,9 +146,9 @@ class RssArticlesFragment() : VMBaseFragment<RssArticlesViewModel>(R.layout.frag
                 }.flowOn(IO).collect { newList ->
                     if (fullRefresh || newList.isEmpty()) {
                         adapter.setItems(newList)
-                        fullRefresh = false
                     } else {
-                        // 用DiffUtil只对差异数据进行更新
+                        //用DiffUtil只对差异数据进行更新
+                        //注意RecyclerView的复用机制,切换标签时采用差异化更新会报ViewHolder的状态管理混乱
                         adapter.setItems(newList, object : DiffUtil.ItemCallback<RssArticle>() {
                             override fun areItemsTheSame(
                                 oldItem: RssArticle, newItem: RssArticle
@@ -206,6 +206,7 @@ class RssArticlesFragment() : VMBaseFragment<RssArticlesViewModel>(R.layout.frag
     }
 
     override fun readRss(rssArticle: RssArticle) {
+        fullRefresh = false //点击进行阅读会触发数据库库更新,此时进行差异化更新
         activityViewModel.read(rssArticle)
         if (activityViewModel.isWaterLayout && activityViewModel.rssSource!!.ruleContent.isNullOrBlank() && rssArticle.description.isNullOrEmpty()) {
             rssArticle.image?.let { showDialogFragment(PhotoDialog(it)) }
