@@ -34,7 +34,9 @@ data class SearchScope(private var scope: String) {
     fun update(scope: String, postValue: Boolean = true) {
         this.scope = scope
         if (postValue) stateLiveData.postValue(scope)
-        save()
+        if (!isSource()) { //不对单书源的搜索进行缓存，防止下次依旧为单书源搜索（单书源搜索需要每次都指定）
+            save()
+        }
     }
 
     fun update(groups: List<String>) {
@@ -46,7 +48,9 @@ data class SearchScope(private var scope: String) {
     fun update(source: BookSource) {
         scope = "${source.bookSourceName}::${source.bookSourceUrl}"
         stateLiveData.postValue(scope)
-        save()
+        if (!isSource()) {
+            save()
+        }
     }
 
     fun isSource(): Boolean {

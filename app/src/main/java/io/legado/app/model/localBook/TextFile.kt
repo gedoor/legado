@@ -199,7 +199,7 @@ class TextFile(private var book: Book) {
                 val matcher: Matcher = pattern.matcher(blockContent)
                 //如果存在相应章节
                 while (matcher.find()) { //获取匹配到的字符在字符串中的起始位置
-                    val title = replacement(matcher.group(), jsStr)
+                    val title = replacement(matcher.group(), jsStr, toc.size)
                     if (title.isEmpty()) continue
                     val chapterStart = matcher.start()
                     //获取章节内容
@@ -465,7 +465,7 @@ class TextFile(private var book: Book) {
             while (matcher.find()) {
                 val contentLength = matcher.start() - start
                 if (start == 0 || contentLength > 1000) {
-                    if (replacement(matcher.group(), tocRule.replacement).isNotEmpty()) {
+                    if (replacement(matcher.group(), tocRule.replacement, num).isNotEmpty()) {
                         num++
                     }
                     start = matcher.end()
@@ -485,7 +485,7 @@ class TextFile(private var book: Book) {
     /**
      * 净化标题
      */
-    private fun replacement(content: String,jsStr: String?): String {
+    private fun replacement(content: String,jsStr: String?, index: Int): String {
         if (jsStr.isNullOrBlank()) {
             return content
         }
@@ -493,6 +493,7 @@ class TextFile(private var book: Book) {
             val bindings = ScriptBindings()
             bindings["result"] = content
             bindings["book"] = toSearchBook
+            bindings["index"] = index + 1
             eval(jsStr, bindings)
         }.toString()
     }

@@ -22,7 +22,6 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.utils.GSON
-import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.dpToPx
 import io.legado.app.utils.fromJsonArray
@@ -41,7 +40,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
 import splitties.views.onClick
-import kotlin.collections.mutableMapOf
 import kotlin.text.lastIndexOf
 import kotlin.text.startsWith
 import kotlin.text.substring
@@ -54,6 +52,7 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
     private var lastClickTime: Long = 0
     private var oKToClose = false
     private var rowUis: List<RowUi>? = null
+    private val sourceLoginJsExtensions by lazy { SourceLoginJsExtensions(this, viewModel.source) }
 
     override fun onStart() {
         super.onStart()
@@ -246,6 +245,7 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
                 kotlin.runCatching {
                     runScriptWithContext {
                         source.evalJS("$loginJS\n$buttonFunctionJS") {
+                            put("java", sourceLoginJsExtensions)
                             put("result", getLoginData(rowUis))
                             put("book", viewModel.book)
                             put("chapter", viewModel.chapter)

@@ -20,7 +20,10 @@ class RssJsExtensions(private val activity: ReadRssActivity, private val rssSour
     }
 
     fun searchBook(key: String) {
-        SearchActivity.start(activity, key)
+        searchBook(key, null)
+    }
+    fun searchBook(key: String, searchScope: String?) {
+        SearchActivity.start(activity, key, searchScope)
     }
 
     fun addBook(bookUrl: String) {
