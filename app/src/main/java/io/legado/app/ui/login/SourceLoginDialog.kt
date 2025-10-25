@@ -43,6 +43,8 @@ import splitties.views.onClick
 import kotlin.text.lastIndexOf
 import kotlin.text.startsWith
 import kotlin.text.substring
+import android.view.MotionEvent
+import android.view.ViewConfiguration
 
 
 class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
@@ -80,7 +82,7 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
         }.getOrNull()
     }
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("ClickableViewAccessibility", "SetTextI18n")
     private fun buttonUi(source: BaseSource, rowUis: List<RowUi>?) {
         val loginInfo = viewModel.loginInfo
         rowUis?.forEachIndexed { index, rowUi ->
@@ -124,17 +126,27 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
                         }.onSuccess { name -> it.textView.text = name }
                     }
                     it.textView.setPadding(16.dpToPx())
-                    it.root.onClick { view ->
-                        val currentTime = System.currentTimeMillis()
-                        if (currentTime - lastClickTime < 200) {
-                            return@onClick // 按钮200ms防抖
+                    var downTime = 0L
+                    it.root.setOnTouchListener { view, event ->
+                        when (event.action) {
+                            MotionEvent.ACTION_DOWN -> {
+                                view.isSelected = true
+                                downTime = System.currentTimeMillis()
+                            }
+                            MotionEvent.ACTION_UP -> {
+                                view.isSelected = false
+                                val upTime = System.currentTimeMillis()
+                                if (upTime - lastClickTime < 200) {
+                                    return@setOnTouchListener true
+                                }
+                                lastClickTime = upTime
+                                handleButtonClick(source, rowUi, rowUis, upTime > downTime + 1000)
+                            }
+                            MotionEvent.ACTION_CANCEL -> {
+                                view.isSelected = false
+                            }
                         }
-                        lastClickTime = currentTime
-                        view.isSelected = true
-                        view.postDelayed({
-                            view.isSelected = false
-                        }, 120) // 点击动效还原
-                        handleButtonClick(source, rowUi, rowUis)
+                        return@setOnTouchListener true
                     }
                 }
 
@@ -156,29 +168,39 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
                         }.onSuccess { name -> it.textView.text = char + name }
                     }
                     it.textView.setPadding(16.dpToPx())
-                    it.root.onClick { view ->
-                        val currentTime = System.currentTimeMillis()
-                        if (currentTime - lastClickTime < 200) {
-                            return@onClick // 按钮200ms防抖
+                    var downTime = 0L
+                    it.root.setOnTouchListener { view, event ->
+                        when (event.action) {
+                            MotionEvent.ACTION_DOWN -> {
+                                view.isSelected = true
+                                downTime = System.currentTimeMillis()
+                            }
+                            MotionEvent.ACTION_UP -> {
+                                view.isSelected = false
+                                val upTime = System.currentTimeMillis()
+                                if (upTime - lastClickTime < 200) {
+                                    return@setOnTouchListener true
+                                }
+                                lastClickTime = upTime
+                                val currentIndex = chars.indexOf(char)
+                                if (currentIndex == -1) {
+                                    char = chars.getOrNull(0) ?: ""
+                                    rowUi.default = char
+                                    it.textView.text = char + rowUi.name
+                                }
+                                else {
+                                    val nextIndex = (currentIndex + 1) % chars.size
+                                    char = chars.getOrNull(nextIndex) ?: ""
+                                    rowUi.default = char
+                                    it.textView.text = char + rowUi.name
+                                }
+                                handleButtonClick(source, rowUi, rowUis, upTime > downTime + 1000)
+                            }
+                            MotionEvent.ACTION_CANCEL -> {
+                                view.isSelected = false
+                            }
                         }
-                        lastClickTime = currentTime
-                        view.isSelected = true
-                        val currentIndex = chars.indexOf(char)
-                        if (currentIndex == -1) {
-                            char = chars.getOrNull(0) ?: ""
-                            rowUi.default = char
-                            it.textView.text = char + rowUi.name
-                        }
-                        else {
-                            val nextIndex = (currentIndex + 1) % chars.size
-                            char = chars.getOrNull(nextIndex) ?: ""
-                            rowUi.default = char
-                            it.textView.text = char + rowUi.name
-                        }
-                        view.postDelayed({
-                            view.isSelected = false
-                        }, 120) // 点击动效还原
-                        handleButtonClick(source, rowUi, rowUis)
+                        return@setOnTouchListener true
                     }
                 }
             }
@@ -234,7 +256,7 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
         binding.toolBar.menu.applyTint(requireContext())
     }
 
-    private fun handleButtonClick(source: BaseSource, rowUi: RowUi, rowUis: List<RowUi>) {
+    private fun handleButtonClick(source: BaseSource, rowUi: RowUi, rowUis: List<RowUi>, isLongClick: Boolean) {
         lifecycleScope.launch(IO) {
             if (rowUi.action.isAbsUrl()) {
                 context?.openUrl(rowUi.action!!)
@@ -249,6 +271,7 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
                             put("result", getLoginData(rowUis))
                             put("book", viewModel.book)
                             put("chapter", viewModel.chapter)
+                            put("isLongClick", isLongClick)
                         }
                     }
                 }.onFailure { e ->

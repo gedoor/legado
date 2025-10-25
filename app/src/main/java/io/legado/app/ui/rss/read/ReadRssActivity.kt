@@ -107,7 +107,7 @@ class ReadRssActivity : VMBaseActivity<ActivityRssReadBinding, ReadRssViewModel>
             viewModel.saveImage(it.value, uri)
         }
     }
-    private val rssJsExtensions by lazy { RssJsExtensions(this, viewModel.rssSource) }
+    private val rssJsExtensions by lazy { RssJsExtensions(this) }
     private fun refresh() {
         viewModel.rssArticle?.let {
             start(this@ReadRssActivity, it.title, it.link, it.origin)

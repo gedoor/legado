@@ -13,9 +13,9 @@ import org.json.JSONObject
 
 
 @Suppress("unused")
-class RssJsExtensions(private val activity: ReadRssActivity, private val rssSource: RssSource?) : JsExtensions {
+class RssJsExtensions(private val activity: ReadRssActivity) : JsExtensions {
 
-    override fun getSource(): BaseSource? {
+    override fun getSource(): RssSource? {
         return activity.getSource()
     }
 
@@ -35,7 +35,7 @@ class RssJsExtensions(private val activity: ReadRssActivity, private val rssSour
     }
     fun open(name: String, url: String, title: String?) {
         activity.lifecycleScope.launch{
-            val source = rssSource ?: return@launch
+            val source = getSource() ?: return@launch
             when (name) {
                 "sort" -> {
                     val sortSourceUrl = title?.let {
