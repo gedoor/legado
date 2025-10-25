@@ -8,6 +8,7 @@ import android.view.Surface
 import android.view.SurfaceControl
 import android.view.SurfaceView
 import androidx.annotation.RequiresApi
+import androidx.core.net.toUri
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.video.PlaceholderSurface
 import com.shuyu.gsyvideoplayer.cache.ICacheManager
@@ -16,7 +17,6 @@ import com.shuyu.gsyvideoplayer.model.VideoOptionModel
 import com.shuyu.gsyvideoplayer.player.BasePlayerManager
 import tv.danmaku.ijk.media.exo2.IjkExo2MediaPlayer
 import tv.danmaku.ijk.media.player.IMediaPlayer
-
 
 
 /**
@@ -45,22 +45,38 @@ class ExoPlayerManager : BasePlayerManager() {
         cacheManager: ICacheManager
     ) {
         mediaPlayer = Exo2MediaPlayer(context)
-        if (mediaPlayer ==  null){
-            return
-        }
         mediaPlayer!!.setAudioStreamType(AudioManager.STREAM_MUSIC)
         if (dummySurface == null) {
             dummySurface = PlaceholderSurface.newInstanceV17(context, false)
         }
+        val model = msg.obj as GSYModel
         try {
-            val model = msg.obj as GSYModel
             if (model.url.isNullOrEmpty()) {
                 // 处理URL为空的情况
                 return
             }
             mediaPlayer!!.setLooping(model.isLooping)
-            mediaPlayer!!.setOverrideExtension(model.getOverrideExtension())
-            mediaPlayer!!.dataSource = model.url
+            mediaPlayer!!.setPreview(model.getMapHeadData() != null && model.getMapHeadData().isNotEmpty())
+            if (model.isCache()) {
+                //通过管理器处理
+                cacheManager.doCacheLogic(
+                    context,
+                    mediaPlayer,
+                    model.getUrl(),
+                    model.getMapHeadData(),
+                    model.cachePath
+                )
+            } else {
+                //通过自己的内部缓存机制
+                mediaPlayer!!.setCache(model.isCache())
+                mediaPlayer!!.setCacheDir(model.cachePath)
+                mediaPlayer!!.setOverrideExtension(model.getOverrideExtension())
+                mediaPlayer!!.setDataSource(
+                    context,
+                    model.getUrl().toUri(),
+                    model.getMapHeadData()
+                )
+            }
             //很遗憾，EXO2的setSpeed只能在播放前生效
             if (model.getSpeed() != 1f && model.getSpeed() > 0) {
                 mediaPlayer!!.setSpeed(model.getSpeed(), 1f)
@@ -79,6 +95,7 @@ class ExoPlayerManager : BasePlayerManager() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+        initSuccess(model)
     }
 
     override fun showDisplay(msg: Message) {
@@ -107,10 +124,10 @@ class ExoPlayerManager : BasePlayerManager() {
                 .setVisibility(surfaceControl!!,  /* visible= */false)
                 .apply()
         } else {
-            val newParentSurfaceControl = surfaceView.getSurfaceControl()
+            val newParentSurfaceControl = surfaceView.surfaceControl
             SurfaceControl.Transaction()
                 .reparent(surfaceControl!!, newParentSurfaceControl)
-                .setBufferSize(surfaceControl!!, surfaceView.getWidth(), surfaceView.getHeight())
+                .setBufferSize(surfaceControl!!, surfaceView.width, surfaceView.height)
                 .setVisibility(surfaceControl!!,  /* visible= */true)
                 .apply()
         }
@@ -241,14 +258,14 @@ class ExoPlayerManager : BasePlayerManager() {
 
     override fun getVideoWidth(): Int {
         if (mediaPlayer != null) {
-            return mediaPlayer!!.getVideoWidth()
+            return mediaPlayer!!.videoWidth
         }
         return 0
     }
 
     override fun getVideoHeight(): Int {
         if (mediaPlayer != null) {
-            return mediaPlayer!!.getVideoHeight()
+            return mediaPlayer!!.videoHeight
         }
         return 0
     }

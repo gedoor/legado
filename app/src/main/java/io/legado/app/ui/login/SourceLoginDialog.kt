@@ -140,7 +140,7 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
                                     return@setOnTouchListener true
                                 }
                                 lastClickTime = upTime
-                                handleButtonClick(source, rowUi, rowUis, upTime > downTime + 1000)
+                                handleButtonClick(source, rowUi, rowUis, upTime > downTime + 666)
                             }
                             MotionEvent.ACTION_CANCEL -> {
                                 view.isSelected = false
@@ -194,7 +194,7 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
                                     rowUi.default = char
                                     it.textView.text = char + rowUi.name
                                 }
-                                handleButtonClick(source, rowUi, rowUis, upTime > downTime + 1000)
+                                handleButtonClick(source, rowUi, rowUis, upTime > downTime + 666)
                             }
                             MotionEvent.ACTION_CANCEL -> {
                                 view.isSelected = false

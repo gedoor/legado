@@ -214,7 +214,7 @@ class TextChapterLayout(
                 val srcList = LinkedList<String>()
                 val reviewImg = bookChapter.reviewImg
                 var reviewTxt = ""
-                if (reviewImg != null) {
+                if (!reviewImg.isNullOrEmpty()) {
                     srcList.add(reviewImg)
                     reviewTxt = if (reviewImg.contains("TEXT")) {
                         reviewChar

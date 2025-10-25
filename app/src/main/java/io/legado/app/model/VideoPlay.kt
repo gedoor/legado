@@ -55,8 +55,8 @@ object VideoPlay : CoroutineScope by MainScope(){
                 ruleData = book,
                 chapter = null
             )
-            player.mapHeadData = analyzeUrl.headerMap
-            player.setUp(analyzeUrl.url, false, File(appCtx.externalCache, "exoplayer"), videoTitle)
+//            player.mapHeadData = analyzeUrl.headerMap
+            player.setUp(analyzeUrl.url, false, File(appCtx.externalCache, "exoplayer"),analyzeUrl.headerMap.toMap(), videoTitle)
             player.startPlayLogic()
             return
         }
