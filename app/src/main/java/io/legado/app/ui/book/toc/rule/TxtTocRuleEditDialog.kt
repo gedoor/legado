@@ -16,6 +16,8 @@ import io.legado.app.data.entities.TxtTocRule
 import io.legado.app.databinding.DialogTocRegexEditBinding
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.lib.theme.primaryColor
+import io.legado.app.ui.widget.code.addJsPattern
+import io.legado.app.ui.widget.code.addJsonPattern
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers
@@ -91,7 +93,11 @@ class TxtTocRuleEditDialog() : BaseDialogFragment(R.layout.dialog_toc_regex_edit
     private fun upRuleView(tocRule: TxtTocRule?) {
         binding.tvRuleName.setText(tocRule?.name)
         binding.tvRuleRegex.setText(tocRule?.rule)
-        binding.tvRuleReplacement.setText(tocRule?.replacement)
+        binding.tvRuleReplacement.apply{
+            addJsonPattern()
+            addJsPattern()
+            setText(tocRule?.replacement)
+        }
         binding.tvRuleExample.setText(tocRule?.example)
     }
 

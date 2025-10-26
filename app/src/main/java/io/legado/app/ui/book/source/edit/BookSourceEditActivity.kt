@@ -223,7 +223,9 @@ class BookSourceEditActivity :
             setText(R.string.source_tab_content)
         })
         binding.recyclerView.setEdgeEffectColor(primaryColor)
-//        binding.recyclerView.layoutManager = NoChildScrollLinearLayoutManager(this) //启用后会阻止跟随光标滚动
+        if (adapter.editEntityMaxLine < 999) {
+            binding.recyclerView.layoutManager = NoChildScrollLinearLayoutManager(this) //启用后会阻止RecyclerView跟随光标滚动,行数少时,用的TextView跟随
+        }
         binding.recyclerView.adapter = adapter
         binding.recyclerView.viewTreeObserver.addOnGlobalFocusChangeListener { oldFocus, newFocus ->
             if (newFocus is EditText) {
@@ -683,7 +685,7 @@ class BookSourceEditActivity :
                     edit.replace(start, end, text)//光标所在位置插入文字
                 }
             }
-            if (adapter.editEntityMaxLine > 9999) {
+            if (adapter.editEntityMaxLine >= 999) {
                 view.post {
                     val editTextLocation = IntArray(2)
                     view.getLocationOnScreen(editTextLocation)

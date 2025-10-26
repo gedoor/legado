@@ -19,6 +19,9 @@ import io.legado.app.data.entities.DictRule
 import io.legado.app.databinding.DialogDictRuleEditBinding
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.code.CodeEditActivity
+import io.legado.app.ui.widget.code.addJsPattern
+import io.legado.app.ui.widget.code.addJsonPattern
+import io.legado.app.ui.widget.code.addLegadoPattern
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
@@ -95,7 +98,12 @@ class DictRuleEditDialog() : BaseDialogFragment(R.layout.dialog_dict_rule_edit, 
     private fun upRuleView(dictRule: DictRule?) {
         binding.tvRuleName.setText(dictRule?.name)
         binding.tvUrlRule.setText(dictRule?.urlRule)
-        binding.tvShowRule.setText(dictRule?.showRule)
+        binding.tvShowRule.apply{
+            addLegadoPattern()
+            addJsonPattern()
+            addJsPattern()
+            setText(dictRule?.showRule)
+        }
     }
 
     private fun getDictRule(): DictRule {
