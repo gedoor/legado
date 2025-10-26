@@ -40,7 +40,7 @@ class BooksAdapterGrid(context: Context, private val callBack: CallBack) :
                     } else {
                         tvName.gone()
                     }
-                    ivCover.load(item.getDisplayCover(), item.name, item.author, false, item.origin)
+                    ivCover.load(item.getDisplayCover(), item, false, item.origin)
                     upRefresh(binding, item)
                 } else {
                     for (i in payloads.indices) {
@@ -50,8 +50,7 @@ class BooksAdapterGrid(context: Context, private val callBack: CallBack) :
                                 "name" -> tvName.text = item.name
                                 "cover" -> ivCover.load(
                                     item.getDisplayCover(),
-                                    item.name,
-                                    item.author,
+                                    item,
                                     false,
                                     item.origin
                                 )
@@ -65,7 +64,7 @@ class BooksAdapterGrid(context: Context, private val callBack: CallBack) :
             is ItemBookshelfGrid2Binding -> binding.run {
                 if (payloads.isEmpty()) {
                     tvName.text = item.name
-                    ivCover.load(item.getDisplayCover(), item.name, item.author, false, item.origin)
+                    ivCover.load(item.getDisplayCover(), item, false, item.origin)
                     upRefresh(binding, item)
                 } else {
                     for (i in payloads.indices) {
@@ -75,8 +74,7 @@ class BooksAdapterGrid(context: Context, private val callBack: CallBack) :
                                 "name" -> tvName.text = item.name
                                 "cover" -> ivCover.load(
                                     item.getDisplayCover(),
-                                    item.name,
-                                    item.author,
+                                    item,
                                     false,
                                     item.origin
                                 )

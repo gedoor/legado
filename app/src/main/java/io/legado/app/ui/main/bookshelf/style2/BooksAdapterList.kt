@@ -62,7 +62,7 @@ class BooksAdapterList(context: Context, callBack: CallBack) :
             tvAuthor.text = item.author
             tvRead.text = item.durChapterTitle
             tvLast.text = item.latestChapterTitle
-            ivCover.load(item.getDisplayCover(), item.name, item.author, false, item.origin)
+            ivCover.load(item.getDisplayCover(), item, false, item.origin)
             flHasNew.visible()
             ivAuthor.visible()
             ivLast.visible()
@@ -84,8 +84,7 @@ class BooksAdapterList(context: Context, callBack: CallBack) :
                             "last" -> tvLast.text = item.latestChapterTitle
                             "cover" -> ivCover.load(
                                 item.getDisplayCover(),
-                                item.name,
-                                item.author,
+                                item,
                                 false,
                                 item.origin
                             )
@@ -134,7 +133,7 @@ class BooksAdapterList(context: Context, callBack: CallBack) :
             tvAuthor.text = item.author
             tvRead.text = item.durChapterTitle
             tvLast.text = item.latestChapterTitle
-            ivCover.load(item.getDisplayCover(), item.name, item.author, false, item.origin)
+            ivCover.load(item.getDisplayCover(), item, false, item.origin)
             flHasNew.visible()
             ivAuthor.visible()
             ivLast.visible()
@@ -155,8 +154,7 @@ class BooksAdapterList(context: Context, callBack: CallBack) :
                             "last" -> tvLast.text = item.latestChapterTitle
                             "cover" -> ivCover.load(
                                 item.getDisplayCover(),
-                                item.name,
-                                item.author,
+                                item,
                                 false,
                                 item.origin
                             )

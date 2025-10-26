@@ -39,9 +39,11 @@ import io.legado.app.ui.widget.dialog.WaitDialog
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
+import io.legado.app.utils.FileUtils
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.cnCompare
 import io.legado.app.utils.dpToPx
+import io.legado.app.utils.externalFiles
 import io.legado.app.utils.hideSoftInput
 import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.sendToClip
@@ -49,6 +51,7 @@ import io.legado.app.utils.setEdgeEffectColor
 import io.legado.app.utils.shouldHideSoftInput
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.startActivity
+import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
@@ -299,6 +302,14 @@ class BookshelfManageActivity :
                         file,
                         "application/json"
                     )
+                }
+            }
+            R.id.menu_clear_bitmap_covers ->  {
+                val path = FileUtils.getPath(externalFiles, "covers_bitmap")
+                if (FileUtils.delete(path)) {
+                    toastOnUi("清理完成")
+                } else {
+                    toastOnUi("清理失败")
                 }
             }
 

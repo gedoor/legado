@@ -1278,4 +1278,5 @@
     <string name="replace_to_js">js处理</string>
     <string name="layout_type">样式：</string>
     <string name="layout_list_compact">紧凑列表</string>
+    <string name="clear_bitmap_covers">清除绘制封面的缓存</string>
 </resources>

@@ -70,7 +70,7 @@ class BooksAdapterGrid(context: Context, callBack: CallBack) :
             else {
                 tvName.gone()
             }
-            ivCover.load(item.getDisplayCover(), item.name, item.author, false, item.origin)
+            ivCover.load(item.getDisplayCover(), item, false, item.origin)
             upRefresh(this, item)
         }
 
@@ -85,8 +85,7 @@ class BooksAdapterGrid(context: Context, callBack: CallBack) :
                             "name" -> tvName.text = item.name
                             "cover" -> ivCover.load(
                                 item.getDisplayCover(),
-                                item.name,
-                                item.author,
+                                item,
                                 false,
                                 item.origin
                             )
@@ -129,7 +128,7 @@ class BooksAdapterGrid(context: Context, callBack: CallBack) :
 
         fun onBind(item: Book, position: Int) = binding.run {
             tvName.text = item.name
-            ivCover.load(item.getDisplayCover(), item.name, item.author, false, item.origin)
+            ivCover.load(item.getDisplayCover(), item, false, item.origin)
             upRefresh(this, item)
         }
 
@@ -144,8 +143,7 @@ class BooksAdapterGrid(context: Context, callBack: CallBack) :
                             "name" -> tvName.text = item.name
                             "cover" -> ivCover.load(
                                 item.getDisplayCover(),
-                                item.name,
-                                item.author,
+                                item,
                                 false,
                                 item.origin
                             )

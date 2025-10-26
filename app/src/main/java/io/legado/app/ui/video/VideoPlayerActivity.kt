@@ -130,7 +130,7 @@ class VideoPlayerActivity : VMBaseActivity<ActivityVideoPlayerBinding, VideoPlay
     }
 
     private fun showCover(book: Book) {
-        binding.ivCover.load(book.getDisplayCover(), book.name, book.author, false, book.origin)
+        binding.ivCover.load(book.getDisplayCover(), book, false, book.origin)
     }
 
     private fun showToc(toc: List<BookChapter>) {
