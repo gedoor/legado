@@ -60,7 +60,7 @@ class BookshelfFragment2() : BaseBookshelfFragment(R.layout.fragment_bookshelf2)
     private val binding by viewBinding(FragmentBookshelf2Binding::bind)
     private val bookshelfLayout by lazy { AppConfig.bookshelfLayout }
     private val booksAdapter: BaseBooksAdapter<*> by lazy {
-        if (bookshelfLayout == 0) {
+        if (bookshelfLayout < 2) {
             BooksAdapterList(requireContext(), this)
         } else {
             BooksAdapterGrid(requireContext(), this)
@@ -87,10 +87,10 @@ class BookshelfFragment2() : BaseBookshelfFragment(R.layout.fragment_bookshelf2)
             binding.refreshLayout.isRefreshing = false
             activityViewModel.upToc(books)
         }
-        if (bookshelfLayout == 0) {
+        if (bookshelfLayout < 2) {
             binding.rvBookshelf.layoutManager = LinearLayoutManager(context)
         } else {
-            binding.rvBookshelf.layoutManager = GridLayoutManager(context, bookshelfLayout + 1)
+            binding.rvBookshelf.layoutManager = GridLayoutManager(context, bookshelfLayout)
         }
         binding.rvBookshelf.itemAnimator = null
         binding.rvBookshelf.adapter = booksAdapter
@@ -118,7 +118,7 @@ class BookshelfFragment2() : BaseBookshelfFragment(R.layout.fragment_bookshelf2)
                 parent: RecyclerView,
                 state: RecyclerView.State
             ) {
-                if (bookshelfLayout == 0) {
+                if (bookshelfLayout < 2) {
                     outRect.set(0, bookshelfMargin, 0, bookshelfMargin)
                 } else {
                     outRect.set(bookshelfMargin, bookshelfMargin, bookshelfMargin, bookshelfMargin)

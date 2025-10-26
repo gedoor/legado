@@ -67,7 +67,7 @@ class CoverImageView @JvmOverloads constructor(
         if (params != null) {
             val width = params.width
             if (width >= 0) {
-                params.height = width * 7 / 5
+                params.height = width * 4 / 3
             } else {
                 params.height = ViewGroup.LayoutParams.WRAP_CONTENT
             }
@@ -77,7 +77,7 @@ class CoverImageView @JvmOverloads constructor(
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val measuredWidth = MeasureSpec.getSize(widthMeasureSpec)
-        val measuredHeight = measuredWidth * 7 / 5
+        val measuredHeight = measuredWidth * 4 / 3
         super.onMeasure(
             widthMeasureSpec,
             MeasureSpec.makeMeasureSpec(measuredHeight, MeasureSpec.EXACTLY)
@@ -149,7 +149,7 @@ class CoverImageView @JvmOverloads constructor(
     }
 
     fun setHeight(height: Int) {
-        val width = height * 5 / 7
+        val width = height * 3 / 4
         minimumWidth = width
     }
 

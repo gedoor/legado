@@ -65,10 +65,16 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
     private val activityViewModel by activityViewModels<MainViewModel>()
     private val bookshelfLayout by lazy { AppConfig.bookshelfLayout }
     private val booksAdapter: BaseBooksAdapter<*> by lazy {
-        if (bookshelfLayout == 0) {
-            BooksAdapterList(requireContext(), this, this, viewLifecycleOwner.lifecycle)
-        } else {
-            BooksAdapterGrid(requireContext(), this)
+        when (bookshelfLayout) {
+            0 -> {
+                BooksAdapterList(requireContext(), this, this, viewLifecycleOwner.lifecycle)
+            }
+            1 -> {
+                BooksAdapterList2(requireContext(), this, this, viewLifecycleOwner.lifecycle)
+            }
+            else -> {
+                BooksAdapterGrid(requireContext(), this)
+            }
         }
     }
     private var booksFlowJob: Job? = null
@@ -102,12 +108,12 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
             binding.refreshLayout.isRefreshing = false
             activityViewModel.upToc(booksAdapter.getItems())
         }
-        if (bookshelfLayout == 0) {
+        if (bookshelfLayout < 2) {
             binding.rvBookshelf.layoutManager = LinearLayoutManager(context)
         } else {
-            binding.rvBookshelf.layoutManager = GridLayoutManager(context, bookshelfLayout + 1)
+            binding.rvBookshelf.layoutManager = GridLayoutManager(context, bookshelfLayout)
         }
-        if (bookshelfLayout == 0) {
+        if (bookshelfLayout < 2) {
             binding.rvBookshelf.setRecycledViewPool(activityViewModel.booksListRecycledViewPool)
         } else {
             binding.rvBookshelf.setRecycledViewPool(activityViewModel.booksGridRecycledViewPool)
@@ -138,7 +144,7 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
                 parent: RecyclerView,
                 state: RecyclerView.State
             ) {
-                if (bookshelfLayout == 0) {
+                if (bookshelfLayout < 2) {
                     outRect.set(0, bookshelfMargin, 0, bookshelfMargin)
                 } else {
                     outRect.set(bookshelfMargin, bookshelfMargin, bookshelfMargin, bookshelfMargin)
@@ -216,7 +222,7 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
 
     private fun startLastUpdateTimeJob() {
         upLastUpdateTimeJob?.cancel()
-        if (!AppConfig.showLastUpdateTime || bookshelfLayout != 0) {
+        if (!AppConfig.showLastUpdateTime || bookshelfLayout > 1) {
             return
         }
         upLastUpdateTimeJob = viewLifecycleOwner.lifecycleScope.launch {

@@ -177,14 +177,13 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
                         swShowWaitUpBooks.isChecked = AppConfig.showWaitUpCount
                         swShowBookshelfFastScroller.isChecked = AppConfig.showBookshelfFastScroller
                         rgLayout.checkByIndex(bookshelfLayout)
-                        if (bookshelfLayout != 0) {
-                            rgbLayout.checkByIndex(showBookname)
-                        } else {
+                        rgbLayout.checkByIndex(showBookname)
+                        if (bookshelfLayout < 2) {
                             bookNameChoice.visibility = View.GONE
                         }
                         rgLayout.setOnCheckedChangeListener { group, checkedId ->
                             val index = group.getCheckedIndex()
-                            bookNameChoice.visibility = if (index == 0) View.GONE else View.VISIBLE
+                            bookNameChoice.visibility = if (index > 1) View.VISIBLE else View.GONE
                         }
                         rgSort.checkByIndex(bookshelfSort)
                         margin.progress = AppConfig.bookshelfMargin
@@ -228,7 +227,7 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
                     }
                     if (bookshelfLayout != rgLayout.getCheckedIndex()) {
                         AppConfig.bookshelfLayout = rgLayout.getCheckedIndex()
-                        if (AppConfig.bookshelfLayout == 0) {
+                        if (AppConfig.bookshelfLayout < 2) {
                             activityViewModel.booksGridRecycledViewPool.clear()
                         } else {
                             activityViewModel.booksListRecycledViewPool.clear()
