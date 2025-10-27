@@ -71,10 +71,13 @@ class RssSourceDebugActivity : VMBaseActivity<ActivityRssSourceDebugBinding, Rss
     }
 
     private fun initSearchView() {
+        openOrCloseHelp(true)
         if (viewModel.rssSource?.searchUrl.isNullOrBlank()) {
             searchView.gone()
             return
         }
+        searchView.onActionViewExpanded()
+        searchView.isSubmitButtonEnabled = true
         searchView.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 searchView.clearFocus()
@@ -90,7 +93,6 @@ class RssSourceDebugActivity : VMBaseActivity<ActivityRssSourceDebugBinding, Rss
         searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
             openOrCloseHelp(hasFocus)
         }
-        openOrCloseHelp(true)
     }
     @SuppressLint("SetTextI18n")
     private fun initHelpView() {
@@ -100,7 +102,7 @@ class RssSourceDebugActivity : VMBaseActivity<ActivityRssSourceDebugBinding, Rss
         }
     }
     /**
-     * 打开关闭历史界面
+     * 打开关闭辅助面板
      */
     private fun openOrCloseHelp(open: Boolean) {
         if (open) {

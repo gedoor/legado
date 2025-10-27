@@ -18,6 +18,7 @@ import android.view.ViewGroup
 import android.widget.HorizontalScrollView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
@@ -46,6 +47,7 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
     override val binding by viewBinding(ActivityRssArtivlesBinding::inflate)
     override val viewModel by viewModels<RssSortViewModel>()
     private val adapter by lazy { TabFragmentPageAdapter() }
+    private var sortUrls: List<Pair<String, String>>? = null
     private val sortList = mutableListOf<Pair<String, String>>()
     private val fragmentMap = hashMapOf<String, Fragment>()
     private val editSourceResult = registerForActivityResult(
@@ -214,11 +216,17 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
                 updateTabSelection(position)
             }
         })
-        viewModel.titleLiveData.observe(this) {
-            binding.titleBar.title = it
-        }
         viewModel.initData(intent) {
             upFragments()
+        }
+        onBackPressedDispatcher.addCallback(this) { //监听返回
+            if (viewModel.searchKey != null) {
+                // 退出搜索
+                viewModel.searchKey = null
+                upFragments()
+                return@addCallback
+            }
+            finish()
         }
     }
 
@@ -262,20 +270,21 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         menu.findItem(R.id.menu_search)?.apply {
-            val source = viewModel.rssSource ?: return@apply
-            val searchUrl = source.searchUrl
-            val hasSearchUrl = !searchUrl.isNullOrBlank()
+            val source = viewModel.rssSource
+            val searchUrl = source?.searchUrl ?: return@apply
+            val hasSearchUrl = searchUrl.isNotBlank()
             isVisible = hasSearchUrl
             if (hasSearchUrl) {
                 (actionView as? SearchView)?.apply {
+                    isSubmitButtonEnabled = true
                     setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                         override fun onQueryTextSubmit(query: String): Boolean {
-                            start(this@RssSortActivity ,searchUrl,source.sourceUrl, query)
-                            return false
+                            clearFocus()
+                            start(this@RssSortActivity ,null,source.sourceUrl, query)
+                            return true
                         }
 
                         override fun onQueryTextChange(newText: String): Boolean {
-                            //viewModel.searchKey = newText
                             return false
                         }
                     })
@@ -334,6 +343,16 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
 
     private fun upFragments() {
         lifecycleScope.launch {
+            val source = viewModel.rssSource ?: return@launch
+            if (viewModel.searchKey != null) {
+                sortList.apply {
+                    val urls = listOf(Pair("搜索", NetworkUtils.getAbsoluteURL(source.sourceUrl, source.searchUrl!!)))
+                    clear()
+                    addAll(urls)
+                }
+                upFragmentsView()
+                return@launch
+            }
             viewModel.sortUrl?.let { url ->
                 val urls: List<Pair<String, String>> = try {
                     if (url.isJsonObject()) {
@@ -341,8 +360,7 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
                             .getOrThrow()
                             .map { Pair(it.key, it.value) }
                     } else {
-                        if (viewModel.searchKey == null) listOf(Pair("", url))
-                        else listOf(Pair("搜索", url))
+                        listOf(Pair("", url))
                     }
                 } catch (e: Exception) {
                     listOf(Pair("", url))
@@ -351,25 +369,36 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
                     clear()
                     addAll(urls)
                 }
-            } ?: viewModel.rssSource?.sortUrls()?.let { urls ->
+                upFragmentsView()
+                return@launch
+            }
+            if (sortUrls == null) {
+                sortUrls = source.sortUrls()
+            }
+            sortUrls?.let { urls ->
                 sortList.apply {
                     clear()
                     addAll(urls)
                 }
+                upFragmentsView()
+                return@launch
             }
-            if (sortList.size == 1) {
-                sortList.first().first.takeIf { it.isNotEmpty() }?.let {
-                    binding.titleBar.title = it
-                }
-                binding.tabsContainer.gone()
-            } else {
-                binding.tabsContainer.visible()
-                setupMultiLineTabs()
+        }
+    }
+    private fun upFragmentsView() {
+        if (sortList.size == 1) {
+            sortList.first().first.takeIf { it.isNotEmpty() }?.let {
+                binding.titleBar.title = viewModel.searchKey ?: it
             }
-            adapter.notifyDataSetChanged()
-            if (sortList.isNotEmpty()) {
-                updateTabSelection(binding.viewPager.currentItem)
-            }
+            binding.tabsContainer.gone()
+        } else {
+            binding.titleBar.title = viewModel.sourceName
+            binding.tabsContainer.visible()
+            setupMultiLineTabs()
+        }
+        adapter.notifyDataSetChanged()
+        if (sortList.isNotEmpty()) {
+            updateTabSelection(binding.viewPager.currentItem)
         }
     }
 
@@ -426,7 +455,7 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
     }
 
     companion object {
-        fun start(context: Context, sortUrl: String, sourceUrl: String, key: String? = null) {
+        fun start(context: Context, sortUrl: String?, sourceUrl: String, key: String? = null) {
             context.startActivity<RssSortActivity> {
                 putExtra("sortUrl", sortUrl)
                 putExtra("url", sourceUrl)

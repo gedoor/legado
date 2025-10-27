@@ -71,7 +71,7 @@
                 android:paddingTop="4dp"
                 android:paddingRight="12dp"
                 android:paddingBottom="4dp"
-                android:text="调试"
+                android:text="开始"
                 android:textColor="@color/primaryText"
                 android:textSize="14sp"
                 tools:ignore="HardcodedText,UnusedAttribute" />
