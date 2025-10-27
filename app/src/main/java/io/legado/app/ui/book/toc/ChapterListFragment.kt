@@ -23,7 +23,7 @@ import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.ui.widget.recycler.UpLinearLayoutManager
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.ColorUtils
-import io.legado.app.utils.applyNavigationBarMargin
+import io.legado.app.utils.applyNavigationBarPadding
 import io.legado.app.utils.observeEvent
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.CoroutineScope
@@ -75,7 +75,7 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
         tvCurrentChapterInfo.setOnClickListener {
             mLayoutManager.scrollToPositionWithOffset(durChapterIndex, 0)
         }
-        binding.llChapterBaseInfo.applyNavigationBarMargin()
+        binding.llChapterBaseInfo.applyNavigationBarPadding()
     }
 
     @SuppressLint("SetTextI18n")

@@ -141,6 +141,10 @@ fun String.escapeRegex(): String {
 
 fun String.encodeURI(): String = URLEncodeUtil.encodeQuery(this)
 
+fun String.normalizeFileName(): String {
+    return replace(AppPattern.fileNameRegex2, "_")
+}
+
 /**
  * 将字符串加上转义,方便传递字符串到浏览器
  */
