@@ -162,7 +162,7 @@ material = { module = "com.google.android.material:material", version.ref = "mat
 
 mozilla-rhino = { module = "org.mozilla:rhino", version.ref = "rhino" }
 
-renderscript-intrinsics-replacement-toolkit = { module = "com.github.android:renderscript-intrinsics-replacement-toolkit", version = "b6363490c3" }
+renderscript-intrinsics-replacement-toolkit = { module = "com.github.TomasValenta:renderscript-intrinsics-replacement-toolkit", version = "8eaa829ddd" }
 zxing-lite = { module = "com.github.jenly1314:zxing-lite", version.ref = "zxingLite" }
 
 [bundles]
