@@ -1,5 +1,6 @@
 package io.legado.app.ui.login
 
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BaseSource
@@ -18,7 +19,7 @@ import io.legado.app.utils.startActivity
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 
-class SourceLoginJsExtensions(private val fragment: SourceLoginDialog, private val source: BaseSource?) : JsExtensions {
+class SourceLoginJsExtensions(private val activity: AppCompatActivity, private val source: BaseSource?) : JsExtensions {
     override fun getSource(): BaseSource? {
         return source
     }
@@ -28,22 +29,22 @@ class SourceLoginJsExtensions(private val fragment: SourceLoginDialog, private v
     }
 
     fun searchBook(key: String, searchScope: String?) {
-        SearchActivity.start(fragment.requireContext(), key, searchScope)
+        SearchActivity.start(activity, key, searchScope)
     }
 
     fun addBook(bookUrl: String) {
-        fragment.showDialogFragment(AddToBookshelfDialog(bookUrl))
+        activity.showDialogFragment(AddToBookshelfDialog(bookUrl))
     }
 
     fun copyText(text: String) {
-        fragment.requireContext().sendToClip(text)
+        activity.sendToClip(text)
     }
 
     fun open(name: String, url: String) {
         return open(name,url,null)
     }
     fun open(name: String, url: String, title: String?) {
-        fragment.lifecycleScope.launch{
+        activity.lifecycleScope.launch{
             val source = getSource() ?: return@launch
             when (source) {
                 is RssSource -> {
@@ -52,7 +53,7 @@ class SourceLoginJsExtensions(private val fragment: SourceLoginDialog, private v
                             val sortUrl = title?.let {
                                 JSONObject().put(title, url).toString()
                             } ?: url
-                            RssSortActivity.start(fragment.requireContext(), sortUrl, source.sourceUrl)
+                            RssSortActivity.start(activity, sortUrl, source.sourceUrl)
                         }
                         "rss" -> {
                             val title = title ?: source.sourceName
@@ -63,7 +64,7 @@ class SourceLoginJsExtensions(private val fragment: SourceLoginDialog, private v
                                 origin = origin,
                                 readTime = System.currentTimeMillis())
                             appDb.rssReadRecordDao.insertRecord(rssReadRecord)
-                            ReadRssActivity.start(fragment.requireContext(), title, url, origin)
+                            ReadRssActivity.start(activity, title, url, origin)
                         }
                     }
                 }
@@ -73,7 +74,7 @@ class SourceLoginJsExtensions(private val fragment: SourceLoginDialog, private v
                             title?.let { searchBook(it, "::$url") }
                         }
                         "explore" -> {
-                            fragment.startActivity<ExploreShowActivity> {
+                            activity.startActivity<ExploreShowActivity> {
                                 putExtra("exploreName", title)
                                 putExtra("sourceUrl", source.bookSourceUrl)
                                 putExtra("exploreUrl", url)

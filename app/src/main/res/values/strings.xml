@@ -1280,4 +1280,6 @@
     <string name="layout_list_compact">紧凑列表</string>
     <string name="clear_bitmap_covers">清除绘制封面的缓存</string>
     <string name="enable_preload">预加载</string>
+    <string name="is_event_listener">事件监听</string>
+    <string name="rule_call_back">回调操作（callBackJs）</string>
 </resources>

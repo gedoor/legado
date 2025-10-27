@@ -212,7 +212,7 @@ class TextChapterLayout(
             //标题非隐藏
             displayTitle.splitNotBlank("\n").forEach { text ->
                 val srcList = LinkedList<String>()
-                val reviewImg = bookChapter.reviewImg
+                val reviewImg = bookChapter.imgUrl
                 var reviewTxt = ""
                 if (!reviewImg.isNullOrEmpty()) {
                     srcList.add(reviewImg)

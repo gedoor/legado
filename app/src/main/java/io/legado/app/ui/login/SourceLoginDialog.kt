@@ -39,12 +39,11 @@ import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
-import splitties.views.onClick
 import kotlin.text.lastIndexOf
 import kotlin.text.startsWith
 import kotlin.text.substring
 import android.view.MotionEvent
-import android.view.ViewConfiguration
+import androidx.appcompat.app.AppCompatActivity
 
 
 class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
@@ -54,7 +53,7 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
     private var lastClickTime: Long = 0
     private var oKToClose = false
     private var rowUis: List<RowUi>? = null
-    private val sourceLoginJsExtensions by lazy { SourceLoginJsExtensions(this, viewModel.source) }
+    private val sourceLoginJsExtensions by lazy { SourceLoginJsExtensions(activity as AppCompatActivity, viewModel.source) }
 
     override fun onStart() {
         super.onStart()

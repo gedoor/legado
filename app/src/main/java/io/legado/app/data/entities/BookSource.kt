@@ -16,6 +16,7 @@ import io.legado.app.data.entities.rule.ExploreRule
 import io.legado.app.data.entities.rule.ReviewRule
 import io.legado.app.data.entities.rule.SearchRule
 import io.legado.app.data.entities.rule.TocRule
+import io.legado.app.model.AudioPlay
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.splitNotBlank
@@ -94,7 +95,9 @@ data class BookSource(
     // 正文页规则
     var ruleContent: ContentRule? = null,
     // 段评规则
-    var ruleReview: ReviewRule? = null
+    var ruleReview: ReviewRule? = null,
+    @ColumnInfo(defaultValue = "0")
+    var eventListener: Boolean = false // 是否监听事件来执行回调规则
 ) : Parcelable, BaseSource {
 
     override fun getTag(): String {

@@ -179,7 +179,7 @@ object AudioPlay : CoroutineScope by MainScope() {
     private fun contentLoadFinish(chapter: BookChapter, content: String) {
         if (chapter.index == book?.durChapterIndex) {
             durPlayUrl = content
-            durLyric = chapter.lyric
+            durLyric = chapter.getVariable("lyric")
             upPlayUrl()
         }
     }

@@ -53,6 +53,7 @@ import io.legado.app.ui.book.manga.ReadMangaActivity
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.read.ReadBookActivity.Companion.RESULT_DELETED
 import io.legado.app.ui.book.search.SearchActivity
+import io.legado.app.ui.book.source.SourceCallBack
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.book.toc.TocActivityResult
 import io.legado.app.ui.file.HandleFileContract
@@ -72,7 +73,6 @@ import io.legado.app.utils.gone
 import io.legado.app.utils.longToastOnUi
 import io.legado.app.utils.openFileUri
 import io.legado.app.utils.sendToClip
-import io.legado.app.utils.shareWithQr
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.toastOnUi
@@ -216,9 +216,15 @@ class BookInfoActivity :
 
             R.id.menu_share_it -> {
                 viewModel.getBook()?.let {
-                    val bookJson = GSON.toJson(it)
-                    val shareStr = "${it.bookUrl}#$bookJson"
-                    shareWithQr(shareStr, it.name)
+                    SourceCallBack.callBackShare(this,viewModel.bookSource, it) {
+                        val bookJson = GSON.toJson(it)
+                        val shareStr = "${it.bookUrl}#$bookJson"
+                        val intent = Intent(Intent.ACTION_SEND)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        intent.putExtra(Intent.EXTRA_TEXT, shareStr)
+                        intent.type = "text/plain"
+                        startActivity(Intent.createChooser(intent, it.name))
+                    }
                 }
             }
 
@@ -343,7 +349,7 @@ class BookInfoActivity :
         tvOrigin.text = getString(R.string.origin_show, book.originName)
         tvLasted.text = getString(R.string.lasted_show, book.latestChapterTitle)
         tvIntro.text = book.getDisplayIntro()
-        llToc?.visible(!book.isWebFile)
+        llToc.visible(!book.isWebFile)
         upTvBookshelf()
         upKinds(book)
         upGroup(book.group)

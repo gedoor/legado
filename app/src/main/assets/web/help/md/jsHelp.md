@@ -417,7 +417,7 @@ chapter.getVariable(key: String): String?
  * 章节信息存储
 ```js
  chapter.putLyric(value: String?) // 存储音频章节歌词
- chapter.putTitleIconUrl(value: String?) // 存储标题段评图标链接
+ chapter.putImgUrl(value: String?) // 存储章节图标链接，比如标题上的段评图标链接
  ```
  
 ## source对象的部分可用函数

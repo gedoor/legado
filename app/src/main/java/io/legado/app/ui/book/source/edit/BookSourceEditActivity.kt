@@ -305,6 +305,7 @@ class BookSourceEditActivity :
                     else -> 0
                 }
             )
+            binding.cbIsEventListener.isChecked = it.eventListener
         }
         // 基本信息
         sourceEntities.clear()
@@ -398,6 +399,7 @@ class BookSourceEditActivity :
             add(EditEntity("imageStyle", cr.imageStyle, R.string.rule_image_style))
             add(EditEntity("imageDecode", cr.imageDecode, R.string.rule_image_decode))
             add(EditEntity("payAction", cr.payAction, R.string.rule_pay_action))
+            add(EditEntity("callBackJs", cr.callBackJs, R.string.rule_call_back))
         }
         // 段评
 //        val rr = bs.getReviewRule()
@@ -430,6 +432,7 @@ class BookSourceEditActivity :
             1 -> BookSourceType.audio
             else -> BookSourceType.default
         }
+        source.eventListener = binding.cbIsEventListener.isChecked
         val searchRule = SearchRule()
         val exploreRule = ExploreRule()
         val bookInfoRule = BookInfoRule()
@@ -589,6 +592,7 @@ class BookSourceEditActivity :
                 "imageStyle" -> contentRule.imageStyle = it.value
                 "imageDecode" -> contentRule.imageDecode = it.value
                 "payAction" -> contentRule.payAction = it.value
+                "callBackJs" -> contentRule.callBackJs = it.value
             }
         }
 //        reviewEntities.forEach {

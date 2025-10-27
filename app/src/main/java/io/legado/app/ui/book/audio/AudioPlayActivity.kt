@@ -108,7 +108,7 @@ class AudioPlayActivity :
         }
         viewModel.bookUrl.observe(this) {
             val targetChapter = appDb.bookChapterDao.getChapter(it, AudioPlay.durChapterIndex)
-            upLyric(it, targetChapter?.lyric ?: AudioPlay.durLyric)
+            upLyric(it, targetChapter?.getVariable("lyric") ?: AudioPlay.durLyric)
         }
         viewModel.initData(intent)
         initView()

@@ -147,7 +147,7 @@ object BookContent {
                     } else {
                         bookChapter.title
                     }
-                    bookChapter.reviewImg = group2
+                    bookChapter.imgUrl = group2
                 }
                 bookChapter.title = title
                 bookChapter.titleMD5 = null
@@ -168,7 +168,7 @@ object BookContent {
             val index = contentStr.indexOf("\n")
             if (index != -1) {
                 contentStr.substring(index).trimIndent()
-                    .takeIf { it.isNotEmpty() }?.let { bookChapter.lyric = it }
+                    .takeIf { it.isNotEmpty() }?.let { bookChapter.putLyric(it) }
                 contentStr = contentStr.substring(0, index)
             }
         }

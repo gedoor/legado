@@ -36,6 +36,7 @@ import io.legado.app.model.ReadManga
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.model.webBook.WebBook
+import io.legado.app.ui.book.source.SourceCallBack
 import io.legado.app.utils.ArchiveUtils
 import io.legado.app.utils.UrlUtil
 import io.legado.app.utils.isContentScheme
@@ -438,6 +439,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                     AudioPlay.book = book
                 }
                 book.save()
+                SourceCallBack.callBackBookShelf(bookSource, book, true)
             }
             chapterListData.value?.let {
                 appDb.bookChapterDao.insert(*it.toTypedArray())
@@ -464,6 +466,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                 if (it.isLocal) {
                     LocalBook.deleteBook(it, deleteOriginal)
                 }
+                SourceCallBack.callBackBookShelf(bookSource, it, false)
             }
         }.onSuccess {
             success?.invoke()
@@ -479,6 +482,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             if (ReadManga.book?.bookUrl == bookData.value!!.bookUrl) {
                 ReadManga.clearMangaChapter()
             }
+            SourceCallBack.callBackClearCache(bookSource, bookData.value!!)
         }.onSuccess {
             context.toastOnUi(R.string.clear_cache_success)
         }.onError {

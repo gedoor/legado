@@ -407,4 +407,15 @@ object DatabaseMigrations {
     )
     class Migration_83_84 : AutoMigrationSpec
 
+    @Suppress("ClassName")
+    @DeleteColumn(
+        tableName = "chapters",
+        columnName = "lyric"
+    )
+    @DeleteColumn(
+        tableName = "chapters",
+        columnName = "reviewImg"
+    )
+    class Migration_84_85 : AutoMigrationSpec
+
 }

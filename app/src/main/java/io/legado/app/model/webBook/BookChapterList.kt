@@ -294,12 +294,12 @@ object BookChapterList {
         }
         val chapterList = appDb.bookChapterDao.getChapterList(book.bookUrl)
         if (chapterList.isNotEmpty()) {
-            val map = chapterList.associateBy({ it.getFileName() }, {Triple(it.wordCount, it.variable, it.reviewImg)})
+            val map = chapterList.associateBy({ it.getFileName() }, {Triple(it.wordCount, it.variable, it.imgUrl)})
             for (bookChapter in list) {
                 map[bookChapter.getFileName()]?.let { info ->
                     bookChapter.wordCount = info.first
                     bookChapter.variable = info.second
-                    bookChapter.reviewImg = info.third
+                    bookChapter.imgUrl = info.third
                 }
             }
         }

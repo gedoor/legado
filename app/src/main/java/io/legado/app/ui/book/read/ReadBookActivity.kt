@@ -92,6 +92,7 @@ import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.book.read.page.provider.LayoutProgressListener
 import io.legado.app.ui.book.searchContent.SearchContentActivity
 import io.legado.app.ui.book.searchContent.SearchResult
+import io.legado.app.ui.book.source.SourceCallBack
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.book.toc.TocActivityResult
 import io.legado.app.ui.book.toc.rule.TxtTocRuleDialog
@@ -1646,6 +1647,7 @@ class ReadBookActivity : BaseReadBookActivity(),
                 okButton {
                     ReadBook.book?.removeType(BookType.notShelf)
                     ReadBook.book?.save()
+                    SourceCallBack.callBackBookShelf(ReadBook.bookSource, ReadBook.book, true)
                     ReadBook.inBookshelf = true
                     setResult(RESULT_OK)
                 }

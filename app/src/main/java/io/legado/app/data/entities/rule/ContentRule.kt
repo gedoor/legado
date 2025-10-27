@@ -19,6 +19,8 @@ data class ContentRule(
     var imageStyle: String? = null,   //默认大小居中,FULL最大宽度
     var imageDecode: String? = null, //图片bytes二次解密js, 返回解密后的bytes
     var payAction: String? = null,    //购买操作,js或者包含{{js}}的url
+    /**  监听到事件后执行的回调js代码  **/
+    var callBackJs: String? = null
 ) : Parcelable {
 
 
