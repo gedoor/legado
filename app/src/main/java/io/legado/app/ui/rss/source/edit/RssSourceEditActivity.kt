@@ -264,7 +264,9 @@ class RssSourceEditActivity :
             binding.cbIsEnable.isChecked = rs.enabled
             binding.cbSingleUrl.isChecked = rs.singleUrl
             binding.cbIsEnableCookie.isChecked = rs.enabledCookieJar == true
-            binding.spType.setSelection(rs.articleStyle)
+            binding.cbIsEnablePreload.isChecked = rs.preload
+            binding.spType.setSelection(rs.type)
+            binding.lyType.setSelection(rs.articleStyle)
         }
         sourceEntities.clear()
         sourceEntities.apply {
@@ -273,6 +275,7 @@ class RssSourceEditActivity :
             add(EditEntity("sourceIcon", rs.sourceIcon, R.string.source_icon))
             add(EditEntity("sourceGroup", rs.sourceGroup, R.string.source_group))
             add(EditEntity("sourceComment", rs.sourceComment, R.string.comment))
+            add(EditEntity("searchUrl", rs.searchUrl, R.string.r_search_url))
             add(EditEntity("sortUrl", rs.sortUrl, R.string.sort_url))
             add(EditEntity("loginUrl", rs.loginUrl, R.string.login_url))
             add(EditEntity("loginUi", rs.loginUi, R.string.login_ui))
@@ -347,7 +350,9 @@ class RssSourceEditActivity :
         source.enabled = binding.cbIsEnable.isChecked
         source.singleUrl = binding.cbSingleUrl.isChecked
         source.enabledCookieJar = binding.cbIsEnableCookie.isChecked
-        source.articleStyle = binding.spType.selectedItemPosition
+        source.preload = binding.cbIsEnablePreload.isChecked
+        source.type = binding.spType.selectedItemPosition
+        source.articleStyle = binding.lyType.selectedItemPosition
         sourceEntities.forEach {
             it.value = it.value?.takeIf { s -> s.isNotBlank() }
             when (it.key) {
@@ -363,6 +368,7 @@ class RssSourceEditActivity :
                 "header" -> source.header = it.value
                 "variableComment" -> source.variableComment = it.value
                 "concurrentRate" -> source.concurrentRate = it.value
+                "searchUrl" -> source.searchUrl = it.value
                 "sortUrl" -> source.sortUrl = it.value
                 "jsLib" -> source.jsLib = it.value
             }

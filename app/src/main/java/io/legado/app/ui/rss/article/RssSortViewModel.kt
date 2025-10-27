@@ -19,6 +19,7 @@ class RssSortViewModel(application: Application) : BaseViewModel(application) {
     var order = System.currentTimeMillis()
     val isGridLayout get() = rssSource?.articleStyle == 2
     val isWaterLayout get() = rssSource?.articleStyle == 3
+    var searchKey: String? = null
 
     fun initData(intent: Intent, finally: () -> Unit) {
         execute {
@@ -32,6 +33,7 @@ class RssSortViewModel(application: Application) : BaseViewModel(application) {
                 }
             }
             sortUrl = intent.getStringExtra("sortUrl")
+            searchKey = intent.getStringExtra("key")
         }.onFinally {
             finally()
         }
@@ -56,7 +58,10 @@ class RssSortViewModel(application: Application) : BaseViewModel(application) {
                 record = rssArticle.link,
                 title = rssArticle.title,
                 origin = rssArticle.origin,
-                readTime = System.currentTimeMillis()
+                sort = rssArticle.sort,
+                readTime = System.currentTimeMillis(),
+                type = rssArticle.type,
+                durPos = rssArticle.durPos
             )
             appDb.rssReadRecordDao.insertRecord(rssReadRecord)
         }

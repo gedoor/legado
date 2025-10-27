@@ -400,4 +400,11 @@ object DatabaseMigrations {
         }
     }
 
+    @Suppress("ClassName")
+    @DeleteColumn(
+        tableName = "rssArticles",
+        columnName = "ratio"
+    )
+    class Migration_83_84 : AutoMigrationSpec
+
 }

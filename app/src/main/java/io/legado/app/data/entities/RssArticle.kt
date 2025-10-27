@@ -24,9 +24,13 @@ data class RssArticle(
     @ColumnInfo(defaultValue = "默认分组")
     var group: String = "默认分组",
     var read: Boolean = false,
+    override var variable: String? = null,
+    /**类型 0网页，1图片，2视频**/
     @ColumnInfo(defaultValue = "0")
-    var ratio: Int = 0,
-    override var variable: String? = null
+    var type: Int = 0,
+    /**阅读进度**/
+    @ColumnInfo(defaultValue = "0")
+    var durPos: Int = 0
 ) : BaseRssArticle {
 
     override fun hashCode() = link.hashCode()
@@ -54,6 +58,8 @@ data class RssArticle(
         content = content,
         image = image,
         group = group,
-        variable = variable
+        variable = variable,
+        type = type,
+        durPos = durPos
     )
 }

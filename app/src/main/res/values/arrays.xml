@@ -20,6 +20,12 @@
 		<item>瀑布</item>
 	</string-array>
 
+	<string-array name="rss_type">
+		<item>网页</item>
+		<item>图片</item>
+		<item>视频</item>
+	</string-array>
+
 	<string-array name="group_style">
 		<item>Tab</item>
 		<item>Folder</item>

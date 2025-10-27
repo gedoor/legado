@@ -3,6 +3,7 @@
 package io.legado.app.ui.rss.article
 
 import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
@@ -11,12 +12,14 @@ import android.os.Bundle
 import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.HorizontalScrollView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.viewModels
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.lifecycleScope
@@ -195,6 +198,15 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
         }
     }
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent) // 更新当前intent
+        // 重新初始化数据，复用时重建
+        viewModel.initData(intent) {
+            upFragments()
+        }
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.viewPager.adapter = adapter
         binding.viewPager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
@@ -208,6 +220,17 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
         viewModel.initData(intent) {
             upFragments()
         }
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        if (ev.action == MotionEvent.ACTION_DOWN) {
+            currentFocus?.let {
+                if (it.shouldHideSoftInput(ev)) {
+                    it.hideSoftInput()
+                }
+            }
+        }
+        return super.dispatchTouchEvent(ev)
     }
 
     // 保存当前选中位置
@@ -235,6 +258,36 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.rss_articles, menu)
         return super.onCompatCreateOptionsMenu(menu)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        menu.findItem(R.id.menu_search)?.apply {
+            val source = viewModel.rssSource ?: return@apply
+            val searchUrl = source.searchUrl
+            val hasSearchUrl = !searchUrl.isNullOrBlank()
+            isVisible = hasSearchUrl
+            if (hasSearchUrl) {
+                (actionView as? SearchView)?.apply {
+                    setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                        override fun onQueryTextSubmit(query: String): Boolean {
+                            start(this@RssSortActivity ,searchUrl,source.sourceUrl, query)
+                            return false
+                        }
+
+                        override fun onQueryTextChange(newText: String): Boolean {
+                            //viewModel.searchKey = newText
+                            return false
+                        }
+                    })
+                    setOnQueryTextFocusChangeListener { _, hasFocus ->
+                        if (!hasFocus) {
+                            isIconified = true
+                        }
+                    }
+                }
+            }
+        }
+        return super.onPrepareOptionsMenu(menu)
     }
 
     override fun onMenuOpened(featureId: Int, menu: Menu): Boolean {
@@ -288,7 +341,8 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
                             .getOrThrow()
                             .map { Pair(it.key, it.value) }
                     } else {
-                        listOf(Pair("", url))
+                        if (viewModel.searchKey == null) listOf(Pair("", url))
+                        else listOf(Pair("搜索", url))
                     }
                 } catch (e: Exception) {
                     listOf(Pair("", url))
@@ -357,7 +411,7 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
 
         override fun getItem(position: Int): Fragment {
             val sort = sortList[position]
-            return RssArticlesFragment(sort.first, sort.second)
+            return RssArticlesFragment(sort.first, sort.second, viewModel.searchKey) //获取内容界面
         }
 
         override fun getCount(): Int {
@@ -372,10 +426,11 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
     }
 
     companion object {
-        fun start(context: Context, sortUrl: String, sourceUrl: String) {
+        fun start(context: Context, sortUrl: String, sourceUrl: String, key: String? = null) {
             context.startActivity<RssSortActivity> {
-                putExtra("url", sourceUrl)
                 putExtra("sortUrl", sortUrl)
+                putExtra("url", sourceUrl)
+                putExtra("key", key)
             }
         }
     }

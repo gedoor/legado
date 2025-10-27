@@ -138,6 +138,37 @@ object Debug {
             }
     }
 
+    fun startDebug(scope: CoroutineScope, rssSource: RssSource, key: String) {
+        cancelDebug()
+        debugSource = rssSource.sourceUrl
+        val searchUrl = rssSource.searchUrl ?: return
+        log(debugSource, "︾开始搜索")
+        Rss.getArticles(scope, "搜索", searchUrl, rssSource, 1, key)
+            .onSuccess {
+                if (it.first.isEmpty()) {
+                    log(debugSource, "⇒列表页解析成功，为空")
+                    log(debugSource, "︽解析完成", state = 1000)
+                } else {
+                    val ruleContent = rssSource.ruleContent
+                    if (!rssSource.ruleArticles.isNullOrBlank() && rssSource.ruleDescription.isNullOrBlank()) {
+                        log(debugSource, "︽列表页解析完成")
+                        log(debugSource, showTime = false)
+                        if (ruleContent.isNullOrEmpty()) {
+                            log(debugSource, "⇒内容规则为空，默认获取整个网页", state = 1000)
+                        } else {
+                            rssContentDebug(scope, it.first[0], ruleContent, rssSource)
+                        }
+                    } else {
+                        log(debugSource, "⇒存在描述规则，不解析内容页")
+                        log(debugSource, "︽解析完成", state = 1000)
+                    }
+                }
+            }
+            .onError {
+                log(debugSource, it.stackTraceStr, state = -1)
+            }
+    }
+
     private fun rssContentDebug(
         scope: CoroutineScope,
         rssArticle: RssArticle,

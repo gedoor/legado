@@ -1,8 +1,10 @@
 package io.legado.app.ui.login
 
 import androidx.lifecycle.lifecycleScope
+import io.legado.app.data.appDb
 import io.legado.app.data.entities.BaseSource
 import io.legado.app.data.entities.BookSource
+import io.legado.app.data.entities.RssReadRecord
 import io.legado.app.data.entities.RssSource
 import io.legado.app.help.JsExtensions
 import io.legado.app.ui.association.AddToBookshelfDialog
@@ -47,13 +49,21 @@ class SourceLoginJsExtensions(private val fragment: SourceLoginDialog, private v
                 is RssSource -> {
                     when (name) {
                         "sort" -> {
-                            val sortSourceUrl = title?.let {
-                                JSONObject().put(title, source.sourceUrl).toString()
-                            } ?: source.sourceUrl
-                            RssSortActivity.start(fragment.requireContext(), url, sortSourceUrl)
+                            val sortUrl = title?.let {
+                                JSONObject().put(title, url).toString()
+                            } ?: url
+                            RssSortActivity.start(fragment.requireContext(), sortUrl, source.sourceUrl)
                         }
                         "rss" -> {
-                            ReadRssActivity.start(fragment.requireContext(), title ?: source.sourceName, url, source.sourceUrl)
+                            val title = title ?: source.sourceName
+                            val origin = source.sourceUrl
+                            val rssReadRecord = RssReadRecord(
+                                record = url,
+                                title = title,
+                                origin = origin,
+                                readTime = System.currentTimeMillis())
+                            appDb.rssReadRecordDao.insertRecord(rssReadRecord)
+                            ReadRssActivity.start(fragment.requireContext(), title, url, origin)
                         }
                     }
                 }

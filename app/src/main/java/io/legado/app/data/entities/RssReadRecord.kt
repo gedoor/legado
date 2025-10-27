@@ -13,5 +13,13 @@ data class RssReadRecord(
     val read: Boolean = true,
     @ColumnInfo(defaultValue = "")
     val origin: String = "",
-    var image: String? = null
+    @ColumnInfo(defaultValue = "")
+    var sort: String = "",
+    var image: String? = null,
+    /**类型 0网页，1图片，2视频**/
+    @ColumnInfo(defaultValue = "0")
+    var type: Int = 0,
+    /**阅读进度**/
+    @ColumnInfo(defaultValue = "0")
+    var durPos: Int = 0
 )

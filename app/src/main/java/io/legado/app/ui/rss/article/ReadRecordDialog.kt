@@ -17,7 +17,7 @@ import io.legado.app.databinding.DialogRecyclerViewBinding
 import io.legado.app.databinding.ItemRssReadRecordBinding
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
-import io.legado.app.ui.rss.read.ReadRssActivity
+import io.legado.app.ui.rss.read.ReadRss
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
@@ -47,7 +47,7 @@ class ReadRecordDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
         adapter.setItems(viewModel.getRecords())
         adapter.setOnRecordClickListener(object : OnRecordClickListener {
             override fun onRecordClick(record: RssReadRecord?) {
-                record?.let { ReadRssActivity.start(requireContext(), it.title, it.record, it.origin) }
+                record?.let { ReadRss.readRss(this@ReadRecordDialog, it)}
             }
         })
     }

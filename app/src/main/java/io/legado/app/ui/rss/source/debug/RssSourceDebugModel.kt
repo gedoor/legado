@@ -34,6 +34,17 @@ class RssSourceDebugModel(application: Application) : BaseViewModel(application)
         }
     }
 
+    fun startDebug(key: String, start: (() -> Unit)? = null, error: (() -> Unit)? = null) {
+        execute {
+            Debug.callback = this@RssSourceDebugModel
+            Debug.startDebug(this, rssSource!!, key)
+        }.onStart {
+            start?.invoke()
+        }.onError {
+            error?.invoke()
+        }
+    }
+
     override fun printLog(state: Int, msg: String) {
         when (state) {
             10 -> listSrc = msg

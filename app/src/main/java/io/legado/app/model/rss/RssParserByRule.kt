@@ -74,7 +74,7 @@ object RssParserByRule {
             val variable = ruleData.getVariable()
             for ((index, item) in collections.withIndex()) {
                 getItem(
-                    sourceUrl, item, analyzeRule, variable, index == 0,
+                    sourceUrl, item, analyzeRule, variable,rssSource.type, index == 0,
                     ruleTitle, rulePubDate, ruleDescription, ruleImage, ruleLink
                 )?.let {
                     it.sort = sortName
@@ -94,6 +94,7 @@ object RssParserByRule {
         item: Any,
         analyzeRule: AnalyzeRule,
         variable: String?,
+        type: Int,
         log: Boolean,
         ruleTitle: List<AnalyzeRule.SourceRule>,
         rulePubDate: List<AnalyzeRule.SourceRule>,
@@ -124,6 +125,7 @@ object RssParserByRule {
         Debug.log(sourceUrl, "┌获取文章链接", log)
         rssArticle.link = NetworkUtils.getAbsoluteURL(sourceUrl, analyzeRule.getString(ruleLink))
         Debug.log(sourceUrl, "└${rssArticle.link}", log)
+        rssArticle.type = type
         if (rssArticle.title.isBlank()) {
             return null
         }

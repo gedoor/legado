@@ -1,7 +1,8 @@
 package io.legado.app.ui.rss.read
 
 import androidx.lifecycle.lifecycleScope
-import io.legado.app.data.entities.BaseSource
+import io.legado.app.data.appDb
+import io.legado.app.data.entities.RssReadRecord
 import io.legado.app.data.entities.RssSource
 import io.legado.app.help.JsExtensions
 import io.legado.app.ui.association.AddToBookshelfDialog
@@ -38,13 +39,21 @@ class RssJsExtensions(private val activity: ReadRssActivity) : JsExtensions {
             val source = getSource() ?: return@launch
             when (name) {
                 "sort" -> {
-                    val sortSourceUrl = title?.let {
-                        JSONObject().put(title, source.sourceUrl).toString()
-                    } ?: source.sourceUrl
-                    RssSortActivity.start(activity, url, sortSourceUrl)
+                    val sortUrl = title?.let {
+                        JSONObject().put(title, url).toString()
+                    } ?: url
+                    RssSortActivity.start(activity, sortUrl, source.sourceUrl)
                 }
                 "rss" -> {
-                    ReadRssActivity.start(activity, title ?: source.sourceName, url, source.sourceUrl)
+                    val title = title ?: source.sourceName
+                    val origin = source.sourceUrl
+                    val rssReadRecord = RssReadRecord(
+                        record = url,
+                        title = title,
+                        origin = origin,
+                        readTime = System.currentTimeMillis())
+                    appDb.rssReadRecordDao.insertRecord(rssReadRecord)
+                    ReadRssActivity.start(activity, title, url, origin)
                 }
             }
         }
