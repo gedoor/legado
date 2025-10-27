@@ -21,7 +21,7 @@ lifecycle = "2.9.4"
 lyricViewx = "1.3.2"
 soraEditor = "0.23.7"
 glide = "5.0.5"
-gson = "2.13.1"
+gson = "2.13.2"
 jsonPath = "2.9.0"
 # issue #3811，不要更新版本，新版引入了一个破坏性变更（详见https://github.com/jhy/jsoup/pull/2017）
 # 若要升级请确保相关代码不会受此变更影响（如AnalyzeByJSoup.kt、JsoupXpath库等）
