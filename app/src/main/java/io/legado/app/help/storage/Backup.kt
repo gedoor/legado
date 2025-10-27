@@ -14,8 +14,20 @@ import io.legado.app.help.config.LocalConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.help.config.ThemeConfig
 import io.legado.app.help.coroutine.Coroutine
-import io.legado.app.utils.*
+import io.legado.app.utils.FileUtils
+import io.legado.app.utils.GSON
+import io.legado.app.utils.LogUtils
 import io.legado.app.utils.compress.ZipUtils
+import io.legado.app.utils.createFolderIfNotExist
+import io.legado.app.utils.defaultSharedPreferences
+import io.legado.app.utils.externalFiles
+import io.legado.app.utils.getFile
+import io.legado.app.utils.getSharedPreferences
+import io.legado.app.utils.isContentScheme
+import io.legado.app.utils.normalizeFileName
+import io.legado.app.utils.openOutputStream
+import io.legado.app.utils.outputStream
+import io.legado.app.utils.writeToOutputStream
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.sync.Mutex
@@ -26,7 +38,8 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.coroutineContext
 
@@ -77,7 +90,7 @@ object Backup {
             "backup${backupDate}-${deviceName}.zip"
         } else {
             "backup${backupDate}.zip"
-        }
+        }.normalizeFileName()
     }
 
     private fun shouldBackup(): Boolean {

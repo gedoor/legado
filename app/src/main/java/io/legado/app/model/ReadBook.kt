@@ -224,13 +224,14 @@ object ReadBook : CoroutineScope by MainScope() {
         nextTextChapter?.clearSearchResult()
     }
 
-    fun uploadProgress(successAction: (() -> Unit)? = null) {
+    fun uploadProgress(toast: Boolean = false, successAction: (() -> Unit)? = null) {
         book?.let {
             launch(IO) {
-                AppWebDav.uploadBookProgress(it)
+                AppWebDav.uploadBookProgress(it, toast) {
+                    successAction?.invoke()
+                }
                 ensureActive()
                 it.update()
-                successAction?.invoke()
             }
         }
     }
