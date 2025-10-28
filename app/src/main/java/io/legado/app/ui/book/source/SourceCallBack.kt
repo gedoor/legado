@@ -40,6 +40,35 @@ object SourceCallBack {
         }
     }
 
+    fun callBackClickAuthor(activity: BookInfoActivity, source: BookSource?, book: Book, noCall: () -> Unit) {
+        if (source == null || !source.eventListener) {
+            noCall.invoke()
+            return
+        }
+        val jsStr = source.getContentRule().callBackJs
+        if (jsStr.isNullOrEmpty()) {
+            noCall.invoke()
+            return
+        }
+        Coroutine.async {
+            val java = SourceLoginJsExtensions(activity, source)
+            val result = source.evalJS(jsStr) {
+                put("event", "clickAuthor")
+                put("java", java)
+                put("result", null)
+                put("book", book)
+                put("chapter", null)
+            }.toString()
+            if (!result.isTrue()) {
+                withContext(Dispatchers.Main) {
+                    noCall.invoke()
+                }
+            }
+        }.onError {
+            AppLog.put("书源执行点击作者回调js函数出错\n${it.localizedMessage}", it, true)
+        }
+    }
+
     fun callBackBookShelf(source: BookSource?, book: Book?, isAdd: Boolean) {
         if (source == null || book == null || !source.eventListener) return
         val jsStr = source.getContentRule().callBackJs

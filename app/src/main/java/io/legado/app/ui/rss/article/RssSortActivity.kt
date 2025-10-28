@@ -312,7 +312,10 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
                 putExtra("key", viewModel.rssSource?.sourceUrl)
             }
 
-            R.id.menu_refresh_sort -> viewModel.clearSortCache { upFragments() }
+            R.id.menu_refresh_sort -> {
+                sortUrls = null
+                viewModel.clearSortCache { upFragments() }
+            }
             R.id.menu_set_source_variable -> setSourceVariable()
             R.id.menu_edit_source -> viewModel.rssSource?.sourceUrl?.let {
                 editSourceResult.launch {

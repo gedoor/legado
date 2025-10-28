@@ -513,8 +513,10 @@ class BookInfoActivity :
         }
         tvAuthor.setOnClickListener {
             viewModel.getBook(false)?.let { book ->
-                startActivity<SearchActivity> {
-                    putExtra("key", book.author)
+                SourceCallBack.callBackClickAuthor(this@BookInfoActivity, viewModel.bookSource, book) {
+                    startActivity<SearchActivity> {
+                        putExtra("key", book.author)
+                    }
                 }
             }
         }
