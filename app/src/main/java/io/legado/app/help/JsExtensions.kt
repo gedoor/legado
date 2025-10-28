@@ -247,7 +247,7 @@ interface JsExtensions : JsEncodeUtils {
 
     /**
      * 打开内置视频播放器
-     * @param url 视频播放连接
+     * @param url 视频播放链接
      * @param title 视频的标题
      * @param float 是否悬浮窗打开
      */

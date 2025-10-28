@@ -82,7 +82,8 @@
 ]
 ```
 * 登录URL
-> 可填写登录链接或者实现登录UI的登录逻辑的JavaScript
+> 可填写登录链接或者实现登录UI的登录逻辑的JavaScript  
+变量isLongClick为true时表示为按钮长按点击
 ```
 示范填写
 function login() {
@@ -213,6 +214,18 @@ let options = {
 
 * 购买操作
 > 可直接填写链接或者JavaScript，如果执行结果是网络链接将会自动打开浏览器,js返回true自动刷新目录和当前章节
+
+* 回调操作
+> 先启用事件监听按钮，然后软件触发事件时会执行回调规则的js代码。如果js返回true会消费事件，之后软件部分原本操作不会再执行。  
+event字符串变量对应的事件名称，目前的事件有
+```js
+"shareBook" //详情页分享按钮
+"clearCache" //详情页清理缓存按钮
+"clickAuthor" //详情页点击作者
+"addBookShelf" //添加到书架
+"delBookShelf" //移除书架
+"saveRead" //保存阅读进度
+```
 
 * 图片解密
 > 适用于图片需要二次解密的情况，直接填写JavaScript，返回解密后的`ByteArray`  

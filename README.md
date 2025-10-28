@@ -10,9 +10,9 @@
   
 Legado / 开源阅读
 <br>
-<a href="https://gedoor.github.io" target="_blank">gedoor.github.io</a> / <a href="https://www.legado.top/" target="_blank">legado.top</a>
+<a href="https://gedoor.github.io" target="_blank">gedoor.github.io</a> / <a href="https://loyc.xyz/" target="_blank">loyc.xyz</a>
 <br>
-Legado is a free and open source novel reader for Android.
+Legado 是一款免费的 Android 平台开源小说阅读器。
 </div>
 
 # 复刻仓库的变动
