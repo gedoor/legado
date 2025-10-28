@@ -68,6 +68,24 @@ class TocViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    fun exportToc(treeUri: Uri) {
+        execute {
+            val book = bookData.value
+                ?: throw NoStackTraceException(context.getString(R.string.no_book))
+            val fileName = "bookToc-${book.name} ${book.author}.json"
+            val doc = FileDoc.fromUri(treeUri, true)
+            doc.createFileIfNotExist(fileName).writeText(
+                GSON.toJson(
+                    appDb.bookChapterDao.getChapterList(book.bookUrl)
+                )
+            )
+        }.onError {
+            AppLog.put("导出失败\n${it.localizedMessage}", it, true)
+        }.onSuccess {
+            context.toastOnUi("导出成功")
+        }
+    }
+
     fun startChapterListSearch(newText: String?) {
         chapterListCallBack?.upChapterList(newText)
     }

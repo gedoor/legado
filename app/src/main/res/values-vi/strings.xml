@@ -349,6 +349,7 @@
     <string name="ps_show_all_find">Hiển thị Khám phá của nguồn đã chọn nếu đóng</string>
     <string name="update_toc">Cập nhật chương</string>
     <string name="txt_toc_rule">Quy tắc chương Txt</string>
+    <string name="txt_toc_replace">Thay thế danh mục txt</string>
     <string name="select_section_export">Chọn một số chương để xuất</string>
     <string name="set_charset">Mã hóa văn bản</string>
     <string name="swap_sort">Thứ tự tăng/giảm dần</string>
@@ -865,6 +866,7 @@
     <string name="show">Hiển thị</string>
     <string name="hide">Ẩn</string>
     <string name="hide_when_status_bar_show">Ẩn khi thanh trạng thái hiển thị</string>
+    <string name="export_toc">Xuất toc</string>
     <string name="reverse_toc">Đảo ngược mục lục</string>
     <string name="show_discovery">Hiển thị Khám phá</string>
     <string name="style">Kiểu</string>
@@ -1215,4 +1217,5 @@
     <string name="disable_horizontal_animation">Tắt hoạt ảnh cuộn ngang</string>
     <string name="enable_manga_gray">Bật ảnh xám</string>
     <string name="play_mode">Chế độ phát</string>
+    <string name="import_toc">thư mục nhập</string>
 </resources>

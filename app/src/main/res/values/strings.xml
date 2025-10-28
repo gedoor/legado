@@ -355,6 +355,7 @@
     <string name="ps_show_all_find">Display the selected origin\'s Discovery if closed</string>
     <string name="update_toc">Update chapters</string>
     <string name="txt_toc_rule">Txt Catalog Rule</string>
+    <string name="txt_toc_replace">Txt Catalog Replace</string>
     <string name="select_section_export">Choose some chapters to be exported</string>
     <string name="set_charset">Text encoding</string>
     <string name="swap_sort">Ascending/Descending order</string>
@@ -872,6 +873,7 @@
     <string name="show">Show</string>
     <string name="hide">Hide</string>
     <string name="hide_when_status_bar_show">Hide when status bar show</string>
+    <string name="export_toc">Export toc</string>
     <string name="reverse_toc">Reverse toc</string>
     <string name="show_discovery">Show Discovery</string>
     <string name="style">Style</string>
@@ -1228,4 +1230,5 @@
     <string name="disable_horizontal_animation">禁用水平滚动动画</string>
     <string name="enable_manga_gray">开启图片灰色</string>
     <string name="play_mode">播放模式</string>
+    <string name="import_toc">import directory</string>
 </resources>

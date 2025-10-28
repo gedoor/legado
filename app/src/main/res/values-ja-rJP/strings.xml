@@ -864,6 +864,7 @@
     <string name="show">Show</string>
     <string name="hide">Hide</string>
     <string name="hide_when_status_bar_show">Hide when status bar show</string>
+    <string name="export_toc">Export toc</string>
     <string name="reverse_toc">Reverse toc</string>
     <string name="show_discovery">显示发现</string>
     <string name="style">样式</string>
@@ -1125,6 +1126,7 @@
     <string name="replace_exclude_scope">排除范围，选填书名或者书源 URL</string>
     <string name="format_js_rule">格式化规则(formatJs)</string>
     <string name="adjust_pos">调整位置</string>
+    <string name="txt_toc_replace">Txt Chapters Replace</string>
     <string name="select_section_export">Choose some chapters to be exported</string>
     <string name="error_scope_input">Please enter the correct range</string>
     <string name="custom_export">Custom Export</string>
@@ -1224,4 +1226,5 @@
     <string name="manga_epaper_value">阈值</string>
     <string name="disable_horizontal_animation">禁用水平滚动动画</string>
     <string name="enable_manga_gray">开启图片灰色</string>
+    <string name="import_toc">import directory</string>
 </resources>
