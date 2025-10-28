@@ -1,5 +1,6 @@
 package io.legado.app.ui.rss.subscription
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -93,6 +94,7 @@ class RuleSubActivity : BaseActivity<ActivityRuleSubBinding>(),
         }
     }
 
+    @SuppressLint("SetTextI18n")
     override fun editSubscription(ruleSub: RuleSub) {
         alert(R.string.rule_subscription) {
             val alertBinding = DialogRuleSubEditBinding.inflate(layoutInflater).apply {
@@ -108,7 +110,7 @@ class RuleSubActivity : BaseActivity<ActivityRuleSubBinding>(),
                 }
                 autoUpdate.setOnCheckedChangeListener { _, isChecked ->
                     if (isChecked && ruleSub.updateInterval == 0){
-                        etUpdateInterval.setText("1")
+                        etUpdateInterval.setText("24")
                     }
                     else if (!isChecked) {
                         etUpdateInterval.setText("0")

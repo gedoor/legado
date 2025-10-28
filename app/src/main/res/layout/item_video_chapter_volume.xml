@@ -2,8 +2,8 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="100dp"
-    android:layout_height="50dp"
+    android:layout_width="80dp"
+    android:layout_height="40dp"
     app:cardCornerRadius="4dp"
     app:cardElevation="0dp"
     app:cardUseCompatPadding="true"
@@ -16,7 +16,7 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:padding="4dp"
-        android:textSize="12sp"
+        android:textSize="11sp"
         android:textStyle="bold"
         android:background="@drawable/card_video_background" />
 

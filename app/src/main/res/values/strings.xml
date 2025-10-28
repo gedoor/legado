@@ -1282,4 +1282,5 @@
     <string name="enable_preload">预加载</string>
     <string name="is_event_listener">事件监听</string>
     <string name="rule_call_back">回调操作（callBackJs）</string>
+    <string name="time_hour">小时</string>
 </resources>

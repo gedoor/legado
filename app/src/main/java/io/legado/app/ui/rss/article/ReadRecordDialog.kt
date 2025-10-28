@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -47,7 +48,7 @@ class ReadRecordDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
         adapter.setItems(viewModel.getRecords())
         adapter.setOnRecordClickListener(object : OnRecordClickListener {
             override fun onRecordClick(record: RssReadRecord?) {
-                record?.let { ReadRss.readRss(this@ReadRecordDialog, it)}
+                record?.let { ReadRss.readRss(activity as AppCompatActivity, it)}
             }
         })
     }

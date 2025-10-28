@@ -1,5 +1,6 @@
 package io.legado.app.ui.rss.read
 
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssReadRecord
@@ -9,17 +10,17 @@ import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.startActivity
 
 object ReadRss {
-    fun readRss(fragment: Fragment, record: RssReadRecord) {
+    fun readRss(activity: AppCompatActivity, record: RssReadRecord) {
         when (record.type) {
             0 -> {
-                fragment.startActivity<ReadRssActivity> {
+                activity.startActivity<ReadRssActivity> {
                     putExtra("title", record.title)
                     putExtra("origin", record.origin)
                     putExtra("link", record.record)
                     putExtra("sort", record.sort)
                 }
             }
-            1 -> readPhoto(fragment, record)
+            1 -> readPhoto(activity, record)
         }
     }
 
@@ -45,8 +46,8 @@ object ReadRss {
         }
     }
 
-    private fun readPhoto(fragment: Fragment, record: RssReadRecord) {
-        fragment.showDialogFragment(PhotoDialog(record.record))
+    private fun readPhoto(activity: AppCompatActivity, record: RssReadRecord) {
+        activity.showDialogFragment(PhotoDialog(record.record))
     }
 
 

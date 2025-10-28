@@ -1,5 +1,6 @@
 package io.legado.app.ui.video
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,17 +12,23 @@ import io.legado.app.data.entities.BookChapter
 import io.legado.app.lib.theme.ThemeStore.Companion.accentColor
 
 class ChapterAdapter(
-    private val chapters: List<BookChapter>,
+    private var chapters: List<BookChapter>,
     private var selectedPosition: Int = -1,
-    private val onChapterClick: (BookChapter) -> Unit
+    private val isVolume: Boolean = false,
+    private val onChapterClick: (BookChapter, Int) -> Unit
 ) : RecyclerView.Adapter<ChapterAdapter.ChapterViewHolder>() {
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): ChapterViewHolder {
+        val resourceId = if (isVolume) {
+            R.layout.item_video_chapter_volume
+        } else {
+            R.layout.item_video_chapter
+        }
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_video_chapter, parent, false)
+            .inflate(resourceId, parent, false)
         return ChapterViewHolder(view)
     }
 
@@ -38,6 +45,12 @@ class ChapterAdapter(
         notifyItemChanged(newPosition)
     }
 
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateData(newToc: List<BookChapter>?) {
+        this.chapters = newToc ?: return
+        notifyDataSetChanged() //全量更新
+    }
+
     inner class ChapterViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val tvChapterName: TextView = itemView.findViewById(R.id.tvChapterName)
 
@@ -45,8 +58,7 @@ class ChapterAdapter(
             tvChapterName.text = chapter.title
             if (isSelected) {
                 tvChapterName.setTextColor(accentColor)
-            }
-            else {
+            } else {
                 tvChapterName.setTextColor(ContextCompat.getColor(itemView.context,R.color.primaryText))
             }
             itemView.setOnClickListener {
@@ -58,7 +70,7 @@ class ChapterAdapter(
                 if (selectedPosition >= 0) {
                     notifyItemChanged(selectedPosition) //更新当前选中的
                 }
-                onChapterClick(chapter)
+                onChapterClick(chapter, selectedPosition)
             }
         }
     }

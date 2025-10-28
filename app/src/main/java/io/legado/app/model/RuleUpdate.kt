@@ -27,10 +27,9 @@ object RuleUpdate {
         val silentUpdate = ruleSub.silentUpdate
         val update = ruleSub.update
         val updateInterval = ruleSub.updateInterval
-        if (update + updateInterval * 24 * 3600 * 1000L > System.currentTimeMillis()) {
+        if (update + updateInterval * 3600 * 1000L > System.currentTimeMillis()) {
             return false
-        }
-        else {
+        } else {
             ruleSub.update = System.currentTimeMillis()
             appDb.ruleSubDao.update(ruleSub)
         }

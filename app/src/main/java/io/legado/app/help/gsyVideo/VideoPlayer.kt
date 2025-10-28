@@ -60,7 +60,7 @@ class VideoPlayer: StandardGSYVideoPlayer {
     private fun initView() {
         mSwitchSize = findViewById(R.id.switchSize)
         btnNext = findViewById(R.id.next)
-        if (VideoPlay.toc == null) {
+        if (VideoPlay.episodes == null) {
             mSwitchSize?.visibility = GONE
             btnNext?.visibility = GONE
             return
@@ -80,12 +80,12 @@ class VideoPlayer: StandardGSYVideoPlayer {
 
     }
     private fun showSwitchDialog() {
-        if (!mHadPlay || VideoPlay.toc.isNullOrEmpty()) {
+        if (!mHadPlay || VideoPlay.episodes.isNullOrEmpty()) {
             return
         }
         isChanging = true
         val switchVideoTypeDialog = SwitchVideoTypeDialog(context)
-        switchVideoTypeDialog.initList(VideoPlay.toc!!, object :
+        switchVideoTypeDialog.initList(VideoPlay.episodes!!, object :
             SwitchVideoTypeDialog.OnListItemClickListener {
             override fun onItemClick(position: Int) {
                 VideoPlay.durChapterIndex = position

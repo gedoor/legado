@@ -16,7 +16,7 @@
         android:id="@+id/playerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:layout_height="300dp"/>
+        tools:layout_height="300dp" />
 
     <LinearLayout
         android:id="@+id/data"
@@ -72,7 +72,8 @@
                 android:singleLine="true"
                 android:text="@string/author"
                 android:textColor="@color/tv_text_summary"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                tools:ignore="RtlSymmetry" />
 
             <androidx.core.widget.NestedScrollView
                 android:id="@+id/scroll_view_r"
@@ -91,35 +92,54 @@
                     android:textIsSelectable="true"
                     android:textSize="14sp" />
             </androidx.core.widget.NestedScrollView>
+
         </LinearLayout>
+
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/chapters_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_marginBottom="20dp"
         android:gravity="center_vertical"
-        android:layout_marginBottom="30dp">
+        android:orientation="vertical">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/chapters"
-            android:layout_width="0dp"
+            android:id="@+id/volumes"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:orientation="horizontal"
-            android:padding="8dp"
+            android:padding="4dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-        <io.legado.app.ui.widget.image.ImageButton
-            android:id="@+id/iv_chapter"
-            android:layout_width="46dp"
-            android:layout_height="46dp"
-            android:background="@drawable/selector_circle_btn_bg"
-            android:contentDescription="@string/chapter_list"
-            android:padding="5dp"
-            android:src="@drawable/ic_chapter_list"
-            app:tint="@color/md_white_1000" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/chapters"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:padding="8dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+            <io.legado.app.ui.widget.image.ImageButton
+                android:id="@+id/iv_chapter"
+                android:layout_width="46dp"
+                android:layout_height="46dp"
+                android:background="@drawable/selector_circle_btn_bg"
+                android:contentDescription="@string/chapter_list"
+                android:padding="5dp"
+                android:src="@drawable/ic_chapter_list"
+                app:tint="@color/md_white_1000" />
+
+        </LinearLayout>
+
     </LinearLayout>
 
 </LinearLayout>

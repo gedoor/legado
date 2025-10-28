@@ -85,7 +85,7 @@
             android:digits="0123456789"
             android:enabled="false"
             android:gravity="center_horizontal"
-            android:hint="0"
+            android:hint="24"
             android:inputType="number"
             android:paddingStart="8dp"
             android:paddingEnd="8dp" />
@@ -94,7 +94,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
-            android:text="@string/time_day" />
+            android:text="@string/time_hour" />
 
     </LinearLayout>
 
