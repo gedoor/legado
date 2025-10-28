@@ -223,6 +223,8 @@
             android:title="@string/record_heap_dump_t"
             app:iconSpaceReserved="false" />
 
+        
+
     </io.legado.app.lib.prefs.PreferenceCategory>
 
 

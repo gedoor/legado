@@ -164,6 +164,9 @@ class MyFragment() : BaseFragment(R.layout.fragment_my_config), MainFragmentInte
                 "fileManage" -> startActivity<FileManageActivity>()
                 "readRecord" -> startActivity<ReadRecordActivity>()
                 "about" -> startActivity<AboutActivity>()
+                "ai_summary_config" -> startActivity<ConfigActivity> {
+                    putExtra("configTag", ConfigTag.AI_SUMMARY_CONFIG)
+                }
                 "exit" -> activity?.finish()
             }
             return super.onPreferenceTreeClick(preference)

@@ -11,11 +11,13 @@ import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getPrefInt
 import io.legado.app.utils.getPrefLong
 import io.legado.app.utils.getPrefString
+import io.legado.app.utils.getPrefStringSet
 import io.legado.app.utils.isNightMode
 import io.legado.app.utils.putPrefBoolean
 import io.legado.app.utils.putPrefInt
 import io.legado.app.utils.putPrefLong
 import io.legado.app.utils.putPrefString
+import io.legado.app.utils.putPrefStringSet
 import io.legado.app.utils.removePref
 import io.legado.app.utils.sysConfiguration
 import io.legado.app.utils.toastOnUi
@@ -694,5 +696,70 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             appCtx.putPrefBoolean(PreferKey.enableMangaGray, value)
         }
 
-}
+    var aiSummaryApiKey: String?
+        get() = appCtx.getPrefString(PreferKey.aiSummaryApiKey)
+        set(value) {
+            appCtx.putPrefString(PreferKey.aiSummaryApiKey, value)
+        }
 
+    var aiSummaryApiUrl: String?
+        get() = appCtx.getPrefString(PreferKey.aiSummaryApiUrl)
+        set(value) {
+            appCtx.putPrefString(PreferKey.aiSummaryApiUrl, value)
+        }
+
+    var aiSummaryModelId: String?
+        get() = appCtx.getPrefString(PreferKey.aiSummaryModelId, "gpt-3.5-turbo")
+        set(value) {
+            appCtx.putPrefString(PreferKey.aiSummaryModelId, value)
+        }
+
+    var aiSummarySystemPrompt: String?
+        get() = appCtx.getPrefString(PreferKey.aiSummarySystemPrompt, "请总结以下内容：")
+        set(value) {
+            appCtx.putPrefString(PreferKey.aiSummarySystemPrompt, value)
+        }
+
+    var aiSummaryCachePath: String?
+        get() = appCtx.getPrefString(PreferKey.aiSummaryCachePath)
+        set(value) {
+            appCtx.putPrefString(PreferKey.aiSummaryCachePath, value)
+        }
+
+    var aiSummarySaveFormat: String?
+        get() = appCtx.getPrefString(PreferKey.aiSummarySaveFormat, "txt")
+        set(value) {
+            appCtx.putPrefString(PreferKey.aiSummarySaveFormat, value)
+        }
+
+    var aiSummarySaveMode: String?
+        get() = appCtx.getPrefString(PreferKey.aiSummarySaveMode, "overwrite")
+        set(value) {
+            appCtx.putPrefString(PreferKey.aiSummarySaveMode, value)
+        }
+
+    var aiSummaryModeEnabled: Boolean = false
+
+    var aiSummaryModelsUrl: String?
+        get() = appCtx.getPrefString(PreferKey.aiSummaryModelsUrl)
+        set(value) {
+            appCtx.putPrefString(PreferKey.aiSummaryModelsUrl, value)
+        }
+
+    var aiSummaryModelList: Set<String>?
+        get() = appCtx.getPrefStringSet(PreferKey.aiSummaryModelList)
+        set(value) {
+            if (value == null) {
+                appCtx.removePref(PreferKey.aiSummaryModelList)
+            } else {
+                appCtx.putPrefStringSet(PreferKey.aiSummaryModelList, value.toMutableSet())
+            }
+        }
+
+    var aiSummaryCustomModel: String?
+        get() = appCtx.getPrefString(PreferKey.aiSummaryCustomModel)
+        set(value) {
+            appCtx.putPrefString(PreferKey.aiSummaryCustomModel, value)
+        }
+
+}
