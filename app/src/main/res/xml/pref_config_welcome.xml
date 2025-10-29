@@ -4,6 +4,15 @@
 
     <io.legado.app.lib.prefs.SwitchPreference
         android:defaultValue="false"
+        android:key="closeWelcome"
+        android:summary="@string/close_welcome_summary"
+        android:title="@string/close_welcome"
+        app:allowDividerAbove="false"
+        app:allowDividerBelow="false"
+        app:iconSpaceReserved="false" />
+
+    <io.legado.app.lib.prefs.SwitchPreference
+        android:defaultValue="false"
         android:key="customWelcome"
         android:summary="@string/custom_welcome_summary"
         android:title="@string/custom_welcome"
@@ -80,5 +89,7 @@
             app:iconSpaceReserved="false" />
 
     </io.legado.app.lib.prefs.PreferenceCategory>
+
+
 
 </androidx.preference.PreferenceScreen>

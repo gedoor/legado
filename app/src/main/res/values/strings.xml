@@ -1284,4 +1284,6 @@
     <string name="rule_call_back">回调操作（callBackJs）</string>
     <string name="time_hour">小时</string>
     <string name="custom_button">定制按钮</string>
+    <string name="close_welcome">关闭欢迎页</string>
+    <string name="close_welcome_summary">启用后进入app不再展示欢迎页</string>
 </resources>

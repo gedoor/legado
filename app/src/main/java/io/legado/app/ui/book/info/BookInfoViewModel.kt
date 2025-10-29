@@ -49,9 +49,9 @@ import kotlinx.coroutines.Dispatchers.IO
 class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     val bookData = MutableLiveData<Book>()
     val chapterListData = MutableLiveData<List<BookChapter>>()
+    val customBtnListData = MutableLiveData<Boolean>()
     val webFiles = mutableListOf<WebFile>()
     var inBookshelf = false
-    var menuCustomBtn: MenuItem? = null
     var bookSource: BookSource? = null
     private var changeSourceCoroutine: Coroutine<*>? = null
     val waitDialogData = MutableLiveData<Boolean>()
@@ -110,7 +110,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                     loadChapter(book, isFromBookInfo = true)
                 }
             }
-            bookSource?.let { menuCustomBtn?.isVisible = it.customButton }
+            customBtnListData.postValue(bookSource?.customButton == true)
         }
     }
 

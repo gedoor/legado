@@ -1,6 +1,7 @@
 package io.legado.app.ui.main
 
 import android.app.Application
+import android.os.Build
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.RecyclerView.RecycledViewPool
@@ -146,6 +147,11 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
             }.onEachParallel(threadCount) {
                 onUpTocBooks.add(it)
                 postEvent(EventBus.UP_BOOKSHELF, it)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    eventListenerSource.clear()
+                } else {
+                    eventListenerSource.removeAll { true }
+                }
                 updateToc(it)
             }.onEach {
                 onUpTocBooks.remove(it)

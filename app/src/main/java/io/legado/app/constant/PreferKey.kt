@@ -128,6 +128,7 @@ object PreferKey {
     const val enableReadRecord = "enableReadRecord"
     const val localBookImportSort = "localBookImportSort"
     const val customWelcome = "customWelcome"
+    const val closeWelcome = "closeWelcome"
     const val welcomeImage = "welcomeImagePath"
     const val welcomeImageDark = "welcomeImagePathDark"
     const val welcomeShowText = "welcomeShowText"

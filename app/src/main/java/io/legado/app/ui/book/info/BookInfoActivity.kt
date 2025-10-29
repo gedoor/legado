@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.MotionEvent
-import android.widget.Button
 import android.widget.CheckBox
 import android.widget.LinearLayout
 import androidx.activity.result.contract.ActivityResultContracts
@@ -178,6 +177,7 @@ class BookInfoActivity :
     private var chapterChanged = false
     private val waitDialog by lazy { WaitDialog(this) }
     private var editMenuItem: MenuItem? = null
+    var menuCustomBtn: MenuItem? = null
     private val book get() = viewModel.getBook(false)
 
     override val binding by viewBinding(ActivityBookInfoBinding::inflate)
@@ -199,6 +199,7 @@ class BookInfoActivity :
         }
         viewModel.bookData.observe(this) { showBook(it) }
         viewModel.chapterListData.observe(this) { upLoading(false, it) }
+        viewModel.customBtnListData.observe(this) { menuCustomBtn?.isVisible = it }
         viewModel.waitDialogData.observe(this) { upWaitDialogStatus(it) }
         viewModel.initData(intent)
         initViewEvent()
@@ -207,7 +208,7 @@ class BookInfoActivity :
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.book_info, menu)
         editMenuItem = menu.findItem(R.id.menu_edit)
-        viewModel.menuCustomBtn = menu.findItem(R.id.menu_custom_btn)
+        menuCustomBtn = menu.findItem(R.id.menu_custom_btn)
         return super.onCompatCreateOptionsMenu(menu)
     }
 
