@@ -220,11 +220,16 @@ let options = {
 event字符串变量对应的事件名称，目前的事件有
 ```js
 "shareBook" //详情页分享按钮
-"clearCache" //详情页清理缓存按钮
+"clickBookName" //详情页点击书名
 "clickAuthor" //详情页点击作者
+"clickCustomButton" //书源自定义按钮
+"clearCache" //详情页清理缓存
 "addBookShelf" //添加到书架
 "delBookShelf" //移除书架
 "saveRead" //保存阅读进度
+"startRead" //开始阅读
+"endRead" //结束阅读
+"shelfRefreshComplete" //书架刷新已完成
 ```
 
 * 图片解密

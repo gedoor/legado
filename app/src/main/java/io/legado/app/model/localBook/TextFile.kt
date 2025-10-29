@@ -199,8 +199,6 @@ class TextFile(private var book: Book) {
                 val matcher: Matcher = pattern.matcher(blockContent)
                 //如果存在相应章节
                 while (matcher.find()) { //获取匹配到的字符在字符串中的起始位置
-                    val title = replacement(matcher.group(), jsStr, toc.size)
-                    if (title.isEmpty()) continue
                     val chapterStart = matcher.start()
                     //获取章节内容
                     val chapterContent = blockContent.substring(seekPos, chapterStart)
@@ -208,6 +206,7 @@ class TextFile(private var book: Book) {
                     val titleLength = matcher.group().toByteArray(charset).size.toLong()
                     val lastStart = toc.lastOrNull()?.start ?: curOffset
                     if (book.getSplitLongChapter() && curOffset + chapterLength - lastStart > maxLengthWithToc) {
+                        val title = replacement(matcher.group(), jsStr, toc.size).takeIf { it.isNotEmpty() } ?: continue
                         //章节字数太多进行拆分
                         val lastTitle = toc.lastOrNull()?.let {
                             it.end = it.start
@@ -240,19 +239,24 @@ class TextFile(private var book: Book) {
                         if (toc.isEmpty()) { //如果当前没有章节，那么就是序章
                             //加入简介
                             if (chapterContent.isNotBlank()) {
-                                val qyChapter = BookChapter()
-                                qyChapter.title = "前言"
-                                qyChapter.start = curOffset
-                                qyChapter.end = curOffset + chapterLength
-                                qyChapter.wordCount =
-                                    StringUtils.wordCountFormat(chapterContent.length)
-                                toc.add(qyChapter)
-                                book.intro = if (chapterContent.length <= 500) {
-                                    chapterContent
+                                val title = replacement("前言", jsStr, 0)
+                                if (title.isNotEmpty()) {
+                                    //如果js把"前言"处理成空了，那么就不要前言,并且前言内容会全部放到简介里面去
+                                    val qyChapter = BookChapter()
+                                    qyChapter.title = title
+                                    qyChapter.start = curOffset
+                                    qyChapter.end = curOffset + chapterLength
+                                    qyChapter.wordCount =
+                                        StringUtils.wordCountFormat(chapterContent.length)
+                                    toc.add(qyChapter)
+                                }
+                                book.intro = if (chapterContent.length > 600 && title.isNotEmpty()) {
+                                    chapterContent.substring(0, 600)
                                 } else {
-                                    chapterContent.substring(0, 500)
+                                    chapterContent
                                 }
                             }
+                            val title = replacement(matcher.group(), jsStr, toc.size).takeIf { it.isNotEmpty() } ?: continue
                             //创建当前章节
                             val curChapter = BookChapter()
                             curChapter.title = title
@@ -260,6 +264,7 @@ class TextFile(private var book: Book) {
                             curChapter.end = curChapter.start
                             toc.add(curChapter)
                         } else { //否则就block分割之后，上一个章节的剩余内容
+                            val title = replacement(matcher.group(), jsStr, toc.size).takeIf { it.isNotEmpty() } ?: continue
                             //获取上一章节
                             val lastChapter = toc.last()
                             lastChapter.isVolume =
@@ -279,6 +284,7 @@ class TextFile(private var book: Book) {
                         bookWordCount += chapterContent.length
                         lastChapterWordCount = 0
                     } else {
+                        val title = replacement(matcher.group(), jsStr, toc.size).takeIf { it.isNotEmpty() } ?: continue
                         if (toc.isNotEmpty()) { //获取章节内容
                             //获取上一章节
                             val lastChapter = toc.last()

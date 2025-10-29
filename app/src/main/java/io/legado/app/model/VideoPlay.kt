@@ -40,9 +40,11 @@ object VideoPlay : CoroutineScope by MainScope(){
     var volumes = arrayListOf<BookChapter>()
     var episodes: List<BookChapter>? =  null
     /**  在当前episodes中的位置  **/
-    var durChapterIndex = 0
+    var chapterInVolumeIndex = 0
     /**  卷章节 -> 线路或者季数  **/
     var durVolumeIndex = 0
+    /**  当前卷  **/
+    var durVolume: BookChapter? = null
     /**  本集的进度  **/
     var durChapterPos = 0
     var inBookshelf = true
@@ -69,10 +71,19 @@ object VideoPlay : CoroutineScope by MainScope(){
             appCtx.toastOnUi("未找到书籍")
             return
         }
-        var chapter = episodes?.getOrNull(durChapterIndex)
-        if (chapter == null) {
-            durChapterIndex = 0
-            chapter = episodes?.getOrNull(durChapterIndex)
+        val chapter = if (episodes.isNullOrEmpty()) {
+            //没有卷目录，那么卷就是播放的章节（适合电影类，没有剧集，全是线路卷章节，如果全是章节没有卷的写法，播放完后会继续下一个线路重复播放）
+            when {
+                durVolume == null -> null
+                durVolume!!.url.startsWith(durVolume!!.title) -> null //卷章节没获取到链接（链接以标题开头）则返回null
+                else -> durVolume
+            }
+        } else {
+            // 优先获取当前索引的剧集，如果不存在则尝试获取第一个剧集
+            episodes?.getOrNull(chapterInVolumeIndex) ?: run {
+                chapterInVolumeIndex = 0
+                episodes?.getOrNull(chapterInVolumeIndex)
+            }
         }
         if (chapter == null) {
             appCtx.toastOnUi("未找到章节")
@@ -203,8 +214,8 @@ object VideoPlay : CoroutineScope by MainScope(){
             }
             appDb.bookDao.getBook(it) ?: appDb.searchBookDao.getSearchBook(it)?.toBook()
         }?.also { b ->
-            durChapterIndex = b.durChapterIndex % 10000 //在卷里的序号
-            durVolumeIndex = b.durChapterIndex / 10000 //十万位开始是卷的索引
+            chapterInVolumeIndex = b.chapterInVolumeIndex
+            durVolumeIndex = b.durVolumeIndex
             durChapterPos = b.durChapterPos
             source = appDb.bookSourceDao.getBookSource(b.origin)
         }
@@ -224,23 +235,28 @@ object VideoPlay : CoroutineScope by MainScope(){
 
     fun upEpisodes() {
         if (volumes.isEmpty()) {
+            durVolume = null
             episodes = toc
-        } else {
-            val startInt = volumes.getOrNull(durVolumeIndex)?.index ?: -1
-            if (startInt == -1) { durVolumeIndex = 0 }
-            val endInt = volumes.getOrNull(durVolumeIndex + 1)?.index ?: toc!!.size
-            episodes = toc!!.subList(startInt + 1, endInt)
+            return
         }
+        durVolume = volumes.getOrNull(durVolumeIndex)
+        if (durVolume == null) {
+            durVolumeIndex = 0
+            durVolume = volumes.getOrNull(durVolumeIndex)
+        }
+        val startInt = durVolume?.index ?: 0
+        val endInt = volumes.getOrNull(durVolumeIndex + 1)?.index ?: toc!!.size
+        episodes = toc!!.subList(startInt + 1, endInt)
     }
 
     fun upDurIndex(offset: Int): Boolean {
         episodes ?: return false
-        val index = durChapterIndex + offset
+        val index = chapterInVolumeIndex + offset
         if (index < 0 || index >= episodes!!.size) {
             appCtx.toastOnUi("已播放完")
             return false
         }
-        durChapterIndex = index
+        chapterInVolumeIndex = index
         durChapterPos = 0
         return true
     }
@@ -249,9 +265,13 @@ object VideoPlay : CoroutineScope by MainScope(){
         book?.let { book ->
             book.lastCheckCount = 0
             book.durChapterTime = System.currentTimeMillis()
-            book.durChapterIndex = durChapterIndex + durVolumeIndex * 10000
+            book.durVolumeIndex = durVolumeIndex
+            book.chapterInVolumeIndex = chapterInVolumeIndex
+            val durChapterIndex = if (volumes.isEmpty()) chapterInVolumeIndex else
+                (durVolume?.index ?: 0) + chapterInVolumeIndex + 1
+            book.durChapterIndex = durChapterIndex
             book.durChapterPos = durChapterPos
-            videoTitle = episodes?.getOrNull(durChapterIndex)?.title
+            videoTitle = toc?.getOrNull(durChapterIndex)?.title
             book.durChapterTitle = videoTitle
             book.update()
         }

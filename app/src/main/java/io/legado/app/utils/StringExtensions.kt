@@ -75,7 +75,7 @@ fun String?.isTrue(nullIsTrue: Boolean = false): Boolean {
     if (this.isNullOrBlank() || this == "null") {
         return nullIsTrue
     }
-    return !this.trim().matches("(?i)^(false|no|not|0|0.0)$".toRegex())
+    return !this.trim().matches("(?i)^(?:false|no|not|0|0.0)$".toRegex())
 }
 
 fun String.isHex(): Boolean {

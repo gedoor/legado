@@ -95,6 +95,13 @@
                 android:checked="false"
                 android:text="@string/is_event_listener" />
 
+            <io.legado.app.lib.theme.view.ThemeCheckBox
+                android:id="@+id/cb_is_custom_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="false"
+                android:text="@string/custom_button" />
+
         </LinearLayout>
 
     </HorizontalScrollView>

@@ -20,6 +20,14 @@ class RssJsExtensions(private val activity: ReadRssActivity) : JsExtensions {
         return activity.getSource()
     }
 
+    fun put(key: String, value: String): String {
+        getSource()?.put(key, value)
+        return value
+    }
+
+    fun get(key: String): String {
+        return getSource()?.get(key)  ?: ""
+    }
     fun searchBook(key: String) {
         searchBook(key, null)
     }

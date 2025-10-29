@@ -24,6 +24,15 @@ class SourceLoginJsExtensions(private val activity: AppCompatActivity, private v
         return source
     }
 
+    fun put(key: String, value: String): String {
+        source?.put(key, value)
+        return value
+    }
+
+    fun get(key: String): String {
+        return source?.get(key)  ?: ""
+    }
+
     fun searchBook(key: String) {
         searchBook(key, null)
     }

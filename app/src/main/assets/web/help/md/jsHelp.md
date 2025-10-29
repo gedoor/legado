@@ -41,7 +41,6 @@
 > 只能在订阅源`shouldOverrideUrlLoading`规则或登录界面中使用  
 > 订阅添加跳转url拦截, js, 返回true拦截,js变量url,可以通过js打开url  
 > url跳转拦截规则不能执行耗时操作
-> 例子https://github.com/gedoor/legado/discussions/3259
 
 * 调用阅读搜索  
 ```js
@@ -66,8 +65,6 @@ name为"sort"打开分类界面、为"rss"打开正文界面
 > 只在登录界面按钮被触发时或按钮的回调事件中有效  
 ```js
 java.copyText(text: String) //复制文本到剪贴板
-java.open(name: String, url: String, title: String)
-name为"sort"打开分类界面、为"rss"打开正文界面
 ```
 * 打开书源发现界面
 ```js

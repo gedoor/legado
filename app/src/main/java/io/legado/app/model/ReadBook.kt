@@ -155,6 +155,7 @@ object ReadBook : CoroutineScope by MainScope() {
         } else {
             appDb.bookSourceDao.getBookSource(book.origin)?.let {
                 bookSource = it
+                SourceCallBack.callBackBook(SourceCallBack.START_READ, it, book)
                 if (book.getImageStyle().isNullOrBlank()) {
                     var imageStyle = it.getContentRule().imageStyle
                     if (imageStyle.isNullOrBlank() && (book.isImage || book.isPdf)) {
@@ -876,7 +877,7 @@ object ReadBook : CoroutineScope by MainScope() {
                     }
                 }
                 appDb.bookDao.update(book)
-                SourceCallBack.callBackSaveRead(bookSource, book)
+                SourceCallBack.callBackBook(SourceCallBack.SAVE_READ, bookSource, book)
             }.onFailure {
                 AppLog.put("保存书籍阅读进度信息出错\n$it", it)
             }

@@ -306,6 +306,7 @@ class BookSourceEditActivity :
                 }
             )
             binding.cbIsEventListener.isChecked = it.eventListener
+            binding.cbIsCustomButton.isChecked = it.customButton
         }
         // 基本信息
         sourceEntities.clear()
@@ -433,6 +434,7 @@ class BookSourceEditActivity :
             else -> BookSourceType.default
         }
         source.eventListener = binding.cbIsEventListener.isChecked
+        source.customButton = binding.cbIsCustomButton.isChecked
         val searchRule = SearchRule()
         val exploreRule = ExploreRule()
         val bookInfoRule = BookInfoRule()

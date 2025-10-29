@@ -88,7 +88,7 @@ class VideoPlayer: StandardGSYVideoPlayer {
         switchVideoTypeDialog.initList(VideoPlay.episodes!!, object :
             SwitchVideoTypeDialog.OnListItemClickListener {
             override fun onItemClick(position: Int) {
-                VideoPlay.durChapterIndex = position
+                VideoPlay.chapterInVolumeIndex = position
                 VideoPlay.durChapterPos = 0
                 VideoPlay.saveRead()
                 VideoPlay.startPlay(this@VideoPlayer)

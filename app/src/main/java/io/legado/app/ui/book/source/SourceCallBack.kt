@@ -1,80 +1,62 @@
 package io.legado.app.ui.book.source
 
+import androidx.appcompat.app.AppCompatActivity
 import io.legado.app.constant.AppLog
 import io.legado.app.data.entities.Book
+import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookSource
 import io.legado.app.help.coroutine.Coroutine
-import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.login.SourceLoginJsExtensions
 import io.legado.app.utils.isTrue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 object SourceCallBack {
-    fun callBackShare(activity: BookInfoActivity, source: BookSource?, book: Book, noCall: () -> Unit) {
+    const val CLICK_AUTHOR = "clickAuthor"
+    const val CLICK_BOOK_NAME = "clickBookName"
+    const val CLICK_SHARE_BOOK = "clickShareBook"
+    const val CLICK_CUSTOM_BUTTON = "clickCustomButton"
+    const val ADD_BOOK_SHELF = "addBookShelf"
+    const val DEL_BOOK_SHELF = "delBookShelf"
+    const val CLEAR_CACHE = "clearCache"
+    const val SAVE_READ = "saveRead"
+    const val START_READ = "startRead"
+    const val END_READ = "endRead"
+    const val SHELF_REFRESH_COMPLETE = "shelfRefreshComplete"
+    fun callBackBtn(activity: AppCompatActivity, event: String, source: BookSource?, book: Book, chapter: BookChapter?, noCall: (() -> Unit)? = null) {
         if (source == null || !source.eventListener) {
-            noCall.invoke()
+            noCall?.invoke()
             return
         }
         val jsStr = source.getContentRule().callBackJs
         if (jsStr.isNullOrEmpty()) {
-            noCall.invoke()
+            noCall?.invoke()
             return
         }
         Coroutine.async {
             val java = SourceLoginJsExtensions(activity, source)
             val result = source.evalJS(jsStr) {
-                put("event", "shareBook")
+                put("event", event)
                 put("java", java)
                 put("result", null)
                 put("book", book)
-                put("chapter", null)
+                put("chapter", chapter)
             }.toString()
             if (!result.isTrue()) {
                 withContext(Dispatchers.Main) {
-                    noCall.invoke()
+                    noCall?.invoke()
                 }
             }
         }.onError {
-            AppLog.put("书源执行分享回调js函数出错\n${it.localizedMessage}", it, true)
+            AppLog.put("书源执行回调事件${event}出错\n${it.localizedMessage}", it, true)
         }
     }
 
-    fun callBackClickAuthor(activity: BookInfoActivity, source: BookSource?, book: Book, noCall: () -> Unit) {
-        if (source == null || !source.eventListener) {
-            noCall.invoke()
-            return
-        }
-        val jsStr = source.getContentRule().callBackJs
-        if (jsStr.isNullOrEmpty()) {
-            noCall.invoke()
-            return
-        }
-        Coroutine.async {
-            val java = SourceLoginJsExtensions(activity, source)
-            val result = source.evalJS(jsStr) {
-                put("event", "clickAuthor")
-                put("java", java)
-                put("result", null)
-                put("book", book)
-                put("chapter", null)
-            }.toString()
-            if (!result.isTrue()) {
-                withContext(Dispatchers.Main) {
-                    noCall.invoke()
-                }
-            }
-        }.onError {
-            AppLog.put("书源执行点击作者回调js函数出错\n${it.localizedMessage}", it, true)
-        }
-    }
-
-    fun callBackBookShelf(source: BookSource?, book: Book?, isAdd: Boolean) {
+    fun callBackBook(event: String, source: BookSource?, book: Book?) {
         if (source == null || book == null || !source.eventListener) return
         val jsStr = source.getContentRule().callBackJs
         if (jsStr.isNullOrEmpty()) return
         Coroutine.async {
-            val event = if (isAdd) "addBookShelf" else "delBookShelf"
             source.evalJS(jsStr) {
                 put("event", event)
                 put("result", null)
@@ -82,39 +64,22 @@ object SourceCallBack {
                 put("chapter", null)
             }
         }.onError {
-            AppLog.put("书源执行书架事件回调js函数出错\n${it.localizedMessage}", it, true)
+            AppLog.put("书源执行回调事件${event}出错\n${it.localizedMessage}", it, true)
         }
     }
 
-    fun callBackClearCache(source: BookSource?, book: Book) {
-        if (source == null || !source.eventListener) return
+    fun callBackSource(event: String, source: BookSource) {
         val jsStr = source.getContentRule().callBackJs
         if (jsStr.isNullOrEmpty()) return
         Coroutine.async {
             source.evalJS(jsStr) {
-                put("event", "clearCache")
+                put("event", event)
                 put("result", null)
-                put("book", book)
+                put("book", null)
                 put("chapter", null)
             }
         }.onError {
-            AppLog.put("书源执行清除缓存事件回调js函数出错\n${it.localizedMessage}", it, true)
-        }
-    }
-
-    fun callBackSaveRead(source: BookSource?, book: Book) {
-        if (source == null || !source.eventListener) return
-        val jsStr = source.getContentRule().callBackJs
-        if (jsStr.isNullOrEmpty()) return
-        Coroutine.async {
-            source.evalJS(jsStr) {
-                put("event", "saveRead")
-                put("result", null)
-                put("book", book)
-                put("chapter", null)
-            }
-        }.onError {
-            AppLog.put("书源执行保存阅读进度事件回调js函数出错\n${it.localizedMessage}", it, true)
+            AppLog.put("书源执行回调事件${event}出错\n${it.localizedMessage}", it, true)
         }
     }
 

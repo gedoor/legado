@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.MotionEvent
+import android.widget.Button
 import android.widget.CheckBox
 import android.widget.LinearLayout
 import androidx.activity.result.contract.ActivityResultContracts
@@ -42,6 +43,7 @@ import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.model.BookCover
+import io.legado.app.model.VideoPlay
 import io.legado.app.model.remote.RemoteBookWebDav
 import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.book.audio.AudioPlayActivity
@@ -94,7 +96,33 @@ class BookInfoActivity :
             viewModel.getBook(false)?.let { book ->
                 lifecycleScope.launch {
                     withContext(IO) {
-                        book.durChapterIndex = it.first
+                        if (book.isVideo) {
+                            VideoPlay.volumes.clear()
+                            appDb.bookChapterDao.getChapterList(book.bookUrl).forEach { it ->
+                                if (it.isVolume) {
+                                    VideoPlay.volumes.add(it)
+                                }
+                            }
+                            if (VideoPlay.volumes.isEmpty()) {
+                                VideoPlay.chapterInVolumeIndex = it.first
+                            } else {
+                                for ((index, volume) in VideoPlay.volumes.reversed().withIndex()) {
+                                    if (volume.index < it.first) {
+                                        book.chapterInVolumeIndex = it.first - volume.index - 1
+                                        book.durVolumeIndex = VideoPlay.volumes.size - index - 1
+                                        VideoPlay.durVolume = volume
+                                        break
+                                    } else if (volume.index == it.first) {
+                                        book.chapterInVolumeIndex = 0
+                                        book.durVolumeIndex = VideoPlay.volumes.size - index - 1
+                                        VideoPlay.durVolume = volume
+                                        break
+                                    }
+                                }
+                            }
+                        } else {
+                            book.durChapterIndex = it.first
+                        }
                         book.durChapterPos = it.second
                         chapterChanged = it.third
                         appDb.bookDao.update(book)
@@ -179,6 +207,7 @@ class BookInfoActivity :
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.book_info, menu)
         editMenuItem = menu.findItem(R.id.menu_edit)
+        viewModel.menuCustomBtn = menu.findItem(R.id.menu_custom_btn)
         return super.onCompatCreateOptionsMenu(menu)
     }
 
@@ -206,6 +235,14 @@ class BookInfoActivity :
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.menu_custom_btn -> {
+                viewModel.bookSource?.customButton?.let {
+                    viewModel.getBook()?.let { book ->
+                        SourceCallBack.callBackBtn(this,SourceCallBack.CLICK_CUSTOM_BUTTON, viewModel.bookSource, book, null)
+                    }
+                }
+            }
+
             R.id.menu_edit -> {
                 viewModel.getBook()?.let {
                     infoEditResult.launch {
@@ -216,7 +253,7 @@ class BookInfoActivity :
 
             R.id.menu_share_it -> {
                 viewModel.getBook()?.let {
-                    SourceCallBack.callBackShare(this,viewModel.bookSource, it) {
+                    SourceCallBack.callBackBtn(this,SourceCallBack.CLICK_SHARE_BOOK, viewModel.bookSource, it, null) {
                         val bookJson = GSON.toJson(it)
                         val shareStr = "${it.bookUrl}#$bookJson"
                         val intent = Intent(Intent.ACTION_SEND)
@@ -513,7 +550,7 @@ class BookInfoActivity :
         }
         tvAuthor.setOnClickListener {
             viewModel.getBook(false)?.let { book ->
-                SourceCallBack.callBackClickAuthor(this@BookInfoActivity, viewModel.bookSource, book) {
+                SourceCallBack.callBackBtn(this@BookInfoActivity, SourceCallBack.CLICK_AUTHOR, viewModel.bookSource, book, null) {
                     startActivity<SearchActivity> {
                         putExtra("key", book.author)
                     }
@@ -522,8 +559,10 @@ class BookInfoActivity :
         }
         tvName.setOnClickListener {
             viewModel.getBook(false)?.let { book ->
-                startActivity<SearchActivity> {
-                    putExtra("key", book.name)
+                SourceCallBack.callBackBtn(this@BookInfoActivity, SourceCallBack.CLICK_BOOK_NAME, viewModel.bookSource, book, null) {
+                    startActivity<SearchActivity> {
+                        putExtra("key", book.name)
+                    }
                 }
             }
         }

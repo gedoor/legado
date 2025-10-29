@@ -1,4 +1,4 @@
-## 来源于fork仓库 [Luoyacheng/legado](https://github.com/Luoyacheng/legado)  
+### 来源于fork仓库 [Luoyacheng/legado](https://github.com/Luoyacheng/legado)  
 [实时详细日志查看](https://gitee.com/lyc486/legado/commits/main)
 # 更新日志
 

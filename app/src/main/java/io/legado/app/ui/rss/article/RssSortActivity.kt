@@ -265,10 +265,6 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.rss_articles, menu)
-        return super.onCompatCreateOptionsMenu(menu)
-    }
-
-    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         menu.findItem(R.id.menu_search)?.apply {
             val source = viewModel.rssSource
             val searchUrl = source?.searchUrl ?: return@apply
@@ -296,7 +292,7 @@ class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewMo
                 }
             }
         }
-        return super.onPrepareOptionsMenu(menu)
+        return super.onCompatCreateOptionsMenu(menu)
     }
 
     override fun onMenuOpened(featureId: Int, menu: Menu): Boolean {

@@ -61,7 +61,7 @@ class BookshelfManageViewModel(application: Application) : BaseViewModel(applica
                     LocalBook.deleteBook(it, deleteOriginal)
                 } else {
                     val source = appDb.bookSourceDao.getBookSource(it.origin)
-                    SourceCallBack.callBackBookShelf(source, it, false)
+                    SourceCallBack.callBackBook(SourceCallBack.DEL_BOOK_SHELF, source, it)
                 }
             }
         }

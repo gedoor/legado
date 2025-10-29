@@ -1634,11 +1634,10 @@ class ReadBookActivity : BaseReadBookActivity(),
 
     override fun finish() {
         val book = ReadBook.book ?: return super.finish()
-
+        SourceCallBack.callBackBook(SourceCallBack.END_READ, ReadBook.bookSource, ReadBook.book)
         if (ReadBook.inBookshelf) {
             return super.finish()
         }
-
         if (!AppConfig.showAddToShelfAlert) {
             viewModel.removeFromBookshelf { super.finish() }
         } else {
@@ -1647,7 +1646,7 @@ class ReadBookActivity : BaseReadBookActivity(),
                 okButton {
                     ReadBook.book?.removeType(BookType.notShelf)
                     ReadBook.book?.save()
-                    SourceCallBack.callBackBookShelf(ReadBook.bookSource, ReadBook.book, true)
+                    SourceCallBack.callBackBook(SourceCallBack.ADD_BOOK_SHELF, ReadBook.bookSource, ReadBook.book)
                     ReadBook.inBookshelf = true
                     setResult(RESULT_OK)
                 }

@@ -94,6 +94,12 @@ data class Book(
     // 当前章节索引
     @ColumnInfo(defaultValue = "0")
     var durChapterIndex: Int = 0,
+    @ColumnInfo(defaultValue = "0")
+    /**  当前卷索引  **/
+    var durVolumeIndex: Int = 0,
+    @ColumnInfo(defaultValue = "0")
+    /**  相对于卷的索引  **/
+    var chapterInVolumeIndex: Int = 0,
     // 当前阅读的进度(首行字符的索引位置)
     @ColumnInfo(defaultValue = "0")
     var durChapterPos: Int = 0,

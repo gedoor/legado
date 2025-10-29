@@ -43,6 +43,7 @@ import java.util.concurrent.Executors
 import kotlin.collections.forEach
 import kotlin.math.min
 import io.legado.app.model.RuleUpdate
+import io.legado.app.ui.book.source.SourceCallBack
 
 class MainViewModel(application: Application) : BaseViewModel(application) {
     private var threadCount = AppConfig.threadCount
@@ -50,6 +51,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     private var upTocPool = Executors.newFixedThreadPool(poolSize).asCoroutineDispatcher()
     private val waitUpTocBooks = LinkedList<String>()
     private val onUpTocBooks = ConcurrentHashMap.newKeySet<String>()
+    private val eventListenerSource = ConcurrentHashMap.newKeySet<BookSource>()
     val onUpBooksLiveData = MutableLiveData<Int>()
     private var upTocJob: Job? = null
     private var cacheBookJob: Job? = null
@@ -174,6 +176,9 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
             }
             return
         }
+        if (source.eventListener) {
+            eventListenerSource.add(source)
+        }
         kotlin.runCatching {
             val oldBook = book.copy()
             if (book.tocUrl.isBlank()) {
@@ -227,6 +232,10 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
      * 缓存书籍
      */
     private fun cacheBook() {
+        //开始缓存前，通知监听事件的书源，书架刷新已完成
+        eventListenerSource.toList().forEach {
+            SourceCallBack.callBackSource(SourceCallBack.SHELF_REFRESH_COMPLETE, it)
+        }
         if (AppConfig.preDownloadNum == 0) return
         cacheBookJob?.cancel()
         cacheBookJob = viewModelScope.launch(upTocPool) {
