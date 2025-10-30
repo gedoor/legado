@@ -55,7 +55,7 @@
                 tools:visibility="visible"
                 tools:text="http" />
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/tv_custom_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"

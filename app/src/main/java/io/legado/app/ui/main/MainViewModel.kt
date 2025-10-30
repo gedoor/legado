@@ -1,7 +1,6 @@
 package io.legado.app.ui.main
 
 import android.app.Application
-import android.os.Build
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.RecyclerView.RecycledViewPool
@@ -52,7 +51,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     private var upTocPool = Executors.newFixedThreadPool(poolSize).asCoroutineDispatcher()
     private val waitUpTocBooks = LinkedList<String>()
     private val onUpTocBooks = ConcurrentHashMap.newKeySet<String>()
-    private val eventListenerSource = ConcurrentHashMap.newKeySet<BookSource>()
+    private val eventListenerSource = ConcurrentHashMap<BookSource, Boolean>()
     val onUpBooksLiveData = MutableLiveData<Int>()
     private var upTocJob: Job? = null
     private var cacheBookJob: Job? = null
@@ -147,11 +146,6 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
             }.onEachParallel(threadCount) {
                 onUpTocBooks.add(it)
                 postEvent(EventBus.UP_BOOKSHELF, it)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    eventListenerSource.clear()
-                } else {
-                    eventListenerSource.removeAll { true }
-                }
                 updateToc(it)
             }.onEach {
                 onUpTocBooks.remove(it)
@@ -183,7 +177,11 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
             return
         }
         if (source.eventListener) {
-            eventListenerSource.add(source)
+            // 使用 putIfAbsent 确保只添加一次
+            if (eventListenerSource.putIfAbsent(source, true) == null) {
+                // 通知监听事件的书源，书架刷新开始
+                SourceCallBack.callBackSource(SourceCallBack.START_SHELF_REFRESH, source)
+            }
         }
         kotlin.runCatching {
             val oldBook = book.copy()
@@ -240,8 +238,9 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     private fun cacheBook() {
         //开始缓存前，通知监听事件的书源，书架刷新已完成
         eventListenerSource.toList().forEach {
-            SourceCallBack.callBackSource(SourceCallBack.SHELF_REFRESH_COMPLETE, it)
+            SourceCallBack.callBackSource(SourceCallBack.END_SHELF_REFRESH, it.first)
         }
+        eventListenerSource.clear()
         if (AppConfig.preDownloadNum == 0) return
         cacheBookJob?.cancel()
         cacheBookJob = viewModelScope.launch(upTocPool) {

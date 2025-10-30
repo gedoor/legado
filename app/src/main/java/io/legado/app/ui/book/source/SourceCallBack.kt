@@ -22,7 +22,8 @@ object SourceCallBack {
     const val SAVE_READ = "saveRead"
     const val START_READ = "startRead"
     const val END_READ = "endRead"
-    const val SHELF_REFRESH_COMPLETE = "shelfRefreshComplete"
+    const val START_SHELF_REFRESH = "startShelfRefresh"
+    const val END_SHELF_REFRESH = "endShelfRefresh"
     fun callBackBtn(activity: AppCompatActivity, event: String, source: BookSource?, book: Book, chapter: BookChapter?, noCall: (() -> Unit)? = null) {
         if (source == null || !source.eventListener) {
             noCall?.invoke()

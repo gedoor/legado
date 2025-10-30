@@ -83,7 +83,7 @@
 ```
 * 登录URL
 > 可填写登录链接或者实现登录UI的登录逻辑的JavaScript  
-变量isLongClick为true时表示为按钮长按点击
+变量`isLongClick`为true时表示为按钮长按点击
 ```
 示范填写
 function login() {
@@ -217,7 +217,7 @@ let options = {
 
 * 回调操作
 > 先启用事件监听按钮，然后软件触发事件时会执行回调规则的js代码。如果js返回true会消费事件，之后软件部分原本操作不会再执行。  
-event字符串变量对应的事件名称，目前的事件有
+`event`变量值对应的事件名称，目前的事件有
 ```js
 "shareBook" //详情页分享按钮
 "clickBookName" //详情页点击书名
@@ -229,7 +229,8 @@ event字符串变量对应的事件名称，目前的事件有
 "saveRead" //保存阅读进度
 "startRead" //开始阅读
 "endRead" //结束阅读
-"shelfRefreshComplete" //书架刷新已完成
+"startShelfRefresh" //开始书架刷新
+"endShelfRefresh" //结束书架刷新
 ```
 
 * 图片解密
