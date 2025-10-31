@@ -9,10 +9,22 @@ object AppPattern {
     val EXP_PATTERN: Pattern = Pattern.compile("\\{\\{([\\w\\W]*?)\\}\\}")
 
     //匹配格式化后的图片格式
-    val imgPattern: Pattern = Pattern.compile("<img[^>]*src=['\"]([^'\"]*(?:['\"][^>]+\\})?)['\"][^>]*>")
+    val imgPattern: Pattern = Pattern.compile("<img[^>]*src=\"([^\"]*(?:\"[^>]+\\})?)\"[^>]*>")
 
     //dataURL图片类型
     val dataUriRegex = Regex("^data:.*?;base64,(.*)")
+    //提取标题中的段评
+    val imgRegex = Regex("(.*)((?:data|https?):[\\s\\S]+)$")
+    //自定义图片样式
+    val imgStyRegex = Regex("style[\"'\\s]*:\\s*[\"']([^\"']*)[\"']")
+    //匹配章节信息中的字数
+    val wordCountRegex = Regex("(?:^|字数[：:、]?|\\s+)([0-9万千百\\.]{1,6}字)")
+
+    //正文不计入字数的字符
+    val noWordCountRegex = Regex("[\\s\\u200B-\\u200F\\uFEFF]")
+
+    //提取链接中的域名
+    val domainRegex = Regex("^https?://([^:/]+)",RegexOption.IGNORE_CASE)
 
     val nameRegex = Regex("\\s+作\\s*者.*|\\s+\\S+\\s+著")
     val authorRegex = Regex("^\\s*作\\s*者[:：\\s]+|\\s+著")

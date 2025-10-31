@@ -5,6 +5,12 @@
     tools:ignore="AlwaysShowAction">
 
     <item
+        android:id="@+id/menu_fullscreen_edit"
+        android:icon="@drawable/ic_code"
+        android:title="@string/edit_content"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/menu_save"
         android:icon="@drawable/ic_save"
         android:title="@string/action_save"
@@ -65,6 +71,11 @@
     <item
         android:id="@+id/menu_share_str"
         android:title="@string/str_share"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_log"
+        android:title="@string/log"
         app:showAsAction="never" />
 
     <item

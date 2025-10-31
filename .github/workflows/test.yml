@@ -3,7 +3,7 @@ name: Test Build
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - '**'
       # - '!**/assets/**'
@@ -34,6 +34,7 @@ jobs:
       versionL: ${{ steps.set-ver.outputs.versionL }}
       lanzou: ${{ steps.check.outputs.lanzou }}
       telegram: ${{ steps.check.outputs.telegram }}
+      gitee: ${{ steps.check.outputs.gitee }}
     steps:
       - id: set-ver
         run: |
@@ -41,11 +42,14 @@ jobs:
           echo "versionL=$(date -d "8 hour" -u +3.%y.%m%d%H%M)" >> $GITHUB_OUTPUT
       - id: check
         run: |
-          if [ ${{ secrets.LANZOU_ID }} ]; then
+          if [ -n "${{ secrets.LANZOU_ID }}" ]; then
             echo "lanzou=yes" >> $GITHUB_OUTPUT
           fi
-          if [ ${{ secrets.BOT_TOKEN }} ]; then
+          if [ -n "${{ secrets.BOT_TOKEN }}" ]; then
             echo "telegram=yes" >> $GITHUB_OUTPUT
+          fi
+          if [ -n "${{ secrets.GITEE_TOKEN }}" ]; then
+            echo "gitee=yes" >> $GITHUB_OUTPUT
           fi
 
   build:
@@ -62,11 +66,11 @@ jobs:
       VERSION: ${{ needs.prepare.outputs.version }}
       VERSIONL: ${{ needs.prepare.outputs.versionL }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: 17
@@ -84,7 +88,7 @@ jobs:
           sed '$a\RELEASE_KEY_ALIAS=legado'                 $GITHUB_WORKSPACE/gradle.properties -i
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
 
       - name: Build With Gradle
         continue-on-error: true
@@ -121,7 +125,7 @@ jobs:
           done
 
       - name: Upload Missing Rules File To Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: legado.${{ env.product }}.${{ env.type }}.mapping.missing_rules
           if-no-files-found: ignore
@@ -140,14 +144,14 @@ jobs:
           fi
 
       - name: Upload App To Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: legado.${{ env.product }}.${{ env.type }}
           if-no-files-found: ignore
           path: ${{ github.workspace }}/apk/*.apk
 
       - name: Upload Mapping File To Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: legado.${{ env.product }}.${{ env.type }}.mapping
           if-no-files-found: ignore
@@ -160,8 +164,8 @@ jobs:
     env: 
       VERSION: ${{ needs.prepare.outputs.version }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v5
         with:
           path: apk/
 
@@ -215,8 +219,8 @@ jobs:
       #蓝奏云分享链接
       LANZOU_URL: ${{ secrets.LANZOU_URL }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v5
         with:
           path: apk/
       - working-directory: apk/
@@ -233,8 +237,8 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event_name != 'pull_request' && github.actor == 'gedoor' }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v5
         with:
           path: apk/
       - working-directory: apk/
@@ -256,8 +260,8 @@ jobs:
     if: ${{ github.event_name != 'pull_request' && needs.prepare.outputs.telegram == 'yes' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v5
         with:
           path: apk/
       - working-directory: apk/
@@ -274,3 +278,64 @@ jobs:
           context: "#阅读 #Legado #Beta #新包名 ${{ needs.prepare.outputs.versionL }}"
           path: apk/*
           method: sendFile
+
+  gitee:
+    needs: [ prepare, build ]
+    if: ${{ github.event_name != 'pull_request' && needs.prepare.outputs.gitee == 'yes' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v5
+        with:
+          path: apk/
+      - working-directory: apk/
+        run: |
+          mv */*.apk .
+          rm -rf */
+
+          for file in `ls *.apk`; do
+            if [[ "$file" == *原包名* ]]; then
+              mv "$file" $(echo $file | sed s/原包名/release/)
+            else
+              mv "$file" $(echo $file | sed s/共存/releaseA/)
+            fi
+          done
+
+      - name: Upload to Gitee Release
+        env:
+          GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
+          GITEE_USER: "lyc486"
+          GITEE_REPO: "legado"
+          VERSION: ${{ needs.prepare.outputs.version }}
+        run: |
+          # 安装依赖工具
+          sudo apt-get -qq install -y jq curl
+          # API基础URL
+          API_BASE="https://gitee.com/api/v5/repos/$GITEE_USER/$GITEE_REPO"
+          AUTH_HEADER="Authorization: token $GITEE_TOKEN"
+          # 检查并删除旧Release
+          if release_data=$(curl -sH "$AUTH_HEADER" "$API_BASE/releases/tags/beta" | jq -e .id); then
+          curl -sX DELETE -H "$AUTH_HEADER" "$API_BASE/releases/$release_data"
+          echo "✅ Deleted old beta release"
+          fi
+
+          # 创建新Release
+          RELEASE_JSON=$(curl -sX POST \
+              -H "Content-Type: application/json" \
+              -H "$AUTH_HEADER" \
+              -d '{"tag_name": "beta", "name": "legado_app_'"$VERSION"'","body": "同步自：https://github.com/Luoyacheng/legado/releases", "target_commitish": "main", "prerelease": true}' \
+              "$API_BASE/releases")
+          # 检查Release创建是否成功
+          if ! RELEASE_ID=$(jq -re .id <<< "$RELEASE_JSON"); then
+          echo "❌ Release creation failed"
+          jq . <<< "$RELEASE_JSON"
+          exit 1
+          fi
+          # 上传所有APK文件
+          for APK_FILE in apk/*.apk; do
+            curl -sX POST \
+              -H "$AUTH_HEADER" \
+              -F "file=@$APK_FILE" \
+              "$API_BASE/releases/$RELEASE_ID/attach_files" > /dev/null # 忽略响应
+            echo "✅ 已上传$APK_FILE"
+          done

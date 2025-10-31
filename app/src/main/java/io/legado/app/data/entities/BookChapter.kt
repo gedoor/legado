@@ -55,7 +55,8 @@ data class BookChapter(
     var end: Long? = null,              // 章节终止位置
     var startFragmentId: String? = null,  //EPUB书籍当前章节的fragmentId
     var endFragmentId: String? = null,    //EPUB书籍下一章节的fragmentId
-    var variable: String? = null        //变量
+    var variable: String? = null,        //变量
+    var imgUrl: String? = null // 标题段评图或者视频封面
 ) : Parcelable, RuleDataInterface {
 
     @delegate:Transient
@@ -63,6 +64,18 @@ data class BookChapter(
     @IgnoredOnParcel
     override val variableMap: HashMap<String, String> by lazy {
         GSON.fromJsonObject<HashMap<String, String>>(variable).getOrNull() ?: hashMapOf()
+    }
+
+    fun putImgUrl(value: String?) {
+        imgUrl =value
+        appDb.bookChapterDao.update(this)
+    }
+
+    fun putLyric(value: String?) { //存入歌词文本
+        if (super.putVariable("lyric", value)) {
+            variable = GSON.toJson(variableMap)
+            appDb.bookChapterDao.update(this)
+        }
     }
 
     @Ignore
@@ -117,7 +130,8 @@ data class BookChapter(
                             displayTitle.replace(
                                 item.regex,
                                 item.replacement,
-                                item.getValidTimeoutMillisecond()
+                                item.getValidTimeoutMillisecond(),
+                                this@BookChapter
                             )
                         } else {
                             displayTitle.replace(item.pattern, item.replacement)

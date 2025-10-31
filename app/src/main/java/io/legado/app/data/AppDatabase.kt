@@ -67,7 +67,7 @@ val appDb by lazy {
 }
 
 @Database(
-    version = 75,
+    version = 86,
     exportSchema = true,
     entities = [Book::class, BookGroup::class, BookSource::class, BookChapter::class,
         ReplaceRule::class, SearchBook::class, SearchKeyword::class, Cookie::class,
@@ -108,6 +108,17 @@ val appDb by lazy {
         AutoMigration(from = 72, to = 73),
         AutoMigration(from = 73, to = 74),
         AutoMigration(from = 74, to = 75),
+        AutoMigration(from = 75, to = 76),
+        AutoMigration(from = 76, to = 77),
+        AutoMigration(from = 77, to = 78),
+        AutoMigration(from = 78, to = 79),
+        AutoMigration(from = 79, to = 80),
+        AutoMigration(from = 80, to = 81, spec = DatabaseMigrations.Migration_80_81::class),
+        AutoMigration(from = 81, to = 82),
+        AutoMigration(from = 82, to = 83),
+        AutoMigration(from = 83, to = 84, spec = DatabaseMigrations.Migration_83_84::class),
+        AutoMigration(from = 84, to = 85, spec = DatabaseMigrations.Migration_84_85::class),
+        AutoMigration(from = 85, to = 86)
     ]
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -196,6 +207,13 @@ abstract class AppDatabase : RoomDatabase() {
                     where not exists (select * from book_groups where groupId = ${BookGroup.IdLocalNone})
                 """.trimIndent()
                 db.execSQL(insertBookGroupLocalNoneGroupSql)
+                @Language("sql")
+                val insertBookGroupVideoSql = """
+                    insert into book_groups(groupId, groupName, 'order', show) 
+                    select ${BookGroup.IdVideo}, '视频', -5, 1
+                    where not exists (select * from book_groups where groupId = ${BookGroup.IdVideo})
+                    """.trimIndent()
+                db.execSQL(insertBookGroupVideoSql)
                 @Language("sql")
                 val insertBookGroupErrorSql = """
                     insert into book_groups(groupId, groupName, 'order', show) 

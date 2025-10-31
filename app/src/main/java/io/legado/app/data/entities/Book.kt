@@ -94,6 +94,12 @@ data class Book(
     // 当前章节索引
     @ColumnInfo(defaultValue = "0")
     var durChapterIndex: Int = 0,
+    @ColumnInfo(defaultValue = "0")
+    /**  当前卷索引  **/
+    var durVolumeIndex: Int = 0,
+    @ColumnInfo(defaultValue = "0")
+    /**  相对于卷的索引  **/
+    var chapterInVolumeIndex: Int = 0,
     // 当前阅读的进度(首行字符的索引位置)
     @ColumnInfo(defaultValue = "0")
     var durChapterPos: Int = 0,
@@ -294,6 +300,23 @@ data class Book(
         return config.dailyChapters
     }
 
+    // 片头 的 setter 和 getter
+    fun setopencredits(opencredits: Int) {
+        config.opencredits = opencredits
+    }
+
+    fun getopencredits(): Int {
+        return config.opencredits
+    }
+    // 片尾 的 setter 和 getter
+    fun setclosecredits(closecredits: Int) {
+        config.closecredits = closecredits
+    }
+
+    fun getclosecredits(): Int {
+        return config.closecredits
+    }
+
     fun getDelTag(tag: Long): Boolean {
         return config.delTag and tag == tag
     }
@@ -402,7 +425,10 @@ data class Book(
         var readSimulating: Boolean = false,
         var startDate: LocalDate? = null,
         var startChapter: Int? = null,     // 用户设置的起始章节
-        var dailyChapters: Int = 3    // 用户设置的每日更新章节数
+        var dailyChapters: Int = 3,    // 用户设置的每日更新章节数
+        var opencredits: Int = 0,       //音频片头
+        var closecredits: Int = 0       //音频片尾
+        
     ) : Parcelable
 
     class Converters {

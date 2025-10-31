@@ -11,11 +11,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tab_layout"
+    <LinearLayout
+        android:id="@+id/tabs_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:tabMode="scrollable" />
+        android:orientation="vertical"
+        android:padding="8dp"
+        android:textColor="@color/background_card"
+        app:layout_constraintTop_toBottomOf="@id/title_bar" />
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/view_pager"

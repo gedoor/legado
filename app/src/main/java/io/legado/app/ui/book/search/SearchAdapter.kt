@@ -91,8 +91,7 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
             upKind(binding, searchBook.getKindList())
             ivCover.load(
                 searchBook.coverUrl,
-                searchBook.name,
-                searchBook.author,
+                searchBook,
                 AppConfig.loadCoverOnlyWifi,
                 searchBook.origin
             )
@@ -111,8 +110,7 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
                         callBack.isInBookshelf(searchBook.name, searchBook.author)
                     "cover" -> ivCover.load(
                         searchBook.coverUrl,
-                        searchBook.name,
-                        searchBook.author,
+                        searchBook,
                         false,
                         searchBook.origin
                     )

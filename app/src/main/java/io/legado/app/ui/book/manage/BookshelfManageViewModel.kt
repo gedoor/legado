@@ -16,6 +16,7 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.model.webBook.WebBook
+import io.legado.app.ui.book.source.SourceCallBack
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.GSON
 import io.legado.app.utils.stackTraceStr
@@ -58,6 +59,9 @@ class BookshelfManageViewModel(application: Application) : BaseViewModel(applica
             books.forEach {
                 if (it.isLocal) {
                     LocalBook.deleteBook(it, deleteOriginal)
+                } else {
+                    val source = appDb.bookSourceDao.getBookSource(it.origin)
+                    SourceCallBack.callBackBook(SourceCallBack.DEL_BOOK_SHELF, source, it)
                 }
             }
         }

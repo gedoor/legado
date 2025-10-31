@@ -69,7 +69,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/show_rule">
 
-                    <io.legado.app.lib.theme.view.ThemeEditText
+                    <io.legado.app.ui.widget.code.CodeView
                         android:id="@+id/tv_show_rule"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

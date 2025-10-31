@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="16dp">
 
@@ -15,8 +14,8 @@
         <io.legado.app.ui.widget.text.AccentTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/book_type"
             android:padding="3dp"
+            android:text="@string/book_type"
             tools:ignore="RtlHardcoded" />
 
         <androidx.appcompat.widget.AppCompatSpinner
@@ -52,5 +51,51 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </io.legado.app.ui.widget.text.TextInputLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <CheckBox
+            android:id="@+id/auto_update"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:text="@string/auto_update" />
+
+        <CheckBox
+            android:id="@+id/silent_update"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:enabled="false"
+            android:text="@string/silent_update" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/update_interval" />
+
+        <EditText
+            android:id="@+id/et_update_interval"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:digits="0123456789"
+            android:enabled="false"
+            android:gravity="center_horizontal"
+            android:hint="24"
+            android:inputType="number"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:text="@string/time_hour" />
+
+    </LinearLayout>
 
 </LinearLayout>

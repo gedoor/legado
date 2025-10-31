@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:padding="16dp"
+    android:background="#CC000000">
+
+    <!-- 播放/暂停按钮 -->
+    <ImageButton
+        android:id="@+id/exo_play_pause"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/exo_icon_play"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:layout_marginEnd="16dp" />
+
+    <!-- 进度条 -->
+    <SeekBar
+        android:id="@+id/exo_progress"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginEnd="16dp" />
+
+    <!-- 全屏按钮 -->
+    <ImageButton
+        android:id="@+id/exo_fullscreen"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/exo_icon_fullscreen_enter"
+        android:background="?android:attr/selectableItemBackgroundBorderless" />
+
+</LinearLayout>

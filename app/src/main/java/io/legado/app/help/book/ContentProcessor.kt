@@ -156,7 +156,8 @@ class ContentProcessor private constructor(
                             mContent.replace(
                                 item.regex,
                                 item.replacement,
-                                item.getValidTimeoutMillisecond()
+                                item.getValidTimeoutMillisecond(),
+                                chapter
                             )
                         } else {
                             mContent.replace(item.pattern, item.replacement)

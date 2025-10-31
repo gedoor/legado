@@ -15,6 +15,7 @@ import io.legado.app.help.http.CookieManager.mergeCookiesToMap
 import io.legado.app.help.http.api.CookieManagerInterface
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.removeCookie
+import io.legado.app.utils.splitNotBlank
 
 @Keep
 object CookieStore : CookieManagerInterface {
@@ -30,6 +31,20 @@ object CookieStore : CookieManagerInterface {
             appDb.cookieDao.insert(cookieBean)
         } catch (e: Exception) {
             AppLog.put("保存Cookie失败\n$e", e)
+        }
+    }
+
+    fun setWebCookie(url: String, cookie: String) {
+        try {
+            val baseUrl = NetworkUtils.getBaseUrl(url) ?: return
+            val cookies = cookie.splitNotBlank(";")
+            val cookieManager = android.webkit.CookieManager.getInstance()
+            cookieManager.removeSessionCookies(null)
+            cookies.forEach {
+                cookieManager.setCookie(baseUrl, it)
+            }
+        } catch (e: Exception) {
+            AppLog.put("设置WebCookie失败\n$e", e)
         }
     }
 

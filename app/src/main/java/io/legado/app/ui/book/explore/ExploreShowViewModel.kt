@@ -70,7 +70,7 @@ class ExploreShowViewModel(application: Application) : BaseViewModel(application
         val url = exploreUrl
         if (source == null || url == null) return
         WebBook.exploreBook(viewModelScope, source, url, page)
-            .timeout(if (BuildConfig.DEBUG) 0L else 30000L)
+            .timeout(if (BuildConfig.DEBUG) 0L else 60000L)
             .onSuccess(IO) { searchBooks ->
                 books.addAll(searchBooks)
                 booksData.postValue(books.toList())

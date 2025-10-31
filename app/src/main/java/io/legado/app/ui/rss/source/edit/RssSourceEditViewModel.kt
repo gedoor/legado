@@ -5,11 +5,15 @@ import android.content.Intent
 import io.legado.app.R
 import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
+import io.legado.app.data.entities.BookSource
 import io.legado.app.data.entities.RssSource
 import io.legado.app.exception.NoStackTraceException
 import io.legado.app.help.AppCacheManager
 import io.legado.app.help.RuleComplete
 import io.legado.app.help.http.CookieStore
+import io.legado.app.help.source.clearExploreKindsCache
+import io.legado.app.help.source.removeSortCache
+import io.legado.app.model.SharedJsScope
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.getClipText
@@ -40,6 +44,16 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
         execute {
             if (source.sourceName.isBlank() || source.sourceName.isBlank()) {
                 throw NoStackTraceException(context.getString(R.string.non_null_name_url))
+            }
+            val oldSource = rssSource ?: RssSource()
+            if (!source.equal(oldSource)) {
+                source.lastUpdateTime = System.currentTimeMillis()
+                if (oldSource.sortUrl != source.sortUrl) {
+                    oldSource.removeSortCache()
+                }
+                if (oldSource.jsLib != source.jsLib) {
+                    SharedJsScope.remove(oldSource.jsLib)
+                }
             }
             rssSource?.let {
                 appDb.rssSourceDao.delete(it)

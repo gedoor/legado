@@ -57,6 +57,7 @@
     <string name="action_search">搜索</string>
     <string name="action_download">下载</string>
     <string name="layout_list">列表</string>
+    <string name="layout_grid2">网格二列</string>
     <string name="layout_grid3">网格三列</string>
     <string name="layout_grid4">网格四列</string>
     <string name="layout_grid5">网格五列</string>
@@ -428,7 +429,7 @@
     <string name="rule_chapter_url">章节 URL 规则（chapterUrl）</string>
     <string name="rule_is_volume">Volume 标识（isVolume）</string>
     <string name="rule_is_vip">VIP 标识（isVip）</string>
-    <string name="rule_update_time">更新时间（ChapterInfo）</string>
+    <string name="rule_update_time">章节信息（ChapterInfo）</string>
     <string name="pre_update_js">更新之前 JS（preUpdateJs）</string>
     <string name="rule_book_content">正文规则（content）</string>
     <string name="rule_next_content">正文下一页 URL 规则（nextContentUrl）</string>
@@ -901,6 +902,7 @@
     <string name="direct_link_upload_rule_summary">用于导出书源书单时生成直链 URL</string>
     <string name="direct_link_upload_config">直链上传配置</string>
     <string name="copy_play_url">拷贝播放 URL</string>
+    <string name="skip_book_credits">跳过片头片尾</string>
     <string name="set_source_variable">设置源变量</string>
     <string name="set_book_variable">设置书籍变量</string>
     <string name="summary">注释</string>
@@ -1226,4 +1228,7 @@
     <string name="manga_epaper_value">阈值</string>
     <string name="disable_horizontal_animation">禁用水平滚动动画</string>
     <string name="enable_manga_gray">开启图片灰色</string>
+    <string name="custom_hosts">自定义Hosts</string>
+    <string name="custom_hosts_summary">域名到IP的映射</string>
+    <string name="show_bookname">显示书名</string>
 </resources>

@@ -6,6 +6,7 @@ import android.net.NetworkCapabilities
 import android.os.Build
 import cn.hutool.core.lang.Validator
 import io.legado.app.constant.AppLog
+import io.legado.app.help.config.AppConfig
 import okhttp3.internal.publicsuffix.PublicSuffixDatabase
 import splitties.systemservices.connectivityManager
 import java.net.InetAddress
@@ -295,4 +296,17 @@ object NetworkUtils {
         return isIPv4Address(input) || isIPv6Address(input)
     }
 
+    fun resolveCustomHost(host: String): String? {
+        val configIps = AppConfig.hostMap?.get(host) ?: return null
+        return when (configIps) {
+            is String -> configIps.splitToSequence(',')
+                .firstOrNull { it.isNotBlank() }
+                ?.trim()
+            is List<*> -> configIps.firstOrNull()
+                ?.toString()
+                ?.takeIf { it.isNotBlank() }
+                ?.trim()
+            else -> null
+        }
+    }
 }

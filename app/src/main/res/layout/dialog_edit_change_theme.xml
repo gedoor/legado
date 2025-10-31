@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <io.legado.app.ui.widget.text.AccentTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="16dp"
+            android:text="@string/change_theme"
+            android:textSize="18sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioGroup
+                android:id="@+id/ch_theme_l"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <RadioButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center"
+                    android:paddingEnd="12dp"
+                    android:text="@string/edit_theme_monokai_dimmed"
+                    tools:ignore="RtlSymmetry,TouchTargetSizeCheck" />
+
+
+                <RadioButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center"
+                    android:paddingEnd="12dp"
+                    android:text="@string/edit_theme_modern_dark"
+                    tools:ignore="RtlSymmetry,TouchTargetSizeCheck" />
+
+
+                <RadioButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center"
+                    android:paddingEnd="12dp"
+                    android:text="@string/edit_theme_solarized_dark"
+                    tools:ignore="RtlSymmetry,TouchTargetSizeCheck" />
+
+
+                <RadioButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center"
+                    android:paddingEnd="12dp"
+                    android:text="@string/edit_theme_abyss"
+                    tools:ignore="RtlSymmetry,TouchTargetSizeCheck" />
+
+
+            </RadioGroup>
+
+            <RadioGroup
+                android:id="@+id/ch_theme_r"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+
+                <RadioButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center"
+                    android:paddingEnd="12dp"
+                    android:text="@string/edit_theme_monokai"
+                    tools:ignore="RtlSymmetry,TouchTargetSizeCheck" />
+
+
+                <RadioButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center"
+                    android:paddingEnd="12dp"
+                    android:text="@string/edit_theme_modern_light"
+                    tools:ignore="RtlSymmetry,TouchTargetSizeCheck" />
+
+
+                <RadioButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center"
+                    android:paddingEnd="12dp"
+                    android:text="@string/edit_theme_solarized_light"
+                    tools:ignore="RtlSymmetry,TouchTargetSizeCheck" />
+
+                <RadioButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center"
+                    android:paddingEnd="12dp"
+                    android:text="@string/edit_theme_quiet_light"
+                    tools:ignore="RtlSymmetry,TouchTargetSizeCheck" />
+
+            </RadioGroup>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

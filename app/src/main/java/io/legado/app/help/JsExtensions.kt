@@ -18,11 +18,13 @@ import io.legado.app.help.http.CookieManager.cookieJarHeader
 import io.legado.app.help.http.CookieStore
 import io.legado.app.help.http.SSLHelper
 import io.legado.app.help.http.StrResponse
+import io.legado.app.help.source.SourceHelp
 import io.legado.app.help.source.SourceVerificationHelp
 import io.legado.app.help.source.getSourceType
 import io.legado.app.model.Debug
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.analyzeRule.QueryTTF
+import io.legado.app.ui.association.OnLineImportActivity
 import io.legado.app.ui.association.OpenUrlConfirmActivity
 import io.legado.app.utils.ArchiveUtils
 import io.legado.app.utils.ChineseUtils
@@ -71,6 +73,7 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
+import androidx.core.net.toUri
 
 /**
  * js扩展类, 在js中通过java变量调用
@@ -119,6 +122,23 @@ interface JsExtensions : JsEncodeUtils {
                     coroutineContext = coroutineContext
                 )
                 analyzeUrl.getStrResponseAwait()
+            }.flowOn(IO).toList().toTypedArray()
+        }
+    }
+
+    /**
+     * 并发测试网络
+     */
+    fun ajaxTestAll(urlList: Array<String>, timeout: Int): Array<StrResponse> {
+        return runBlocking(context) {
+            urlList.asFlow().mapAsync(AppConfig.threadCount) { url ->
+                val analyzeUrl = AnalyzeUrl(
+                    url,
+                    source = getSource(),
+                    coroutineContext = coroutineContext,
+                    callTimeout = timeout.toLong()
+                )
+                analyzeUrl.getStrResponseAwait2()
             }.flowOn(IO).toList().toTypedArray()
         }
     }
@@ -226,28 +246,47 @@ interface JsExtensions : JsEncodeUtils {
     }
 
     /**
+     * 打开内置视频播放器
+     * @param url 视频播放链接
+     * @param title 视频的标题
+     * @param float 是否悬浮窗打开
+     */
+    fun openVideoPlayer(url: String, title: String, float: Boolean) {
+        SourceHelp.openVideoPlayer(getSource(), url, title, float)
+    }
+
+    /**
      * 使用内置浏览器打开链接，手动验证网站防爬
      * @param url 要打开的链接
      * @param title 浏览器页面的标题
      */
     fun startBrowser(url: String, title: String) {
+        return startBrowser(url, title, null)
+    }
+
+    fun startBrowser(url: String, title: String, html: String?) {
         rhinoContext.ensureActive()
-        SourceVerificationHelp.startBrowser(getSource(), url, title)
+        SourceVerificationHelp.startBrowser(getSource(), url, title, html=html)
     }
 
     /**
      * 使用内置浏览器打开链接，并等待网页结果
      */
-    fun startBrowserAwait(url: String, title: String, refetchAfterSuccess: Boolean): StrResponse {
-        rhinoContext.ensureActive()
-        val body = SourceVerificationHelp.getVerificationResult(
-            getSource(), url, title, true, refetchAfterSuccess
-        )
-        return StrResponse(url, body)
+    fun startBrowserAwait(url: String, title: String): StrResponse {
+        return startBrowserAwait(url, title, true, null)
     }
 
-    fun startBrowserAwait(url: String, title: String): StrResponse {
-        return startBrowserAwait(url, title, true)
+    fun startBrowserAwait(url: String, title: String, refetchAfterSuccess: Boolean): StrResponse {
+        return startBrowserAwait(url, title, refetchAfterSuccess, null)
+    }
+
+    fun startBrowserAwait(url: String, title: String, refetchAfterSuccess: Boolean, html: String?): StrResponse {
+        rhinoContext.ensureActive()
+        val pair = SourceVerificationHelp.getVerificationResult(
+            getSource(), url, title, true, refetchAfterSuccess, html
+        )
+        val (url2, body) = pair
+        return StrResponse(url2.ifEmpty { url }, body)
     }
 
     /**
@@ -255,7 +294,7 @@ interface JsExtensions : JsEncodeUtils {
      */
     fun getVerificationCode(imageUrl: String): String {
         rhinoContext.ensureActive()
-        return SourceVerificationHelp.getVerificationResult(getSource(), imageUrl, "", false)
+        return SourceVerificationHelp.getVerificationResult(getSource(), imageUrl, "", false).second
     }
 
     /**
@@ -990,6 +1029,12 @@ interface JsExtensions : JsEncodeUtils {
     fun openUrl(url: String, mimeType: String? = null) {
         require(url.length < 64 * 1024) { "openUrl parameter url too long" }
         rhinoContext.ensureActive()
+        if (url.startsWith("legado://") || url.startsWith("yuedu://")) {
+            appCtx.startActivity<OnLineImportActivity> {
+                data = url.toUri()
+            }
+            return
+        }
         val source = getSource() ?: throw NoStackTraceException("openUrl source cannot be null")
         appCtx.startActivity<OpenUrlConfirmActivity> {
             putExtra("uri", url)

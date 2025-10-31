@@ -15,6 +15,9 @@ import com.jeremyliao.liveeventbus.logger.DefaultLogger
 import com.script.rhino.ReadOnlyJavaObject
 import com.script.rhino.RhinoScriptEngine
 import com.script.rhino.RhinoWrapFactory
+import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry
+import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry
+import io.github.rosemoe.sora.langs.textmate.registry.provider.AssetsFileResolver
 import io.legado.app.base.AppContextWrapper
 import io.legado.app.constant.AppConst.channelIdDownload
 import io.legado.app.constant.AppConst.channelIdReadAloud
@@ -80,6 +83,13 @@ class App : Application() {
             LogUtils.init(this@App)
             LogUtils.d("App", "onCreate")
             LogUtils.logDeviceInfo()
+            //初始化sora加载
+            FileProviderRegistry.getInstance().addFileProvider(
+                AssetsFileResolver(
+                    applicationContext.assets
+                )
+            )
+            GrammarRegistry.getInstance().loadGrammars("textmate/languages.json")
             //预下载Cronet so
             Cronet.preDownload()
             createNotificationChannels()

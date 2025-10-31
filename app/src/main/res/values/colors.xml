@@ -33,6 +33,9 @@
     <color name="btn_bg_press_2">#63858585</color>
     <color name="btn_bg_press_tp">#632C2C2C</color>
 
+    <color name="card_bg_water">#69fdfdfd</color>
+    <color name="card_border_water">#39424242</color>
+
     <color name="tv_btn_normal_black">#737373</color>
     <color name="tv_btn_press_black">#adadad</color>
 

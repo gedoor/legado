@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     tools:ignore="AlwaysShowAction">
+
+    <item
+        android:id="@+id/menu_fullscreen_edit"
+        android:icon="@drawable/ic_code"
+        android:title="@string/edit_content"
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/menu_save"

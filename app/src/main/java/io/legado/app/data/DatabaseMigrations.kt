@@ -371,4 +371,51 @@ object DatabaseMigrations {
     )
     class Migration_64_65 : AutoMigrationSpec
 
+    @Suppress("ClassName")
+    class Migration_80_81 : AutoMigrationSpec {
+        override fun onPostMigrate(db: SupportSQLiteDatabase) {
+            db.execSQL("""
+            CREATE TABLE rssArticles_new (
+                origin TEXT NOT NULL DEFAULT '',
+                sort TEXT NOT NULL DEFAULT '',
+                title TEXT NOT NULL DEFAULT '',
+                `order` INTEGER NOT NULL DEFAULT 0,
+                link TEXT NOT NULL DEFAULT '',
+                pubDate TEXT,
+                description TEXT,
+                content TEXT,
+                image TEXT,
+                `group` TEXT NOT NULL DEFAULT '默认分组',
+                read INTEGER NOT NULL DEFAULT 0,
+                variable TEXT,
+                PRIMARY KEY (origin, link, sort)
+            )
+        """.trimIndent())
+            db.execSQL("""
+            INSERT INTO rssArticles_new (origin, sort, title, `order`, link, pubDate, description, content, image, `group`, read, variable)
+            SELECT origin, sort, title, `order`, link, pubDate, description, content, image, `group`, read, variable FROM rssArticles
+        """.trimIndent())
+            db.execSQL("DROP TABLE rssArticles")
+            db.execSQL("ALTER TABLE rssArticles_new RENAME TO rssArticles")
+        }
+    }
+
+    @Suppress("ClassName")
+    @DeleteColumn(
+        tableName = "rssArticles",
+        columnName = "ratio"
+    )
+    class Migration_83_84 : AutoMigrationSpec
+
+    @Suppress("ClassName")
+    @DeleteColumn(
+        tableName = "chapters",
+        columnName = "lyric"
+    )
+    @DeleteColumn(
+        tableName = "chapters",
+        columnName = "reviewImg"
+    )
+    class Migration_84_85 : AutoMigrationSpec
+
 }

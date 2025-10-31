@@ -51,6 +51,60 @@
                 android:text="@string/auto_save_cookie"
                 tools:ignore="TouchTargetSizeCheck" />
 
+            <io.legado.app.lib.theme.view.ThemeCheckBox
+                android:id="@+id/cb_is_enable_preload"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="false"
+                android:text="@string/enable_preload"
+                tools:ignore="TouchTargetSizeCheck" />
+
+        </LinearLayout>
+
+    </HorizontalScrollView>
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="8dp"
+            tools:ignore="VisualLintBounds">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="@string/book_type"
+                tools:ignore="RtlHardcoded" />
+
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/sp_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:entries="@array/rss_type"
+                android:theme="@style/Spinner"
+                tools:ignore="TouchTargetSizeCheck" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="@string/layout_type"
+                tools:ignore="RtlHardcoded,RtlSymmetry" />
+
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/ly_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:entries="@array/layout_type"
+                android:theme="@style/Spinner"
+                tools:ignore="TouchTargetSizeCheck" />
+
         </LinearLayout>
 
     </HorizontalScrollView>

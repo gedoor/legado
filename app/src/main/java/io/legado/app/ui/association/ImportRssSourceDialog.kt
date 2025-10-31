@@ -223,10 +223,11 @@ class ImportRssSourceDialog() : BaseDialogFragment(R.layout.dialog_recycler_view
             binding.apply {
                 cbSourceName.isChecked = viewModel.selectStatus[holder.layoutPosition]
                 cbSourceName.text = item.sourceName
-                tvSourceState.text = if (viewModel.checkSources[holder.layoutPosition] != null) {
-                    "已有"
-                } else {
-                    "新增"
+                val localSource = viewModel.checkSources[holder.layoutPosition]
+                tvSourceState.text = when {
+                    localSource == null -> "新增"
+                    item.lastUpdateTime > localSource.lastUpdateTime -> "更新"
+                    else -> "已有"
                 }
             }
         }
