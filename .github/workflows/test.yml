@@ -77,11 +77,11 @@ jobs:
       - name: Release Apk Sign
         run: |
           echo "给apk增加签名"
-          cp $GITHUB_WORKSPACE/.github/workflows/legado.jks $GITHUB_WORKSPACE/app/legado.jks
+          echo ${{ secrets.RELEASE_KEY_STORE }} | base64 --decode > $GITHUB_WORKSPACE/app/legado.jks
+          echo RELEASE_KEY_PASSWORD='${{ secrets.RELEASE_KEY_PASSWORD }}' >> gradle.properties
+          echo RELEASE_STORE_PASSWORD='${{ secrets.RELEASE_STORE_PASSWORD }}' >> gradle.properties
           sed '$a\RELEASE_STORE_FILE=./legado.jks'          $GITHUB_WORKSPACE/gradle.properties -i
           sed '$a\RELEASE_KEY_ALIAS=legado'                 $GITHUB_WORKSPACE/gradle.properties -i
-          sed '$a\RELEASE_STORE_PASSWORD=gedoor_legado'     $GITHUB_WORKSPACE/gradle.properties -i
-          sed '$a\RELEASE_KEY_PASSWORD=gedoor_legado'       $GITHUB_WORKSPACE/gradle.properties -i
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -90,9 +90,9 @@ jobs:
         continue-on-error: true
         run: |
           if [ ${{ env.type }} == 'release' ]; then
-            typeName="原包名"
+            typeName="新包名"
           else
-            typeName="共存"
+            typeName="新共存"
             sed "s/'.release'/'.releaseA'/" $GITHUB_WORKSPACE/app/build.gradle  -i
             sed 's/.release/.releaseA/'     $GITHUB_WORKSPACE/app/google-services.json -i
           fi
@@ -155,7 +155,7 @@ jobs:
 
   prerelease:
     needs: [ prepare, build ]
-    if: github.event_name != 'pull_request' && github.repository == 'gedoor/legado'
+    if: github.event_name != 'pull_request' && github.repository == 'LegadoTeam/legado'
     runs-on: ubuntu-latest
     env: 
       VERSION: ${{ needs.prepare.outputs.version }}
@@ -171,10 +171,10 @@ jobs:
           rm -rf */
 
           for file in `ls *.apk`; do
-            if [[ "$file" == *原包名* ]]; then
-              mv "$file" $(echo $file | sed s/原包名/release/)
+            if [[ "$file" == *新包名* ]]; then
+              mv "$file" $(echo $file | sed s/新包名/release/)
             else
-              mv "$file" $(echo $file | sed s/共存/releaseA/)
+              mv "$file" $(echo $file | sed s/新共存/releaseA/)
             fi
           done
 
@@ -271,6 +271,6 @@ jobs:
         with:
           chat_id: ${{ secrets.CHANNEL_ID }}
           bot_token: ${{ secrets.BOT_TOKEN }}
-          context: "#阅读 #Legado #Beta ${{ needs.prepare.outputs.versionL }}"
+          context: "#阅读 #Legado #Beta #新包名 ${{ needs.prepare.outputs.versionL }}"
           path: apk/*
           method: sendFile
