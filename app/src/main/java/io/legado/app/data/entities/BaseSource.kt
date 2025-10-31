@@ -8,6 +8,7 @@ import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppLog
 import io.legado.app.data.entities.rule.RowUi
 import io.legado.app.help.CacheManager
+import io.legado.app.help.ConcurrentRateLimiter.Companion.updateConcurrentRate
 import io.legado.app.help.JsExtensions
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.crypto.SymmetricCryptoAndroid
@@ -300,6 +301,13 @@ interface BaseSource : JsExtensions {
         runBlocking {
             remove(jsLib)
         }
+    }
+
+    /**
+     * 设置并发率
+     */
+    fun putConcurrent(value: String) {
+        updateConcurrentRate(getKey(),value)
     }
 
     /**

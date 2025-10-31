@@ -87,7 +87,6 @@ Legado 是一款免费的 Android 平台开源小说阅读器。
     - 点击过的订阅源分类自动变暗
     - 支持为订阅源设定起始页
     - 单个分类时标题显示为分类名
-    - 浏览器会优先读取已有的Glide图片缓存
     - 新增网页日志开关，console.log会输出到阅读日志
     - 支持函数直接打开分类界面和正文界面
     - 优化刷新按钮效果为重新访问链接再刷新
@@ -100,9 +99,9 @@ Legado 是一款免费的 Android 平台开源小说阅读器。
 - 函数变动
     - startBrowser、startBrowserAwait支持html参数
     - startBrowserAwait返回的响应的url为网页实际地址
-    - source.getLoginInfoMap()在用户信息未初始化时，返回空对象而不是null
+    - source.getLoginInfoMap()在用户信息未初始化时，自动初始化，而不是返回null
 - 函数、变量新增
-    - java.setConcurrent(concurrent:Sring)实时改变并发率
+    - source.putConcurrent(concurrent:Sring)实时改变并发率
     - cookie.setWebCookie(url,cookie)单独给内置浏览器设置cookie
     - source.refreshExplore()刷新发现
     - source.refreshJSLib()刷新jslib
