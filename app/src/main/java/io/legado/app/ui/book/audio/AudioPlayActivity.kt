@@ -55,6 +55,7 @@ import io.legado.app.ui.book.audio.config.AudioSkipCredits
 import android.view.View
 import com.dirror.lyricviewx.OnPlayClickListener
 import io.legado.app.lib.theme.ThemeStore.Companion.accentColor
+import io.legado.app.ui.book.source.SourceCallBack
 
 /**
  * 音频播放
@@ -73,6 +74,7 @@ class AudioPlayActivity :
     private var playMode = AudioPlay.PlayMode.LIST_END_STOP
     private val lyricViewX by lazy { binding.lyricViewX }
     private var lyricOn = false
+    private var menuCustomBtn: MenuItem? = null
 
     private val progressTimeFormat by lazy {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -110,12 +112,14 @@ class AudioPlayActivity :
             val targetChapter = appDb.bookChapterDao.getChapter(it, AudioPlay.durChapterIndex)
             upLyric(it, targetChapter?.getVariable("lyric") ?: AudioPlay.durLyric)
         }
+        viewModel.customBtnListData.observe(this) { menuCustomBtn?.isVisible = it }
         viewModel.initData(intent)
         initView()
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.audio_play, menu)
+        menuCustomBtn = menu.findItem(R.id.menu_custom_btn)
         return super.onCompatCreateOptionsMenu(menu)
     }
 
@@ -127,6 +131,13 @@ class AudioPlayActivity :
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.menu_custom_btn -> {
+                AudioPlay.bookSource?.customButton?.let {
+                    AudioPlay.book?.let { book ->
+                        SourceCallBack.callBackBtn(this,SourceCallBack.CLICK_CUSTOM_BUTTON, AudioPlay.bookSource, book, null)
+                    }
+                }
+            }
             R.id.menu_change_source -> AudioPlay.book?.let {
                 showDialogFragment(ChangeBookSourceDialog(it.name, it.author))
             }
