@@ -82,6 +82,13 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_touch_dict"
+        android:checkable="true"
+        android:checked="false"
+        android:title="@string/book_touch_dict"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_enable_replace"
         android:checkable="true"
         android:checked="true"
