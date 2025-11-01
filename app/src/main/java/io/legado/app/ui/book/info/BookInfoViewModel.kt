@@ -424,7 +424,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun addToBookshelf(success: (() -> Unit)?) {
+    fun addToBookshelf(success: (() -> Unit)?) { //点击书架按钮或在加分组时触发
         execute {
             bookData.value?.let { book ->
                 book.removeType(BookType.notShelf)
@@ -469,7 +469,6 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                 if (it.isLocal) {
                     LocalBook.deleteBook(it, deleteOriginal)
                 }
-                SourceCallBack.callBackBook(SourceCallBack.DEL_BOOK_SHELF, bookSource, it)
             }
         }.onSuccess {
             success?.invoke()

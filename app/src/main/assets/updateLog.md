@@ -37,7 +37,7 @@
 * 新增一款专属的代码编辑器，极大提高代码编写体验
 * (改回)书源编辑时文本能跟随光标滚动了
 * 软件内部更新链接更换为本复刻仓库的gitee链接
-* 登录界面按钮300ms防抖
+* 登录界面按钮200ms防抖
 * 软键盘自定义文本支持换行符和制表符
 * 支持鼠标滑轮滚动小说视图
 * 新增订阅源瀑布流样式，强烈推荐
@@ -76,12 +76,12 @@
 * 优化字数统计，使其更加准确
 * 优化书籍详情页平板布局
 * 优化并发率控制实现
-* 新增java.setConcurrent(concurrent:Sring)实时改变并发率
+* 新增~~java.setConcurrent(concurrent:Sring)~~实时改变并发率
 * 函数startBrowser、startBrowserAwait支持html参数
 * 新增isFromBookInfo变量，判断是否来源于详情页刷新
 * 新增cookie.setWebCookie(url,cookie)为内置浏览器设置cookie
 * 登录UI支持用js构建
-* 高亮代码限制提高到2万字符，支持let、const关键字高亮
+* ~~高亮代码限制提高到2万字符~~，支持let、const关键字高亮
 * 优化text图片大小与字体汉字相同
 * 内置浏览器变动
   - 支持screen.orientation.lock在全屏时控制屏幕方向

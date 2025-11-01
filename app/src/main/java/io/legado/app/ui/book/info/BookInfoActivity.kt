@@ -97,9 +97,9 @@ class BookInfoActivity :
                     withContext(IO) {
                         if (book.isVideo) {
                             VideoPlay.volumes.clear()
-                            appDb.bookChapterDao.getChapterList(book.bookUrl).forEach { it ->
-                                if (it.isVolume) {
-                                    VideoPlay.volumes.add(it)
+                            appDb.bookChapterDao.getChapterList(book.bookUrl).forEach { chapter ->
+                                if (chapter.isVolume) {
+                                    VideoPlay.volumes.add(chapter)
                                 }
                             }
                             if (VideoPlay.volumes.isEmpty()) {
@@ -131,7 +131,7 @@ class BookInfoActivity :
             }
         } ?: let {
             if (!viewModel.inBookshelf) {
-                viewModel.delBook()
+                viewModel.delBook() //进目录会保存book，此时退出目录触发的book删除，不通知书源回调
             }
         }
     }
@@ -532,7 +532,7 @@ class BookInfoActivity :
             }
             viewModel.getBook()?.let { book ->
                 if (!viewModel.inBookshelf) {
-                    viewModel.saveBook(book) {
+                    viewModel.saveBook(book) { //点击目录会保存book
                         viewModel.saveChapterList {
                             openChapterList()
                         }
@@ -631,14 +631,14 @@ class BookInfoActivity :
 
     @SuppressLint("InflateParams")
     private fun deleteBook() {
-        viewModel.getBook()?.let {
+        viewModel.getBook()?.let { book ->
             if (LocalConfig.bookInfoDeleteAlert) {
                 alert(
                     titleResource = R.string.draw,
                     messageResource = R.string.sure_del
                 ) {
                     var checkBox: CheckBox? = null
-                    if (it.isLocal) {
+                    if (book.isLocal) {
                         checkBox = CheckBox(this@BookInfoActivity).apply {
                             setText(R.string.delete_book_file)
                             isChecked = LocalConfig.deleteBookOriginal
@@ -653,6 +653,7 @@ class BookInfoActivity :
                         if (checkBox != null) {
                             LocalConfig.deleteBookOriginal = checkBox.isChecked
                         }
+                        SourceCallBack.callBackBook(SourceCallBack.DEL_BOOK_SHELF, viewModel.bookSource, book) //确认后删除书架
                         viewModel.delBook(LocalConfig.deleteBookOriginal) {
                             setResult(RESULT_OK)
                             finish()
@@ -661,6 +662,7 @@ class BookInfoActivity :
                     noButton()
                 }
             } else {
+                SourceCallBack.callBackBook(SourceCallBack.DEL_BOOK_SHELF, viewModel.bookSource, book) //点按钮直接删除书架
                 viewModel.delBook(LocalConfig.deleteBookOriginal) {
                     setResult(RESULT_OK)
                     finish()
