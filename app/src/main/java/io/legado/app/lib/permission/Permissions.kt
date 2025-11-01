@@ -43,6 +43,8 @@ object Permissions {
 
     const val ACCESS_MEDIA_LOCATION = "android.permission.ACCESS_MEDIA_LOCATION"
 
+    const val SYSTEM_ALERT_WINDOW = "android.permission.SYSTEM_ALERT_WINDOW"
+
     const val REQUEST_IGNORE_BATTERY_OPTIMIZATIONS =
         "android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"
 

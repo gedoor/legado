@@ -1,9 +1,13 @@
 package io.legado.app.ui.book.read.config
 
+import android.app.Activity.RESULT_OK
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.viewModels
 import io.legado.app.R
@@ -13,6 +17,7 @@ import io.legado.app.databinding.DialogHttpTtsEditBinding
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.about.AppLogDialog
+import io.legado.app.ui.code.CodeEditActivity
 import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.ui.widget.code.addJsPattern
 import io.legado.app.ui.widget.code.addJsonPattern
@@ -38,6 +43,7 @@ class HttpTtsEditDialog() : BaseDialogFragment(R.layout.dialog_http_tts_edit, tr
 
     private val binding by viewBinding(DialogHttpTtsEditBinding::bind)
     private val viewModel by viewModels<HttpTtsEditViewModel>()
+    private var focusedEditText: EditText? = null
 
     override fun onStart() {
         super.onStart()
@@ -86,8 +92,38 @@ class HttpTtsEditDialog() : BaseDialogFragment(R.layout.dialog_http_tts_edit, tr
         binding.tvHeaders.setText(httpTTS.header)
     }
 
+
+    private val textEditLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            result.data?.getStringExtra("text")?.let { editedText ->
+                focusedEditText?.let { editText ->
+                    editText.setText(editedText)
+                    editText.setSelection(result.data!!.getIntExtra("cursorPosition", 0))
+                    editText.requestFocus()
+                } ?: run {
+                    toastOnUi(R.string.focus_lost_on_textbox)
+                }
+            }
+        }
+    }
+    private fun onFullEditClicked() {
+        val view = dialog?.window?.decorView?.findFocus()
+        if (view is EditText) {
+            focusedEditText = view
+            val currentText = view.text.toString()
+            val intent = Intent(requireActivity(), CodeEditActivity::class.java).apply {
+                putExtra("text", currentText)
+                putExtra("cursorPosition", view.selectionStart)
+            }
+            textEditLauncher.launch(intent)
+        }
+        else {
+            toastOnUi(R.string.please_focus_cursor_on_textbox)
+        }
+    }
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
+            R.id.menu_fullscreen_edit -> onFullEditClicked()
             R.id.menu_save -> viewModel.save(dataFromView()) {
                 toastOnUi("保存成功")
             }

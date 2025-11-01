@@ -9,14 +9,18 @@ import io.legado.app.data.entities.RssArticle
 import io.legado.app.data.entities.RssReadRecord
 import io.legado.app.data.entities.RssSource
 import io.legado.app.help.source.removeSortCache
+import io.legado.app.help.source.sortUrls
 
 
 class RssSortViewModel(application: Application) : BaseViewModel(application) {
     var url: String? = null
+    var sortUrl: String? = null
     var rssSource: RssSource? = null
-    val titleLiveData = MutableLiveData<String>()
     var order = System.currentTimeMillis()
     val isGridLayout get() = rssSource?.articleStyle == 2
+    val isWaterLayout get() = rssSource?.articleStyle == 3
+    var searchKey: String? = null
+    var sourceName: String? = null
 
     fun initData(intent: Intent, finally: () -> Unit) {
         execute {
@@ -24,11 +28,13 @@ class RssSortViewModel(application: Application) : BaseViewModel(application) {
             url?.let { url ->
                 rssSource = appDb.rssSourceDao.getByKey(url)
                 rssSource?.let {
-                    titleLiveData.postValue(it.sourceName)
+                    sourceName = it.sourceName
                 } ?: let {
                     rssSource = RssSource(sourceUrl = url)
                 }
             }
+            sortUrl = intent.getStringExtra("sortUrl") ?: sortUrl
+            searchKey = intent.getStringExtra("key")
         }.onFinally {
             finally()
         }
@@ -36,7 +42,7 @@ class RssSortViewModel(application: Application) : BaseViewModel(application) {
 
     fun switchLayout() {
         rssSource?.let {
-            if (it.articleStyle < 2) {
+            if (it.articleStyle < 3) {
                 it.articleStyle += 1
             } else {
                 it.articleStyle = 0
@@ -52,7 +58,11 @@ class RssSortViewModel(application: Application) : BaseViewModel(application) {
             val rssReadRecord = RssReadRecord(
                 record = rssArticle.link,
                 title = rssArticle.title,
-                readTime = System.currentTimeMillis()
+                origin = rssArticle.origin,
+                sort = rssArticle.sort,
+                readTime = System.currentTimeMillis(),
+                type = rssArticle.type,
+                durPos = rssArticle.durPos
             )
             appDb.rssReadRecordDao.insertRecord(rssReadRecord)
         }

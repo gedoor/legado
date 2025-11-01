@@ -36,8 +36,10 @@
                 android:singleLine="true"
                 android:visibility="gone"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toLeftOf="@+id/tv_source_action"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintRight_toLeftOf="@+id/tv_custom_btn"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="visible"
+                tools:text="章节名" />
 
             <TextView
                 android:id="@+id/tv_chapter_url"
@@ -48,8 +50,25 @@
                 android:singleLine="true"
                 android:visibility="gone"
                 app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@+id/tv_custom_btn"
+                app:layout_constraintTop_toBottomOf="@+id/tv_chapter_name"
+                tools:visibility="visible"
+                tools:text="http" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/tv_custom_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_margin="1dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="4dp"
+                android:src="@drawable/ic_custom"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_chapter_url"
                 app:layout_constraintRight_toLeftOf="@+id/tv_source_action"
-                app:layout_constraintTop_toBottomOf="@+id/tv_chapter_name" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="visible"
+                tools:ignore="ContentDescription" />
 
             <io.legado.app.ui.widget.text.AccentBgTextView
                 android:id="@+id/tv_source_action"

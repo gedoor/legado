@@ -1,24 +1,27 @@
 [versions]
 
-kotlin = "2.2.0"
-ksp = "2.2.0-2.0.2"
-agp = "8.10.1"
-appcompat = "1.7.0"
+kotlin = "2.2.21"
+ksp = "2.2.20-2.0.4"
+agp = "8.13.0"
+appcompat = "1.7.1"
 colorpicker = "1.1.0"
-commonsText = "1.13.1"
+commonsText = "1.14.0"
 constraintlayout = "2.2.1"
-core = "1.16.0"
+core = "1.17.0"
+#不要更新，提高了最低SDK
 firebaseBom = "33.2.0"
 flexbox = "3.0.0"
-fragment = "1.8.7"
+fragment = "1.8.9"
 
 #不要更新版本
 hutool = "5.8.22"
 
 libarchive = "1.1.6"
-lifecycle = "2.9.0"
-glide = "4.16.0"
-gson = "2.13.1"
+lifecycle = "2.9.4"
+lyricViewx = "1.3.2"
+soraEditor = "0.23.7"
+glide = "5.0.5"
+gson = "2.13.2"
 jsonPath = "2.9.0"
 # issue #3811，不要更新版本，新版引入了一个破坏性变更（详见https://github.com/jhy/jsoup/pull/2017）
 # 若要升级请确保相关代码不会受此变更影响（如AnalyzeByJSoup.kt、JsoupXpath库等）
@@ -27,26 +30,29 @@ jsoupxpath = "2.5.3"
 coroutines = "1.10.2"
 liveeventbus = "1.8.14"
 markwon = "4.6.2"
-material = "1.12.0"
-media = "1.7.0"
-media3 = "1.6.1"
+material = "1.13.0"
+media = "1.7.1"
+media3 = "1.8.0"
+gsyvideoplayer = "11.1.0"
 nanoHttpd = "2.3.1"
-okhttp = "5.1.0"
+okhttp = "5.2.1"
 preference = "1.2.1"
+#不要更新，需要跟随firebaseBom
 protobufJavalite = "4.26.1"
 quickChineseTransfer = "0.2.16"
+#不要更新，提高了最低SDK
 room = "2.7.1"
 splitties = "3.0.0"
 rhino = "1.8.0"
 desugar = "2.1.5"
 
-activity = "1.10.1"
+activity = "1.11.0"
 #kotlinxSerialization = "1.8.0"
 swiperefreshlayout = "1.1.0"
 #noinspection GradleDependency
-recyclerview = "1.2.0"
+recyclerview = "1.4.0"
 #noinspection GradleDependency
-viewpager2 = "1.0.0"
+viewpager2 = "1.1.0"
 webkit = "1.13.0"
 collection = "1.5.0"
 
@@ -89,10 +95,18 @@ libarchive = { module = "me.zhanghai.android.libarchive:library", version.ref = 
 lifecycle-common-java8 = { module = "androidx.lifecycle:lifecycle-common-java8", version.ref = "lifecycle" }
 lifecycle-service = { module = "androidx.lifecycle:lifecycle-service", version.ref = "lifecycle" }
 
+lyricViewx = { module = "com.github.Moriafly:LyricViewX", version.ref = "lyricViewx" }
+
+
 media-media = { module = "androidx.media:media", version.ref = "media" }
 media3-datasource-okhttp = { module = "androidx.media3:media3-datasource-okhttp", version.ref = "media3" }
 media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3" }
+media3-exoplayer-hls = { module = "androidx.media3:media3-exoplayer-hls", version.ref = "media3" }
+media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3" }
 media3-session = { module = "androidx.media3:media3-session", version.ref = "media3" }
+
+gsyVideoPlayer-java = { module = "io.github.carguo:gsyvideoplayer-java", version.ref = "gsyvideoplayer" }
+gsyVideoPlayer-exo2 = { module = "io.github.carguo:gsyvideoplayer-exo2", version.ref = "gsyvideoplayer" }
 
 markwon-core = { module = "io.noties.markwon:core", version.ref = "markwon" }
 markwon-image-glide = { module = "io.noties.markwon:image-glide", version.ref = "markwon" }
@@ -121,13 +135,16 @@ glide-glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide
 glide-okhttp= { module = "com.github.bumptech.glide:okhttp3-integration", version.ref ="glide" }
 glide-recyclerview={module="com.github.bumptech.glide:recyclerview-integration",version.ref="glide"}
 glide-compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "glide" }
-glide-compose = { module = "com.github.bumptech.glide:compose", version = "1.0.0-beta01" }
+glide-compose = { module = "com.github.bumptech.glide:compose", version = "1.0.0-beta08" }
 glide-ksp = { module = "com.github.bumptech.glide:ksp", version.ref = "glide" }
 glide-avif = { module = "com.github.bumptech.glide:avif-integration", version.ref = "glide" }
 avif = { module = "org.aomedia.avif.android:avif", version = "1.1.1.14d8e3c4" }
 glide-svg = { module = "com.github.qoqa:glide-svg", version = "4.0.2" }
 androidsvg = { module = "com.caverock:androidsvg-aar", version = "1.4" }
 
+soraEditor-bom = { module = "io.github.rosemoe:editor-bom", version.ref = "soraEditor" }
+soraEditor-core = { module = "io.github.rosemoe:editor" }
+soraEditor-language-textmate = { module = "io.github.rosemoe:language-textmate" }
 splitties-appctx = { module = "com.louiscad.splitties:splitties-appctx", version.ref = "splitties" }
 splitties-activities = { module = "com.louiscad.splitties:splitties-activities", version.ref = "splitties" }
 splitties-systemservices = { module = "com.louiscad.splitties:splitties-systemservices", version.ref = "splitties" }

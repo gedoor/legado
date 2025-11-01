@@ -14,7 +14,7 @@ val jsonPattern: Pattern = Pattern.compile("\"[A-Za-z0-9]*?\"\\:|\"|\\{|\\}|\\[|
 val wrapPattern: Pattern = Pattern.compile("\\\\n")
 val operationPattern: Pattern =
     Pattern.compile(":|==|>|<|!=|>=|<=|->|=|%|-|-=|%=|\\+|\\-|\\-=|\\+=|\\^|\\&|\\|::|\\?|\\*")
-val jsPattern: Pattern = Pattern.compile("var")
+val jsPattern: Pattern = Pattern.compile("\\b(?:var|let|const)\\b")
 
 fun CodeView.addLegadoPattern() {
     addSyntaxPattern(legadoPattern, appCtx.color(R.color.md_orange_900))

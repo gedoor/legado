@@ -49,7 +49,7 @@ android {
     defaultConfig {
         applicationId "com.legado.app"
         minSdk 21
-        targetSdk 35
+        targetSdk 36
         versionCode 30000 + gitCommits
         versionName version
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -202,10 +202,16 @@ dependencies {
     implementation(libs.media.media)
     // For media playback using ExoPlayer
     implementation(libs.media3.exoplayer)
+    //implementation(libs.media3.exoplayer.hls)
+    //implementation(libs.media3.ui)
     // For loading data using the OkHttp network stack
     implementation(libs.media3.datasource.okhttp)
     // For exposing and controlling media sessions
     //implementation "androidx.media3:media3-session:$media3_version"
+
+    //videoPlayer
+    implementation(libs.gsyVideoPlayer.java)
+    implementation(libs.gsyVideoPlayer.exo2)
 
     //Splitties
     implementation(libs.splitties.appctx)
@@ -288,4 +294,10 @@ dependencies {
 
     //com.github.AmrDeveloper:CodeView代码编辑已集成到应用内
     //epubLib集成到应用内
+    // 椒盐歌词
+    implementation(libs.lyricViewx)
+    // sora-editor代码编辑器,更丰富的编辑功能
+    implementation(platform(libs.soraEditor.bom))
+    implementation(libs.soraEditor.core)
+    implementation(libs.soraEditor.language.textmate)
 }

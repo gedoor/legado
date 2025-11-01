@@ -11,9 +11,11 @@ import io.legado.app.base.BaseDialogFragment
 import io.legado.app.databinding.DialogTextViewBinding
 import io.legado.app.help.IntentData
 import io.legado.app.lib.theme.primaryColor
+import io.legado.app.ui.code.CodeEditActivity
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.setHtml
 import io.legado.app.utils.setLayout
+import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.noties.markwon.Markwon
 import io.noties.markwon.ext.tables.TablePlugin
@@ -61,16 +63,11 @@ class TextDialog() : BaseDialogFragment(R.layout.dialog_text_view) {
         binding.toolBar.setBackgroundColor(primaryColor)
         binding.toolBar.inflateMenu(R.menu.dialog_text)
         binding.toolBar.menu.applyTint(requireContext())
-        binding.toolBar.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.menu_close -> dismissAllowingStateLoss()
-            }
-            true
-        }
         arguments?.let {
             binding.toolBar.title = it.getString("title")
             val content = IntentData.get(it.getString("content")) ?: ""
-            when (it.getString("mode")) {
+            val mode = it.getString("mode")
+            when (mode) {
                 Mode.MD.name -> viewLifecycleOwner.lifecycleScope.launch {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         binding.textView.setTextClassifier(TextClassifier.NO_OP)
@@ -97,6 +94,19 @@ class TextDialog() : BaseDialogFragment(R.layout.dialog_text_view) {
                         binding.textView.text = content
                     }
                 }
+            }
+            binding.toolBar.setOnMenuItemClickListener { menu ->
+                when (menu.itemId) {
+                    R.id.menu_close -> dismissAllowingStateLoss()
+                    R.id.menu_fullscreen_edit -> {
+                        startActivity<CodeEditActivity> {
+                            putExtra("text", content)
+                            putExtra("writable", false)
+                            putExtra("languageName", if (mode == Mode.MD.name) "text.html.markdown" else "text.html.basic")
+                        }
+                    }
+                }
+                true
             }
             time = it.getLong("time", 0L)
         }

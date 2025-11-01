@@ -6,11 +6,14 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookGroup
+import io.legado.app.databinding.ItemBookshelfGrid2Binding
 import io.legado.app.databinding.ItemBookshelfGridBinding
 import io.legado.app.databinding.ItemBookshelfGridGroupBinding
 import io.legado.app.help.book.isLocal
 import io.legado.app.help.config.AppConfig
+import io.legado.app.utils.gone
 import io.legado.app.utils.invisible
+import io.legado.app.utils.visible
 import splitties.views.onLongClick
 
 @Suppress("UNUSED_PARAMETER")
@@ -23,7 +26,13 @@ class BooksAdapterGrid(context: Context, callBack: CallBack) :
     ): RecyclerView.ViewHolder {
         return when (viewType) {
             1 -> GroupViewHolder(ItemBookshelfGridGroupBinding.inflate(inflater, parent, false))
-            else -> BookViewHolder(ItemBookshelfGridBinding.inflate(inflater, parent, false))
+            else -> {
+                when (AppConfig.showBookname) {
+                    2 -> BookViewHolder2(ItemBookshelfGrid2Binding.inflate(inflater, parent, false))
+                    1 -> BookViewHolder(ItemBookshelfGridBinding.inflate(inflater, parent, false), false)
+                    else -> BookViewHolder(ItemBookshelfGridBinding.inflate(inflater, parent, false), true)
+                }
+            }
         }
     }
 
@@ -38,6 +47,11 @@ class BooksAdapterGrid(context: Context, callBack: CallBack) :
                 holder.onBind(it, position, payloads)
             }
 
+            is BookViewHolder2 -> (getItem(position) as? Book)?.let {
+                holder.registerListener(it)
+                holder.onBind(it, position, payloads)
+            }
+
             is GroupViewHolder -> (getItem(position) as? BookGroup)?.let {
                 holder.registerListener(it)
                 holder.onBind(it, position, payloads)
@@ -45,12 +59,18 @@ class BooksAdapterGrid(context: Context, callBack: CallBack) :
         }
     }
 
-    inner class BookViewHolder(val binding: ItemBookshelfGridBinding) :
+    inner class BookViewHolder(val binding: ItemBookshelfGridBinding, val showName: Boolean) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun onBind(item: Book, position: Int) = binding.run {
-            tvName.text = item.name
-            ivCover.load(item.getDisplayCover(), item.name, item.author, false, item.origin)
+            if (showName) {
+                tvName.visible()
+                tvName.text = item.name
+            }
+            else {
+                tvName.gone()
+            }
+            ivCover.load(item.getDisplayCover(), item, false, item.origin)
             upRefresh(this, item)
         }
 
@@ -65,8 +85,7 @@ class BooksAdapterGrid(context: Context, callBack: CallBack) :
                             "name" -> tvName.text = item.name
                             "cover" -> ivCover.load(
                                 item.getDisplayCover(),
-                                item.name,
-                                item.author,
+                                item,
                                 false,
                                 item.origin
                             )
@@ -88,6 +107,64 @@ class BooksAdapterGrid(context: Context, callBack: CallBack) :
         }
 
         private fun upRefresh(binding: ItemBookshelfGridBinding, item: Book) {
+            if (!item.isLocal && callBack.isUpdate(item.bookUrl)) {
+                binding.bvUnread.invisible()
+                binding.rlLoading.visible()
+            } else {
+                binding.rlLoading.inVisible()
+                if (AppConfig.showUnread) {
+                    binding.bvUnread.setBadgeCount(item.getUnreadChapterNum())
+                    binding.bvUnread.setHighlight(item.lastCheckCount > 0)
+                } else {
+                    binding.bvUnread.invisible()
+                }
+            }
+        }
+
+    }
+
+    inner class BookViewHolder2(val binding: ItemBookshelfGrid2Binding) :
+        RecyclerView.ViewHolder(binding.root) {
+
+        fun onBind(item: Book, position: Int) = binding.run {
+            tvName.text = item.name
+            ivCover.load(item.getDisplayCover(), item, false, item.origin)
+            upRefresh(this, item)
+        }
+
+        fun onBind(item: Book, position: Int, payloads: MutableList<Any>) = binding.run {
+            if (payloads.isEmpty()) {
+                onBind(item, position)
+            } else {
+                for (i in payloads.indices) {
+                    val bundle = payloads[i] as Bundle
+                    bundle.keySet().forEach {
+                        when (it) {
+                            "name" -> tvName.text = item.name
+                            "cover" -> ivCover.load(
+                                item.getDisplayCover(),
+                                item,
+                                false,
+                                item.origin
+                            )
+
+                            "refresh" -> upRefresh(this, item)
+                        }
+                    }
+                }
+            }
+        }
+
+        fun registerListener(item: Any) {
+            binding.root.setOnClickListener {
+                callBack.onItemClick(item)
+            }
+            binding.root.onLongClick {
+                callBack.onItemLongClick(item)
+            }
+        }
+
+        private fun upRefresh(binding: ItemBookshelfGrid2Binding, item: Book) {
             if (!item.isLocal && callBack.isUpdate(item.bookUrl)) {
                 binding.bvUnread.invisible()
                 binding.rlLoading.visible()

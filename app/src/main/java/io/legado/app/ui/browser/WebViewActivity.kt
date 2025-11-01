@@ -2,12 +2,14 @@ package io.legado.app.ui.browser
 
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
+import android.graphics.Bitmap
 import android.net.Uri
 import android.net.http.SslError
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.webkit.ConsoleMessage
 import android.webkit.CookieManager
 import android.webkit.SslErrorHandler
 import android.webkit.URLUtil
@@ -47,7 +49,17 @@ import io.legado.app.utils.toggleSystemBar
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
 import java.net.URLDecoder
+import android.webkit.JavascriptInterface
+import androidx.lifecycle.lifecycleScope
+import io.legado.app.constant.AppLog
+import io.legado.app.help.coroutine.Coroutine
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
+import io.legado.app.model.analyzeRule.AnalyzeRule
+import io.legado.app.model.analyzeRule.AnalyzeRule.Companion.setCoroutineContext
 import io.legado.app.help.http.CookieManager as AppCookieManager
+import io.legado.app.model.ReadBook
+import io.legado.app.utils.escapeForJs
 
 class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
 
@@ -57,6 +69,8 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
     private var webPic: String? = null
     private var isCloudflareChallenge = false
     private var isFullScreen = false
+    private var isfullscreen = false
+    private var localhtml = false
     private val saveImage = registerForActivityResult(HandleFileContract()) {
         it.uri?.let { uri ->
             ACache.get().put(imagePathKey, uri.toString())
@@ -75,6 +89,7 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
             if (html.isNullOrEmpty()) {
                 binding.webView.loadUrl(url, headerMap)
             } else {
+                localhtml = true
                 binding.webView.loadDataWithBaseURL(url, html, "text/html", "utf-8", url)
             }
         }
@@ -106,6 +121,7 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
             menu.findItem(R.id.menu_disable_source)?.isVisible = true
             menu.findItem(R.id.menu_delete_source)?.isVisible = true
         }
+        menu.findItem(R.id.menu_show_web_log)?.isChecked = viewModel.showWebLog
         return super.onPrepareOptionsMenu(menu)
     }
 
@@ -124,6 +140,10 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
             }
 
             R.id.menu_full_screen -> toggleFullScreen()
+            R.id.menu_show_web_log -> {
+                viewModel.toggleShowWebLog()
+                item.isChecked = viewModel.showWebLog
+            }
             R.id.menu_disable_source -> {
                 viewModel.disableSource {
                     finish()
@@ -162,11 +182,14 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
     private fun initWebView(url: String, headerMap: HashMap<String, String>) {
         binding.progressBar.fontColor = accentColor
         binding.webView.webChromeClient = CustomWebChromeClient()
+        // 添加 JavaScript 接口
+        binding.webView.addJavascriptInterface(JSInterface(), "AndroidComm")
         binding.webView.webViewClient = CustomWebViewClient()
         binding.webView.settings.apply {
             setDarkeningAllowed(AppConfig.isNightTheme)
             mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
             domStorageEnabled = true
+            mediaPlaybackRequiresUserGesture = false
             allowContentAccess = true
             useWideViewPort = true
             loadWithOverviewMode = true
@@ -209,6 +232,89 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
         }
     }
 
+    inner class JSInterface {
+        @JavascriptInterface
+        fun lockOrientation(orientation: String) {
+            runOnUiThread {
+                if (isfullscreen) {
+                    requestedOrientation = when (orientation) {
+                        "portrait", "portrait-primary" -> ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                        "portrait-secondary" -> ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT
+                        "landscape", "landscape-primary" -> ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                        "landscape-secondary" -> ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
+                        "any", "unspecified" -> ActivityInfo.SCREEN_ORIENTATION_SENSOR
+                        else -> ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+                    }
+                }
+            }
+        }
+        @JavascriptInterface
+        fun request(jsCode:String, id: String) {
+            Coroutine.async(lifecycleScope) {
+                AnalyzeRule(ReadBook.book, viewModel.source).run {
+                    setCoroutineContext(coroutineContext)
+                    evalJS(jsCode).toString()
+                }
+            }.onSuccess { data ->
+                binding.webView.evaluateJavascript("window.JSBridgeResult('$id', '${data.escapeForJs()}', null);", null)
+            }.onError {
+                binding.webView.evaluateJavascript("window.JSBridgeResult('$id', null, '${it.localizedMessage?.escapeForJs()}');", null)
+            }
+        }
+        @JavascriptInterface
+        fun onCloseRequested() {
+            runOnUiThread {
+                close()
+            }
+        }
+    }
+
+    private fun injectOrientationSupport() {
+        val js = """
+        (function() {
+            if (screen.orientation && !screen.orientation.__patched) {
+                screen.orientation.lock = function(orientation) {
+                    return new Promise((resolve, reject) => {
+                        window.AndroidComm?.lockOrientation(orientation) 
+                        resolve()
+                    });
+                };
+                screen.orientation.unlock = function() {
+                    return new Promise((resolve, reject) => {
+                        window.AndroidComm?.lockOrientation('unlock') 
+                        resolve()
+                    });
+                };
+                screen.orientation.__patched = true;
+            }
+            ${if (localhtml) """
+            window.run = function(jsCode) {
+                return new Promise((resolve, reject) => {
+                const requestId = 'req_' + Date.now() + '_' + Math.random().toString(36).substring(2, 5);
+                window.JSBridgeCallbacks = window.JSBridgeCallbacks || {};
+                window.JSBridgeCallbacks[requestId] = { resolve, reject };
+                window.AndroidComm?.request(String(jsCode), requestId);
+                });
+            };
+            window.JSBridgeResult = function(requestId, result, error) {
+                if (window.JSBridgeCallbacks?.[requestId]) {
+                    if (error) {
+                        window.JSBridgeCallbacks[requestId].reject(error);
+                    } else {
+                        window.JSBridgeCallbacks[requestId].resolve(result);
+                    }
+                    delete window.JSBridgeCallbacks[requestId];
+                }
+            };
+            window.close = function() {
+                window.AndroidComm?.onCloseRequested();
+            };
+            """ else ""}
+        })();
+        """.trimIndent()
+        binding.webView.evaluateJavascript(js, null)
+    }
+
     private fun saveImage(webPic: String) {
         this.webPic = webPic
         val path = ACache.get().getAsString(imagePathKey)
@@ -235,6 +341,19 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
         super.finish()
     }
 
+    private fun close() {
+        if (!isCloudflareChallenge) {
+            if (viewModel.sourceVerificationEnable) {
+                viewModel.saveVerificationResult(binding.webView) {
+                    finish()
+                }
+            }
+            else {
+                finish()
+            }
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         binding.webView.destroy()
@@ -249,21 +368,56 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
         }
 
         override fun onShowCustomView(view: View?, callback: CustomViewCallback?) {
-            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR
+            isfullscreen = true
             binding.llView.invisible()
             binding.customWebView.addView(view)
             customWebViewCallback = callback
             keepScreenOn(true)
             toggleSystemBar(false)
+            lifecycleScope.launch {
+                delay(100)
+                if (!isFinishing && !isDestroyed) {
+                    if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED) {
+                        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR
+                    }
+                }
+            }
         }
 
         override fun onHideCustomView() {
+            isfullscreen = false
             binding.customWebView.removeAllViews()
             binding.llView.visible()
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
             keepScreenOn(false)
             toggleSystemBar(true)
         }
+
+        /* 覆盖window.close() */
+        override fun onCloseWindow(window: WebView?) {
+            close()
+        }
+
+        /* 监听网页日志 */
+        override fun onConsoleMessage(consoleMessage: ConsoleMessage): Boolean {
+            viewModel.source?.let {
+                if (viewModel.showWebLog) {
+                    val consoleException = Exception("${consoleMessage.messageLevel().name}: \n${consoleMessage.message()}\n-Line ${consoleMessage.lineNumber()} of ${consoleMessage.sourceId()}")
+                    val message = viewModel.sourceName + ": ${consoleMessage.message()}"
+                    when (consoleMessage.messageLevel()) {
+                        ConsoleMessage.MessageLevel.LOG -> AppLog.put(message)
+                        ConsoleMessage.MessageLevel.DEBUG -> AppLog.put(message, consoleException)
+                        ConsoleMessage.MessageLevel.WARNING -> AppLog.put(message, consoleException)
+                        ConsoleMessage.MessageLevel.ERROR -> AppLog.put(message, consoleException)
+                        ConsoleMessage.MessageLevel.TIP -> AppLog.put(message)
+                        else -> AppLog.put(message)
+                    }
+                    return true
+                }
+            }
+            return false
+        }
+        
     }
 
     inner class CustomWebViewClient : WebViewClient() {
@@ -285,6 +439,11 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
             return true
         }
 
+        override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+            super.onPageStarted(view, url, favicon)
+            injectOrientationSupport()
+        }
+        
         override fun onPageFinished(view: WebView?, url: String?) {
             super.onPageFinished(view, url)
             val cookieManager = CookieManager.getInstance()

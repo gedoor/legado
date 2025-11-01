@@ -9,21 +9,21 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    if: ${{ github.repository == 'gedoor/legado' }}
+    if: ${{ github.repository == 'Luoyacheng/legado' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Check Cronet Updates
         run: source .github/scripts/cronet.sh
 
       - name: Set up JDK 17
         if: ${{ env.cronet == 'ok' }}
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: 17
 
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v5
         if: ${{ env.cronet == 'ok' }}
 
       - name: Download Cronet

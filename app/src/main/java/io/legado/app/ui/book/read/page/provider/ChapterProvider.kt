@@ -46,11 +46,11 @@ import java.util.Locale
 @Suppress("DEPRECATION", "ConstPropertyName")
 object ChapterProvider {
     //用于图片字的替换
-    const val srcReplaceChar = "▩"
-
+    const val srcReplaceChar = "袮" //▩▣ 丨⼁ //换成袮，这是不应该存在的汉字,替换为祢
+    const val srcReplaceCharC = '袮' //可能有略微的提升
+    const val srcReplaceCharD = '祢'
     //用于评论按钮的替换
-    const val reviewChar = "▨"
-
+    const val reviewChar = "꧁"
     const val indentChar = "　"
 
     @JvmStatic
@@ -199,7 +199,7 @@ object ChapterProvider {
         contents.forEach { content ->
             if (book.getImageStyle().equals(Book.imgStyleText, true)) {
                 //图片样式为文字嵌入类型
-                var text = content.replace(srcReplaceChar, "▣")
+                var text = content.replace(srcReplaceCharC, srcReplaceCharD)
                 val srcList = LinkedList<String>()
                 val sb = StringBuffer()
                 val matcher = AppPattern.imgPattern.matcher(text)
@@ -227,6 +227,7 @@ object ChapterProvider {
                     durY = it.second
                 }
             } else {
+                val content = content.replace(srcReplaceCharC, srcReplaceCharD) //为了后续能直接去除srcReplaceChar
                 val matcher = AppPattern.imgPattern.matcher(content)
                 var start = 0
                 while (matcher.find()) {

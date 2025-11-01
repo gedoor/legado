@@ -8,6 +8,8 @@ import android.view.MotionEvent
 import android.view.View
 import io.legado.app.R
 import io.legado.app.data.entities.Bookmark
+import io.legado.app.help.book.isAudio
+import io.legado.app.help.book.isOnLineTxt
 import io.legado.app.help.config.AppConfig
 import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.page.delegate.PageDelegate
@@ -247,6 +249,14 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 is ImageColumn -> if (AppConfig.previewImageByClick) {
                     activity?.showDialogFragment(PhotoDialog(column.src))
                     handled = true
+                } else {
+                    if (ReadBook.book?.isOnLineTxt == true) {
+                        val src = column.src
+                        if (src.contains("\"js\"") || src.contains("'js'")) {
+                            callBack.clickImg(src)
+                            handled = true
+                        }
+                    }
                 }
             }
         }
@@ -713,5 +723,6 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         fun onImageLongPress(x: Float, y: Float, src: String)
         fun onCancelSelect()
         fun onLongScreenshotTouchEvent(event: MotionEvent): Boolean
+        fun clickImg(clickjs: String)
     }
 }

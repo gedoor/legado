@@ -21,14 +21,18 @@ open class WelcomeActivity : BaseActivity<ActivityWelcomeBinding>() {
     override val binding by viewBinding(ActivityWelcomeBinding::inflate)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        binding.ivBook.setColorFilter(accentColor)
-        binding.vwTitleLine.setBackgroundColor(accentColor)
-        // 避免从桌面启动程序后，会重新实例化入口类的activity
         if (intent.flags and Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT != 0) {
+            // 避免从桌面启动程序后，会重新实例化入口类的activity
             finish()
         } else {
-            binding.root.postDelayed(600) { startMainActivity() }
+            if (getPrefBoolean(PreferKey.closeWelcome)) {
+                startMainActivity()
+            } else {
+                binding.root.postDelayed(600) { startMainActivity() }
+            }
         }
+        binding.ivBook.setColorFilter(accentColor)
+        binding.vwTitleLine.setBackgroundColor(accentColor)
     }
 
     override fun setupSystemBar() {

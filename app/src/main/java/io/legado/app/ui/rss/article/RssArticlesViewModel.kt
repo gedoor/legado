@@ -22,12 +22,14 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
     private var nextPageUrl: String? = null
     var sortName: String = ""
     var sortUrl: String = ""
+    var searchKey: String? = null
     var page = 1
 
     fun init(bundle: Bundle?) {
         bundle?.let {
             sortName = it.getString("sortName") ?: ""
             sortUrl = it.getString("sortUrl") ?: ""
+            searchKey = it.getString("searchKey")
         }
     }
 
@@ -35,7 +37,7 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
         isLoading = true
         page = 1
         order = System.currentTimeMillis()
-        Rss.getArticles(viewModelScope, sortName, sortUrl, rssSource, page).onSuccess(IO) {
+        Rss.getArticles(viewModelScope, sortName, sortUrl, rssSource, page, searchKey).onSuccess(IO) {
             nextPageUrl = it.second
             val articles = it.first
             articles.forEach { rssArticle ->
@@ -63,7 +65,7 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
             loadFinallyLiveData.postValue(false)
             return
         }
-        Rss.getArticles(viewModelScope, sortName, pageUrl, rssSource, page).onSuccess(IO) {
+        Rss.getArticles(viewModelScope, sortName, pageUrl, rssSource, page, searchKey).onSuccess(IO) {
             nextPageUrl = it.second
             loadMoreSuccess(it.first)
             isLoading = false
@@ -80,9 +82,9 @@ class RssArticlesViewModel(application: Application) : BaseViewModel(application
             return
         }
         val firstArticle = articles.first()
-        val dbFirstArticle = appDb.rssArticleDao.get(firstArticle.origin, firstArticle.link)
+        val dbFirstArticle = appDb.rssArticleDao.get(firstArticle.origin, firstArticle.link, firstArticle.sort)
         val lastArticle = articles.last()
-        val dbLastArticle = appDb.rssArticleDao.get(lastArticle.origin, lastArticle.link)
+        val dbLastArticle = appDb.rssArticleDao.get(lastArticle.origin, lastArticle.link, firstArticle.sort)
         if (dbFirstArticle != null && dbLastArticle != null) {
             loadFinallyLiveData.postValue(false)
         } else {

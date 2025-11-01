@@ -538,9 +538,10 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
 
     companion object {
 
-        fun start(context: Context, key: String?) {
+        fun start(context: Context, key: String?, searchScope: String? = null) {
             context.startActivity<SearchActivity> {
                 putExtra("key", key)
+                putExtra("searchScope", searchScope)
             }
         }
 

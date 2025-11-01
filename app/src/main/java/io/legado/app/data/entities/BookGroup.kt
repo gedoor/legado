@@ -33,6 +33,7 @@ data class BookGroup(
         const val IdAudio = -3L
         const val IdNetNone = -4L
         const val IdLocalNone = -5L
+        const val IdVideo = -6L
         const val IdError = -11L
     }
 
@@ -43,6 +44,7 @@ data class BookGroup(
             IdLocal -> "$groupName(${context.getString(R.string.local)})"
             IdNetNone -> "$groupName(${context.getString(R.string.net_no_group)})"
             IdLocalNone -> "$groupName(${context.getString(R.string.local_no_group)})"
+            IdVideo -> "$groupName(${context.getString(R.string.video)})"
             IdError -> "$groupName(${context.getString(R.string.update_book_fail)})"
             else -> groupName
         }

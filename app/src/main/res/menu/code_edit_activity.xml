@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="AlwaysShowAction">
+
+    <item
+        android:id="@+id/menu_search"
+        android:icon="@drawable/ic_search"
+        android:title="@string/search"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/menu_save"
+        android:icon="@drawable/ic_save"
+        android:title="@string/action_save"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/menu_change_theme"
+        android:title="@string/change_theme"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_format_code"
+        android:title="@string/format_code"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_config_settings"
+        android:title="@string/config_settings"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_auto_wrap"
+        android:title="@string/auto_wrap"
+        android:checkable="true"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_log"
+        android:title="@string/log"
+        app:showAsAction="never" />
+
+</menu>

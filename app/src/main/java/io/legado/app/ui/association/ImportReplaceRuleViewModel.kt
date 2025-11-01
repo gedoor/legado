@@ -14,6 +14,7 @@ import io.legado.app.help.http.decompressed
 import io.legado.app.help.http.newCallResponseBody
 import io.legado.app.help.http.okHttpClient
 import io.legado.app.help.http.text
+import io.legado.app.model.RuleUpdate
 import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.isJsonArray
 import io.legado.app.utils.isJsonObject
@@ -107,6 +108,11 @@ class ImportReplaceRuleViewModel(app: Application) : BaseViewModel(app) {
     }
 
     private suspend fun importUrl(url: String) {
+        RuleUpdate.cacheReplaceRuleMap[url]?.also {
+            allRules.addAll(it)
+            RuleUpdate.cacheReplaceRuleMap.remove(url)
+            return
+        }
         okHttpClient.newCallResponseBody {
             if (url.endsWith("#requestWithoutUA")) {
                 url(url.substringBeforeLast("#requestWithoutUA"))

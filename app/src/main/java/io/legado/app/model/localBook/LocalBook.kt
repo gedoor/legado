@@ -195,7 +195,7 @@ object LocalBook {
             }
         }
 
-        if (content.isNullOrEmpty()) {
+        if (content.isNullOrEmpty() && !chapter.isVolume) {
             return null
         }
 

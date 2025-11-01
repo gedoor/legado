@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat
 import io.legado.app.utils.startActivity
 import splitties.init.appCtx
 import splitties.systemservices.powerManager
+import android.provider.Settings
 
 @Suppress("MemberVisibilityCanBePrivate")
 internal class Request : OnRequestPermissionsResultCallback {
@@ -68,7 +69,10 @@ internal class Request : OnRequestPermissionsResultCallback {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             toSetting()
         } else {
-            if (deniedPermissions.contains(Permissions.MANAGE_EXTERNAL_STORAGE)) {
+            if (deniedPermissions.contains(Permissions.SYSTEM_ALERT_WINDOW)) {
+                toSystemAlertWindowSetting(deniedPermissions)
+            }
+            else if (deniedPermissions.contains(Permissions.MANAGE_EXTERNAL_STORAGE)) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     toManageFileSetting(deniedPermissions)
                 }
@@ -115,6 +119,14 @@ internal class Request : OnRequestPermissionsResultCallback {
                 Permissions.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS -> {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         if (!powerManager.isIgnoringBatteryOptimizations(appCtx.packageName)) {
+                            deniedPermissionList.add(permission)
+                        }
+                    }
+                }
+
+                Permissions.SYSTEM_ALERT_WINDOW -> {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        if (!Settings.canDrawOverlays(appCtx)) {
                             deniedPermissionList.add(permission)
                         }
                     }
@@ -192,6 +204,16 @@ internal class Request : OnRequestPermissionsResultCallback {
         }
     }
 
+    private fun toSystemAlertWindowSetting(deniedPermissions: Array<String>) {
+        appCtx.startActivity<PermissionActivity> {
+            putExtra(PermissionActivity.KEY_RATIONALE, rationale)
+            putExtra(PermissionActivity.KEY_INPUT_REQUEST_TYPE, TYPE_SYSTEM_ALERT_WINDOW)
+            putExtra(PermissionActivity.KEY_INPUT_PERMISSIONS_CODE, requestCode)
+            putExtra(PermissionActivity.KEY_INPUT_PERMISSIONS, deniedPermissions)
+        }
+    }
+
+
     override fun onRequestPermissionsResult(
         permissions: Array<String>,
         grantResults: IntArray
@@ -224,5 +246,6 @@ internal class Request : OnRequestPermissionsResultCallback {
         const val TYPE_MANAGE_ALL_FILES_ACCESS = 3
         const val TYPE_REQUEST_NOTIFICATIONS = 4
         const val TYPE_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS = 5
+        const val TYPE_SYSTEM_ALERT_WINDOW = 6
     }
 }

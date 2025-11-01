@@ -69,7 +69,10 @@ object SharedJsScope {
                 RhinoScriptEngine.eval(jsLib, scope, coroutineContext)
             }
             if (scope is ScriptableObject) {
-                scope.sealObject()
+                /**
+                 * 阻止新全局增加（即函数内未用var的隐性全局变量创建）,会直接隐性创建失败,提示变量未定义
+                 */
+                scope.preventExtensions()
             }
             scopeMap.put(key, WeakReference(scope))
         }
@@ -79,6 +82,22 @@ object SharedJsScope {
     fun remove(jsLib: String?) {
         if (jsLib.isNullOrBlank()) {
             return
+        }
+        if (jsLib.isJsonObject()) {
+            val jsMap: Map<String, String> = GSON.fromJson(
+                jsLib,
+                TypeToken.getParameterized(
+                    Map::class.java,
+                    String::class.java,
+                    String::class.java
+                ).type
+            )
+            jsMap.values.forEach { value ->
+                if (value.isAbsUrl()) {
+                    val fileName = MD5Utils.md5Encode(value)
+                    aCache.remove(fileName)
+                }
+            }
         }
         val key = MD5Utils.md5Encode(jsLib)
         scopeMap.remove(key)

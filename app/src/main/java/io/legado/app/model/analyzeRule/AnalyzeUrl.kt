@@ -13,8 +13,6 @@ import com.script.rhino.RhinoScriptEngine
 import com.script.rhino.runScriptWithContext
 import io.legado.app.constant.AppConst.UA_NAME
 import io.legado.app.constant.AppPattern
-import io.legado.app.constant.AppPattern.JS_PATTERN
-import io.legado.app.constant.AppPattern.dataUriRegex
 import io.legado.app.data.entities.BaseSource
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
@@ -55,6 +53,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
+import okhttp3.Dns
 import java.io.ByteArrayInputStream
 import java.io.InputStream
 import java.net.URLEncoder
@@ -151,7 +150,7 @@ class AnalyzeUrl(
      */
     private fun analyzeJs() {
         var start = 0
-        val jsMatcher = JS_PATTERN.matcher(ruleUrl)
+        val jsMatcher = AppPattern.JS_PATTERN.matcher(ruleUrl)
         var result = ruleUrl
         while (jsMatcher.find()) {
             if (jsMatcher.start() > start) {
@@ -341,6 +340,7 @@ class AnalyzeUrl(
         }
     }
 
+
     /**
      * 执行JS
      */
@@ -468,6 +468,52 @@ class AnalyzeUrl(
         }
     }
 
+    /**
+     * 测试网址连接,返回带响应时间的StrResponse
+     * 只有get请求,用来测试网站可用性
+     */
+    suspend fun getStrResponseAwait2(): StrResponse {
+        if (type != null) {
+            return StrResponse(url, HexUtil.encodeHexStr(getByteArrayAwait()))
+        }
+        concurrentRateLimiter.withLimit {
+            setCookie()
+            val startTime = System.currentTimeMillis()
+            return try {
+                val strResponse: StrResponse = getClient().newCallStrResponse(retry) {
+                    addHeaders(headerMap)
+                    get(urlNoQuery, encodedQuery)
+                }.let {
+                    val connectionTime = System.currentTimeMillis() - startTime
+                    it.putCallTime(connectionTime.toInt())
+                    val isXml = it.raw.body.contentType()?.toString()
+                        ?.matches(AppPattern.xmlContentTypeRegex) == true
+                    if (isXml && it.body?.trim()?.startsWith("<?xml", true) == false) {
+                        StrResponse(it.raw, "<?xml version=\"1.0\"?>" + it.body)
+                    } else it
+                }
+                strResponse
+            } catch (e: Exception) {
+                val errorCode = when (e) {
+                    is java.net.SocketTimeoutException -> -2  // 超时错误
+                    is java.net.UnknownHostException -> -3   // 未找到域名
+                    is java.net.ConnectException -> -4       // 连接被拒绝
+                    is java.net.SocketException -> -5        // Socket错误（包括连接重置）
+                    is javax.net.ssl.SSLException -> -6      // SSL证书或握手错误
+                    is java.io.InterruptedIOException -> {
+                        if (e.message?.contains("timeout") == true) {
+                            -1  // 超过设定时间
+                        } else -7
+                    }
+                    else -> -7  // 其它错误
+                }
+                return StrResponse(url, e.message).apply {
+                    putCallTime(errorCode)
+                }
+            }
+        }
+    }
+
     @JvmOverloads
     fun getStrResponse(
         jsStr: String? = null,
@@ -511,7 +557,10 @@ class AnalyzeUrl(
 
     private fun getClient(): OkHttpClient {
         val client = getProxyClient(proxy)
-        if (readTimeout == null && callTimeout == null) {
+        val host = extractHostFromUrl(urlNoQuery)
+        if (host.isNullOrEmpty()) return client
+        val hasDns = AppConfig.addressCache[host] != null
+        if (readTimeout == null && callTimeout == null && !hasDns) {
             return client
         }
         return client.newBuilder().run {
@@ -522,9 +571,20 @@ class AnalyzeUrl(
             if (callTimeout != null) {
                 callTimeout(callTimeout, TimeUnit.MILLISECONDS)
             }
+            if (hasDns) {
+                dns { hostname ->
+                    val cachedAddress = AppConfig.addressCache[hostname]
+                    cachedAddress ?: Dns.SYSTEM.lookup(hostname)
+                }
+            }
             build()
         }
     }
+
+    private fun extractHostFromUrl(url: String): String? {
+        return AppPattern.domainRegex.find(url)?.groupValues?.getOrNull(1)
+    }
+
 
     fun getResponse(): Response {
         return runBlocking(coroutineContext) {
@@ -536,7 +596,7 @@ class AnalyzeUrl(
         if (!urlNoQuery.startsWith("data:")) {
             return null
         }
-        val dataUriFindResult = dataUriRegex.find(urlNoQuery)
+        val dataUriFindResult = AppPattern.dataUriRegex.find(urlNoQuery)
         if (dataUriFindResult != null) {
             val dataUriBase64 = dataUriFindResult.groupValues[1]
             val byteArray = Base64.decode(dataUriBase64, Base64.DEFAULT)
@@ -666,6 +726,7 @@ class AnalyzeUrl(
         private val pagePattern = Pattern.compile("<(.*?)>")
         private val queryEncoder =
             RFC3986.UNRESERVED.orNew(PercentCodec.of("!$%&()*+,/:;=?@[\\]^`{|}"))
+        private val isCronet: Boolean by lazy {AppConfig.isCronet}
 
         fun AnalyzeUrl.getMediaItem(): MediaItem {
             setCookie()
@@ -831,13 +892,17 @@ class AnalyzeUrl(
 
     data class ConcurrentRecord(
         /**
-         * 是否按频率
-         */
-        val isConcurrent: Boolean,
-        /**
          * 开始访问时间
          */
         var time: Long,
+        /**
+         * 限制次数
+         */
+        var accessLimit : Int,
+        /**
+         * 间隔时间
+         */
+        var interval : Int,
         /**
          * 正在访问的个数
          */

@@ -3,6 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/menu_custom_btn"
+        android:icon="@drawable/ic_custom"
+        android:title="@string/custom_button"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/menu_edit"
         android:icon="@drawable/ic_edit"
         android:title="@string/edit"

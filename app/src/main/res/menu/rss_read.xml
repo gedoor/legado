@@ -35,4 +35,19 @@
         android:title="@string/open_in_browser"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/menu_read_record"
+        android:title="@string/read_record"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_edit_source"
+        android:title="@string/edit_source"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_log"
+        android:title="@string/log"
+        app:showAsAction="never" />
+
 </menu>

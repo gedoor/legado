@@ -68,6 +68,11 @@
             android:key="userAgent"
             android:title="@string/user_agent" />
 
+        <io.legado.app.lib.prefs.Preference
+            android:key="customHosts"
+            android:summary="@string/custom_hosts_summary"
+            android:title="@string/custom_hosts" />
+
         <io.legado.app.lib.prefs.SwitchPreference
             android:defaultValue="false"
             android:key="webServiceWakeLock"

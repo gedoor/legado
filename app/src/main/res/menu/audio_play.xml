@@ -5,6 +5,13 @@
     tools:ignore="AlwaysShowAction">
 
     <item
+        android:id="@+id/menu_custom_btn"
+        android:icon="@drawable/ic_custom"
+        android:title="@string/custom_button"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/menu_change_source"
         android:icon="@drawable/ic_exchange"
         android:title="@string/change_origin"
@@ -31,6 +38,10 @@
         android:checkable="true"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/menu_skip_credits"
+        android:title="@string/skip_book_credits"
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_log"

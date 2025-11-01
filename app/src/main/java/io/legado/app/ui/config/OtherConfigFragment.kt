@@ -30,6 +30,7 @@ import io.legado.app.ui.file.HandleFileContract
 import io.legado.app.ui.widget.number.NumberPickerDialog
 import io.legado.app.utils.LogUtils
 import io.legado.app.utils.getPrefBoolean
+import io.legado.app.utils.isJsonObject
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.putPrefBoolean
 import io.legado.app.utils.putPrefString
@@ -88,6 +89,7 @@ class OtherConfigFragment : PreferenceFragment(),
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
         when (preference.key) {
             PreferKey.userAgent -> showUserAgentDialog()
+            PreferKey.customHosts -> showCustomHostsDialog()
             PreferKey.defaultBookTreeUri -> localBookTreeSelect.launch {
                 title = getString(R.string.select_book_folder)
                 mode = HandleFileContract.DIR_SYS
@@ -264,6 +266,26 @@ class OtherConfigFragment : PreferenceFragment(),
                     removePref(PreferKey.userAgent)
                 } else {
                     putPrefString(PreferKey.userAgent, userAgent)
+                }
+            }
+            cancelButton()
+        }
+    }
+
+    @SuppressLint("InflateParams")
+    private fun showCustomHostsDialog() {
+        alert(getString(R.string.custom_hosts)) {
+            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                editView.hint = getString(R.string.custom_hosts)
+                editView.setText(AppConfig.customHosts)
+            }
+            customView { alertBinding.root }
+            okButton {
+                val customHosts = alertBinding.editView.text?.toString()
+                if (customHosts.isJsonObject()) {
+                    putPrefString(PreferKey.customHosts, customHosts!!)
+                } else {
+                    removePref(PreferKey.customHosts)
                 }
             }
             cancelButton()

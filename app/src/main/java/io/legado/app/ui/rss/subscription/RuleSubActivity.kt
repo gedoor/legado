@@ -1,6 +1,9 @@
 package io.legado.app.ui.rss.subscription
 
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
 import androidx.core.view.isGone
@@ -91,12 +94,46 @@ class RuleSubActivity : BaseActivity<ActivityRuleSubBinding>(),
         }
     }
 
+    @SuppressLint("SetTextI18n")
     override fun editSubscription(ruleSub: RuleSub) {
         alert(R.string.rule_subscription) {
             val alertBinding = DialogRuleSubEditBinding.inflate(layoutInflater).apply {
                 spType.setSelection(ruleSub.type)
                 etName.setText(ruleSub.name)
                 etUrl.setText(ruleSub.url)
+                autoUpdate.isChecked = ruleSub.autoUpdate
+                silentUpdate.isChecked = ruleSub.silentUpdate
+                etUpdateInterval.setText(ruleSub.updateInterval.toString())
+                etUpdateInterval.isEnabled = ruleSub.autoUpdate
+                if (ruleSub.updateInterval > 0) {
+                    silentUpdate.isEnabled = true
+                }
+                autoUpdate.setOnCheckedChangeListener { _, isChecked ->
+                    if (isChecked && ruleSub.updateInterval == 0){
+                        etUpdateInterval.setText("24")
+                    }
+                    else if (!isChecked) {
+                        etUpdateInterval.setText("0")
+                    }
+                    etUpdateInterval.isEnabled = isChecked
+                    silentUpdate.isEnabled = isChecked
+                }
+                etUpdateInterval.addTextChangedListener(object : TextWatcher {
+                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                    }
+                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    }
+                    override fun afterTextChanged(s: Editable?) {
+                        if (s.toString().toIntOrNull() == 0) {
+                            silentUpdate.isChecked = false
+                            autoUpdate.isChecked = false
+                            silentUpdate.isEnabled = false
+                        }
+                        else {
+                            silentUpdate.isEnabled = true
+                        }
+                    }
+                })
             }
             customView { alertBinding.root }
             okButton {
@@ -104,6 +141,18 @@ class RuleSubActivity : BaseActivity<ActivityRuleSubBinding>(),
                     ruleSub.type = alertBinding.spType.selectedItemPosition
                     ruleSub.name = alertBinding.etName.text?.toString() ?: ""
                     ruleSub.url = alertBinding.etUrl.text?.toString() ?: ""
+                    ruleSub.autoUpdate = alertBinding.autoUpdate.isChecked
+                    ruleSub.silentUpdate = alertBinding.silentUpdate.isChecked
+                    val intervalText = alertBinding.etUpdateInterval.text?.toString()
+                    ruleSub.updateInterval = if (intervalText.isNullOrEmpty()) {
+                        0
+                    } else {
+                        intervalText.toIntOrNull() ?: 0
+                    }
+                    if (ruleSub.url.isBlank()) {
+                        toastOnUi(getString(R.string.null_url))
+                        return@launch
+                    }
                     val rs = withContext(IO) {
                         appDb.ruleSubDao.findByUrl(ruleSub.url)
                     }

@@ -3,6 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:ignore="AlwaysShowAction">
+    <item
+        android:id="@+id/menu_fullscreen_edit"
+        android:icon="@drawable/ic_code"
+        android:title="@string/edit_content"
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/menu_save"

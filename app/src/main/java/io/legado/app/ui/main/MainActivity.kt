@@ -35,6 +35,9 @@ import io.legado.app.lib.theme.elevation
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.about.CrashLogsDialog
+import io.legado.app.ui.association.ImportBookSourceDialog
+import io.legado.app.ui.association.ImportReplaceRuleDialog
+import io.legado.app.ui.association.ImportRssSourceDialog
 import io.legado.app.ui.main.bookshelf.BaseBookshelfFragment
 import io.legado.app.ui.main.bookshelf.style1.BookshelfFragment1
 import io.legado.app.ui.main.bookshelf.style2.BookshelfFragment2
@@ -64,7 +67,8 @@ import kotlin.coroutines.suspendCoroutine
  */
 class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
     BottomNavigationView.OnNavigationItemSelectedListener,
-    BottomNavigationView.OnNavigationItemReselectedListener {
+    BottomNavigationView.OnNavigationItemReselectedListener,
+    MainViewModel.CallBack {
 
     override val binding by viewBinding(ActivityMainBinding::inflate)
     override val viewModel by viewModels<MainViewModel>()
@@ -141,10 +145,16 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
             notifyAppCrash()
             //备份同步
             backupSync()
+            //设置回调
+            viewModel.setActivityCallback(this@MainActivity)
+            //自动更新书源
+            binding.viewPagerMain.postDelayed(1000) {
+                viewModel.ruleSubsUp()
+            }
             //自动更新书籍
             val isAutoRefreshedBook = savedInstanceState?.getBoolean("isAutoRefreshedBook") ?: false
             if (AppConfig.autoRefreshBook && !isAutoRefreshedBook) {
-                binding.viewPagerMain.postDelayed(1000) {
+                binding.viewPagerMain.postDelayed(2000) {
                     viewModel.upAllBookToc()
                 }
             }
@@ -466,6 +476,20 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
             return fragment
         }
 
+    }
+
+    override fun openImportUi(type:Int, source: String) {
+        when (type) {
+            0 -> showDialogFragment(
+                ImportBookSourceDialog(source)
+            )
+            1 -> showDialogFragment(
+                ImportRssSourceDialog(source)
+            )
+            2 -> showDialogFragment(
+                ImportReplaceRuleDialog(source)
+            )
+        }
     }
 
 }

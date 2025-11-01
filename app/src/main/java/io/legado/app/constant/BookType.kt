@@ -4,10 +4,15 @@ import androidx.annotation.IntDef
 
 /**
  * 以二进制位来区分,可能一本书籍包含多个类型,每一位代表一个类型,数值为2的n次方
- * 以二进制位来区分,数据库查询更高效, 数值>=8和老版本类型区分开
+ * 以二进制位来区分,数据库查询更高效, 数值>=8和老版本类型区分开 ? 补充数字4为视频,现在应该不再需要考虑老版本
  */
 @Suppress("ConstPropertyName")
 object BookType {
+    /**
+     * 4 视频
+     */
+    const val video = 0b100
+
     /**
      * 8 文本
      */
@@ -50,15 +55,15 @@ object BookType {
 
     @Target(AnnotationTarget.VALUE_PARAMETER)
     @Retention(AnnotationRetention.SOURCE)
-    @IntDef(text, updateError, audio, image, webFile, local, archive, notShelf)
+    @IntDef(video, text, updateError, audio, image, webFile, local, archive, notShelf)
     annotation class Type
 
     /**
      * 所有可以从书源转换的书籍类型
      */
-    const val allBookType = text or image or audio or webFile
+    const val allBookType = video or text or image or audio or webFile
 
-    const val allBookTypeLocal = text or image or audio or webFile or local
+    const val allBookTypeLocal = video or text or image or audio or webFile or local
 
     /**
      * 本地书籍书源标志
