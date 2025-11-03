@@ -18,7 +18,6 @@ import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.startActivity
 import kotlinx.coroutines.launch
 import org.json.JSONObject
-import org.mozilla.javascript.NativeObject
 
 class SourceLoginJsExtensions(
     private val activity: AppCompatActivity, private val source: BaseSource?,
