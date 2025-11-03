@@ -65,6 +65,7 @@ name为"sort"打开分类界面、为"rss"打开正文界面
 > 只在登录界面按钮被触发时或按钮的回调事件中有效  
 ```js
 java.copyText(text: String) //复制文本到剪贴板
+java.upLoginData(data: Map<String, String>) //更新界面信息，参数是对象，例如{"telephone":"123"}
 ```
 * 打开书源发现界面
 ```js

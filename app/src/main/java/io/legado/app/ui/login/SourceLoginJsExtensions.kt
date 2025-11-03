@@ -18,8 +18,21 @@ import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.startActivity
 import kotlinx.coroutines.launch
 import org.json.JSONObject
+import org.mozilla.javascript.NativeObject
 
-class SourceLoginJsExtensions(private val activity: AppCompatActivity, private val source: BaseSource?) : JsExtensions {
+class SourceLoginJsExtensions(
+    private val activity: AppCompatActivity, private val source: BaseSource?,
+    private val callback: Callback? = null
+) : JsExtensions {
+
+    interface Callback {
+        fun upUiData(data: Map<String, String>)
+    }
+
+    fun upLoginData(data: Map<String, String>) {
+        callback?.upUiData(data)
+    }
+
     override fun getSource(): BaseSource? {
         return source
     }
@@ -30,7 +43,7 @@ class SourceLoginJsExtensions(private val activity: AppCompatActivity, private v
     }
 
     fun get(key: String): String {
-        return source?.get(key)  ?: ""
+        return source?.get(key) ?: ""
     }
 
     fun searchBook(key: String) {
@@ -50,10 +63,11 @@ class SourceLoginJsExtensions(private val activity: AppCompatActivity, private v
     }
 
     fun open(name: String, url: String) {
-        return open(name,url,null)
+        return open(name, url, null)
     }
+
     fun open(name: String, url: String, title: String?) {
-        activity.lifecycleScope.launch{
+        activity.lifecycleScope.launch {
             val source = getSource() ?: return@launch
             when (source) {
                 is RssSource -> {
@@ -64,6 +78,7 @@ class SourceLoginJsExtensions(private val activity: AppCompatActivity, private v
                             } ?: url
                             RssSortActivity.start(activity, sortUrl, source.sourceUrl)
                         }
+
                         "rss" -> {
                             val title = title ?: source.sourceName
                             val origin = source.sourceUrl
@@ -71,17 +86,20 @@ class SourceLoginJsExtensions(private val activity: AppCompatActivity, private v
                                 record = url,
                                 title = title,
                                 origin = origin,
-                                readTime = System.currentTimeMillis())
+                                readTime = System.currentTimeMillis()
+                            )
                             appDb.rssReadRecordDao.insertRecord(rssReadRecord)
                             ReadRssActivity.start(activity, title, url, origin)
                         }
                     }
                 }
+
                 is BookSource -> {
                     when (name) {
                         "search" -> {
                             title?.let { searchBook(it, "::$url") }
                         }
+
                         "explore" -> {
                             activity.startActivity<ExploreShowActivity> {
                                 putExtra("exploreName", title)
