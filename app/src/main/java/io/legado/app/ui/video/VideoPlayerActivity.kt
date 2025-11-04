@@ -105,7 +105,9 @@ class VideoPlayerActivity : VMBaseActivity<ActivityVideoPlayerBinding, VideoPlay
     @OptIn(UnstableApi::class)
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         isNew = intent.getBooleanExtra("isNew", true)
-        VideoPlay.videoUrl = intent.getStringExtra("videoUrl")
+        intent.getStringExtra("videoUrl")?.apply {
+            VideoPlay.videoUrl = this
+        }
         VideoPlay.videoTitle = intent.getStringExtra("videoTitle")
         val sourceKey = intent.getStringExtra("sourceKey")
         val sourceType = intent.getIntExtra("sourceType", 0)
@@ -382,7 +384,7 @@ class VideoPlayerActivity : VMBaseActivity<ActivityVideoPlayerBinding, VideoPlay
                 }
             }
 
-            R.id.menu_copy_video_url -> VideoPlay.videoUrl?.let { sendToClip(it) }
+            R.id.menu_copy_video_url -> (VideoPlay.videoUrl ?: VideoPlay.chapterContent)?.let { sendToClip(it) }
             R.id.menu_edit_source -> VideoPlay.source?.let {s  ->
                 when (s) {
                     is BookSource -> bookSourceEditResult.launch {
