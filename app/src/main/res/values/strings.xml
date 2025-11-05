@@ -1228,4 +1228,19 @@
     <string name="disable_horizontal_animation">禁用水平滚动动画</string>
     <string name="enable_manga_gray">开启图片灰色</string>
     <string name="play_mode">播放模式</string>
+
+    <!-- New: New Discovery Interface Related Strings -->
+    <string name="source_type_novel">Novel</string>
+    <string name="source_type_audio">Audio</string>
+    <string name="source_type_manga">Manga</string>
+    <string name="source_type_file">File</string>
+    <string name="current_source">Current Source</string>
+    <string name="switch_source">Switch Source</string>
+    <string name="all_categories">All</string>
+    <string name="loading_categories">Loading...</string>
+    <string name="select_source">Select Source</string>
+    <string name="select_source_hint">Please select a source to switch to</string>
+    <string name="no_available_sources">No available sources for current type</string>
+    <string name="delete_source_confirm">Delete Source</string>
+    <string name="delete_source_message">Are you sure you want to delete source "%s"?</string>
 </resources>

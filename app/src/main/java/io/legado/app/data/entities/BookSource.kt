@@ -221,11 +221,28 @@ data class BookSource(
     }
 
     fun getDisplayVariableComment(otherComment: String): String {
-        return if (variableComment.isNullOrBlank()) {
+        return if (bookSourceComment.isNullOrBlank()) {
             otherComment
         } else {
-            "${variableComment}\n$otherComment"
+            "$bookSourceComment\n\n$otherComment"
         }
+    }
+
+    // 新增：转换为BookSourcePart
+    fun toBookSourcePart(): BookSourcePart {
+        return BookSourcePart(
+            bookSourceUrl = bookSourceUrl,
+            bookSourceName = bookSourceName,
+            bookSourceGroup = bookSourceGroup,
+            customOrder = customOrder,
+            enabled = enabled,
+            enabledExplore = enabledExplore,
+            hasLoginUrl = !loginUrl.isNullOrBlank(),
+            lastUpdateTime = lastUpdateTime,
+            respondTime = respondTime,
+            weight = weight,
+            hasExploreUrl = !exploreUrl.isNullOrBlank()
+        )
     }
 
     fun equal(source: BookSource): Boolean {

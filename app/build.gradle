@@ -239,7 +239,9 @@ dependencies {
     //Glide
     implementation(libs.glide.glide)
     implementation(libs.glide.okhttp)
-    ksp(libs.glide.ksp)
+    // 暂时禁用KSP，使用传统注解处理器避免兼容性问题
+    // ksp(libs.glide.ksp)
+    annotationProcessor(libs.glide.compiler)
 
     //Svg
     implementation(libs.androidsvg)
