@@ -102,15 +102,13 @@ class AudioPlayActivity :
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.titleBar.setBackgroundResource(R.color.transparent)
         AudioPlay.register(this)
-        viewModel.titleData.observe(this) {
-            binding.titleBar.title = it
+        viewModel.titleData.observe(this) { name ->
+            binding.titleBar.title = name
+            val lyric = AudioPlay.durChapter?.getVariable("lyric")?.takeIf { it.isNotBlank() }
+            upLyric(lyric ?: AudioPlay.durLyric)
         }
         viewModel.coverData.observe(this) {
             upCover(it)
-        }
-        viewModel.bookUrl.observe(this) {
-            val targetChapter = appDb.bookChapterDao.getChapter(it, AudioPlay.durChapterIndex)
-            upLyric(it, targetChapter?.getVariable("lyric") ?: AudioPlay.durLyric)
         }
         viewModel.customBtnListData.observe(this) { menuCustomBtn?.isVisible = it }
         viewModel.initData(intent)
@@ -236,17 +234,17 @@ class AudioPlayActivity :
         }.into(binding.ivCover)
     }
 
-    override fun upLyric(bookUrl: String, lyric: String?) {
-        if(lyric.isNullOrBlank()) return
+    override fun upLyric(lyric: String?) {
+        if(lyric.isNullOrBlank()) {
+            binding.lyricViewX.visibility = View.GONE
+            return
+        }
+        binding.lyricViewX.visibility = View.VISIBLE
+        lyricViewX.loadLyric(lyric)
         if (lyricOn) {
-            lyricViewX.loadLyric(lyric)
-            appDb.bookDao.getBook(bookUrl)?.let {
-                upLyricP(it.durChapterPos)
-            }
+            upLyricP(AudioPlay.durChapterPos)
         } else {
             lyricOn = true
-            binding.lyricViewX.visibility = View.VISIBLE
-            lyricViewX.loadLyric(lyric)
             lyricViewX.apply {
                 setNormalTextSize(50F)
                 setCurrentTextSize(60F)
@@ -260,9 +258,7 @@ class AudioPlayActivity :
                 })
             }
             lyricViewX.postDelayed({
-                appDb.bookDao.getBook(bookUrl)?.let {
-                    upLyricP(it.durChapterPos)
-                }
+                upLyricP(AudioPlay.durChapterPos)
             }, 100)
         }
     }
@@ -272,14 +268,16 @@ class AudioPlayActivity :
 
     private fun playButton(noLyr: Boolean = true) {
         val status = AudioPlay.status
-        if (status == Status.PLAY && noLyr) {
-            AudioPlay.pause(this)
-        }
-        else if(status == Status.PAUSE){
-            AudioPlay.resume(this)
-        }
-        else {
-            AudioPlay.loadOrUpPlayUrl()
+        when (status) {
+            Status.PLAY if noLyr -> {
+                AudioPlay.pause(this)
+            }
+            Status.PAUSE -> {
+                AudioPlay.resume(this)
+            }
+            else -> {
+                AudioPlay.loadOrUpPlayUrl()
+            }
         }
     }
 
