@@ -30,10 +30,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
 import java.util.LinkedList
-import kotlin.coroutines.coroutineContext
 import kotlin.math.roundToInt
 import android.util.Size
 import io.legado.app.constant.AppPattern.noWordCountRegex
@@ -118,6 +118,8 @@ class TextChapterLayout(
         }.onError {
             exception = it
             onException(it)
+        }.onCancel {
+            channel.cancel()
         }.onFinally {
             isCompleted = true
         }
@@ -394,7 +396,7 @@ class TextChapterLayout(
             textPage.height += endPadding
         }
         textPage.text = stringBuilder.toString()
-        coroutineContext.ensureActive()
+        currentCoroutineContext().ensureActive()
         onPageCompleted()
         onCompleted()
     }
@@ -858,7 +860,7 @@ class TextChapterLayout(
                     textPage.leftLineSize = textPage.lineSize
                 }
                 textPage.text = stringBuilder.toString()
-                coroutineContext.ensureActive()
+                currentCoroutineContext().ensureActive()
                 onPageCompleted()
                 //新建页面
                 pendingTextPage = TextPage()
