@@ -1,0 +1,56 @@
+name: Sync Upstream (gedoor/legado)
+
+on:
+  schedule:
+    # 每 12 小时运行一次（UTC 00:00 和 12:00）
+    - cron: '0 */12 * * *'
+  workflow_dispatch: {}  # 支持手动触发
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set Git identity
+        run: |
+          git config --global user.name "mgz0227"
+          git config --global user.email "miaogongzi0227@gmail.com"
+
+      - name: Add or update upstream
+        run: |
+          if git remote | grep -q '^upstream$'; then
+            git remote set-url upstream https://github.com/gedoor/legado.git
+          else
+            git remote add upstream https://github.com/gedoor/legado.git
+          fi
+          git fetch upstream
+
+      - name: Check for upstream updates
+        id: check
+        run: |
+          git fetch upstream master
+          LOCAL=$(git rev-parse master)
+          REMOTE=$(git rev-parse upstream/master)
+          if [ "$LOCAL" = "$REMOTE" ]; then
+            echo "up_to_date=true" >> $GITHUB_OUTPUT
+            echo "✅ Already up to date."
+          else
+            echo "up_to_date=false" >> $GITHUB_OUTPUT
+            echo "🔄 Upstream has new commits."
+          fi
+
+      - name: Merge upstream changes
+        if: steps.check.outputs.up_to_date == 'false'
+        run: |
+          git checkout master
+          git merge --no-edit upstream/master || true
+
+      - name: Push to origin
+        if: steps.check.outputs.up_to_date == 'false'
+        run: |
+          git push "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" master

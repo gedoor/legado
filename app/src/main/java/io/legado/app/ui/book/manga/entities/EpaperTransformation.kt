@@ -19,7 +19,7 @@ import java.security.MessageDigest
  *                  仅当applyBinarization为true时有效。
  */
 class EpaperTransformation(
-    @IntRange(0, 255) private val threshold: Int = 128,
+    @param:IntRange(0, 255) private val threshold: Int = 128,
 ) : BitmapTransformation() {
 
     private val ID =
