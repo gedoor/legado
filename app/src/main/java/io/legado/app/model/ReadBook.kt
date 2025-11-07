@@ -34,8 +34,11 @@ import io.legado.app.ui.book.source.SourceCallBack
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.stackTraceStr
 import io.legado.app.utils.toastOnUi
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.SupervisorJob
@@ -45,7 +48,9 @@ import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
 import kotlin.math.max
@@ -66,6 +71,12 @@ object ReadBook : CoroutineScope by MainScope() {
     var prevTextChapter: TextChapter? = null
     var curTextChapter: TextChapter? = null
     var nextTextChapter: TextChapter? = null
+    var prevChapterLoadingJob: Coroutine<*>? = null
+    var curChapterLoadingJob: Coroutine<*>? = null
+    var nextChapterLoadingJob: Coroutine<*>? = null
+    var prevChapterLoadingLock = Mutex()
+    var curChapterLoadingLock = Mutex()
+    var nextChapterLoadingLock = Mutex()
     var bookSource: BookSource? = null
     var msg: String? = null
     private val loadingChapters = arrayListOf<Int>()
@@ -674,6 +685,7 @@ object ReadBook : CoroutineScope by MainScope() {
     /**
      * 内容加载完成
      */
+    @Synchronized
     fun contentLoadFinish(
         book: Book,
         chapter: BookChapter,
@@ -687,7 +699,13 @@ object ReadBook : CoroutineScope by MainScope() {
         if (canceled || chapter.index !in durChapterIndex - 1..durChapterIndex + 1) {
             return
         }
-        Coroutine.async {
+        val offset = chapter.index - durChapterIndex
+        when (offset) {
+            0 -> curChapterLoadingJob?.cancel()
+            -1 -> prevChapterLoadingJob?.cancel()
+            1 -> nextChapterLoadingJob?.cancel()
+        }
+        val job = Coroutine.async(this, start = CoroutineStart.LAZY) {
             val contentProcessor = ContentProcessor.get(book.name, book.origin)
             val displayTitle = chapter.getDisplayTitle(
                 contentProcessor.getTitleReplaceRules(),
@@ -695,13 +713,15 @@ object ReadBook : CoroutineScope by MainScope() {
             )
             val contents = contentProcessor
                 .getContent(book, chapter, content, includeTitle = false)
+            ensureActive()
             val textChapter = ChapterProvider.getTextChapterAsync(
-                this@ReadBook, book, chapter, displayTitle, contents, simulatedChapterSize
+                this, book, chapter, displayTitle, contents, simulatedChapterSize
             )
-            when (val offset = chapter.index - durChapterIndex) {
-                0 -> {
-                    curTextChapter?.cancelLayout()
-                    curTextChapter = textChapter
+            when (offset) {
+                0 -> curChapterLoadingLock.withLock {
+                    withContext(Main) {
+                        curTextChapter = textChapter
+                    }
                     callBack?.upMenuView()
                     var available = false
                     for (page in textChapter.layoutChannel) {
@@ -724,16 +744,18 @@ object ReadBook : CoroutineScope by MainScope() {
                     callBack?.contentLoadFinish()
                 }
 
-                -1 -> {
-                    prevTextChapter?.cancelLayout()
-                    prevTextChapter = textChapter
+                -1 -> prevChapterLoadingLock.withLock {
+                    withContext(Main) {
+                        prevTextChapter = textChapter
+                    }
                     textChapter.layoutChannel.receiveAsFlow().collect()
                     if (upContent) callBack?.upContent(offset, resetPageOffset)
                 }
 
-                1 -> {
-                    nextTextChapter?.cancelLayout()
-                    nextTextChapter = textChapter
+                1 -> nextChapterLoadingLock.withLock {
+                    withContext(Main) {
+                        nextTextChapter = textChapter
+                    }
                     for (page in textChapter.layoutChannel) {
                         if (page.index > 1) {
                             continue
@@ -745,11 +767,20 @@ object ReadBook : CoroutineScope by MainScope() {
 
             return@async
         }.onError {
+            if (it is CancellationException) {
+                return@onError
+            }
             AppLog.put("ChapterProvider ERROR", it)
             appCtx.toastOnUi("ChapterProvider ERROR:\n${it.stackTraceStr}")
         }.onSuccess {
             success?.invoke()
         }
+        when (offset) {
+            0 -> curChapterLoadingJob = job
+            -1 -> prevChapterLoadingJob = job
+            1 -> nextChapterLoadingJob = job
+        }
+        job.start()
     }
 
     suspend fun contentLoadFinishAwait(
@@ -777,7 +808,9 @@ object ReadBook : CoroutineScope by MainScope() {
             when (val offset = chapter.index - durChapterIndex) {
                 0 -> {
                     curTextChapter?.cancelLayout()
-                    curTextChapter = textChapter
+                    withContext(Main) {
+                        curTextChapter = textChapter
+                    }
                     callBack?.upMenuView()
                     var available = false
                     for (page in textChapter.layoutChannel) {
@@ -802,14 +835,18 @@ object ReadBook : CoroutineScope by MainScope() {
 
                 -1 -> {
                     prevTextChapter?.cancelLayout()
-                    prevTextChapter = textChapter
+                    withContext(Main) {
+                        prevTextChapter = textChapter
+                    }
                     textChapter.layoutChannel.receiveAsFlow().collect()
                     if (upContent) callBack?.upContent(offset, resetPageOffset)
                 }
 
                 1 -> {
                     nextTextChapter?.cancelLayout()
-                    nextTextChapter = textChapter
+                    withContext(Main) {
+                        nextTextChapter = textChapter
+                    }
                     for (page in textChapter.layoutChannel) {
                         if (page.index > 1) {
                             continue
@@ -818,9 +855,10 @@ object ReadBook : CoroutineScope by MainScope() {
                     }
                 }
             }
-
-            return
         }.onFailure {
+            if (it is CancellationException) {
+                return@onFailure
+            }
             AppLog.put("ChapterProvider ERROR", it)
             appCtx.toastOnUi("ChapterProvider ERROR:\n${it.stackTraceStr}")
         }
