@@ -45,7 +45,7 @@
 * 调用阅读搜索  
 ```js
 java.searchBook(bookName: String)
-* @searchScope 搜索作用域
+* @param searchScope 搜索作用域
 java.searchBook(key: String, searchScope: String)
 ```
 
@@ -56,21 +56,21 @@ java.addBook(bookUrl: String)
 
 * 打开订阅源界面  
 ```js
+* @param name 为"sort"打开分类界面、为"rss"打开正文界面
 java.open(name: String, url: String)
 java.open(name: String, url: String, title: String)
-name为"sort"打开分类界面、为"rss"打开正文界面
 ```
 
 ### [SourceLoginJsExtensions](https://github.com/Luoyacheng/legado/blob/main/app/src/main/java/io/legado/app/ui/login/SourceLoginJsExtensions.kt)
 > 只在登录界面按钮被触发时或按钮的回调事件中有效  
 ```js
 java.copyText(text: String) //复制文本到剪贴板
-java.upLoginData(data: Map<String, String>) //更新界面信息，参数是对象，例如{"telephone":"123"}
+java.upLoginData(data: Map<String, String>) //更新登录界面信息，参数是对象，例如{"telephone":"123"}
 ```
 * 打开书源发现界面
 ```js
-* @url 发现页链接
-* @title 发现页标题
+* @param url 发现页链接
+* @param title 发现页标题
 java.open("explore", url: String)
 java.open("explore", url: String, title: String)
 ```
