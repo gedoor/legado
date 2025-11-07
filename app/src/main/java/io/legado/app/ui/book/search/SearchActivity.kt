@@ -327,7 +327,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     private fun receiptIntent(intent: Intent? = null) {
         val searchScope = intent?.getStringExtra("searchScope")
         searchScope?.let {
-            viewModel.searchScope.update(searchScope, false)
+            viewModel.searchScope.update(searchScope, postValue = false, save = false)
         }
         val key = intent?.getStringExtra("key")
         if (key.isNullOrBlank()) {

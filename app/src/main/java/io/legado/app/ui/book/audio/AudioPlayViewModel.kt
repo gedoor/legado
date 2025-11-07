@@ -23,7 +23,6 @@ import io.legado.app.utils.toastOnUi
 class AudioPlayViewModel(application: Application) : BaseViewModel(application) {
     val titleData = MutableLiveData<String>()
     val coverData = MutableLiveData<String>()
-    val bookUrl = MutableLiveData<String>()
     val customBtnListData = MutableLiveData<Boolean>()
 
     fun initData(intent: Intent) = AudioPlay.apply {

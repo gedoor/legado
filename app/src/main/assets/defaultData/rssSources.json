@@ -10,24 +10,28 @@
     "sourceUrl": "https://www.yuque.com/legado"
   },
   {
+    "contentBlacklist": ".+abe.ymmiyun.com.+,.+star.xfztgxt.com.+,.+jjpp.lmtjapi.com.+",
     "customOrder": 3,
     "enableJs": true,
     "enabled": true,
+    "header": "@js:\ncache.putMemory('yckdm',String.raw`\njava.toast('地址发布页 yckceo.vip');\nvar surl='https://yckceo.vip', mint=9999;\r\nvar rr=java.ajax(surl);\r\nrr = org.jsoup.Jsoup.parse(rr);\nrr = rr.select(\"#urllist a:not([href='#'])\");\nrr.length<2&&java.longToast('发布页访问异常');\nPackages.java.util.Collections.reverse(rr);\r\nlet aly = new JavaImporter(Packages.org.jsoup.Jsoup, Packages.org.jsoup.Connection);\r\nfor (char of rr) {\r\n\tlet url = char.attr(\"href\");\r\n\turl = 'https://' + String(url).replace(/^.*\\//, '');\r\n\ttry {\r\n\tlet st = Date.now();\r\n\t\twith (aly) {\r\n\t\t\tJsoup.connect(url)\r\n\t\t\t\t.timeout(5000)\r\n\t\t\t\t.ignoreContentType(true)\r\n\t\t\t\t.followRedirects(false)\r\n\t\t\t\t.method(Connection.Method.HEAD)\r\n\t\t\t\t.execute()}\r\n\tlet et = Date.now();\n\turl+=(cache.get('yckwb')||'');\r\n\tlet tm = et-st;\r\n\tif (tm<900) {surl=url; break;}\r\n\tif (tm<mint) {mint=tm;surl=url;}\r\n\t} catch(err) {}\r\n}\ntry {\ncookie.setCookie(surl,source.getLoginHeaderMap().Cookie);\n} catch(e) {cookie.removeCookie(surl);}\nsurl\r\n`);\r\nJSON.stringify({\"User-Agent\":java.getWebViewUA().replaceAll(\"; wv| Version\\/4.0\",'')});",
+    "jsLib": "qiehuanlib=[{首页:\"\"},{阅读:\"/yuedu/index/index.html\"},{书源:\"/yuedu/shuyuan/index.html\"},{书源合集:\"/yuedu/shuyuans/index.html\"},{订阅源:\"/yuedu/rss/index.html\"},{订阅源合集:\"/yuedu/rsss/index.html\"},{其它:\"/yuedu/tools/index.html\"}];",
+    "loginUi": "[\n {\n \"name\": \"📌切换起始页\",\n \"type\": \"button\",\n \"action\": \"qiehuan()\",\n \"style\": {\n \t\"layout_flexGrow\": 0,\n \t\"layout_flexBasisPercent\": -1,\n  \"layout_wrapBefore\": true}\n },\n {\n \"name\": \"📝登录\",\n \"type\": \"button\",\n \"action\": \"denglu()\",\n \"style\": {\n  \"layout_flexGrow\": 0,\n  \"layout_flexBasisPercent\": -1,\n  \"layout_wrapBefore\": false}\n }\n]",
+    "loginUrl": "function login(){}\nfunction qiehuan(){\n\tlet nm = source.get('ycknm');\n\tif(nm==''||nm>6) {nm=0;}\n\tlet qh = qiehuanlib[nm];\n\tlet key = Object.keys(qh)[0];\n\tlet value = qh[key];\n\tcache.put('yckwb',value);\n\tjava.longToast('\\n起始页已设为\\n'+key);\n\tnm++;\n\tsource.put('ycknm',nm);\n}\nfunction denglu(){\n\tlet url=eval(String(cache.getFromMemory('yckdm'))).match(/^http.{4}[^\\/]+/);\n\tif (url) {\n\tjava.startBrowserAwait(url,'登录');\n\tPackages.java.lang.Thread.sleep(50);\n let ck=cookie.getCookie(url)+'';\nif (!ck.includes('token')) java.toast('💔登录失败');\nelse source.putLoginHeader(`{Cookie: \"${ck}\"}`),java.toast('🎉登录成功');\n\t\t} else java.toast('获取网址失败');\n}",
     "singleUrl": true,
-    "sourceGroup": "legado",
-    "sourceIcon": "http://mmbiz.qpic.cn/mmbiz_png/hpfMV8hEuL2eS6vnCxvTzoOiaCAibV6exBzJWq9xMic9xDg3YXAick87tsfafic0icRwkQ5ibV0bJ84JtSuxhPuEDVquA/0?wx_fmt=png",
-    "sourceName": "小说拾遗",
-    "sourceUrl": "snssdk1128://user/profile/562564899806367"
+    "sourceIcon": "https://gitee.com/lyc486/yuedu/raw/master/ycktb.gif",
+    "sourceName": "源仓库",
+    "sourceUrl": "http@js:eval(String(cache.getFromMemory('yckdm')))"
   },
   {
     "customOrder": 4,
     "enableJs": true,
     "enabled": true,
     "singleUrl": true,
-    "sourceGroup": "legado",
-    "sourceIcon": "https://cdn.jsdelivr.net/gh/mgz0227/meowcloud/icon.png",
-    "sourceName": "Meow云",
-    "sourceUrl": "https://pan.miaogongzi.net"
+    "sourceComment": "版本：在线版\n——洛娅橙",
+    "sourceIcon": "https://gitee.com/lyc486/yuedu/raw/master/drtb.gif",
+    "sourceName": "导入",
+    "sourceUrl": "https://loyc.xyz/b/daoru"
   },
   {
     "customOrder": 5,
@@ -35,8 +39,8 @@
     "enabled": true,
     "singleUrl": true,
     "sourceGroup": "legado",
-    "sourceIcon": "https://cdn.jsdelivr.net/gh/gedoor/legado@master/app/src/main/res/mipmap-hdpi/ic_launcher.png",
-    "sourceName": "烏雲净化",
-    "sourceUrl": "https://www.lanzout.com/b0bw8jwoh"
+    "sourceIcon": "https://cdn.jsdelivr.net/gh/mgz0227/meowcloud/icon.png",
+    "sourceName": "Meow云",
+    "sourceUrl": "https://pan.miaogongzi.net"
   }
 ]

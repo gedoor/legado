@@ -32,7 +32,8 @@ import java.io.File
 
 object VideoPlay : CoroutineScope by MainScope(){
     val videoManager by lazy { ExoVideoManager() }
-    var videoUrl: String? = null
+    var videoUrl: String? = null //直接的播放链接
+    var chapterContent: String? = null //章节内容->播放链接
     var videoTitle: String? = null
     var source: BaseSource? = null
     var book: Book? = null
@@ -94,6 +95,7 @@ object VideoPlay : CoroutineScope by MainScope(){
                 if (content.isEmpty()) {
                     appCtx.toastOnUi("未获取到资源链接")
                 } else {
+                    chapterContent = content
                     val analyzeUrl = AnalyzeUrl(
                         content,
                         source = source,
@@ -136,6 +138,14 @@ object VideoPlay : CoroutineScope by MainScope(){
             videoManager.listener().onCompletion()
         }
         videoManager.releaseMediaPlayer()
+        videoUrl = null
+        chapterContent = null
+        source = null
+        book = null
+        toc = null
+        volumes.clear()
+        episodes = null
+        durVolume = null
     }
     /**
      * 暂停播放

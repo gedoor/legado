@@ -155,7 +155,9 @@ class VideoPlayService : BaseService() {
         }
         intent?.let {
             isNew = intent.getBooleanExtra("isNew", true)
-            VideoPlay.videoUrl = intent.getStringExtra("videoUrl")
+            intent.getStringExtra("videoUrl")?.apply {
+                VideoPlay.videoUrl = this
+            }
             VideoPlay.videoTitle = intent.getStringExtra("videoTitle")
             val sourceKey = intent.getStringExtra("sourceKey")
             val sourceType = intent.getIntExtra("sourceType", 0)

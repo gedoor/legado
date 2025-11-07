@@ -74,6 +74,7 @@ class TextFile(private var book: Book) {
     private var txtBuffer: ByteArray? = null
     private var bufferStart = -1L
     private var bufferEnd = -1L
+
     //选中更好的目录规则判断阈值
     private val overRuleCount = 2
     private val toSearchBook = book.toSearchBook()
@@ -152,7 +153,7 @@ class TextFile(private var book: Book) {
     /**
      * 按规则解析目录
      */
-    private fun analyze(rr:List<String>): Pair<ArrayList<BookChapter>, Int> {
+    private fun analyze(rr: List<String>): Pair<ArrayList<BookChapter>, Int> {
         val pattern = rr[0].toPattern(Pattern.MULTILINE)
         val jsStr = rr.getOrNull(1)
         if (rr[0].isEmpty()) {
@@ -202,11 +203,11 @@ class TextFile(private var book: Book) {
                     val chapterStart = matcher.start()
                     //获取章节内容
                     val chapterContent = blockContent.substring(seekPos, chapterStart)
+                    val chapterContentLength = chapterContent.length
                     val chapterLength = chapterContent.toByteArray(charset).size.toLong()
                     val titleLength = matcher.group().toByteArray(charset).size.toLong()
                     val lastStart = toc.lastOrNull()?.start ?: curOffset
                     if (book.getSplitLongChapter() && curOffset + chapterLength - lastStart > maxLengthWithToc) {
-                        val title = replacement(matcher.group(), jsStr, toc.size).takeIf { it.isNotEmpty() } ?: continue
                         //章节字数太多进行拆分
                         val lastTitle = toc.lastOrNull()?.let {
                             it.end = it.start
@@ -214,9 +215,14 @@ class TextFile(private var book: Book) {
                             it.tag = null
                             it.title
                         }
-                        val (chapters, wordCount) = analyze(
-                            lastStart, curOffset + chapterLength
-                        )
+                        val title = replacement(
+                            matcher.group(),
+                            jsStr,
+                            toc.size,
+                            lastTitle,
+                            chapterContentLength
+                        ).takeIf { it.isNotEmpty() } ?: continue
+                        val (chapters, wordCount) = analyze(lastStart, curOffset + chapterLength)
                         lastTitle?.let {
                             chapters.forEachIndexed { index, bookChapter ->
                                 bookChapter.title = "$lastTitle(${index + 1})"
@@ -247,16 +253,20 @@ class TextFile(private var book: Book) {
                                     qyChapter.start = curOffset
                                     qyChapter.end = curOffset + chapterLength
                                     qyChapter.wordCount =
-                                        StringUtils.wordCountFormat(chapterContent.length)
+                                        StringUtils.wordCountFormat(chapterContentLength)
                                     toc.add(qyChapter)
                                 }
-                                book.intro = if (chapterContent.length > 600 && title.isNotEmpty()) {
-                                    chapterContent.substring(0, 600)
+                                book.intro = if (chapterContentLength > 600 && title.isNotEmpty()) {
+                                    chapterContent.take(600)
                                 } else {
                                     chapterContent
                                 }
                             }
-                            val title = replacement(matcher.group(), jsStr, toc.size).takeIf { it.isNotEmpty() } ?: continue
+                            val title = replacement(
+                                matcher.group(),
+                                jsStr,
+                                toc.size
+                            ).takeIf { it.isNotEmpty() } ?: continue
                             //创建当前章节
                             val curChapter = BookChapter()
                             curChapter.title = title
@@ -267,11 +277,18 @@ class TextFile(private var book: Book) {
                             val title = replacement(matcher.group(), jsStr, toc.size).takeIf { it.isNotEmpty() } ?: continue
                             //获取上一章节
                             val lastChapter = toc.last()
+                            val title = replacement(
+                                matcher.group(),
+                                jsStr,
+                                toc.size,
+                                lastChapter.title,
+                                chapterContentLength
+                            ).takeIf { it.isNotEmpty() } ?: continue
                             lastChapter.isVolume =
-                                chapterContent.substringAfter(lastChapter.title).isBlank()
+                                chapterContent.isBlank() //.substringAfter(lastChapter.title)
                             //将当前段落添加上一章去
                             lastChapter.end = lastChapter.end!! + chapterLength
-                            lastChapterWordCount += chapterContent.length
+                            lastChapterWordCount += chapterContentLength
                             lastChapter.wordCount =
                                 StringUtils.wordCountFormat(lastChapterWordCount)
                             //创建当前章节
@@ -281,19 +298,27 @@ class TextFile(private var book: Book) {
                             curChapter.end = curChapter.start
                             toc.add(curChapter)
                         }
-                        bookWordCount += chapterContent.length
+                        bookWordCount += chapterContentLength
                         lastChapterWordCount = 0
                     } else {
                         val title = replacement(matcher.group(), jsStr, toc.size).takeIf { it.isNotEmpty() } ?: continue
                         if (toc.isNotEmpty()) { //获取章节内容
                             //获取上一章节
                             val lastChapter = toc.last()
+                            val title = replacement(
+                                matcher.group(),
+                                jsStr,
+                                toc.size,
+                                lastChapter.title,
+                                chapterContentLength
+                            ).takeIf { it.isNotEmpty() }
+                                ?: continue
                             lastChapter.isVolume =
-                                chapterContent.substringAfter(lastChapter.title).isBlank()
+                                chapterContent.isBlank() //.substringAfter(lastChapter.title)
                             lastChapter.end =
                                 lastChapter.start!! + chapterLength
                             lastChapter.wordCount =
-                                StringUtils.wordCountFormat(chapterContent.length)
+                                StringUtils.wordCountFormat(chapterContentLength)
                             //创建当前章节
                             val curChapter = BookChapter()
                             curChapter.title = title
@@ -301,19 +326,21 @@ class TextFile(private var book: Book) {
                             curChapter.end = curChapter.start
                             toc.add(curChapter)
                         } else { //如果章节不存在则创建章节
+                            val title = replacement(matcher.group(), jsStr, toc.size).takeIf { it.isNotEmpty() }
+                                ?: continue
                             val curChapter = BookChapter()
                             curChapter.title = title
                             curChapter.start = curOffset + titleLength
                             curChapter.end = curChapter.start
                             curChapter.wordCount =
-                                StringUtils.wordCountFormat(chapterContent.length)
+                                StringUtils.wordCountFormat(chapterContentLength)
                             toc.add(curChapter)
                         }
-                        bookWordCount += chapterContent.length
+                        bookWordCount += chapterContentLength
                         lastChapterWordCount = 0
                     }
                     //设置指针偏移
-                    seekPos += chapterContent.length + matcher.group().length
+                    seekPos += chapterContentLength + matcher.group().length
                 }
                 val wordCount = blockContent.length - seekPos
                 bookWordCount += wordCount
@@ -468,10 +495,13 @@ class TextFile(private var book: Book) {
             var start = 0
             var num = 0
             var numE = 0
+            var lastTitle: String? = null
             while (matcher.find()) {
                 val contentLength = matcher.start() - start
                 if (start == 0 || contentLength > 1000) {
-                    if (replacement(matcher.group(), tocRule.replacement, num).isNotEmpty()) {
+                    val title = replacement(matcher.group(), tocRule.replacement, num, lastTitle, contentLength)
+                    if (title.isNotEmpty()) {
+                        lastTitle = title
                         num++
                     }
                     start = matcher.end()
@@ -482,7 +512,9 @@ class TextFile(private var book: Book) {
             if (num > numE && (num > maxNum + overRuleCount)) { //后面的规则匹配数量没超过最大值2个，那么依旧用前面那个
                 maxNum = num
                 mTocRule = tocRule
-                if (maxNum > 70) { break } //能获取60个章节，说明这个规则能基本匹配，并且排在前面，所以不考虑后面的规则
+                if (maxNum > 70) {
+                    break
+                } //能获取60个章节，说明这个规则能基本匹配，并且排在前面，所以不考虑后面的规则
             }
         }
         return mTocRule
@@ -491,7 +523,13 @@ class TextFile(private var book: Book) {
     /**
      * 净化标题
      */
-    private fun replacement(content: String,jsStr: String?, index: Int): String {
+    private fun replacement(
+        content: String,
+        jsStr: String?,
+        index: Int,
+        prevTitle: String? = null,
+        prevLength: Int = -1
+    ): String {
         if (jsStr.isNullOrBlank()) {
             return content
         }
@@ -500,6 +538,8 @@ class TextFile(private var book: Book) {
             bindings["result"] = content
             bindings["book"] = toSearchBook
             bindings["index"] = index + 1
+            bindings["prevTitle"] = prevTitle
+            bindings["prevLength"] = prevLength
             eval(jsStr, bindings)
         }.toString()
     }

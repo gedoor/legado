@@ -3,7 +3,7 @@ name: Test Build
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - '**'
       # - '!**/assets/**'
@@ -34,6 +34,7 @@ jobs:
       versionL: ${{ steps.set-ver.outputs.versionL }}
       lanzou: ${{ steps.check.outputs.lanzou }}
       telegram: ${{ steps.check.outputs.telegram }}
+      gitee: ${{ steps.check.outputs.gitee }}
     steps:
       - id: set-ver
         run: |
@@ -41,11 +42,14 @@ jobs:
           echo "versionL=$(date -d "8 hour" -u +3.%y.%m%d%H%M)" >> $GITHUB_OUTPUT
       - id: check
         run: |
-          if [ ${{ secrets.LANZOU_ID }} ]; then
+          if [ -n "${{ secrets.LANZOU_ID }}" ]; then
             echo "lanzou=yes" >> $GITHUB_OUTPUT
           fi
-          if [ ${{ secrets.BOT_TOKEN }} ]; then
+          if [ -n "${{ secrets.BOT_TOKEN }}" ]; then
             echo "telegram=yes" >> $GITHUB_OUTPUT
+          fi
+          if [ -n "${{ secrets.GITEE_TOKEN }}" ]; then
+            echo "gitee=yes" >> $GITHUB_OUTPUT
           fi
 
   build:
@@ -62,11 +66,11 @@ jobs:
       VERSION: ${{ needs.prepare.outputs.version }}
       VERSIONL: ${{ needs.prepare.outputs.versionL }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: 17
@@ -84,7 +88,7 @@ jobs:
           sed '$a\RELEASE_KEY_ALIAS=legado'                 $GITHUB_WORKSPACE/gradle.properties -i
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
 
       - name: Build With Gradle
         continue-on-error: true
@@ -121,7 +125,7 @@ jobs:
           done
 
       - name: Upload Missing Rules File To Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: legado.${{ env.product }}.${{ env.type }}.mapping.missing_rules
           if-no-files-found: ignore
@@ -140,14 +144,14 @@ jobs:
           fi
 
       - name: Upload App To Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: legado.${{ env.product }}.${{ env.type }}
           if-no-files-found: ignore
           path: ${{ github.workspace }}/apk/*.apk
 
       - name: Upload Mapping File To Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: legado.${{ env.product }}.${{ env.type }}.mapping
           if-no-files-found: ignore
@@ -160,8 +164,8 @@ jobs:
     env: 
       VERSION: ${{ needs.prepare.outputs.version }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v5
         with:
           path: apk/
 
@@ -215,8 +219,8 @@ jobs:
       #蓝奏云分享链接
       LANZOU_URL: ${{ secrets.LANZOU_URL }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v5
         with:
           path: apk/
       - working-directory: apk/
@@ -233,8 +237,8 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event_name != 'pull_request' && github.actor == 'gedoor' }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v5
         with:
           path: apk/
       - working-directory: apk/
@@ -256,8 +260,8 @@ jobs:
     if: ${{ github.event_name != 'pull_request' && needs.prepare.outputs.telegram == 'yes' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v5
         with:
           path: apk/
       - working-directory: apk/

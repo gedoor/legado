@@ -49,7 +49,7 @@ object SourceCallBack {
                 }
             }
         }.onError {
-            AppLog.put("书源执行回调事件${event}出错\n${it.localizedMessage}", it, true)
+            AppLog.put("${source.bookSourceName}\n书源执行回调事件${event}出错\n${it.localizedMessage}", it, true)
         }
     }
 
@@ -65,7 +65,7 @@ object SourceCallBack {
                 put("chapter", null)
             }
         }.onError {
-            AppLog.put("书源执行回调事件${event}出错\n${it.localizedMessage}", it, true)
+            AppLog.put("${source.bookSourceName}\n书源执行回调事件${event}出错\n${it.localizedMessage}", it, true)
         }
     }
 
@@ -80,7 +80,7 @@ object SourceCallBack {
                 put("chapter", null)
             }
         }.onError {
-            AppLog.put("书源执行回调事件${event}出错\n${it.localizedMessage}", it, true)
+            AppLog.put("${source.bookSourceName}\n书源执行回调事件${event}出错\n${it.localizedMessage}", it, true)
         }
     }
 

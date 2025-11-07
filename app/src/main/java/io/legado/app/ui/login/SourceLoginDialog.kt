@@ -43,7 +43,9 @@ import kotlin.text.lastIndexOf
 import kotlin.text.startsWith
 import kotlin.text.substring
 import android.view.MotionEvent
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import io.legado.app.ui.widget.text.TextInputLayout
 
 
 class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
@@ -53,7 +55,44 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
     private var lastClickTime: Long = 0
     private var oKToClose = false
     private var rowUis: List<RowUi>? = null
-    private val sourceLoginJsExtensions by lazy { SourceLoginJsExtensions(activity as AppCompatActivity, viewModel.source) }
+    private var rowUiName = arrayListOf<String>()
+    private val sourceLoginJsExtensions by lazy {
+        SourceLoginJsExtensions(activity as AppCompatActivity, viewModel.source,
+            object : SourceLoginJsExtensions.Callback {
+                override fun upUiData(data: Map<String, String>) {
+                    activity?.runOnUiThread { // 在主线程中更新 UI
+                        handleUIDataUpdate(data)
+                    }
+                }
+            })
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun handleUIDataUpdate(data: Map<String, String>) {
+        data.forEach { (key, value) ->
+            val index = rowUiName.indexOf(key)
+            if (index != -1) {
+                when (val rowView = binding.root.findViewById<View>(index + 1000)) {
+                    is TextInputLayout -> {
+                        val text = value
+                        rowView.editText?.setText(text)
+                    }
+                    is TextView -> {
+                        val rowUi = rowUis?.get(index) ?: return
+                        when (rowUi.type) {
+                            RowUi.Type.button -> {
+                                rowView.text = value
+                            }
+                            RowUi.Type.toggle -> {
+                                rowUi.default = value
+                                rowView.text = value + rowUi.name
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     override fun onStart() {
         super.onStart()
@@ -85,6 +124,7 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
     private fun buttonUi(source: BaseSource, rowUis: List<RowUi>?) {
         val loginInfo = viewModel.loginInfo
         rowUis?.forEachIndexed { index, rowUi ->
+            rowUiName.add(rowUi.name)
             when (rowUi.type) {
                 RowUi.Type.text -> ItemSourceEditBinding.inflate(
                     layoutInflater,
@@ -158,7 +198,7 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
                     rowUi.style().apply(it.root)
                     it.root.id = index + 1000
                     val chars = rowUi.chars ?: arrayOf("chars is null")
-                    var char = loginInfo[rowUi.name]?.takeIf { it -> it.isNotEmpty() } ?: rowUi.default ?: chars.getOrNull(0) ?: "chars is []"
+                    var char = loginInfo[rowUi.name]?.takeIf { c -> c.isNotEmpty() } ?: rowUi.default ?: chars.getOrNull(0) ?: "chars is []"
                     rowUi.default = char
                     it.textView.text = char + rowUi.name
                     rowUi.viewName?.let { jsStr ->
@@ -326,7 +366,7 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
 
     override fun onDismiss(dialog: DialogInterface) {
         if (!oKToClose) {
-            execute {
+            lifecycleScope.launch(IO) {
                 val loginInfo = viewModel.loginInfo.toMutableMap()
                 rowUis?.forEachIndexed { index, rowUi ->
                     when (rowUi.type) {

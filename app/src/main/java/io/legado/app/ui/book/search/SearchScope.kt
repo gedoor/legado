@@ -31,10 +31,10 @@ data class SearchScope(private var scope: String) {
 
     val stateLiveData = MutableLiveData(scope)
 
-    fun update(scope: String, postValue: Boolean = true) {
+    fun update(scope: String, postValue: Boolean = true, save: Boolean = true) {
         this.scope = scope
         if (postValue) stateLiveData.postValue(scope)
-        if (!isSource()) { //不对单书源的搜索进行缓存，防止下次依旧为单书源搜索（单书源搜索需要每次都指定）
+        if (save) { //不对单书源的搜索进行缓存，防止下次依旧为单书源搜索（单书源搜索需要每次都指定）
             save()
         }
     }

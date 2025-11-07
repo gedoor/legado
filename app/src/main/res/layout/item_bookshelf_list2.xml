@@ -91,11 +91,10 @@
 
     <TextView
         android:id="@+id/tv_author"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:includeFontPadding="false"
         android:maxLines="1"
-        android:paddingEnd="6dp"
         android:scrollbars="none"
         android:singleLine="true"
         android:text="@string/author"
@@ -103,10 +102,30 @@
         android:textSize="13sp"
         app:layout_constraintBottom_toTopOf="@+id/tv_last"
         app:layout_constraintLeft_toRightOf="@+id/iv_author"
-        app:layout_constraintRight_toLeftOf="@+id/tv_read"
+        app:layout_constraintRight_toLeftOf="@+id/isolate"
         app:layout_constraintTop_toBottomOf="@+id/tv_name"
-        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintHorizontal_weight="0"
         tools:ignore="RtlSymmetry,TextContrastCheck" />
+
+
+    <TextView
+        android:id="@+id/isolate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:includeFontPadding="false"
+        android:maxLines="1"
+        android:scrollbars="none"
+        android:singleLine="true"
+        android:text="•"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"
+        android:textColor="@color/tv_text_summary"
+        app:layout_constraintTop_toTopOf="@+id/tv_author"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_author"
+        app:layout_constraintLeft_toRightOf="@+id/tv_author"
+        app:layout_constraintRight_toLeftOf="@id/tv_read"
+        android:textSize="11sp"
+        tools:ignore="HardcodedText" />
 
     <TextView
         android:id="@+id/tv_read"
@@ -119,7 +138,7 @@
         android:textColor="@color/tv_text_summary"
         android:textSize="13sp"
         app:layout_constraintTop_toTopOf="@+id/tv_author"
-        app:layout_constraintLeft_toRightOf="@+id/tv_author"
+        app:layout_constraintLeft_toRightOf="@+id/isolate"
         app:layout_constraintRight_toLeftOf="@id/tv_last_update_time"
         app:layout_constraintBottom_toBottomOf="@+id/tv_author"
         app:layout_constraintHorizontal_weight="1"

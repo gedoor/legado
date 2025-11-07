@@ -163,7 +163,7 @@ object AudioPlay : CoroutineScope by MainScope() {
                     }.onCancel {
                         removeLoading(index)
                     }.onFinally {
-                        callback?.upLyric(book.bookUrl, durLyric)
+                        callback?.upLyric(durLyric)
                         removeLoading(index)
                     }
             } else {
@@ -433,7 +433,7 @@ object AudioPlay : CoroutineScope by MainScope() {
     interface CallBack {
 
         fun upLoading(loading: Boolean)
-        fun upLyric(bookUrl: String,lyric: String?)
+        fun upLyric(lyric: String?)
         fun upLyricP(position: Int)
     }
 
