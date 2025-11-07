@@ -252,7 +252,7 @@ class TextChapterLayout(
         var isSetTypedImage = false
         var wordCount = 0
         contents.forEach { content ->
-            coroutineContext.ensureActive()
+            currentCoroutineContext().ensureActive()
             var text = content.replace(srcReplaceCharC, srcReplaceCharD)
             if (isTextImageStyle) {
                 //图片样式为文字嵌入类型
@@ -289,7 +289,7 @@ class TextChapterLayout(
                 if (content.contains("<img")) {
                     val matcher = AppPattern.imgPattern.matcher(text)
                     while (matcher.find()) {
-                        coroutineContext.ensureActive()
+                        currentCoroutineContext().ensureActive()
                         val imgSrc = matcher.group(1)!!
                         var iStyle = imageStyle
                         var isSmallImage = true
