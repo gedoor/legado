@@ -24,6 +24,7 @@ import io.legado.app.utils.exists
 import io.legado.app.utils.find
 import io.legado.app.utils.inputStream
 import io.legado.app.utils.isUri
+import io.legado.app.utils.normalizeFileName
 import io.legado.app.utils.toastOnUi
 import splitties.init.appCtx
 import java.io.File
@@ -346,7 +347,7 @@ fun Book.getExportFileName(
         RhinoScriptEngine.eval(jsStr, bindings).toString() + "." + suffix
     }.onFailure {
         AppLog.put("导出书名规则错误,使用默认规则\n${it.localizedMessage}", it)
-    }.getOrDefault(default)
+    }.getOrDefault(default).normalizeFileName()
 }
 
 // 根据当前日期计算章节总数

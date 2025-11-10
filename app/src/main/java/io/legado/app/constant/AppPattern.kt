@@ -17,6 +17,7 @@ object AppPattern {
     val nameRegex = Regex("\\s+作\\s*者.*|\\s+\\S+\\s+著")
     val authorRegex = Regex("^\\s*作\\s*者[:：\\s]+|\\s+著")
     val fileNameRegex = Regex("[\\\\/:*?\"<>|.]")
+    val fileNameRegex2 = Regex("[\\\\/:*?\"<>|]")
     val splitGroupRegex = Regex("[,;，；]")
     val titleNumPattern: Pattern = Pattern.compile("(第)(.+?)(章)")
 
