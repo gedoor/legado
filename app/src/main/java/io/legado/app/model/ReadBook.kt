@@ -399,7 +399,7 @@ object ReadBook : CoroutineScope by MainScope() {
         if (durChapterIndex > 0) {
             durChapterPos = if (toLast) prevTextChapter?.lastReadLength ?: Int.MAX_VALUE else 0
             durChapterIndex--
-            nextTextChapter?.cancelLayout()
+            nextChapterLoadingJob?.cancel()
             nextTextChapter = curTextChapter
             curTextChapter = prevTextChapter
             prevTextChapter = null
