@@ -1215,4 +1215,5 @@
     <string name="disable_horizontal_animation">Tắt hoạt ảnh cuộn ngang</string>
     <string name="enable_manga_gray">Bật ảnh xám</string>
     <string name="play_mode">Chế độ phát</string>
+    <string name="sure_cache_book">是否确认开始缓存？</string>
 </resources>

@@ -221,9 +221,9 @@ object ReadBook : CoroutineScope by MainScope() {
     }
 
     fun clearTextChapter() {
-        prevTextChapter?.cancelLayout()
-        curTextChapter?.cancelLayout()
-        nextTextChapter?.cancelLayout()
+        prevChapterLoadingJob?.cancel()
+        curChapterLoadingJob?.cancel()
+        nextChapterLoadingJob?.cancel()
         prevTextChapter = null
         curTextChapter = null
         nextTextChapter = null
@@ -336,7 +336,7 @@ object ReadBook : CoroutineScope by MainScope() {
         if (durChapterIndex < simulatedChapterSize - 1) {
             durChapterPos = 0
             durChapterIndex++
-            prevTextChapter?.cancelLayout()
+            prevChapterLoadingJob?.cancel()
             prevTextChapter = curTextChapter
             curTextChapter = nextTextChapter
             nextTextChapter = null
@@ -367,7 +367,7 @@ object ReadBook : CoroutineScope by MainScope() {
         if (durChapterIndex < simulatedChapterSize - 1) {
             durChapterPos = 0
             durChapterIndex++
-            prevTextChapter?.cancelLayout()
+            prevChapterLoadingJob?.cancel()
             prevTextChapter = curTextChapter
             curTextChapter = nextTextChapter
             nextTextChapter = null
@@ -718,6 +718,7 @@ object ReadBook : CoroutineScope by MainScope() {
             when (offset) {
                 0 -> curChapterLoadingLock.withLock {
                     withContext(Main) {
+                        ensureActive()
                         curTextChapter = textChapter
                     }
                     callBack?.upMenuView()
@@ -744,6 +745,7 @@ object ReadBook : CoroutineScope by MainScope() {
 
                 -1 -> prevChapterLoadingLock.withLock {
                     withContext(Main) {
+                        ensureActive()
                         prevTextChapter = textChapter
                     }
                     textChapter.layoutChannel.receiveAsFlow().collect()
@@ -752,6 +754,7 @@ object ReadBook : CoroutineScope by MainScope() {
 
                 1 -> nextChapterLoadingLock.withLock {
                     withContext(Main) {
+                        ensureActive()
                         nextTextChapter = textChapter
                     }
                     for (page in textChapter.layoutChannel) {
