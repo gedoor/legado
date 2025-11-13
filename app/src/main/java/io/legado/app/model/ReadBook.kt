@@ -447,10 +447,15 @@ object ReadBook : CoroutineScope by MainScope() {
         }
     }
 
-    fun openChapter(index: Int, durChapterPos: Int = 0, success: (() -> Unit)? = null) {
+    fun openChapter(
+        index: Int,
+        durChapterPos: Int = 0,
+        upContent: Boolean = true,
+        success: (() -> Unit)? = null
+    ) {
         if (index < chapterSize) {
             clearTextChapter()
-            callBack?.upContent()
+            if (upContent) callBack?.upContent()
             durChapterIndex = index
             ReadBook.durChapterPos = durChapterPos
             saveRead()

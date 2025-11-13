@@ -675,8 +675,8 @@ class ReadView(context: Context, attrs: AttributeSet) :
         return curPage.getCurVisiblePage()
     }
 
-    fun getCurVisibleFirstLine(): TextLine? {
-        return curPage.getCurVisibleFirstLine()
+    fun getReadAloudPos(): Pair<Int, TextLine>? {
+        return curPage.getReadAloudPos()
     }
 
     fun invalidateTextPage() {

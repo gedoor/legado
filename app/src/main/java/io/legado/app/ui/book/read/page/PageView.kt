@@ -426,8 +426,8 @@ class PageView(context: Context) : FrameLayout(context) {
         return binding.contentTextView.getCurVisiblePage()
     }
 
-    fun getCurVisibleFirstLine(): TextLine? {
-        return binding.contentTextView.getCurVisibleFirstLine()
+    fun getReadAloudPos(): Pair<Int, TextLine>? {
+        return binding.contentTextView.getReadAloudPos()
     }
 
     fun markAsMainView() {
