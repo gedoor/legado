@@ -328,7 +328,7 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun openChapter(index: Int, durChapterPos: Int = 0, success: (() -> Unit)? = null) {
-        ReadBook.openChapter(index, durChapterPos, success)
+        ReadBook.openChapter(index, durChapterPos, success = success)
     }
 
     fun removeFromBookshelf(success: (() -> Unit)?) {

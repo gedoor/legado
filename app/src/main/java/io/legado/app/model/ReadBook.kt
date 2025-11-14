@@ -52,6 +52,7 @@ import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import splitties.init.appCtx
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.max
 import kotlin.math.min
 
@@ -70,16 +71,14 @@ object ReadBook : CoroutineScope by MainScope() {
     var prevTextChapter: TextChapter? = null
     var curTextChapter: TextChapter? = null
     var nextTextChapter: TextChapter? = null
-    var prevChapterLoadingJob: Coroutine<*>? = null
-    var curChapterLoadingJob: Coroutine<*>? = null
-    var nextChapterLoadingJob: Coroutine<*>? = null
-    var prevChapterLoadingLock = Mutex()
-    var curChapterLoadingLock = Mutex()
-    var nextChapterLoadingLock = Mutex()
     var bookSource: BookSource? = null
     var msg: String? = null
     private val loadingChapters = arrayListOf<Int>()
     private val readRecord = ReadRecord()
+    private val chapterLoadingJobs = ConcurrentHashMap<Int, Coroutine<*>>()
+    private val prevChapterLoadingLock = Mutex()
+    private val curChapterLoadingLock = Mutex()
+    private val nextChapterLoadingLock = Mutex()
     var readStartTime: Long = System.currentTimeMillis()
 
     /* 跳转进度前进度记录 */
@@ -221,9 +220,7 @@ object ReadBook : CoroutineScope by MainScope() {
     }
 
     fun clearTextChapter() {
-        prevTextChapter?.cancelLayout()
-        curTextChapter?.cancelLayout()
-        nextTextChapter?.cancelLayout()
+        clearExpiredChapterLoadingJob(true)
         prevTextChapter = null
         curTextChapter = null
         nextTextChapter = null
@@ -336,7 +333,7 @@ object ReadBook : CoroutineScope by MainScope() {
         if (durChapterIndex < simulatedChapterSize - 1) {
             durChapterPos = 0
             durChapterIndex++
-            prevTextChapter?.cancelLayout()
+            clearExpiredChapterLoadingJob()
             prevTextChapter = curTextChapter
             curTextChapter = nextTextChapter
             nextTextChapter = null
@@ -367,7 +364,7 @@ object ReadBook : CoroutineScope by MainScope() {
         if (durChapterIndex < simulatedChapterSize - 1) {
             durChapterPos = 0
             durChapterIndex++
-            prevTextChapter?.cancelLayout()
+            clearExpiredChapterLoadingJob()
             prevTextChapter = curTextChapter
             curTextChapter = nextTextChapter
             nextTextChapter = null
@@ -399,7 +396,7 @@ object ReadBook : CoroutineScope by MainScope() {
         if (durChapterIndex > 0) {
             durChapterPos = if (toLast) prevTextChapter?.lastReadLength ?: Int.MAX_VALUE else 0
             durChapterIndex--
-            nextTextChapter?.cancelLayout()
+            clearExpiredChapterLoadingJob()
             nextTextChapter = curTextChapter
             curTextChapter = prevTextChapter
             prevTextChapter = null
@@ -450,10 +447,15 @@ object ReadBook : CoroutineScope by MainScope() {
         }
     }
 
-    fun openChapter(index: Int, durChapterPos: Int = 0, success: (() -> Unit)? = null) {
+    fun openChapter(
+        index: Int,
+        durChapterPos: Int = 0,
+        upContent: Boolean = true,
+        success: (() -> Unit)? = null
+    ) {
         if (index < chapterSize) {
             clearTextChapter()
-            callBack?.upContent()
+            if (upContent) callBack?.upContent()
             durChapterIndex = index
             ReadBook.durChapterPos = durChapterPos
             saveRead()
@@ -697,12 +699,7 @@ object ReadBook : CoroutineScope by MainScope() {
         if (canceled || chapter.index !in durChapterIndex - 1..durChapterIndex + 1) {
             return
         }
-        val offset = chapter.index - durChapterIndex
-        when (offset) {
-            0 -> curChapterLoadingJob?.cancel()
-            -1 -> prevChapterLoadingJob?.cancel()
-            1 -> nextChapterLoadingJob?.cancel()
-        }
+        chapterLoadingJobs[chapter.index]?.cancel()
         val job = Coroutine.async(this, start = CoroutineStart.LAZY) {
             val contentProcessor = ContentProcessor.get(book.name, book.origin)
             val displayTitle = chapter.getDisplayTitle(
@@ -715,9 +712,10 @@ object ReadBook : CoroutineScope by MainScope() {
             val textChapter = ChapterProvider.getTextChapterAsync(
                 this, book, chapter, displayTitle, contents, simulatedChapterSize
             )
-            when (offset) {
+            when (val offset = chapter.index - durChapterIndex) {
                 0 -> curChapterLoadingLock.withLock {
                     withContext(Main) {
+                        ensureActive()
                         curTextChapter = textChapter
                     }
                     callBack?.upMenuView()
@@ -744,6 +742,7 @@ object ReadBook : CoroutineScope by MainScope() {
 
                 -1 -> prevChapterLoadingLock.withLock {
                     withContext(Main) {
+                        ensureActive()
                         prevTextChapter = textChapter
                     }
                     textChapter.layoutChannel.receiveAsFlow().collect()
@@ -752,6 +751,7 @@ object ReadBook : CoroutineScope by MainScope() {
 
                 1 -> nextChapterLoadingLock.withLock {
                     withContext(Main) {
+                        ensureActive()
                         nextTextChapter = textChapter
                     }
                     for (page in textChapter.layoutChannel) {
@@ -773,11 +773,7 @@ object ReadBook : CoroutineScope by MainScope() {
         }.onSuccess {
             success?.invoke()
         }
-        when (offset) {
-            0 -> curChapterLoadingJob = job
-            -1 -> prevChapterLoadingJob = job
-            1 -> nextChapterLoadingJob = job
-        }
+        chapterLoadingJobs[chapter.index] = job
         job.start()
     }
 
@@ -975,6 +971,17 @@ object ReadBook : CoroutineScope by MainScope() {
         }
     }
 
+    private fun clearExpiredChapterLoadingJob(clearAll: Boolean = false) {
+        val iterator = chapterLoadingJobs.iterator()
+        while (iterator.hasNext()) {
+            val (index, job) = iterator.next()
+            if (clearAll || index !in durChapterIndex - 1..durChapterIndex + 1) {
+                job.cancel()
+                iterator.remove()
+            }
+        }
+    }
+
     /**
      * 注册回调
      */
@@ -995,6 +1002,7 @@ object ReadBook : CoroutineScope by MainScope() {
         downloadScope.coroutineContext.cancelChildren()
         coroutineContext.cancelChildren()
         ImageProvider.clear()
+        clearExpiredChapterLoadingJob(true)
         if (!CacheBookService.isRun) {
             CacheBook.close()
         }

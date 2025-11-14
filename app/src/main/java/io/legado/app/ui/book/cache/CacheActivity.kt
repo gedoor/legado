@@ -172,7 +172,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
         when (item.itemId) {
             R.id.menu_download,
             R.id.menu_download_after -> {
-                if (!CacheBook.isRun) {
+                if (!CacheBook.isRun) sureCacheBook {
                     adapter.getItems().forEach { book ->
                         CacheBook.start(
                             this@CacheActivity,
@@ -187,7 +187,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
             }
 
             R.id.menu_download_all -> {
-                if (!CacheBook.isRun) {
+                if (!CacheBook.isRun) sureCacheBook {
                     adapter.getItems().forEach { book ->
                         CacheBook.start(
                             this@CacheActivity,
@@ -552,6 +552,16 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
                 AppConfig.exportCharset = alertBinding.editView.text?.toString() ?: "UTF-8"
             }
             cancelButton()
+        }
+    }
+
+    private fun sureCacheBook(action: () -> Unit) {
+        alert(R.string.draw) {
+            setMessage(R.string.sure_cache_book)
+            noButton()
+            yesButton {
+                action.invoke()
+            }
         }
     }
 

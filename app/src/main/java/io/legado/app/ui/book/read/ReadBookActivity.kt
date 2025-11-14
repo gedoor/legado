@@ -1329,10 +1329,17 @@ class ReadBookActivity : BaseReadBookActivity(),
                 ReadAloud.upReadAloudClass()
                 val scrollPageAnim = ReadBook.pageAnim() == 3
                 if (scrollPageAnim) {
-                    val line = binding.readView.getCurVisibleFirstLine()
-                    if (line != null) {
-                        ReadBook.durChapterPos = line.chapterPosition
-                        ReadBook.readAloud(startPos = line.pagePosition)
+                    val pos = binding.readView.getReadAloudPos()
+                    if (pos != null) {
+                        val (index, line) = pos
+                        if (ReadBook.durChapterIndex != index) {
+                            ReadBook.openChapter(index, line.chapterPosition, false) {
+                                ReadBook.readAloud(startPos = line.pagePosition)
+                            }
+                        } else {
+                            ReadBook.durChapterPos = line.chapterPosition
+                            ReadBook.readAloud(startPos = line.pagePosition)
+                        }
                     } else {
                         ReadBook.readAloud()
                     }
@@ -1345,10 +1352,17 @@ class ReadBookActivity : BaseReadBookActivity(),
                 val scrollPageAnim = ReadBook.pageAnim() == 3
                 if (scrollPageAnim && pageChanged) {
                     pageChanged = false
-                    val line = binding.readView.getCurVisibleFirstLine()
-                    if (line != null) {
-                        ReadBook.durChapterPos = line.chapterPosition
-                        ReadBook.readAloud(startPos = line.pagePosition)
+                    val pos = binding.readView.getReadAloudPos()
+                    if (pos != null) {
+                        val (index, line) = pos
+                        if (ReadBook.durChapterIndex != index) {
+                            ReadBook.openChapter(index, line.chapterPosition, false) {
+                                ReadBook.readAloud(startPos = line.pagePosition)
+                            }
+                        } else {
+                            ReadBook.durChapterPos = line.chapterPosition
+                            ReadBook.readAloud(startPos = line.pagePosition)
+                        }
                     } else {
                         ReadBook.readAloud()
                     }
