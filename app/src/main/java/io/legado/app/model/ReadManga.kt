@@ -482,10 +482,11 @@ object ReadManga : CoroutineScope by MainScope() {
     fun uploadProgress(successAction: (() -> Unit)? = null) {
         book?.let {
             launch(IO) {
-                AppWebDav.uploadBookProgress(it)
+                AppWebDav.uploadBookProgress(it) {
+                    successAction?.invoke()
+                }
                 ensureActive()
                 it.update()
-                successAction?.invoke()
             }
         }
     }

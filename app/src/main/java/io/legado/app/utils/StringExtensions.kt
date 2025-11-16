@@ -140,3 +140,7 @@ fun String.escapeRegex(): String {
 }
 
 fun String.encodeURI(): String = URLEncodeUtil.encodeQuery(this)
+
+fun String.normalizeFileName(): String {
+    return replace(AppPattern.fileNameRegex2, "_")
+}

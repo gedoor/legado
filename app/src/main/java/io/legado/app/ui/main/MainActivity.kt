@@ -80,6 +80,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
     private var pagePosition = 0
     private val fragmentMap = hashMapOf<Int, Fragment>()
     private var bottomMenuCount = 4
+    private val EXIT_INTERVAL = 2000L
     private val realPositions = arrayOf(idBookshelf, idExplore, idRss, idMy)
     private val adapter by lazy {
         TabFragmentPageAdapter(supportFragmentManager)
@@ -102,7 +103,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
                     return@addCallback
                 }
             }
-            if (System.currentTimeMillis() - exitTime > 2000) {
+            if (System.currentTimeMillis() - exitTime > EXIT_INTERVAL) {
                 toastOnUi(R.string.double_click_exit)
                 exitTime = System.currentTimeMillis()
             } else {

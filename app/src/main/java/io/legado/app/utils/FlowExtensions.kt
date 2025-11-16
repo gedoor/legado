@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
@@ -198,7 +198,9 @@ fun <T> Flow<T>.flowWithLifecycleFirst(
     minActiveState: Lifecycle.State = Lifecycle.State.STARTED
 ): Flow<T> = callbackFlow {
     if (!lifecycle.currentState.isAtLeast(minActiveState)) {
-        send(first())
+        firstOrNull()?.let {
+            send(it)
+        }
     }
     lifecycle.repeatOnLifecycle(minActiveState) {
         this@flowWithLifecycleFirst.collect {
@@ -244,7 +246,9 @@ fun <T> Flow<T>.flowWithLifecycleAndDatabaseChangeFirst(
         .onEach { update++ }
         .produceIn(this)
     if (!isActive) {
-        send(first())
+        firstOrNull()?.let {
+            send(it)
+        }
     }
     lifecycle.repeatOnLifecycle(minActiveState) {
         if (update == 0) {

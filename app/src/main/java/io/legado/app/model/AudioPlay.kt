@@ -49,6 +49,7 @@ object AudioPlay : CoroutineScope by MainScope() {
             }
         }
     }
+
     var playMode = PlayMode.LIST_END_STOP
     var status = Status.STOP
     private var activityContext: Context? = null
@@ -81,6 +82,7 @@ object AudioPlay : CoroutineScope by MainScope() {
             chapterSize
         }
         if (durChapterIndex != book.durChapterIndex) {
+            stopPlay()
             durChapterIndex = book.durChapterIndex
             durChapterPos = book.durChapterPos
             durPlayUrl = ""
@@ -155,6 +157,8 @@ object AudioPlay : CoroutineScope by MainScope() {
                     }.onError {
                         AppLog.put("获取资源链接出错\n$it", it, true)
                         upLoading(false)
+                    }.onCancel {
+                        removeLoading(index)
                     }.onFinally {
                         removeLoading(index)
                     }
@@ -293,12 +297,14 @@ object AudioPlay : CoroutineScope by MainScope() {
                     loadPlayUrl()
                 }
             }
+
             PlayMode.SINGLE_LOOP -> {
                 durChapterPos = 0
                 durPlayUrl = ""
                 saveRead()
                 loadPlayUrl()
             }
+
             PlayMode.RANDOM -> {
                 durChapterIndex = (0 until simulatedChapterSize).random()
                 durChapterPos = 0
@@ -306,6 +312,7 @@ object AudioPlay : CoroutineScope by MainScope() {
                 saveRead()
                 loadPlayUrl()
             }
+
             PlayMode.LIST_LOOP -> {
                 durChapterIndex = (durChapterIndex + 1) % simulatedChapterSize
                 durChapterPos = 0

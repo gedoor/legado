@@ -25,13 +25,14 @@ import io.legado.app.utils.compress.ZipUtils
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.isJson
+import io.legado.app.utils.normalizeFileName
 import io.legado.app.utils.removePref
 import io.legado.app.utils.toastOnUi
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.runBlocking
 import splitties.init.appCtx
 import java.io.File
-import kotlin.coroutines.coroutineContext
 
 /**
  * webDav初始化会访问网络,不要放到主线程
@@ -219,7 +220,7 @@ object AppWebDav {
                 WebDav(putUrl, it).upload(byteArray, "text/plain")
             }
         } catch (e: Exception) {
-            coroutineContext.ensureActive()
+            currentCoroutineContext().ensureActive()
             AppLog.put("WebDav导出失败\n${e.localizedMessage}", e, true)
         }
     }
@@ -233,12 +234,16 @@ object AppWebDav {
                 WebDav(putUrl, it).upload(uri, "text/plain")
             }
         } catch (e: Exception) {
-            coroutineContext.ensureActive()
+            currentCoroutineContext().ensureActive()
             AppLog.put("WebDav导出失败\n${e.localizedMessage}", e, true)
         }
     }
 
-    suspend fun uploadBookProgress(book: Book) {
+    suspend fun uploadBookProgress(
+        book: Book,
+        toast: Boolean = false,
+        onSuccess: (() -> Unit)? = null
+    ) {
         val authorization = authorization ?: return
         if (!AppConfig.syncBookProgress) return
         if (!NetworkUtils.isAvailable()) return
@@ -248,9 +253,10 @@ object AppWebDav {
             val url = getProgressUrl(book.name, book.author)
             WebDav(url, authorization).upload(json.toByteArray(), "application/json")
             book.syncTime = System.currentTimeMillis()
+            onSuccess?.invoke()
         } catch (e: Exception) {
-            coroutineContext.ensureActive()
-            AppLog.put("上传进度失败\n${e.localizedMessage}", e)
+            currentCoroutineContext().ensureActive()
+            AppLog.put("上传进度失败\n${e.localizedMessage}", e, toast)
         }
     }
 
@@ -264,7 +270,7 @@ object AppWebDav {
             WebDav(url, authorization).upload(json.toByteArray(), "application/json")
             onSuccess?.invoke()
         } catch (e: Exception) {
-            coroutineContext.ensureActive()
+            currentCoroutineContext().ensureActive()
             AppLog.put("上传进度失败\n${e.localizedMessage}", e)
         }
     }
@@ -274,26 +280,25 @@ object AppWebDav {
     }
 
     private fun getProgressFileName(name: String, author: String): String {
-        return UrlUtil.replaceReservedChar("${name}_${author}") + ".json"
+        return UrlUtil.replaceReservedChar("${name}_${author}".normalizeFileName()) + ".json"
     }
 
     /**
      * 获取书籍进度
      */
     suspend fun getBookProgress(book: Book): BookProgress? {
-        authorization?.let {
-            val url = getProgressUrl(book.name, book.author)
-            kotlin.runCatching {
-                WebDav(url, it).download().let { byteArray ->
-                    val json = String(byteArray)
-                    if (json.isJson()) {
-                        return GSON.fromJsonObject<BookProgress>(json).getOrNull()
-                    }
+        val url = getProgressUrl(book.name, book.author)
+        kotlin.runCatching {
+            val authorization = authorization ?: return null
+            WebDav(url, authorization).download().let { byteArray ->
+                val json = String(byteArray)
+                if (json.isJson()) {
+                    return GSON.fromJsonObject<BookProgress>(json).getOrNull()
                 }
-            }.onFailure {
-                coroutineContext.ensureActive()
-                AppLog.put("获取书籍进度失败\n${it.localizedMessage}", it)
             }
+        }.onFailure {
+            currentCoroutineContext().ensureActive()
+            AppLog.put("获取书籍进度失败\n${it.localizedMessage}", it)
         }
         return null
     }

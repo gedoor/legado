@@ -29,7 +29,9 @@ import io.legado.app.utils.onEachParallel
 import io.legado.app.utils.postEvent
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
@@ -175,6 +177,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
             ReadBook.onChapterListUpdated(book)
             addDownload(source, book)
         }.onFailure {
+            currentCoroutineContext().ensureActive()
             AppLog.put("${book.name} 更新目录失败\n${it.localizedMessage}", it)
             //这里可能因为时间太长书籍信息已经更改,所以重新获取
             appDb.bookDao.getBook(book.bookUrl)?.let { book ->
