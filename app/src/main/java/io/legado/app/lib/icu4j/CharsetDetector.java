@@ -404,7 +404,7 @@ public class CharsetDetector {
         }
 
         //
-        // Tally up the byte occurence statistics.
+        // Tally up the byte occurrence statistics.
         //   These are available for use by the various detectors.
         //
         Arrays.fill(fByteStats, (short) 0);
@@ -434,7 +434,7 @@ public class CharsetDetector {
 
     short[] fByteStats =      // byte frequency statistics for the input text.
             new short[256];  //   Value is percent, not absolute.
-    //   Value is rounded up, so zero really means zero occurences.
+    //   Value is rounded up, so zero really means zero occurrences.
 
     boolean fC1Bytes =          // True if any bytes in the range 0x80 - 0x9F are in the input;
             false;
