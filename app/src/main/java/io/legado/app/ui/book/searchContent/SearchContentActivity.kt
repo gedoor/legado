@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.MotionEvent
 import android.widget.EditText
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
@@ -30,11 +29,9 @@ import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.applyNavigationBarMargin
 import io.legado.app.utils.applyTint
-import io.legado.app.utils.hideSoftInput
 import io.legado.app.utils.invisible
 import io.legado.app.utils.observeEvent
 import io.legado.app.utils.postEvent
-import io.legado.app.utils.shouldHideSoftInput
 import io.legado.app.utils.showSoftInput
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
@@ -99,20 +96,6 @@ class SearchContentActivity :
             }
         }
         return super.onCompatOptionsItemSelected(item)
-    }
-
-    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-        if (ev.action == MotionEvent.ACTION_DOWN) {
-            currentFocus?.let {
-                if (it.shouldHideSoftInput(ev)) {
-                    it.post {
-                        it.clearFocus()
-                        it.hideSoftInput()
-                    }
-                }
-            }
-        }
-        return super.dispatchTouchEvent(ev)
     }
 
     private fun initSearchResultList(list: List<SearchResult>?, position: Int) {

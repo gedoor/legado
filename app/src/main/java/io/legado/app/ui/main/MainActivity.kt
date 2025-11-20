@@ -5,7 +5,6 @@ package io.legado.app.ui.main
 import android.os.Bundle
 import android.text.format.DateUtils
 import android.view.MenuItem
-import android.view.MotionEvent
 import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.activity.viewModels
@@ -42,13 +41,11 @@ import io.legado.app.ui.main.explore.ExploreFragment
 import io.legado.app.ui.main.my.MyFragment
 import io.legado.app.ui.main.rss.RssFragment
 import io.legado.app.ui.widget.dialog.TextDialog
-import io.legado.app.utils.hideSoftInput
 import io.legado.app.utils.isCreated
 import io.legado.app.utils.navigationBarHeight
 import io.legado.app.utils.observeEvent
 import io.legado.app.utils.setEdgeEffectColor
 import io.legado.app.utils.setOnApplyWindowInsetsListenerCompat
-import io.legado.app.utils.shouldHideSoftInput
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -114,20 +111,6 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
                 }
             }
         }
-    }
-
-    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-        if (ev.action == MotionEvent.ACTION_DOWN) {
-            currentFocus?.let {
-                if (it.shouldHideSoftInput(ev)) {
-                    it.post {
-                        it.clearFocus()
-                        it.hideSoftInput()
-                    }
-                }
-            }
-        }
-        return super.dispatchTouchEvent(ev)
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
