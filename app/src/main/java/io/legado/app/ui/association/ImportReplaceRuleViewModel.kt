@@ -1,6 +1,7 @@
 package io.legado.app.ui.association
 
 import android.app.Application
+import androidx.core.net.toUri
 import androidx.lifecycle.MutableLiveData
 import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppConst
@@ -17,7 +18,10 @@ import io.legado.app.help.http.text
 import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.isJsonArray
 import io.legado.app.utils.isJsonObject
+import io.legado.app.utils.isUri
+import io.legado.app.utils.readText
 import io.legado.app.utils.splitNotBlank
+import splitties.init.appCtx
 
 class ImportReplaceRuleViewModel(app: Application) : BaseViewModel(app) {
     var isAddGroup = false
@@ -100,6 +104,10 @@ class ImportReplaceRuleViewModel(app: Application) : BaseViewModel(app) {
             text.isJsonObject() -> {
                 val rule = ReplaceAnalyzer.jsonToReplaceRule(text).getOrThrow()
                 allRules.add(rule)
+            }
+
+            text.isUri() -> {
+                importAwait(text.toUri().readText(appCtx))
             }
 
             else -> throw NoStackTraceException("格式不对")
