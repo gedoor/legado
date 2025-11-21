@@ -161,23 +161,8 @@ class CacheBookService : BaseService() {
     private fun download() {
         downloadJob?.cancel()
         downloadJob = lifecycleScope.launch(cachePool) {
-            while (isActive) {
-                if (!CacheBook.isRun) {
-                    stopSelf()
-                    return@launch
-                }
-                CacheBook.cacheBookMap.forEach {
-                    val cacheBookModel = it.value
-                    while (cacheBookModel.waitCount > 0) {
-                        if (CacheBook.onDownloadCount < threadCount) {
-                            cacheBookModel.download(this, cachePool)
-                        } else {
-                            delay(100)
-                        }
-                    }
-                }
-                delay(100)
-            }
+            CacheBook.startProcessJob(cachePool)
+            stopSelf()
         }
     }
 

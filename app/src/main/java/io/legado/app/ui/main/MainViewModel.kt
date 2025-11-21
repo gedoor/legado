@@ -213,28 +213,14 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         if (AppConfig.preDownloadNum == 0) return
         cacheBookJob?.cancel()
         cacheBookJob = viewModelScope.launch(upTocPool) {
-            while (isActive) {
-                if (CacheBookService.isRun || !CacheBook.isRun) {
-                    cacheBookJob?.cancel()
-                    cacheBookJob = null
-                    return@launch
+            launch {
+                while (isActive && CacheBook.isRun) {
+                    //有目录更新是不缓存,优先更新目录,现在更多网站限制并发
+                    CacheBook.setWorkingState(waitUpTocBooks.isEmpty() && onUpTocBooks.isEmpty())
+                    delay(1000)
                 }
-                CacheBook.cacheBookMap.forEach {
-                    val cacheBookModel = it.value
-                    while (cacheBookModel.waitCount > 0) {
-                        //有目录更新是不缓存,优先更新目录,现在更多网站限制并发
-                        if (waitUpTocBooks.isEmpty()
-                            && onUpTocBooks.isEmpty()
-                            && CacheBook.onDownloadCount < threadCount
-                        ) {
-                            cacheBookModel.download(this, upTocPool)
-                        } else {
-                            delay(100)
-                        }
-                    }
-                }
-                delay(100)
             }
+            CacheBook.startProcessJob(upTocPool)
         }
     }
 
