@@ -66,7 +66,7 @@ class SpeakEngineDialog() : BaseDialogFragment(R.layout.dialog_recycler_view),
     private val callBack: CallBack? get() = parentFragment as? CallBack
     private val importDocResult = registerForActivityResult(HandleFileContract()) {
         it.uri?.let { uri ->
-            viewModel.importLocal(uri)
+            showDialogFragment(ImportHttpTtsDialog(uri.toString()))
         }
     }
     private val exportDirResult = registerForActivityResult(HandleFileContract()) {
