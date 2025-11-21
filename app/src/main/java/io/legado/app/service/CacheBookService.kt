@@ -106,12 +106,14 @@ class CacheBookService : BaseService() {
             val chapterCount = appDb.bookChapterDao.getChapterCount(bookUrl)
             val book = cacheBook.book
             if (chapterCount == 0) {
+                cacheBook.setLoading()
                 mutex.withLock {
                     val name = book.name
                     if (book.tocUrl.isEmpty()) {
                         kotlin.runCatching {
                             WebBook.getBookInfoAwait(cacheBook.bookSource, book)
                         }.onFailure {
+                            removeDownload(bookUrl)
                             val msg = "《$name》目录为空且加载详情页失败\n${it.localizedMessage}"
                             AppLog.put(msg, it, true)
                             return@execute
@@ -122,6 +124,7 @@ class CacheBookService : BaseService() {
                             book.totalChapterNum = 0
                             book.update()
                         }
+                        removeDownload(bookUrl)
                         val msg = "《$name》目录为空且加载目录失败\n${it.localizedMessage}"
                         AppLog.put(msg, it, true)
                         return@execute

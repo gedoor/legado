@@ -191,7 +191,7 @@ object CacheBook {
         private val tasks = CompositeCoroutine()
         private var isStopped = false
         private var waitingRetry = false
-        private var isLoading = true
+        private var isLoading = false
 
         val waitCount get() = waitDownloadSet.size
         val onDownloadCount get() = onDownloadSet.size
@@ -216,10 +216,16 @@ object CacheBook {
         }
 
         @Synchronized
+        fun setLoading() {
+            isLoading = true
+        }
+
+        @Synchronized
         fun stop() {
             waitDownloadSet.clear()
             tasks.clear()
             isStopped = true
+            isLoading = false
             postEvent(EventBus.UP_DOWNLOAD, book.bookUrl)
         }
 
