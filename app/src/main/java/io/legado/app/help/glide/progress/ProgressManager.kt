@@ -28,7 +28,7 @@ object ProgressManager {
     }
 
     fun addListener(url: String, listener: OnProgressListener) {
-        if (url.isNotEmpty() && listener != null) {
+        if (url.isNotEmpty()) {
             val url = getUrlNoOption(url)
             listenersMap[url] = listener
             listener.invoke(false, 1, 0, 0)
@@ -42,7 +42,7 @@ object ProgressManager {
         }
     }
 
-    fun getProgressListener(url: String): OnProgressListener {
+    fun getProgressListener(url: String): OnProgressListener? {
         return if (url.isEmpty() || listenersMap.isEmpty()) {
             null
         } else {
@@ -53,7 +53,7 @@ object ProgressManager {
     private fun getUrlNoOption(url: String): String {
         val urlMatcher = AnalyzeUrl.paramPattern.matcher(url)
         return if (urlMatcher.find()) {
-            url.substring(0, urlMatcher.start())
+            url.take(urlMatcher.start())
         } else {
             url
         }
