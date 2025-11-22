@@ -300,6 +300,9 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
             notifyItemChanged(it)
         }
         observeEvent<String>(EventBus.UP_DOWNLOAD) {
+            notifyItemChanged(it)
+        }
+        observeEvent<String>(EventBus.UP_DOWNLOAD_STATE) {
             if (!CacheBook.isRun) {
                 menu?.findItem(R.id.menu_download)?.let { item ->
                     item.setIconCompat(R.drawable.ic_play_24dp)
@@ -313,7 +316,6 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
                 }
                 menu?.applyTint(this)
             }
-            notifyItemChanged(it)
         }
         observeEvent<Pair<Book, BookChapter>>(EventBus.SAVE_CONTENT) { (book, chapter) ->
             viewModel.cacheChapters[book.bookUrl]?.add(chapter.url)

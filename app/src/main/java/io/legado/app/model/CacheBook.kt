@@ -30,6 +30,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.Semaphore
@@ -140,10 +142,14 @@ object CacheBook {
                     delay(1000)
                 }
             }
+        }.onStart {
+            postEvent(EventBus.UP_DOWNLOAD_STATE, "")
         }.onEachParallel(AppConfig.threadCount) {
             coroutineScope {
                 it.download(this, context)
             }
+        }.onCompletion {
+            postEvent(EventBus.UP_DOWNLOAD_STATE, "")
         }.collect()
     }
 
@@ -298,7 +304,6 @@ object CacheBook {
          */
         @Synchronized
         fun download(scope: CoroutineScope, context: CoroutineContext) {
-            postEvent(EventBus.UP_DOWNLOAD, book.bookUrl)
             val chapterIndex = waitDownloadSet.firstOrNull()
             if (chapterIndex == null) {
                 if (!isLoading && onDownloadSet.isEmpty()) {
@@ -374,7 +379,6 @@ object CacheBook {
         }
 
         suspend fun downloadAwait(chapter: BookChapter): String {
-            postEvent(EventBus.UP_DOWNLOAD, book.bookUrl)
             synchronized(this) {
                 onDownloadSet.add(chapter.index)
                 waitDownloadSet.remove(chapter.index)
@@ -408,7 +412,6 @@ object CacheBook {
             if (onDownloadSet.contains(chapter.index)) {
                 return
             }
-            postEvent(EventBus.UP_DOWNLOAD, book.bookUrl)
             onDownloadSet.add(chapter.index)
             waitDownloadSet.remove(chapter.index)
             WebBook.getContent(
