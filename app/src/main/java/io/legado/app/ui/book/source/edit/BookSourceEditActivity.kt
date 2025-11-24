@@ -632,6 +632,8 @@ class BookSourceEditActivity :
             val edit = view.editableText//获取EditText的文字
             if (start < 0 || start >= edit.length) {
                 edit.append(text)
+            } else if (start > end) {
+                edit.replace(end, start, text)
             } else {
                 edit.replace(start, end, text)//光标所在位置插入文字
             }
