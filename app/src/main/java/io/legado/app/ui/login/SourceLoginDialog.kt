@@ -56,47 +56,51 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
         binding.toolBar.title = getString(R.string.login_source, source.getTag())
         val loginInfo = source.getLoginInfoMap()
         val loginUi = source.loginUi()
-        loginUi?.forEachIndexed { index, rowUi ->
-            when (rowUi.type) {
-                RowUi.Type.text -> ItemSourceEditBinding.inflate(
-                    layoutInflater,
-                    binding.root,
-                    false
-                ).let {
-                    binding.flexbox.addView(it.root)
-                    it.root.id = index + 1000
-                    it.textInputLayout.hint = rowUi.name
-                    it.editText.setText(loginInfo?.get(rowUi.name))
-                }
+        try {
+            loginUi?.forEachIndexed { index, rowUi ->
+                when (rowUi.type) {
+                    RowUi.Type.text -> ItemSourceEditBinding.inflate(
+                        layoutInflater,
+                        binding.root,
+                        false
+                    ).let {
+                        binding.flexbox.addView(it.root)
+                        it.root.id = index + 1000
+                        it.textInputLayout.hint = rowUi.name
+                        it.editText.setText(loginInfo?.get(rowUi.name))
+                    }
 
-                RowUi.Type.password -> ItemSourceEditBinding.inflate(
-                    layoutInflater,
-                    binding.root,
-                    false
-                ).let {
-                    binding.flexbox.addView(it.root)
-                    it.root.id = index + 1000
-                    it.textInputLayout.hint = rowUi.name
-                    it.editText.inputType =
-                        InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_CLASS_TEXT
-                    it.editText.setText(loginInfo?.get(rowUi.name))
-                }
+                    RowUi.Type.password -> ItemSourceEditBinding.inflate(
+                        layoutInflater,
+                        binding.root,
+                        false
+                    ).let {
+                        binding.flexbox.addView(it.root)
+                        it.root.id = index + 1000
+                        it.textInputLayout.hint = rowUi.name
+                        it.editText.inputType =
+                            InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_CLASS_TEXT
+                        it.editText.setText(loginInfo?.get(rowUi.name))
+                    }
 
-                RowUi.Type.button -> ItemFilletTextBinding.inflate(
-                    layoutInflater,
-                    binding.root,
-                    false
-                ).let {
-                    binding.flexbox.addView(it.root)
-                    rowUi.style().apply(it.root)
-                    it.root.id = index + 1000
-                    it.textView.text = rowUi.name
-                    it.textView.setPadding(16.dpToPx())
-                    it.root.onClick {
-                        handleButtonClick(source, rowUi, loginUi)
+                    RowUi.Type.button -> ItemFilletTextBinding.inflate(
+                        layoutInflater,
+                        binding.root,
+                        false
+                    ).let {
+                        binding.flexbox.addView(it.root)
+                        rowUi.style().apply(it.root)
+                        it.root.id = index + 1000
+                        it.textView.text = rowUi.name
+                        it.textView.setPadding(16.dpToPx())
+                        it.root.onClick {
+                            handleButtonClick(source, rowUi, loginUi)
+                        }
                     }
                 }
             }
+        } catch (e: NullPointerException) {
+            AppLog.put("登录UI JSON 数据错误", e, true)
         }
         binding.toolBar.inflateMenu(R.menu.source_login)
         binding.toolBar.menu.applyTint(requireContext())

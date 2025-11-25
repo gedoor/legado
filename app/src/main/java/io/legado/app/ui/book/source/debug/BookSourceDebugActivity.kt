@@ -121,29 +121,36 @@ class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookS
         initExploreKinds()
     }
 
+    @SuppressLint("SetTextI18n")
     private fun initExploreKinds() {
         lifecycleScope.launch {
-            val exploreKinds = viewModel.bookSource?.exploreKinds()?.filter {
-                !it.url.isNullOrBlank()
-            }
-            exploreKinds?.firstOrNull()?.let {
-                binding.textFx.text = "${it.title}::${it.url}"
-                if (it.title.startsWith("ERROR:")) {
-                    adapter.addItem("获取发现出错\n${it.url}")
-                    openOrCloseHelp(false)
-                    searchView.clearFocus()
-                    return@launch
+            try {
+                val exploreKinds = viewModel.bookSource?.exploreKinds()?.filter {
+                    !it.url.isNullOrBlank()
                 }
-            }
-            @Suppress("USELESS_ELVIS")
-            exploreKinds?.map { it.title ?: "" }?.let { exploreKindTitles ->
-                binding.textFx.onLongClick {
-                    selector("选择发现", exploreKindTitles) { _, index ->
-                        val explore = exploreKinds[index]
-                        binding.textFx.text = "${explore.title}::${explore.url}"
-                        searchView.setQuery(binding.textFx.text, true)
+                exploreKinds?.firstOrNull()?.let {
+                    binding.textFx.text = "${it.title}::${it.url}"
+                    if (it.title.startsWith("ERROR:")) {
+                        adapter.addItem("获取发现出错\n${it.url}")
+                        openOrCloseHelp(false)
+                        searchView.clearFocus()
+                        return@launch
                     }
                 }
+                @Suppress("USELESS_ELVIS")
+                exploreKinds?.map { it.title ?: "" }?.let { exploreKindTitles ->
+                    binding.textFx.onLongClick {
+                        selector("选择发现", exploreKindTitles) { _, index ->
+                            val explore = exploreKinds[index]
+                            binding.textFx.text = "${explore.title}::${explore.url}"
+                            searchView.setQuery(binding.textFx.text, true)
+                        }
+                    }
+                }
+            } catch (e: NullPointerException) {
+                adapter.addItem("获取发现出错 JSON 数据错误\n$e")
+                openOrCloseHelp(false)
+                searchView.clearFocus()
             }
         }
     }
