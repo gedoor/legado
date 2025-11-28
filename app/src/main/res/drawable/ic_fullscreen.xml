@@ -1,0 +1,34 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+
+    <!-- 左上箭头 -->
+    <path
+        android:strokeColor="#FF000000"
+        android:strokeWidth="5"
+        android:strokeLineCap="round"
+        android:pathData="M40,40 L15,15 M15,15 L25,15 M15,15 L15,25" />
+
+    <!-- 右上箭头 -->
+    <path
+        android:strokeColor="#FF000000"
+        android:strokeWidth="5"
+        android:strokeLineCap="round"
+        android:pathData="M60,40 L85,15 M85,15 L75,15 M85,15 L85,25" />
+
+    <!-- 左下箭头 -->
+    <path
+        android:strokeColor="#FF000000"
+        android:strokeWidth="5"
+        android:strokeLineCap="round"
+        android:pathData="M40,60 L15,85 M15,85 L25,85 M15,85 L15,75" />
+
+    <!-- 右下箭头 -->
+    <path
+        android:strokeColor="#FF000000"
+        android:strokeWidth="5"
+        android:strokeLineCap="round"
+        android:pathData="M60,60 L85,85 M85,85 L75,85 M85,85 L85,75" />
+</vector>
