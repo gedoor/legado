@@ -1,7 +1,7 @@
 package io.legado.app.data.entities.rule
 
 data class RowUi(
-    var name: String,
+    var name: String = "",
     var type: String = "text",
     var action: String? = null,
     var style: FlexChildStyle? = null
