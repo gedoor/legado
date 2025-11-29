@@ -49,6 +49,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 /**
@@ -231,11 +232,10 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
             binding.toolBar.menu.applyTint(requireContext())
         }
         lifecycleScope.launch {
-            repeatOnLifecycle(STARTED) {
-                viewModel.searchDataFlow.conflate().collect {
-                    adapter.setItems(it)
-                    delay(1000)
-                }
+            lifecycle.currentStateFlow.first { it.isAtLeast(STARTED) }
+            viewModel.searchDataFlow.conflate().collect {
+                adapter.setItems(it)
+                delay(1000)
             }
         }
 
