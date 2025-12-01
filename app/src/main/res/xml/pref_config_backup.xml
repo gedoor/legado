@@ -11,20 +11,20 @@
 
         <io.legado.app.lib.prefs.EditTextPreference
             android:key="web_dav_url"
-            android:title="@string/web_dav_url"
             android:summary="@string/web_dav_url_s"
+            android:title="@string/web_dav_url"
             app:iconSpaceReserved="false" />
 
         <io.legado.app.lib.prefs.EditTextPreference
             android:key="web_dav_account"
-            android:title="@string/web_dav_account"
             android:summary="@string/web_dav_account_s"
+            android:title="@string/web_dav_account"
             app:iconSpaceReserved="false" />
 
         <io.legado.app.lib.prefs.EditTextPreference
             android:key="web_dav_password"
-            android:title="@string/web_dav_pw"
             android:summary="@string/web_dav_pw_s"
+            android:title="@string/web_dav_pw"
             app:iconSpaceReserved="false" />
 
         <io.legado.app.lib.prefs.EditTextPreference
@@ -42,20 +42,20 @@
             app:iconSpaceReserved="false" />
 
         <io.legado.app.lib.prefs.SwitchPreference
-            android:key="syncBookProgress"
             android:defaultValue="true"
-            android:title="@string/sync_book_progress_t"
+            android:key="syncBookProgress"
             android:summary="@string/sync_book_progress_s"
+            android:title="@string/sync_book_progress_t"
             app:allowDividerAbove="false"
             app:allowDividerBelow="false"
             app:iconSpaceReserved="false" />
 
         <io.legado.app.lib.prefs.SwitchPreference
-            android:key="syncBookProgressPlus"
             android:defaultValue="false"
-            android:title="@string/sync_book_progress_plus_t"
-            android:summary="@string/sync_book_progress_plus_s"
             android:dependency="syncBookProgress"
+            android:key="syncBookProgressPlus"
+            android:summary="@string/sync_book_progress_plus_s"
+            android:title="@string/sync_book_progress_plus_t"
             app:allowDividerAbove="false"
             app:allowDividerBelow="false"
             app:iconSpaceReserved="false" />
@@ -70,39 +70,46 @@
 
         <io.legado.app.lib.prefs.Preference
             android:key="backupUri"
-            android:title="@string/backup_path"
             android:summary="@string/select_backup_path"
+            android:title="@string/backup_path"
             app:iconSpaceReserved="false" />
 
         <io.legado.app.lib.prefs.Preference
             android:key="web_dav_backup"
-            android:title="@string/backup"
             android:summary="@string/backup_summary"
+            android:title="@string/backup"
             app:iconSpaceReserved="false" />
 
         <io.legado.app.lib.prefs.Preference
             android:key="web_dav_restore"
-            android:title="@string/restore"
             android:summary="@string/restore_summary"
+            android:title="@string/restore"
             app:iconSpaceReserved="false" />
 
         <io.legado.app.lib.prefs.Preference
             android:key="restoreIgnore"
-            android:title="@string/restore_ignore"
             android:summary="@string/restore_ignore_summary"
+            android:title="@string/restore_ignore"
             app:iconSpaceReserved="false" />
 
         <io.legado.app.lib.prefs.Preference
             android:key="import_old"
-            android:title="@string/menu_import_old_version"
             android:summary="@string/import_old_summary"
+            android:title="@string/menu_import_old_version"
             app:iconSpaceReserved="false" />
 
         <io.legado.app.lib.prefs.SwitchPreference
-            android:key="onlyLatestBackup"
             android:defaultValue="true"
-            android:title="@string/only_latest_backup_t"
+            android:key="onlyLatestBackup"
             android:summary="@string/only_latest_backup_s"
+            android:title="@string/only_latest_backup_t"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.lib.prefs.SwitchPreference
+            android:defaultValue="true"
+            android:key="autoCheckNewBackup"
+            android:summary="@string/auto_check_new_backup_s"
+            android:title="@string/auto_check_new_backup_t"
             app:allowDividerAbove="false"
             app:allowDividerBelow="false"
             app:iconSpaceReserved="false" />

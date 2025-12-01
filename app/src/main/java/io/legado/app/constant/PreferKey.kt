@@ -167,6 +167,7 @@ object PreferKey {
     const val showMangaUi = "showMangaUi"
     const val disableMangaScale = "disableMangaScale"
     const val paddingDisplayCutouts = "paddingDisplayCutouts"
+    const val autoCheckNewBackup = "autoCheckNewBackup"
 
     const val cPrimary = "colorPrimary"
     const val cAccent = "colorAccent"
