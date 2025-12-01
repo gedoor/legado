@@ -39,6 +39,8 @@ import io.legado.app.help.LifecycleHelp
 import io.legado.app.help.RuleBigDataHelp
 import io.legado.app.help.book.BookHelp
 import io.legado.app.help.config.AppConfig
+import io.legado.app.help.config.ReadBookConfig
+import io.legado.app.help.config.ThemeConfig
 import io.legado.app.help.config.ThemeConfig.applyDayNight
 import io.legado.app.help.config.ThemeConfig.applyDayNightInit
 import io.legado.app.help.coroutine.Coroutine
@@ -105,6 +107,8 @@ class App : Application() {
             RuleBigDataHelp.clearInvalid()
             BookHelp.clearInvalidCache()
             Backup.clearCache()
+            ReadBookConfig.clearBgAndCache()
+            ThemeConfig.clearBg()
             //初始化简繁转换引擎
             when (AppConfig.chineseConverterType) {
                 1 -> {

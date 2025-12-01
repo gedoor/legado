@@ -162,6 +162,25 @@ object ReadBookConfig {
         return false
     }
 
+    fun clearBgAndCache() {
+        val bgs = hashSetOf<String>()
+        configList.forEach { config ->
+            repeat(3) {
+                config.getBgPath(it)?.let { path ->
+                    bgs.add(path)
+                }
+            }
+        }
+        appCtx.externalFiles.getFile("bg").listFiles()?.forEach {
+            if (!bgs.contains(it.absolutePath)) {
+                it.delete()
+            }
+        }
+        FileUtils.delete(appCtx.externalCache.getFile("readConfig"))
+        val configZipPath = FileUtils.getPath(appCtx.externalCache, "readConfig.zip")
+        FileUtils.delete(configZipPath)
+    }
+
     private fun resetAll() {
         DefaultData.readConfigs.let {
             configList.clear()
@@ -703,6 +722,30 @@ object ReadBookConfig {
                 e.printOnDebug()
             }
             return bgDrawable ?: ColorDrawable(appCtx.getCompatColor(R.color.background))
+        }
+
+        fun getBgPath(bgIndex: Int): String? {
+            val bgType = when (bgIndex) {
+                0 -> bgType
+                1 -> bgTypeNight
+                2 -> bgTypeEInk
+                else -> error("unknown bgIndex: $bgIndex")
+            }
+            if (bgType != 2) {
+                return null
+            }
+            val bgStr = when (bgIndex) {
+                0 -> bgStr
+                1 -> bgStrNight
+                2 -> bgStrEInk
+                else -> error("unknown bgIndex: $bgIndex")
+            }
+            val path = if (bgStr.contains(File.separator)) {
+                bgStr
+            } else {
+                FileUtils.getPath(appCtx.externalFiles, "bg", bgStr)
+            }
+            return path
         }
     }
 }
