@@ -38,6 +38,7 @@ import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.file.HandleFileContract
 import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.ColorUtils
+import io.legado.app.utils.FileDoc
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.GSON
 import io.legado.app.utils.MD5Utils
@@ -52,9 +53,9 @@ import io.legado.app.utils.inputStream
 import io.legado.app.utils.isContentScheme
 import io.legado.app.utils.launch
 import io.legado.app.utils.longToast
+import io.legado.app.utils.openInputStream
 import io.legado.app.utils.openOutputStream
 import io.legado.app.utils.outputStream
-import io.legado.app.utils.parseToUri
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.printOnDebug
 import io.legado.app.utils.readBytes
@@ -277,12 +278,14 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
             exportFiles.add(configFile)
             val fontPath = ReadBookConfig.textFont
             if (fontPath.isNotEmpty()) {
-                val fontName = FileUtils.getName(fontPath)
-                val fontInputStream =
-                    fontPath.parseToUri().inputStream(requireContext()).getOrNull()
+                val fontDoc = FileDoc.fromFile(fontPath)
+                val fontName = fontDoc.name
+                val fontInputStream = fontDoc.openInputStream().getOrNull()
                 fontInputStream?.use {
                     val fontExportFile = FileUtils.createFileIfNotExist(configDir, fontName)
-                    it.copyTo(fontExportFile.outputStream())
+                    fontExportFile.outputStream().use { out ->
+                        it.copyTo(out)
+                    }
                     exportFiles.add(fontExportFile)
                 }
             }
