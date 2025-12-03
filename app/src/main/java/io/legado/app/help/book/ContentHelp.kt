@@ -20,13 +20,13 @@ object ContentHelp {
         var p = content1
             .replace("&quot;".toRegex(), "“")
             .replace("[:：]['\"‘”“]+".toRegex(), "：“")
-            .replace("[\"”“]+[\\s]*[\"”“][\\s\"”“]*".toRegex(), "”\n“")
+            .replace("[\"”“]+\\s*[\"”“][\\s\"”“]*".toRegex(), "”\n“")
             .split("\n(\\s*)".toRegex()).toTypedArray()
 
         //初始化StringBuilder的长度,在原content的长度基础上做冗余
         var buffer = StringBuilder((content1.length * 1.15).toInt())
         //          章节的文本格式为章节标题-空行-首段，所以处理段落时需要略过第一行文本。
-        buffer.append(" ")
+        buffer.append("  ")
         if (chapterName.trim { it <= ' ' } != p[0].trim { it <= ' ' }) {
             // 去除段落内空格。unicode 3000 象形字间隔（中日韩符号和标点），不包含在\s内
             buffer.append(p[0].replace("[\u3000\\s]+".toRegex(), ""))
@@ -34,7 +34,12 @@ object ContentHelp {
 
         //如果原文存在分段错误，需要把段落重新黏合
         for (i in 1 until p.size) {
-            if (match(MARK_SENTENCES_END, buffer[buffer.length - 1])) buffer.append("\n")
+            if (match(MARK_SENTENCES_END, buffer.last())
+                || (match(MARK_QUOTATION_RIGHT, buffer.last())
+                        && match(MARK_SENTENCES_END, buffer[buffer.lastIndex - 1]))
+            ) {
+                buffer.append("\n")
+            }
             // 段落开头以外的地方不应该有空格
             // 去除段落内空格。unicode 3000 象形字间隔（中日韩符号和标点），不包含在\s内
             buffer.append(p[i].replace("[\u3000\\s]".toRegex(), ""))
@@ -44,7 +49,7 @@ object ContentHelp {
         //         ”。“处理为”。\n“。不考虑“？”  “！”的情况。
         // ”。xxx处理为 ”。\n xxx
         p = buffer.toString()
-            .replace("[\"”“]+[\\s]*[\"”“]+".toRegex(), "”\n“")
+            .replace("[\"”“]+\\s*[\"”“]+".toRegex(), "”\n“")
             .replace("[\"”“]+(？。！?!~)[\"”“]+".toRegex(), "”$1\n“")
             .replace("[\"”“]+(？。！?!~)([^\"”“])".toRegex(), "”$1\n$2")
             .replace(
@@ -60,7 +65,7 @@ object ContentHelp {
         buffer = reduceLength(buffer)
         content1 = (buffer.toString() //         处理章节头部空格和换行
             .replaceFirst("^\\s+".toRegex(), "")
-            .replace("\\s*[\"”“]+[\\s]*[\"”“][\\s\"”“]*".toRegex(), "”\n“")
+            .replace("\\s*[\"”“]+\\s*[\"”“][\\s\"”“]*".toRegex(), "”\n“")
             .replace("[:：][”“\"\\s]+".toRegex(), "：“")
             .replace("\n[\"“”]([^\n\"“”]+)([,:，：][\"”“])([^\n\"“”]+)".toRegex(), "\n$1：“$3")
             .replace("\n(\\s*)".toRegex(), "\n"))
@@ -113,13 +118,13 @@ object ContentHelp {
         if (match(MARK_QUOTATION, str[0])) {
             val i = seekIndex(str, MARK_QUOTATION, 1, length - 2, true) + 1
             if (i > 1) if (!match(MARK_QUOTATION_BEFORE, str[i - 1])) {
-                return "${str.substring(0, i)}\n${str.substring(i)}"
+                return "${str.take(i)}\n${str.substring(i)}"
             }
         } else if (match(MARK_QUOTATION, str[length - 1])) {
             val i = length - 1 - seekIndex(str, MARK_QUOTATION, 1, length - 2, false)
             if (i > 1) {
                 if (!match(MARK_QUOTATION_BEFORE, str[i - 1])) {
-                    return "${str.substring(0, i)}\n${str.substring(i)}"
+                    return "${str.take(i)}\n${str.substring(i)}"
                 }
             }
         }
@@ -142,8 +147,8 @@ object ContentHelp {
         tigger: Int
     ): ArrayList<Int> {
         val result = ArrayList<Int>()
-        val arrayEnd = seekIndexs(str, MARK_SENTENCES_END_P, 0, str.length - 2, true)
-        val arrayMid = seekIndexs(str, MARK_SENTENCES_MID, 0, str.length - 2, true)
+        val arrayEnd = seekIndexes(str, MARK_SENTENCES_END_P, 0, str.length - 2, true)
+        val arrayMid = seekIndexes(str, MARK_SENTENCES_MID, 0, str.length - 2, true)
         if (arrayEnd.size < tigger && arrayMid.size < tigger * 3) return result
         var j = 0
         var i = min
@@ -347,7 +352,7 @@ object ContentHelp {
             var j = 0
             var progress = 0
             var nextLine = -1
-            if (insN.size > 0) nextLine = insN[j]
+            if (insN.isNotEmpty()) nextLine = insN[j]
             var gain = 3
             var min = 0
             var trigger = 2
@@ -425,24 +430,24 @@ object ContentHelp {
         var j = 0
         var progress = 0
         var nextLine = -1
-        if (insN.size > 0) nextLine = insN[j]
+        if (insN.isNotEmpty()) nextLine = insN[j]
         for (i in arrayQuote.indices) {
-            val qutoe = arrayQuote[i]
+            val quote = arrayQuote[i]
 
 //            把引号前的换行符与内容相间插入
             while (j < insN.size) {
 
 //                如果下一个换行符在当前引号前，那么需要此次处理.如果紧挨当前引号，需要考虑插入引号的情况
-                if (nextLine >= qutoe) break
+                if (nextLine >= quote) break
                 nextLine = insN[j]
                 buffer.append(string, progress, nextLine + 1)
                 buffer.append('\n')
                 progress = nextLine + 1
                 j++
             }
-            if (progress < qutoe) {
-                buffer.append(string, progress, qutoe + 1)
-                progress = qutoe + 1
+            if (progress < quote) {
+                buffer.append(string, progress, quote + 1)
+                progress = quote + 1
             }
             if (insQuote[i] && buffer.length > 2) {
                 if (buffer[buffer.length - 1] == '\n') buffer.append('“') else buffer.insert(
@@ -504,7 +509,7 @@ object ContentHelp {
      * @param inOrder 是否按照从前向后的顺序匹配
      * @return 返回距离构成的ArrayList<Int>
      */
-    private fun seekIndexs(
+    private fun seekIndexes(
         str: String,
         key: String,
         from: Int,
@@ -514,14 +519,18 @@ object ContentHelp {
         val list = ArrayList<Int>()
         if (str.length - from < 1) return list
         var i = 0
-        if (from > i) i = from
+        if (from > 0) i = from
         var t = str.length
         if (to > 0) t = min(t, to)
         var c: Char
         while (i < t) {
             c = if (inOrder) str[i] else str[str.length - i - 1]
             if (key.indexOf(c) != -1) {
-                list.add(i)
+                if (list.isNotEmpty() && i - list.last() == 1) {
+                    list[list.lastIndex] = i
+                } else {
+                    list.add(i)
+                }
             }
             i++
         }
@@ -567,7 +576,7 @@ object ContentHelp {
     private fun seekIndex(str: String, key: String, from: Int, to: Int, inOrder: Boolean): Int {
         if (str.length - from < 1) return -1
         var i = 0
-        if (from > i) i = from
+        if (from > 0) i = from
         var t = str.length
         if (to > 0) t = min(t, to)
         var c: Char
@@ -609,6 +618,7 @@ object ContentHelp {
 
     //  引号
     private const val MARK_QUOTATION = "\"“”"
+    private const val MARK_QUOTATION_RIGHT = "\"”"
     private val PARAGRAPH_DIAGLOG = "^[\"”“][^\"”“]+[\"”“]$".toRegex()
 
     //  限制字典的长度
