@@ -68,7 +68,7 @@
 import API from '@api'
 import { CircleCheckFilled, Edit } from '@element-plus/icons-vue'
 import hotkeys from 'hotkeys-js'
-import { getSourceName, isInvaildSource } from '../utils/souce'
+import { getSourceName, isInvaildSource, normalizeSource } from '../utils/souce'
 
 const store = useSourceStore()
 const pull = () => {
@@ -168,6 +168,7 @@ const redo = () => {
 const saveSource = () => {
   const source = store.currentSource
   if (isInvaildSource(source)) {
+    normalizeSource(source)
     API.saveSource(source).then(({ data }) => {
       const sourceName = getSourceName(source)
       if (data.isSuccess) {

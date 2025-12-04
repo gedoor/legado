@@ -49,12 +49,27 @@ export const convertSourcesToMap = (sources: Source[]): Map<string, Source> => {
   return map
 }
 
+export const normalizeSource = (source: any) => {
+  for (const key in source) {
+    const value = source[key]
+    if (
+      value === '' ||
+      value === null ||
+      (typeof value === 'string' && !value.trim())
+    ) {
+      delete source[key]
+    } else if (value instanceof Object) {
+      normalizeSource(value)
+    }
+  }
+}
+
 export const emptyBookSource = {
   ruleSearch: {},
   ruleBookInfo: {},
   ruleToc: {},
   ruleContent: {},
-  ruleReview: {},
+  // ruleReview: {},
   ruleExplore: {},
 } as BookSoure
 export const emptyRssSource = {} as RssSource

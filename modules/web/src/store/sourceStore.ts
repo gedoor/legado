@@ -13,8 +13,8 @@ const emptySource = isBookSource ? emptyBookSource : emptyRssSource
 export const useSourceStore = defineStore('source', {
   state: () => {
     return {
-      bookSources: [] as BookSoure[], // 临时存放所有书源,
-      rssSources: [] as RssSource[], // 临时存放所有订阅源
+      bookSources: shallowRef([] as BookSoure[]), // 临时存放所有书源,
+      rssSources: shallowRef([] as RssSource[]), // 临时存放所有订阅源
       savedSources: [] as Source[], // 批量保存到阅读app成功的源
       currentSource: JSON.parse(JSON.stringify(emptySource)) as Source, // 当前编辑的源
       currentTab: localStorage.getItem('tabName') || 'editTab',
@@ -51,9 +51,9 @@ export const useSourceStore = defineStore('source', {
     //拉取源后保存
     saveSources(data: Source[]) {
       if (isBookSource) {
-        this.bookSources = data as BookSoure[]
+        this.bookSources = markRaw(data) as BookSoure[]
       } else {
-        this.rssSources = data as RssSource[]
+        this.rssSources = markRaw(data) as RssSource[]
       }
     },
     //批量推送
