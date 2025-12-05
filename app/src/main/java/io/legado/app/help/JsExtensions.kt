@@ -322,7 +322,7 @@ interface JsExtensions : JsEncodeUtils {
     fun downloadFile(url: String): String {
         rhinoContext.ensureActive()
         val analyzeUrl = AnalyzeUrl(url, source = getSource(), coroutineContext = context)
-        val type = UrlUtil.getSuffix(url, analyzeUrl.type)
+        val type = analyzeUrl.type ?: UrlUtil.getSuffix(url)
         val path = FileUtils.getPath(
             File(FileUtils.getCachePath()),
             "${MD5Utils.md5Encode16(url)}.${type}"
