@@ -14,29 +14,32 @@ import io.legado.app.utils.canvasrecorder.recordIfNeeded
 /**
  * 自动翻页
  */
-class AutoPager(private val readView: ReadView) : Runnable {
+class AutoPager(private val readView: ReadView) {
     private var progress = 0
     var isRunning = false
         private set
     private var isPausing = false
-    private var isEInkMode = false
     private var scrollOffsetRemain = 0.0
     private var scrollOffset = 0
     private var lastTimeMillis = 0L
     private var canvasRecorder = CanvasRecorderFactory.create()
     private val paint by lazy { Paint() }
 
+    // 墨水屏模式
+    private var eInkStep = 0
+    private val eInkTotalSteps = 4
+    private var eInkLastStepTime = 0L
 
     fun start() {
         isRunning = true
-        isEInkMode = AppConfig.isEInkMode
+        paint.color = ThemeStore.accentColor
+        lastTimeMillis = SystemClock.uptimeMillis()
         readView.curPage.upSelectAble(false)
-        if (isEInkMode) {
-            readView.postDelayed(this, ReadBookConfig.autoReadSpeed * 1000L)
-        } else {
-            paint.color = ThemeStore.accentColor
-            lastTimeMillis = SystemClock.uptimeMillis()
-            readView.invalidate()
+        readView.invalidate()
+
+        if (AppConfig.isEInkMode) {
+            eInkStep = 0
+            eInkLastStepTime = lastTimeMillis
         }
     }
 
@@ -46,8 +49,6 @@ class AutoPager(private val readView: ReadView) : Runnable {
         }
         isRunning = false
         isPausing = false
-        isEInkMode = false
-        readView.removeCallbacks(this)
         readView.curPage.upSelectAble(AppConfig.textSelectAble)
         readView.invalidate()
         reset()
@@ -59,7 +60,6 @@ class AutoPager(private val readView: ReadView) : Runnable {
             return
         }
         isPausing = true
-        readView.removeCallbacks(this)
     }
 
     fun resume() {
@@ -67,24 +67,19 @@ class AutoPager(private val readView: ReadView) : Runnable {
             return
         }
         isPausing = false
-        if (isEInkMode) {
-            readView.postDelayed(this, ReadBookConfig.autoReadSpeed * 1000L)
-        } else {
-            lastTimeMillis = SystemClock.uptimeMillis()
-            readView.invalidate()
+        lastTimeMillis = SystemClock.uptimeMillis()
+        if (AppConfig.isEInkMode) {
+            eInkLastStepTime = lastTimeMillis
         }
+        readView.invalidate()
     }
 
     fun reset() {
-        if (isEInkMode) {
-            readView.removeCallbacks(this)
-            readView.postDelayed(this, ReadBookConfig.autoReadSpeed * 1000L)
-        } else {
-            progress = 0
-            scrollOffsetRemain = 0.0
-            scrollOffset = 0
-            canvasRecorder.invalidate()
-        }
+        progress = 0
+        scrollOffsetRemain = 0.0
+        scrollOffset = 0
+        canvasRecorder.invalidate()
+        eInkStep = 0
     }
 
     fun upRecorder() {
@@ -93,7 +88,7 @@ class AutoPager(private val readView: ReadView) : Runnable {
     }
 
     fun onDraw(canvas: Canvas) {
-        if (!isRunning || isEInkMode) {
+        if (!isRunning) {
             return
         }
 
@@ -103,31 +98,75 @@ class AutoPager(private val readView: ReadView) : Runnable {
                 scrollOffset = 0
             }
         } else {
-            val bottom = progress
             val width = readView.width
+            val height = readView.height
 
-            canvasRecorder.recordIfNeeded(readView.nextPage)
-            canvas.withClip(0, 0, width, bottom) {
-                canvasRecorder.draw(this)
+            if (AppConfig.isEInkMode) {
+                // 墨水屏模式分步绘制
+                if (eInkStep > 0) {
+                    canvasRecorder.recordIfNeeded(readView.nextPage)
+                    val stepHeight = height * eInkStep / eInkTotalSteps
+                    canvas.withClip(0, 0, width, stepHeight) {
+                        canvasRecorder.draw(this)
+                    }
+                    canvas.drawRect(
+                        0f,
+                        stepHeight.toFloat() - 1,
+                        width.toFloat(),
+                        stepHeight.toFloat(),
+                        paint
+                    )
+                }
+                if (eInkStep < eInkTotalSteps && !isPausing) {
+                    readView.postInvalidate()
+                }
+            } else {
+                // 非墨水屏持续绘制
+                val bottom = progress
+
+                canvasRecorder.recordIfNeeded(readView.nextPage)
+                canvas.withClip(0, 0, width, bottom) {
+                    canvasRecorder.draw(this)
+                }
+
+                canvas.drawRect(
+                    0f,
+                    bottom.toFloat() - 1,
+                    width.toFloat(),
+                    bottom.toFloat(),
+                    paint
+                )
+                if (!isPausing) readView.postInvalidate()
             }
-
-            canvas.drawRect(
-                0f,
-                bottom.toFloat() - 1,
-                width.toFloat(),
-                bottom.toFloat(),
-                paint
-            )
-            if (!isPausing) readView.postInvalidate()
         }
-
     }
 
     fun computeOffset() {
-        if (!isRunning || isPausing || isEInkMode) {
+        if (!isRunning || isPausing) {
             return
         }
 
+        // 墨水屏模式计时翻页
+        if (AppConfig.isEInkMode) {
+            val currentTime = SystemClock.uptimeMillis()
+            val stepInterval = (ReadBookConfig.autoReadSpeed * 1000 / eInkTotalSteps).toLong()
+
+            if (currentTime - eInkLastStepTime >= stepInterval) {
+                eInkStep++
+                eInkLastStepTime = currentTime
+
+                if (eInkStep >= eInkTotalSteps) {
+                    if (!readView.fillPage(PageDirection.NEXT)) {
+                        stop()
+                    } else {
+                        reset()
+                    }
+                }
+            }
+            return
+        }
+
+        // 非墨水屏按帧翻页
         val currentTime = SystemClock.uptimeMillis()
         val elapsedTime = currentTime - lastTimeMillis
         lastTimeMillis = currentTime
@@ -151,17 +190,4 @@ class AutoPager(private val readView: ReadView) : Runnable {
             }
         }
     }
-
-    override fun run() {
-        if (!isRunning || isPausing) {
-            return
-        }
-
-        if (!readView.fillPage(PageDirection.NEXT)) {
-            stop()
-        } else {
-            readView.postDelayed(this, ReadBookConfig.autoReadSpeed * 1000L)
-        }
-    }
-
 }
