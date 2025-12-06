@@ -696,5 +696,41 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             appCtx.putPrefBoolean(PreferKey.enableMangaGray, value)
         }
 
+    var welcomeImage
+        get() = appCtx.getPrefString(PreferKey.welcomeImage)
+        set(value) {
+            appCtx.putPrefString(PreferKey.welcomeImage, value)
+        }
+
+    var welcomeShowText
+        get() = appCtx.getPrefBoolean(PreferKey.welcomeShowText, true)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.welcomeShowText, value)
+        }
+
+    var welcomeShowIcon
+        get() = appCtx.getPrefBoolean(PreferKey.welcomeShowIcon, true)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.welcomeShowIcon, value)
+        }
+
+    var welcomeImageDark
+        get() = appCtx.getPrefString(PreferKey.welcomeImageDark)
+        set(value) {
+            appCtx.putPrefString(PreferKey.welcomeImageDark, value)
+        }
+
+    var welcomeShowTextDark
+        get() = appCtx.getPrefBoolean(PreferKey.welcomeShowTextDark, true)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.welcomeShowTextDark, value)
+        }
+
+    var welcomeShowIconDark
+        get() = appCtx.getPrefBoolean(PreferKey.welcomeShowIconDark, true)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.welcomeShowIconDark, value)
+        }
+
 }
 
