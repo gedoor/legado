@@ -36,14 +36,17 @@ import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.getPrefString
+import kotlinx.coroutines.currentCoroutineContext
 import splitties.init.appCtx
 import java.io.File
-import kotlin.coroutines.coroutineContext
 
 @Keep
+@Suppress("ConstPropertyName")
 object BookCover {
 
     private const val coverRuleConfigKey = "legadoCoverRuleConfig"
+    const val configFileName = "coverRule.json"
+
     var drawBookName = true
         private set
     var drawBookAuthor = true
@@ -200,9 +203,12 @@ object BookCover {
     }
 
     fun getCoverRule(): CoverRule {
+        return getConfig() ?: DefaultData.coverRule
+    }
+
+    fun getConfig(): CoverRule? {
         return GSON.fromJsonObject<CoverRule>(CacheManager.get(coverRuleConfigKey))
             .getOrNull()
-            ?: DefaultData.coverRule
     }
 
     suspend fun searchCover(book: Book): String? {
@@ -214,12 +220,12 @@ object BookCover {
             config.searchUrl,
             book.name,
             source = config,
-            coroutineContext = coroutineContext,
+            coroutineContext = currentCoroutineContext(),
             hasLoginHeader = false
         )
         val res = analyzeUrl.getStrResponseAwait()
         val analyzeRule = AnalyzeRule(book)
-        analyzeRule.setCoroutineContext(coroutineContext)
+        analyzeRule.setCoroutineContext(currentCoroutineContext())
         analyzeRule.setContent(res.body)
         analyzeRule.setRedirectUrl(res.url)
         return analyzeRule.getString(config.coverRule, isUrl = true)
@@ -227,6 +233,10 @@ object BookCover {
 
     fun saveCoverRule(config: CoverRule) {
         val json = GSON.toJson(config)
+        saveCoverRule(json)
+    }
+
+    fun saveCoverRule(json: String) {
         CacheManager.put(coverRuleConfigKey, json)
     }
 

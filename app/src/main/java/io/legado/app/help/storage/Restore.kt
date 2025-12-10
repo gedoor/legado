@@ -32,6 +32,7 @@ import io.legado.app.help.book.upType
 import io.legado.app.help.config.LocalConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.help.config.ThemeConfig
+import io.legado.app.model.BookCover
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.ACache
 import io.legado.app.utils.FileUtils
@@ -210,6 +211,14 @@ object Restore {
             ThemeConfig.upConfig()
         }?.onFailure {
             AppLog.put("恢复主题出错\n${it.localizedMessage}", it)
+        }
+        File(path, BookCover.configFileName).takeIf {
+            it.exists()
+        }?.runCatching {
+            val json = readText()
+            BookCover.saveCoverRule(json)
+        }?.onFailure {
+            AppLog.put("恢复封面规则出错\n${it.localizedMessage}", it)
         }
         if (!BackupConfig.ignoreReadConfig) {
             //恢复阅读界面配置
