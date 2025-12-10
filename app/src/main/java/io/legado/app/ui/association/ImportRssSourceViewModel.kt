@@ -184,7 +184,7 @@ class ImportRssSourceViewModel(app: Application) : BaseViewModel(app) {
             allSources.forEach {
                 val has = appDb.rssSourceDao.getByKey(it.sourceUrl)
                 checkSources.add(has)
-                selectStatus.add(has == null)
+                selectStatus.add(has == null || has.lastUpdateTime < it.lastUpdateTime)
             }
             successLiveData.postValue(allSources.size)
         }

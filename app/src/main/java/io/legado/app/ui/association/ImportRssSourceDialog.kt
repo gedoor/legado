@@ -25,8 +25,14 @@ import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.dialog.CodeDialog
 import io.legado.app.ui.widget.dialog.WaitDialog
-import io.legado.app.utils.*
+import io.legado.app.utils.GSON
+import io.legado.app.utils.dpToPx
+import io.legado.app.utils.fromJsonObject
+import io.legado.app.utils.putPrefBoolean
+import io.legado.app.utils.setLayout
+import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import io.legado.app.utils.visible
 import splitties.views.onClick
 
 /**
@@ -223,10 +229,11 @@ class ImportRssSourceDialog() : BaseDialogFragment(R.layout.dialog_recycler_view
             binding.apply {
                 cbSourceName.isChecked = viewModel.selectStatus[holder.layoutPosition]
                 cbSourceName.text = item.sourceName
-                tvSourceState.text = if (viewModel.checkSources[holder.layoutPosition] != null) {
-                    "已有"
-                } else {
-                    "新增"
+                val localSource = viewModel.checkSources[holder.layoutPosition]
+                tvSourceState.text = when {
+                    localSource == null -> "新增"
+                    item.lastUpdateTime > localSource.lastUpdateTime -> "更新"
+                    else -> "已有"
                 }
             }
         }
