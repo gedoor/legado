@@ -13,7 +13,6 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.help.DefaultData
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.utils.BitmapUtils
-import io.legado.app.utils.FileDoc
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.GSON
 import io.legado.app.utils.compress.ZipUtils
@@ -469,14 +468,18 @@ object ReadBookConfig {
         val configFile = configDir.getFile(configFileName)
         val config: Config = GSON.fromJsonObject<Config>(configFile.readText()).getOrThrow()
         if (config.textFont.isNotEmpty()) {
-            val fontDoc = FileDoc.fromFile(config.textFont)
-            val fontName = fontDoc.name
+            val fontName = config.textFont
             val fontPath =
                 FileUtils.getPath(appCtx.externalFiles, "font", fontName)
-            if (!FileUtils.exist(fontPath)) {
-                configDir.getFile(fontName).copyTo(File(fontPath))
+            val fontFile = configDir.getFile(fontName)
+            if (fontFile.exists()) {
+                if (!FileUtils.exist(fontPath)) {
+                    fontFile.copyTo(File(fontPath))
+                }
+                config.textFont = fontPath
+            } else {
+                config.textFont = ""
             }
-            config.textFont = fontPath
         }
         if (config.bgType == 2) {
             val bgName = FileUtils.getName(config.bgStr)
