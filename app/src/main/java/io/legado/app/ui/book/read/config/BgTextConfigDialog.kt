@@ -13,7 +13,6 @@ import android.view.WindowManager
 import android.widget.SeekBar
 import androidx.appcompat.widget.TooltipCompat
 import androidx.core.view.isGone
-import androidx.documentfile.provider.DocumentFile
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -44,13 +43,15 @@ import io.legado.app.utils.GSON
 import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.SelectImageContract
 import io.legado.app.utils.compress.ZipUtils
+import io.legado.app.utils.createFileIfNotExist
 import io.legado.app.utils.createFileReplace
 import io.legado.app.utils.createFolderReplace
+import io.legado.app.utils.delete
 import io.legado.app.utils.externalCache
 import io.legado.app.utils.externalFiles
+import io.legado.app.utils.find
 import io.legado.app.utils.getFile
 import io.legado.app.utils.inputStream
-import io.legado.app.utils.isContentScheme
 import io.legado.app.utils.launch
 import io.legado.app.utils.longToast
 import io.legado.app.utils.openInputStream
@@ -298,20 +299,13 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
             }
             val configZipPath = FileUtils.getPath(requireContext().externalCache, configFileName)
             if (ZipUtils.zipFiles(exportFiles, File(configZipPath))) {
-                if (uri.isContentScheme()) {
-                    DocumentFile.fromTreeUri(requireContext(), uri)?.let { treeDoc ->
-                        treeDoc.findFile(exportFileName)?.delete()
-                        val out = treeDoc.createFile("", exportFileName)?.openOutputStream()
-                        out?.use {
-                            File(configZipPath).inputStream().use {
-                                it.copyTo(out)
-                            }
-                        }
+                val exportDir = FileDoc.fromDir(uri)
+                exportDir.find(exportFileName)?.delete()
+                val exportFileDoc = exportDir.createFileIfNotExist(exportFileName)
+                exportFileDoc.openOutputStream().getOrThrow().use { out ->
+                    File(configZipPath).inputStream().use {
+                        it.copyTo(out)
                     }
-                } else {
-                    val exportPath = FileUtils.getPath(File(uri.path!!), exportFileName)
-                    FileUtils.delete(exportPath)
-                    File(configZipPath).copyTo(FileUtils.createFileIfNotExist(exportPath))
                 }
             }
         }.onSuccess {

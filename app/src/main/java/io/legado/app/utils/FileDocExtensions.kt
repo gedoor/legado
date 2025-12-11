@@ -81,6 +81,10 @@ data class FileDoc(
             return fromUri(path.toUri(), false)
         }
 
+        fun fromDir(uri: Uri): FileDoc {
+            return fromUri(uri, true)
+        }
+
         fun fromUri(uri: Uri, isDir: Boolean): FileDoc {
             if (uri.isContentScheme()) {
                 val doc = if (isDir) {
