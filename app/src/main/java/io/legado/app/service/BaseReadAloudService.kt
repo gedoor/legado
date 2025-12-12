@@ -133,11 +133,17 @@ abstract class BaseReadAloudService : BaseService(),
     var readAloudByPage = false
         private set
 
+
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (AudioManager.ACTION_AUDIO_BECOMING_NOISY == intent.action) {
+            when (intent.action) {
+                AudioManager.ACTION_AUDIO_BECOMING_NOISY -> pauseReadAloud()
+                "android.media.VOLUME_CHANGED_ACTION" -> {
+                    if (isPlay() && audioManager.getStreamVolume(AudioManager.STREAM_MUSIC) == 0) {
                 pauseReadAloud()
             }
+        }
+    }
         }
     }
 
@@ -524,7 +530,10 @@ abstract class BaseReadAloudService : BaseService(),
      * 注册多媒体按钮监听
      */
     private fun initBroadcastReceiver() {
-        val intentFilter = IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY)
+        val intentFilter = IntentFilter().apply {
+            addAction(AudioManager.ACTION_AUDIO_BECOMING_NOISY)
+            addAction("android.media.VOLUME_CHANGED_ACTION")
+        }
         registerReceiver(broadcastReceiver, intentFilter)
     }
 
