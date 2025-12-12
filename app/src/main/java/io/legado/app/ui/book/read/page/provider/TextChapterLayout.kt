@@ -342,8 +342,10 @@ class TextChapterLayout(
                     width = visibleWidth
                     height = size.height * visibleWidth / size.width
                     if (pageAnim != PageAnim.scrollPageAnim && height > visibleHeight - durY) {
-                        width = width * visibleHeight / height
-                        height = visibleHeight
+                        if (height > visibleHeight) {
+                            width = width * visibleHeight / height
+                            height = visibleHeight
+                        }
                         prepareNextPageIfNeed(durY + height)
                     }
                 }
