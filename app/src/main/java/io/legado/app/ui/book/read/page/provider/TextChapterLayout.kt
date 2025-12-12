@@ -6,6 +6,7 @@ import android.text.StaticLayout
 import android.text.TextPaint
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern
+import io.legado.app.constant.PageAnim
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.help.book.BookContent
@@ -76,6 +77,7 @@ class TextChapterLayout(
     private val useZhLayout = ReadBookConfig.useZhLayout
     private val isMiddleTitle = ReadBookConfig.isMiddleTitle
     private val textFullJustify = ReadBookConfig.textFullJustify
+    private val pageAnim = book.getPageAnim()
 
     private var pendingTextPage = TextPage()
 
@@ -339,6 +341,11 @@ class TextChapterLayout(
                 Book.imgStyleFull -> {
                     width = visibleWidth
                     height = size.height * visibleWidth / size.width
+                    if (pageAnim != PageAnim.scrollPageAnim && height > visibleHeight) {
+                        width = width * visibleHeight / height
+                        height = visibleHeight
+                        prepareNextPageIfNeed(durY + height)
+                    }
                 }
 
                 Book.imgStyleSingle -> {
