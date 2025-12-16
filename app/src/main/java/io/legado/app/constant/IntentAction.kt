@@ -12,6 +12,7 @@ object IntentAction {
     const val setTimer = "setTimer"
     const val prevParagraph = "prevParagraph"
     const val nextParagraph = "nextParagraph"
+    const val resetParagraph = "resetParagraph"
     const val upTtsSpeechRate = "upTtsSpeechRate"
     const val upTtsProgress = "upTtsProgress"
     const val adjustProgress = "adjustProgress"

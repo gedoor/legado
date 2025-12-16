@@ -219,6 +219,7 @@ abstract class BaseReadAloudService : BaseService(),
             IntentAction.upTtsSpeechRate -> upSpeechRate(true)
             IntentAction.prevParagraph -> prevP()
             IntentAction.nextParagraph -> nextP()
+            IntentAction.resetParagraph -> resetP()
             IntentAction.prev -> prevChapter()
             IntentAction.next -> nextChapter()
             IntentAction.addTimer -> addTimer()
@@ -377,6 +378,13 @@ abstract class BaseReadAloudService : BaseService(),
         } else {
             nextChapter()
         }
+    }
+
+    private fun resetP() {
+        readAloudNumber -= paragraphStartPos
+        paragraphStartPos = 0
+        upTtsProgress(readAloudNumber)
+        play()
     }
 
     private fun setTimer(minute: Int) {

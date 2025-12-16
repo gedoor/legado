@@ -602,6 +602,12 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             appCtx.putPrefBoolean(PreferKey.readBarStyleFollowPage, value)
         }
 
+    var readAloudResetParagraphAfterDict: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.readAloudResetParagraphAfterDict, false)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.readAloudResetParagraphAfterDict, value)
+        }
+
     var sourceEditMaxLine: Int
         get() {
             val maxLine = appCtx.getPrefInt(PreferKey.sourceEditMaxLine, Int.MAX_VALUE)
