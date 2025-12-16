@@ -46,9 +46,7 @@ suspend fun OkHttpClient.newCallResponseBody(
     retry: Int = 0,
     builder: Request.Builder.() -> Unit
 ): ResponseBody {
-    return newCallResponse(retry, builder).let {
-        it.body ?: throw IOException(it.message)
-    }
+    return newCallResponse(retry, builder).body
 }
 
 suspend fun OkHttpClient.newCallStrResponse(
@@ -56,7 +54,7 @@ suspend fun OkHttpClient.newCallStrResponse(
     builder: Request.Builder.() -> Unit
 ): StrResponse {
     return newCallResponse(retry, builder).let {
-        StrResponse(it, it.body?.text() ?: it.message)
+        StrResponse(it, it.body.text())
     }
 }
 
@@ -142,6 +140,7 @@ fun Request.Builder.postForm(encodedForm: String) {
     post(encodedForm.toRequestBody(formContentType))
 }
 
+@Suppress("unused")
 fun Request.Builder.postForm(form: Map<String, String>, encoded: Boolean = false) {
     val formBody = FormBody.Builder()
     form.forEach {

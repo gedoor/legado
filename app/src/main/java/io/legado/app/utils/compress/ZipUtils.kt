@@ -2,11 +2,22 @@ package io.legado.app.utils.compress
 
 import android.annotation.SuppressLint
 import io.legado.app.utils.DebugLog
+import io.legado.app.utils.compress.ZipUtils.zipFile
 import io.legado.app.utils.printOnDebug
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
-import java.io.*
-import java.util.zip.*
+import java.io.BufferedInputStream
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStream
+import java.util.zip.GZIPOutputStream
+import java.util.zip.ZipEntry
+import java.util.zip.ZipFile
+import java.util.zip.ZipInputStream
+import java.util.zip.ZipOutputStream
 
 @SuppressLint("ObsoleteSdkInt")
 @Suppress("unused", "MemberVisibilityCanBePrivate")
@@ -241,7 +252,7 @@ object ZipUtils {
             if (!entryFile.canonicalPath.startsWith(dir.canonicalPath)) {
                 throw SecurityException("压缩文件只能解压到指定路径")
             }
-            if (entry!!.isDirectory) {
+            if (entry.isDirectory) {
                 if (!entryFile.exists()) {
                     entryFile.mkdirs()
                 }
@@ -286,7 +297,7 @@ object ZipUtils {
             if (entry!!.isDirectory) {
                 continue
             }
-            val fileName = entry!!.name
+            val fileName = entry.name
             if (filter != null && filter.invoke(fileName))
                 fileNames.add(fileName)
         }

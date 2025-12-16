@@ -10,8 +10,14 @@ import android.graphics.drawable.Drawable
 import org.json.JSONArray
 import org.json.JSONObject
 import splitties.init.appCtx
-import java.io.*
-import java.util.*
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.IOException
+import java.io.ObjectInputStream
+import java.io.ObjectOutputStream
+import java.io.Serializable
+import java.util.Collections
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicLong
 import kotlin.math.min
@@ -458,6 +464,7 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
      */
     private object Utils {
 
+        @Suppress("ConstPropertyName")
         private const val mSeparator = ' '
 
         /**
@@ -762,8 +769,8 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
 
                 var fileSize: Long = 0
                 if (mostLongUsedFile != null) {
-                    fileSize = calculateSize(mostLongUsedFile!!)
-                    if (mostLongUsedFile!!.delete()) {
+                    fileSize = calculateSize(mostLongUsedFile)
+                    if (mostLongUsedFile.delete()) {
                         lastUsageDates.remove(mostLongUsedFile)
                     }
                 }

@@ -53,7 +53,7 @@ class AutoReadDialog : BaseDialogFragment(R.layout.dialog_auto_read) {
         val bottomDialog = (activity as ReadBookActivity).bottomDialog++
         if (bottomDialog > 0) {
             dismiss()
-            return
+            return@run
         }
         val bg = requireContext().bottomBackground
         val isLight = ColorUtils.isColorLight(bg)

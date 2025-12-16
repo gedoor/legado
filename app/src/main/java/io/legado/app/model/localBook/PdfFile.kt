@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.pdf.PdfRenderer
 import android.os.ParcelFileDescriptor
+import androidx.core.graphics.createBitmap
 import io.legado.app.constant.AppLog
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
@@ -121,16 +122,14 @@ class PdfFile(var book: Book) {
         if (index >= renderer.pageCount) {
             return null
         }
-        return renderer.openPage(index)?.use { page ->
-            Bitmap.createBitmap(
+        return renderer.openPage(index).use { page ->
+            createBitmap(
                 SystemUtils.screenWidthPx,
-                (SystemUtils.screenWidthPx.toDouble() * page.height / page.width).toInt(),
-                Bitmap.Config.ARGB_8888
-            )
-                .apply {
-                    this.eraseColor(Color.WHITE)
-                    page.render(this, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
-                }
+                (SystemUtils.screenWidthPx.toDouble() * page.height / page.width).toInt()
+            ).apply {
+                this.eraseColor(Color.WHITE)
+                page.render(this, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
+            }
         }
 
     }
@@ -168,7 +167,7 @@ class PdfFile(var book: Book) {
                 null
             }
 
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             return null
         }
     }
