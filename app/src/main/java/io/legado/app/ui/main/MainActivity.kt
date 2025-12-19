@@ -374,17 +374,19 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
     }
 
     private fun upHomePage() {
-        when (AppConfig.defaultHomePage) {
-            "bookshelf" -> {}
-            "explore" -> if (AppConfig.showDiscovery) {
-                binding.viewPagerMain.setCurrentItem(realPositions.indexOf(idExplore), false)
-            }
+        // Always navigate to Explore page on startup if discovery is enabled
+        if (AppConfig.showDiscovery) {
+            binding.viewPagerMain.setCurrentItem(realPositions.indexOf(idExplore), false)
+        } else {
+            // Fallback to default behavior if discovery is disabled
+            when (AppConfig.defaultHomePage) {
+                "bookshelf" -> {}
+                "rss" -> if (AppConfig.showRSS) {
+                    binding.viewPagerMain.setCurrentItem(realPositions.indexOf(idRss), false)
+                }
 
-            "rss" -> if (AppConfig.showRSS) {
-                binding.viewPagerMain.setCurrentItem(realPositions.indexOf(idRss), false)
+                "my" -> binding.viewPagerMain.setCurrentItem(realPositions.indexOf(idMy), false)
             }
-
-            "my" -> binding.viewPagerMain.setCurrentItem(realPositions.indexOf(idMy), false)
         }
     }
 
