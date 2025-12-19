@@ -3,6 +3,7 @@ package io.legado.app.service
 import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.net.Uri
+import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
@@ -307,7 +308,7 @@ class HttpReadAloudService : BaseReadAloudService(),
     }
 
     private fun createDownloader(factory: CacheDataSource.Factory, fileName: String): Downloader {
-        val uri = Uri.parse(fileName)
+        val uri = fileName.toUri()
         val request = DownloadRequest.Builder(fileName, uri).build()
         return DefaultDownloaderFactory(factory, okHttpClient.dispatcher.executorService)
             .createDownloader(request)
@@ -586,7 +587,7 @@ class HttpReadAloudService : BaseReadAloudService(),
         return servicePendingIntent<HttpReadAloudService>(actionStr)
     }
 
-    inner class CustomLoadErrorHandlingPolicy : DefaultLoadErrorHandlingPolicy(0) {
+    class CustomLoadErrorHandlingPolicy : DefaultLoadErrorHandlingPolicy(0) {
         override fun getRetryDelayMsFor(loadErrorInfo: LoadErrorHandlingPolicy.LoadErrorInfo): Long {
             return C.TIME_UNSET
         }

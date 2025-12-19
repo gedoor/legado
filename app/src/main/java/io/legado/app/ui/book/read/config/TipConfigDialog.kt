@@ -3,6 +3,7 @@ package io.legado.app.ui.book.read.config
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.indices
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -44,6 +45,9 @@ class TipConfigDialog : BaseDialogFragment(R.layout.dialog_tip_config) {
     }
 
     private fun initView() {
+        if (ReadBookConfig.titleMode !in binding.rgTitleMode.indices) {
+            ReadBookConfig.titleMode = 0
+        }
         binding.rgTitleMode.checkByIndex(ReadBookConfig.titleMode)
         binding.dsbTitleSize.progress = ReadBookConfig.titleSize
         binding.dsbTitleTop.progress = ReadBookConfig.titleTopSpacing

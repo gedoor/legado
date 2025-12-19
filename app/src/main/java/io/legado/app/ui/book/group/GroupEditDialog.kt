@@ -70,6 +70,9 @@ class GroupEditDialog() : BaseDialogFragment(R.layout.dialog_book_group_edit) {
             binding.btnDelete.visible(it.groupId > 0 || it.groupId == Long.MIN_VALUE)
             binding.tieGroupName.setText(it.groupName)
             binding.ivCover.load(it.cover)
+            if (it.bookSort + 1 !in 0..<binding.spSort.count) {
+                it.bookSort = -1
+            }
             binding.spSort.setSelection(it.bookSort + 1)
             binding.cbEnableRefresh.isChecked = it.enableRefresh
         } ?: let {
