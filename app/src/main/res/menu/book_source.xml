@@ -133,9 +133,9 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/menu_show_same_source"
+        android:id="@+id/menu_group_sources_by_domain"
         android:checkable="true"
-        android:title="@string/show_same_source"
+        android:title="@string/group_sources_by_domain"
         app:showAsAction="never" />
 
     <item
