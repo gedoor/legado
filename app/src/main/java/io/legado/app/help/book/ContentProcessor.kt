@@ -101,48 +101,6 @@ class ContentProcessor private constructor(
         var sameTitleRemoved = false
         var effectiveReplaceRules: ArrayList<ReplaceRule>? = null
         if (content != "null") {
-            //去除重复标题
-            val fileName = chapter.getFileName("nr")
-            if (!removeSameTitleCache.contains(fileName)) try {
-                val name = Pattern.quote(book.name)
-                var title = chapter.title.escapeRegex().replace(spaceRegex, "\\\\s*")
-                var matcher = Pattern.compile("^(\\s|\\p{P}|${name})*${title}(\\s)*")
-                    .matcher(mContent)
-                if (matcher.find()) {
-                    mContent = mContent.substring(matcher.end())
-                    sameTitleRemoved = true
-                } else if (useReplace && book.getUseReplaceRule()) {
-                    title = Pattern.quote(
-                        chapter.getDisplayTitle(
-                            contentReplaceRules,
-                            chineseConvert = false
-                        )
-                    )
-                    matcher = Pattern.compile("^(\\s|\\p{P}|${name})*${title}(\\s)*")
-                        .matcher(mContent)
-                    if (matcher.find()) {
-                        mContent = mContent.substring(matcher.end())
-                        sameTitleRemoved = true
-                    }
-                }
-            } catch (e: Exception) {
-                AppLog.put("去除重复标题出错\n${e.localizedMessage}", e)
-            }
-            if (reSegment && book.getReSegment()) {
-                //重新分段
-                mContent = ContentHelp.reSegment(mContent, chapter.title)
-            }
-            if (chineseConvert) {
-                //简繁转换
-                try {
-                    when (AppConfig.chineseConverterType) {
-                        1 -> mContent = ChineseUtils.t2s(mContent)
-                        2 -> mContent = ChineseUtils.s2t(mContent)
-                    }
-                } catch (e: Exception) {
-                    appCtx.toastOnUi("简繁转换出错")
-                }
-            }
             if (useReplace && book.getUseReplaceRule()) {
                 //替换
                 effectiveReplaceRules = arrayListOf()
@@ -176,6 +134,36 @@ class ContentProcessor private constructor(
                     }
                 }
             }
+            //去除重复标题
+            val fileName = chapter.getFileName("nr")
+            if (!removeSameTitleCache.contains(fileName)) try {
+                val name = Pattern.quote(book.name)
+                var title = chapter.title.escapeRegex().replace(spaceRegex, "\\\\s*")
+                var matcher = Pattern.compile("^(\\s|\\p{P}|${name})*${title}(\\s)*")
+                    .matcher(mContent)
+                if (matcher.find()) {
+                    mContent = mContent.substring(matcher.end())
+                    sameTitleRemoved = true
+                }
+            } catch (e: Exception) {
+                AppLog.put("去除重复标题出错\n${e.localizedMessage}", e)
+            }
+            if (reSegment && book.getReSegment()) {
+                //重新分段
+                mContent = ContentHelp.reSegment(mContent, chapter.title)
+            }
+            if (chineseConvert) {
+                //简繁转换
+                try {
+                    when (AppConfig.chineseConverterType) {
+                        1 -> mContent = ChineseUtils.t2s(mContent)
+                        2 -> mContent = ChineseUtils.s2t(mContent)
+                    }
+                } catch (e: Exception) {
+                    appCtx.toastOnUi("简繁转换出错")
+                }
+            }
+
         }
         if (includeTitle) {
             //重新添加标题
