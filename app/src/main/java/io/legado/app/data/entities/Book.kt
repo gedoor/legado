@@ -223,7 +223,7 @@ data class Book(
 
     fun getPageAnim(): Int {
         var pageAnim = config.pageAnim
-            ?: if (type and BookType.image > 0) PageAnim.scrollPageAnim else ReadBookConfig.pageAnim
+            ?: if (isImage) PageAnim.scrollPageAnim else ReadBookConfig.pageAnim
         if (pageAnim < 0) {
             pageAnim = ReadBookConfig.pageAnim
         }
