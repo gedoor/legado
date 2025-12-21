@@ -182,7 +182,7 @@ class ImportBookActivity : BaseImportBookActivity<ImportBookViewModel>(),
     private fun initRootPath(rootUri: Uri) {
         kotlin.runCatching {
             val doc = DocumentFile.fromTreeUri(this, rootUri)
-            if (doc == null || doc.name.isNullOrEmpty()) {
+            if (doc == null || doc.name.isNullOrEmpty() || !doc.isDirectory) {
                 binding.tvEmptyMsg.visible()
                 selectFolder.launch()
             } else {
