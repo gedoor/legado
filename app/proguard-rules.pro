@@ -101,7 +101,7 @@ cn.hutool.core.util.**{*;}
 }
 
 # MenuExtensions applyOpenTint
--keep,allowobfuscation class androidx.appcompat.view.menu.SubMenuBuilder
+-keepnames class androidx.appcompat.view.menu.SubMenuBuilder
 -keep class androidx.appcompat.view.menu.MenuBuilder {
     *** setOptionalIconsVisible(...);
     *** getNonActionItems();
