@@ -62,7 +62,7 @@ fun AppCompatActivity.readUri(
         }
     } catch (e: Exception) {
         e.printOnDebug()
-        AppLog.put("读取Uri出错\n$e", e, true)
+        AppLog.put("读取Uri出错\n$uri\n$e", e, true)
         if (e is SecurityException) {
             throw e
         }
@@ -99,7 +99,7 @@ fun Fragment.readUri(uri: Uri?, success: (fileDoc: FileDoc, inputStream: InputSt
         }
     } catch (e: Exception) {
         e.printOnDebug()
-        AppLog.put("读取Uri出错\n$e", e, true)
+        AppLog.put("读取Uri出错\n$uri\n$e", e, true)
     }
 }
 
