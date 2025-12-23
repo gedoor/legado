@@ -22,9 +22,9 @@ class JsURL(url: String, baseUrl: String? = null) {
         }
         host = mUrl.host
         origin = if (mUrl.port > 0) {
-            "${mUrl.protocol}://$host:${mUrl}:${mUrl.port}"
+            "${mUrl.protocol}://$host:${mUrl.port}"
         } else {
-            "${mUrl.protocol}://$host:${mUrl}"
+            "${mUrl.protocol}://$host"
         }
         pathname = mUrl.path
         val query = mUrl.query

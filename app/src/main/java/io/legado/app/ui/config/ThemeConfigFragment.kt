@@ -27,12 +27,12 @@ import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.prefs.ColorPreference
 import io.legado.app.lib.prefs.fragment.PreferenceFragment
 import io.legado.app.lib.theme.primaryColor
+import io.legado.app.ui.file.HandleFileContract
 import io.legado.app.ui.widget.number.NumberPickerDialog
 import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.MD5Utils
-import io.legado.app.utils.SelectImageContract
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.externalFiles
 import io.legado.app.utils.getPrefInt
@@ -57,7 +57,7 @@ class ThemeConfigFragment : PreferenceFragment(),
 
     private val requestCodeBgLight = 121
     private val requestCodeBgDark = 122
-    private val selectImage = registerForActivityResult(SelectImageContract()) {
+    private val selectImage = registerForActivityResult(HandleFileContract()) {
         it.uri?.let { uri ->
             when (it.requestCode) {
                 requestCodeBgLight -> setBgFromUri(uri, PreferKey.bgImage) {
@@ -253,9 +253,15 @@ class ThemeConfigFragment : PreferenceFragment(),
 
                 1 -> {
                     if (isNight) {
-                        selectImage.launch(requestCodeBgDark)
+                        selectImage.launch {
+                            requestCode = requestCodeBgDark
+                            mode = HandleFileContract.IMAGE
+                        }
                     } else {
-                        selectImage.launch(requestCodeBgLight)
+                        selectImage.launch {
+                            requestCode = requestCodeBgLight
+                            mode = HandleFileContract.IMAGE
+                        }
                     }
                 }
 
