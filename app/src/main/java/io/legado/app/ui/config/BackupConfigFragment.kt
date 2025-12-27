@@ -112,16 +112,19 @@ class BackupConfigFragment : PreferenceFragment(),
             it.setOnBindEditTextListener { editText ->
                 editText.inputType =
                     InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_CLASS_TEXT
+                editText.setSelection(editText.text.length)
             }
         }
         findPreference<EditTextPreference>(PreferKey.webDavDir)?.let {
             it.setOnBindEditTextListener { editText ->
                 editText.text = AppConfig.webDavDir?.toEditable()
+                editText.setSelection(editText.text.length)
             }
         }
         findPreference<EditTextPreference>(PreferKey.webDavDeviceName)?.let {
             it.setOnBindEditTextListener { editText ->
                 editText.text = AppConfig.webDavDeviceName?.toEditable()
+                editText.setSelection(editText.text.length)
             }
         }
         upPreferenceSummary(PreferKey.webDavUrl, getPrefString(PreferKey.webDavUrl))

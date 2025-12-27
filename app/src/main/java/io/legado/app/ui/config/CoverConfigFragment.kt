@@ -13,7 +13,19 @@ import io.legado.app.lib.prefs.SwitchPreference
 import io.legado.app.lib.prefs.fragment.PreferenceFragment
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.model.BookCover
-import io.legado.app.utils.*
+import io.legado.app.ui.file.HandleFileContract
+import io.legado.app.utils.FileUtils
+import io.legado.app.utils.MD5Utils
+import io.legado.app.utils.externalFiles
+import io.legado.app.utils.getPrefBoolean
+import io.legado.app.utils.getPrefString
+import io.legado.app.utils.inputStream
+import io.legado.app.utils.putPrefString
+import io.legado.app.utils.readUri
+import io.legado.app.utils.removePref
+import io.legado.app.utils.setEdgeEffectColor
+import io.legado.app.utils.showDialogFragment
+import io.legado.app.utils.toastOnUi
 import splitties.init.appCtx
 import java.io.FileOutputStream
 
@@ -22,7 +34,7 @@ class CoverConfigFragment : PreferenceFragment(),
 
     private val requestCodeCover = 111
     private val requestCodeCoverDark = 112
-    private val selectImage = registerForActivityResult(SelectImageContract()) {
+    private val selectImage = registerForActivityResult(HandleFileContract()) {
         it.uri?.let { uri ->
             when (it.requestCode) {
                 requestCodeCover -> setCoverFromUri(PreferKey.defaultCover, uri)
@@ -64,16 +76,19 @@ class CoverConfigFragment : PreferenceFragment(),
             PreferKey.defaultCoverDark -> {
                 upPreferenceSummary(key, getPrefString(key))
             }
+
             PreferKey.coverShowName -> {
                 findPreference<SwitchPreference>(PreferKey.coverShowAuthor)
                     ?.isEnabled = getPrefBoolean(key)
                 BookCover.upDefaultCover()
             }
+
             PreferKey.coverShowNameN -> {
                 findPreference<SwitchPreference>(PreferKey.coverShowAuthorN)
                     ?.isEnabled = getPrefBoolean(key)
                 BookCover.upDefaultCover()
             }
+
             PreferKey.coverShowAuthor,
             PreferKey.coverShowAuthorN -> {
                 BookCover.upDefaultCover()
@@ -87,7 +102,10 @@ class CoverConfigFragment : PreferenceFragment(),
             "coverRule" -> showDialogFragment(CoverRuleConfigDialog())
             PreferKey.defaultCover ->
                 if (getPrefString(preference.key).isNullOrEmpty()) {
-                    selectImage.launch(requestCodeCover)
+                    selectImage.launch {
+                        requestCode = requestCodeCover
+                        mode = HandleFileContract.IMAGE
+                    }
                 } else {
                     context?.selector(
                         items = arrayListOf(
@@ -99,13 +117,20 @@ class CoverConfigFragment : PreferenceFragment(),
                             removePref(preference.key)
                             BookCover.upDefaultCover()
                         } else {
-                            selectImage.launch(requestCodeCover)
+                            selectImage.launch {
+                                requestCode = requestCodeCover
+                                mode = HandleFileContract.IMAGE
+                            }
                         }
                     }
                 }
+
             PreferKey.defaultCoverDark ->
                 if (getPrefString(preference.key).isNullOrEmpty()) {
-                    selectImage.launch(requestCodeCoverDark)
+                    selectImage.launch {
+                        requestCode = requestCodeCoverDark
+                        mode = HandleFileContract.IMAGE
+                    }
                 } else {
                     context?.selector(
                         items = arrayListOf(
@@ -117,7 +142,10 @@ class CoverConfigFragment : PreferenceFragment(),
                             removePref(preference.key)
                             BookCover.upDefaultCover()
                         } else {
-                            selectImage.launch(requestCodeCoverDark)
+                            selectImage.launch {
+                                requestCode = requestCodeCoverDark
+                                mode = HandleFileContract.IMAGE
+                            }
                         }
                     }
                 }
@@ -134,6 +162,7 @@ class CoverConfigFragment : PreferenceFragment(),
             } else {
                 value
             }
+
             else -> preference.summary = value
         }
     }

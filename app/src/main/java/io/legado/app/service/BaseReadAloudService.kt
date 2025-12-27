@@ -316,6 +316,10 @@ abstract class BaseReadAloudService : BaseService(),
     @SuppressLint("WakelockTimeout")
     @CallSuper
     open fun resumeReadAloud() {
+        resumeReadAloudInternal()
+    }
+
+    private fun resumeReadAloudInternal() {
         pause = false
         needResumeOnAudioFocusGain = false
         needResumeOnCallStateIdle = false
@@ -686,14 +690,14 @@ abstract class BaseReadAloudService : BaseService(),
 
     open fun prevChapter() {
         toLast = false
+        resumeReadAloudInternal()
         ReadBook.moveToPrevChapter(true, toLast = false)
-        play()
     }
 
     open fun nextChapter() {
         ReadBook.upReadTime()
         AppLog.putDebug("${ReadBook.curTextChapter?.chapter?.title} 朗读结束跳转下一章并朗读")
-        play()
+        resumeReadAloudInternal()
         if (!ReadBook.moveToNextChapter(true)) {
             stopSelf()
         }

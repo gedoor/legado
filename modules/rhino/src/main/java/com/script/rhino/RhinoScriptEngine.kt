@@ -206,7 +206,7 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
                 thiz1 = Context.toObject(thiz1, topLevel)
             }
             val engineScope = getRuntimeScope(context)
-            val localScope = if (thiz1 != null) thiz1 as Scriptable else engineScope
+            val localScope = thiz1 ?: engineScope
             val obj = ScriptableObject.getProperty(localScope, name) as? Function
                 ?: throw NoSuchMethodException("no such method: $name")
             var scope = obj.parentScope
@@ -229,7 +229,7 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
     override fun <T> getInterface(clazz: Class<T>): T? {
         return try {
             implementor.getInterface(null, clazz)
-        } catch (var3: ScriptException) {
+        } catch (_: ScriptException) {
             null
         }
     }
@@ -240,7 +240,7 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
         } else {
             try {
                 implementor.getInterface(obj, paramClass)
-            } catch (var4: ScriptException) {
+            } catch (_: ScriptException) {
                 null
             }
         }
@@ -393,7 +393,7 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
         if (System.getSecurityManager() != null) {
             try {
                 AccessController.checkPermission(AllPermission())
-            } catch (var6: AccessControlException) {
+            } catch (_: AccessControlException) {
                 accessContext = AccessController.getContext()
             }
         }
@@ -413,7 +413,7 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
                         obj1 = Context.toObject(obj1, topLevel)
                     }
                     val engineScope = getRuntimeScope(context)
-                    val localScope = if (obj1 != null) obj1 as Scriptable else engineScope
+                    val localScope = obj1 ?: engineScope
                     val methods = clazz.methods
                     val methodsSize = methods.size
                     for (index in 0 until methodsSize) {

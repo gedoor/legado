@@ -21,8 +21,8 @@ import io.legado.app.utils.applyTint
 import io.legado.app.utils.startActivityForBook
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 abstract class BaseImportBookActivity<VM : ViewModel> :
     VMBaseActivity<ActivityImportBookBinding, VM>() {
@@ -49,7 +49,7 @@ abstract class BaseImportBookActivity<VM : ViewModel> :
     /**
      * 设置书籍保存位置
      */
-    protected suspend fun setBookStorage() = suspendCoroutine { block ->
+    protected suspend fun setBookStorage() = suspendCancellableCoroutine sc@{ block ->
         localBookTreeSelectListener = {
             localBookTreeSelectListener = null
             block.resume(it)
@@ -58,7 +58,7 @@ abstract class BaseImportBookActivity<VM : ViewModel> :
         if (!AppConfig.defaultBookTreeUri.isNullOrBlank()) {
             localBookTreeSelectListener = null
             block.resume(true)
-            return@suspendCoroutine
+            return@sc
         }
         //测试读写??
         val storageHelp = String(assets.open("storageHelp.md").readBytes())

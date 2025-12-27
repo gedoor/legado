@@ -18,6 +18,7 @@ import io.legado.app.lib.theme.primaryTextColor
 import java.lang.reflect.Method
 
 @SuppressLint("RestrictedApi")
+@Suppress("UsePropertyAccessSyntax")
 fun Menu.applyTint(context: Context, theme: Theme = Theme.Auto): Menu = this.let { menu ->
     if (menu is MenuBuilder) {
         menu.setOptionalIconsVisible(true)

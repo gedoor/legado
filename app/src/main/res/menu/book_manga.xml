@@ -72,11 +72,11 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/menu_disable_horizontal_animation"
+        android:id="@+id/menu_disable_horizontal_page_snap"
         android:checkable="true"
         android:checked="false"
         android:visible="false"
-        android:title="@string/disable_horizontal_animation"
+        android:title="@string/disable_horizontal_page_snap"
         app:showAsAction="never" />
 
     <item

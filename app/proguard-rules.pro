@@ -100,6 +100,13 @@ cn.hutool.core.util.**{*;}
     *** mNavButtonView;
 }
 
+# MenuExtensions applyOpenTint
+-keepnames class androidx.appcompat.view.menu.SubMenuBuilder
+-keep class androidx.appcompat.view.menu.MenuBuilder {
+    *** setOptionalIconsVisible(...);
+    *** getNonActionItems();
+}
+
 # FileDocExtensions.kt treeDocumentFileConstructor
 -keep class androidx.documentfile.provider.TreeDocumentFile {
     <init>(...);

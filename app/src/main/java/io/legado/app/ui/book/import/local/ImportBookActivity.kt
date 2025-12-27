@@ -8,6 +8,7 @@ import android.view.MenuItem
 import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.net.toUri
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -166,31 +167,32 @@ class ImportBookActivity : BaseImportBookActivity<ImportBookViewModel>(),
                 selectFolder.launch()
             } else {
                 val rootUri = if (lastPath.isUri()) {
-                    Uri.parse(lastPath)
+                    lastPath.toUri()
                 } else {
                     Uri.fromFile(File(lastPath))
                 }
                 when {
-                    rootUri.isContentScheme() -> {
-                        kotlin.runCatching {
-                            val doc = DocumentFile.fromTreeUri(this, rootUri)
-                            if (doc == null || doc.name.isNullOrEmpty()) {
-                                binding.tvEmptyMsg.visible()
-                                selectFolder.launch()
-                            } else {
-                                viewModel.subDocs.clear()
-                                viewModel.rootDoc = FileDoc.fromDocumentFile(doc)
-                                upDocs(viewModel.rootDoc!!)
-                            }
-                        }.onFailure {
-                            binding.tvEmptyMsg.visible()
-                            selectFolder.launch()
-                        }
-                    }
-
+                    rootUri.isContentScheme() -> initRootPath(rootUri)
                     else -> initRootPath(rootUri.path!!)
                 }
             }
+        }
+    }
+
+    private fun initRootPath(rootUri: Uri) {
+        kotlin.runCatching {
+            val doc = DocumentFile.fromTreeUri(this, rootUri)
+            if (doc == null || doc.name.isNullOrEmpty() || !doc.isDirectory) {
+                binding.tvEmptyMsg.visible()
+                selectFolder.launch()
+            } else {
+                viewModel.subDocs.clear()
+                viewModel.rootDoc = FileDoc.fromDocumentFile(doc)
+                upPath()
+            }
+        }.onFailure {
+            binding.tvEmptyMsg.visible()
+            selectFolder.launch()
         }
     }
 
@@ -201,9 +203,15 @@ class ImportBookActivity : BaseImportBookActivity<ImportBookViewModel>(),
             .rationale(R.string.tip_perm_request_storage)
             .onGranted {
                 kotlin.runCatching {
-                    viewModel.rootDoc = FileDoc.fromFile(File(path))
-                    viewModel.subDocs.clear()
-                    upPath()
+                    val file = File(path)
+                    if (!file.isDirectory) {
+                        binding.tvEmptyMsg.visible()
+                        selectFolder.launch()
+                    } else {
+                        viewModel.subDocs.clear()
+                        viewModel.rootDoc = FileDoc.fromFile(file)
+                        upPath()
+                    }
                 }.onFailure {
                     binding.tvEmptyMsg.visible()
                     selectFolder.launch()

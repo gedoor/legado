@@ -36,8 +36,8 @@ object AppUpdateGitHub : AppUpdate.AppUpdateInterface {
         if (!res.isSuccessful) {
             throw NoStackTraceException("获取新版本出错(${res.code})")
         }
-        val body = res.body?.text()
-        if (body.isNullOrBlank()) {
+        val body = res.body.text()
+        if (body.isBlank()) {
             throw NoStackTraceException("获取新版本出错")
         }
         return GSON.fromJsonObject<GithubRelease>(body)

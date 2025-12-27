@@ -684,10 +684,10 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             appCtx.putPrefInt(PreferKey.mangaEInkThreshold, value)
         }
 
-    var disableHorizontalAnimator
-        get() = appCtx.getPrefBoolean(PreferKey.disableHorizontalAnimator, false)
+    var disableHorizontalPageSnap
+        get() = appCtx.getPrefBoolean(PreferKey.disableHorizontalPageSnap, false)
         set(value) {
-            appCtx.putPrefBoolean(PreferKey.disableHorizontalAnimator, value)
+            appCtx.putPrefBoolean(PreferKey.disableHorizontalPageSnap, value)
         }
 
     var enableMangaGray

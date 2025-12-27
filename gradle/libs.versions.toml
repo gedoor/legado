@@ -1,57 +1,72 @@
 [versions]
 
-kotlin = "2.2.0"
-ksp = "2.2.0-2.0.2"
-agp = "8.10.1"
-appcompat = "1.7.0"
+kotlin = "2.3.0"
+ksp = "2.3.4"
+agp = "8.13.2"
+appcompat = "1.7.1"
 colorpicker = "1.1.0"
-commonsText = "1.13.1"
 constraintlayout = "2.2.1"
-core = "1.16.0"
-firebaseBom = "33.2.0"
+core = "1.17.0"
 flexbox = "3.0.0"
-fragment = "1.8.7"
-
-#不要更新版本
-hutool = "5.8.22"
+fragment = "1.8.9"
 
 libarchive = "1.1.6"
-lifecycle = "2.9.0"
-glide = "4.16.0"
-gson = "2.13.1"
-jsonPath = "2.9.0"
-# issue #3811，不要更新版本，新版引入了一个破坏性变更（详见https://github.com/jhy/jsoup/pull/2017）
-# 若要升级请确保相关代码不会受此变更影响（如AnalyzeByJSoup.kt、JsoupXpath库等）
-jsoup = "1.16.2"
+glide = "5.0.5"
+gson = "2.13.2"
+jsonPath = "2.10.0"
 jsoupxpath = "2.5.3"
 coroutines = "1.10.2"
 liveeventbus = "1.8.14"
 markwon = "4.6.2"
-material = "1.12.0"
-media = "1.7.0"
-media3 = "1.6.1"
+material = "1.13.0"
+media = "1.7.1"
 nanoHttpd = "2.3.1"
-okhttp = "5.1.0"
+okhttp = "5.3.2"
 preference = "1.2.1"
-protobufJavalite = "4.26.1"
 quickChineseTransfer = "0.2.16"
-room = "2.7.1"
+
 splitties = "3.0.0"
-rhino = "1.8.0"
+rhino = "1.8.1"
 desugar = "2.1.5"
 
-activity = "1.10.1"
 #kotlinxSerialization = "1.8.0"
-swiperefreshlayout = "1.1.0"
-#noinspection GradleDependency
-recyclerview = "1.2.0"
-#noinspection GradleDependency
-viewpager2 = "1.0.0"
-webkit = "1.13.0"
+swiperefreshlayout = "1.2.0"
+webkit = "1.14.0"
 collection = "1.5.0"
 
 zxingLite = "3.3.0"
 
+#不要更新版本
+#noinspection NewerVersionAvailable
+hutool = "5.8.22"
+
+#noinspection NewerVersionAvailable
+protobufJavalite = "4.26.1"
+
+# issue #3811，不要更新版本，新版引入了一个破坏性变更（详见https://github.com/jhy/jsoup/pull/2017）
+# 若要升级请确保相关代码不会受此变更影响（如AnalyzeByJSoup.kt、JsoupXpath库等）
+#noinspection NewerVersionAvailable
+jsoup = "1.16.2"
+
+# 新版本使用了 Android 6 以下缺少的 Arrays.setAll 方法，导致进入阅读界面会崩溃
+#noinspection NewerVersionAvailable
+commonsText = "1.13.1"
+
+#noinspection NewerVersionAvailable
+media3 = "1.8.0"
+
+#noinspection GradleDependency
+activity = "1.11.0"
+#noinspection GradleDependency
+lifecycle = "2.9.4"
+#noinspection GradleDependency
+room = "2.7.1"
+#noinspection GradleDependency
+recyclerview = "1.2.0"
+#noinspection GradleDependency
+viewpager2 = "1.0.0"
+#noinspection GradleDependency
+firebaseBom = "33.2.0"
 
 [libraries]
 

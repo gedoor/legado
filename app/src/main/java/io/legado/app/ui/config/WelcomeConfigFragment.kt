@@ -14,9 +14,9 @@ import io.legado.app.lib.prefs.SwitchPreference
 import io.legado.app.lib.prefs.fragment.PreferenceFragment
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.model.BookCover
+import io.legado.app.ui.file.HandleFileContract
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.MD5Utils
-import io.legado.app.utils.SelectImageContract
 import io.legado.app.utils.externalFiles
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.inputStream
@@ -33,7 +33,7 @@ class WelcomeConfigFragment : PreferenceFragment(),
 
     private val requestWelcomeImage = 221
     private val requestWelcomeImageDark = 222
-    private val selectImage = registerForActivityResult(SelectImageContract()) {
+    private val selectImage = registerForActivityResult(HandleFileContract()) {
         it.uri?.let { uri ->
             when (it.requestCode) {
                 requestWelcomeImage -> setCoverFromUri(PreferKey.welcomeImage, uri)
@@ -110,7 +110,10 @@ class WelcomeConfigFragment : PreferenceFragment(),
         when (preference.key) {
             PreferKey.welcomeImage ->
                 if (getPrefString(preference.key).isNullOrEmpty()) {
-                    selectImage.launch(requestWelcomeImage)
+                    selectImage.launch {
+                        requestCode = requestWelcomeImage
+                        mode = HandleFileContract.IMAGE
+                    }
                 } else {
                     context?.selector(
                         items = arrayListOf(
@@ -130,14 +133,20 @@ class WelcomeConfigFragment : PreferenceFragment(),
                             }
                             BookCover.upDefaultCover()
                         } else {
-                            selectImage.launch(requestWelcomeImage)
+                            selectImage.launch {
+                                requestCode = requestWelcomeImage
+                                mode = HandleFileContract.IMAGE
+                            }
                         }
                     }
                 }
 
             PreferKey.welcomeImageDark ->
                 if (getPrefString(preference.key).isNullOrEmpty()) {
-                    selectImage.launch(requestWelcomeImageDark)
+                    selectImage.launch {
+                        requestCode = requestWelcomeImageDark
+                        mode = HandleFileContract.IMAGE
+                    }
                 } else {
                     context?.selector(
                         items = arrayListOf(
@@ -157,7 +166,10 @@ class WelcomeConfigFragment : PreferenceFragment(),
                             }
                             BookCover.upDefaultCover()
                         } else {
-                            selectImage.launch(requestWelcomeImageDark)
+                            selectImage.launch {
+                                requestCode = requestWelcomeImageDark
+                                mode = HandleFileContract.IMAGE
+                            }
                         }
                     }
                 }
