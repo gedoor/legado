@@ -595,7 +595,7 @@
     <string name="rss_source">訂閲源</string>
     <string name="rss_source_edit">編輯訂閲源</string>
     <string name="screen">篩選</string>
-    <string name="screen_find">篩選發現</string>
+    <string name="screen_find">篩選發現源</string>
     <string name="dur_pos">當前位置：</string>
     <string name="precision_search">精準搜索</string>
     <string name="service_starting">正在啟動服務</string>

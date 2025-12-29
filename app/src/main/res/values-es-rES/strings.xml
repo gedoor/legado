@@ -605,7 +605,7 @@
     <string name="rss_source">Fuente de suscripción</string>
     <string name="rss_source_edit">Editar fuente de suscripción</string>
     <string name="screen">Filtro</string>
-    <string name="screen_find">Buscar fuentes de Descubrir</string>
+    <string name="screen_find">Search Discovery sources</string>
     <string name="dur_pos">Ubicación actual:</string>
     <string name="precision_search">Búsqueda precisa</string>
     <string name="service_starting">Iniciando servicio</string>

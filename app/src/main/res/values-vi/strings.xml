@@ -603,7 +603,7 @@
     <string name="rss_source">Nguồn RSS</string>
     <string name="rss_source_edit">Sửa nguồn RSS</string>
     <string name="screen">Bộ lọc</string>
-    <string name="screen_find">Tìm kiếm nguồn Khám phá</string>
+    <string name="screen_find">Search Discovery sources</string>
     <string name="dur_pos">Vị trí hiện tại：</string>
     <string name="precision_search">Tìm kiếm chính xác</string>
     <string name="service_starting">Đang khởi động dịch vụ</string>

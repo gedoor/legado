@@ -607,7 +607,7 @@
     <string name="rss_source">Fonte de assinatura</string>
     <string name="rss_source_edit">Editar a fonte de assinatura</string>
     <string name="screen">Filtrar</string>
-    <string name="screen_find">Pesquisar as fontes da Descoberta</string>
+    <string name="screen_find">Search Discovery sources</string>
     <string name="dur_pos">Localização atual：</string>
     <string name="precision_search">Busca precisa</string>
     <string name="service_starting">Iniciação do serviço</string>
