@@ -378,7 +378,7 @@
     <string name="page_anim_simulation">模擬</string>
     <string name="page_anim_scroll">滾動</string>
     <string name="page_anim_none">無動畫</string>
-    <string name="disable_page_anim_comic">禁用翻頁動畫</string>
+    <string name="disable_manga_page_anim">禁用翻頁動畫</string>
     <string name="up_change_source_last_chapter_t">後台更新換源最新章節</string>
     <string name="up_change_source_last_chapter_s">開啟則會在軟體打開1分鐘後開始更新</string>
     <string name="behavior_main_t">書架ToolBar自動隱藏</string>

@@ -384,7 +384,7 @@
     <string name="page_anim_simulation">Simulation</string>
     <string name="page_anim_scroll">Scroll</string>
     <string name="page_anim_none">None</string>
-    <string name="disable_page_anim_comic">ページめくりアニメーションを無効にする</string>
+    <string name="disable_manga_page_anim">ページめくりアニメーションを無効にする</string>
     <string name="up_change_source_last_chapter_t">Update the latest chapter after changed origin in the background</string>
     <string name="up_change_source_last_chapter_s">if enabled,the update will start 1 minute later when the software is run</string>
     <string name="behavior_main_t">Auto hide ToolBar</string>

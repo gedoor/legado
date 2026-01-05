@@ -80,10 +80,10 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/menu_no_page_anim_comic"
+        android:id="@+id/menu_disable_manga_page_anim"
         android:checkable="true"
         android:checked="false"
-        android:title="@string/disable_page_anim_comic"
+        android:title="@string/disable_manga_page_anim"
         app:showAsAction="never" />
 
     <item

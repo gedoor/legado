@@ -596,9 +596,10 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
                 }
             }
 
-            R.id.menu_no_page_anim_comic -> {
+            R.id.menu_disable_manga_page_anim -> {
                 item.isChecked = !item.isChecked
-                AppConfig.comicDisablePageAnim = item.isChecked
+                mMenu?.findItem(R.id.menu_disable_horizontal_page_snap)?.isVisible = !item.isChecked
+                AppConfig.disableMangaPageAnim = item.isChecked
                 if (item.isChecked) {
                     mPagerSnapHelper.attachToRecyclerView(null)
                 } else {
@@ -671,7 +672,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
         mAdapter.isHorizontal = enable
         if (enable) {
             if (!enableAutoScroll) {
-                if (AppConfig.disableHorizontalPageSnap) {
+                if (AppConfig.disableHorizontalPageSnap || AppConfig.disableMangaPageAnim) {
                     mPagerSnapHelper.attachToRecyclerView(null)
                 } else {
                     mPagerSnapHelper.attachToRecyclerView(binding.recyclerView)
@@ -698,10 +699,10 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
         menu.findItem(R.id.menu_epaper_manga).isChecked = AppConfig.enableMangaEInk
         menu.findItem(R.id.menu_epaper_manga_setting).isVisible = AppConfig.enableMangaEInk
         menu.findItem(R.id.menu_disable_horizontal_page_snap).run {
-            isVisible = AppConfig.enableMangaHorizontalScroll
-            isChecked = AppConfig.disableHorizontalPageSnap
+            isVisible = AppConfig.enableMangaHorizontalScroll && !AppConfig.disableMangaPageAnim
+            isChecked = AppConfig.disableHorizontalPageSnap || AppConfig.disableMangaPageAnim
         }
-        menu.findItem(R.id.menu_no_page_anim_comic).isChecked = AppConfig.comicDisablePageAnim
+        menu.findItem(R.id.menu_disable_manga_page_anim).isChecked = AppConfig.disableMangaPageAnim
         menu.findItem(R.id.menu_gray_manga).isChecked = AppConfig.enableMangaGray
     }
 
@@ -751,7 +752,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
         }
         dx *= direction
         dy *= direction
-        if (AppConfig.comicDisablePageAnim) {
+        if (AppConfig.disableMangaPageAnim) {
             binding.recyclerView.scrollBy(dx, dy)
         } else {
             binding.recyclerView.smoothScrollBy(dx, dy)
