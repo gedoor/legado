@@ -382,6 +382,7 @@
     <string name="page_anim_simulation">Simulação</string>
     <string name="page_anim_scroll">Deslizar</string>
     <string name="page_anim_none">Nenhum</string>
+    <string name="disable_page_anim_comic">Desativar animação de virada</string>
     <string name="up_change_source_last_chapter_t">Atualizar o último capítulo após a alteração de origem em segundo plano</string>
     <string name="up_change_source_last_chapter_s">se ativado, a atualização será iniciada 1 minuto depois o App for aberto</string>
     <string name="behavior_main_t">Auto esconder a barra de ferramentas</string>

@@ -379,6 +379,7 @@
     <string name="page_anim_simulation">Mô phỏng</string>
     <string name="page_anim_scroll">Cuộn</string>
     <string name="page_anim_none">Không có</string>
+    <string name="disable_page_anim_comic">Tắt hiệu ứng lật trang</string>
     <string name="up_change_source_last_chapter_t">Cập nhật chương mới nhất sau khi đổi nguồn trong nền</string>
     <string name="up_change_source_last_chapter_s">Nếu được kích hoạt, cập nhật sẽ bắt đầu sau 1 phút khi phần mềm chạy</string>
     <string name="behavior_main_t">Tự động ẩn thanh công cụ</string>

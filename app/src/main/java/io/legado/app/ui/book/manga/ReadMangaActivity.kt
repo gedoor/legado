@@ -596,6 +596,18 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
                 }
             }
 
+            R.id.menu_no_page_anim_comic -> {
+                item.isChecked = !item.isChecked
+                AppConfig.comicDisablePageAnim = item.isChecked
+                if (item.isChecked) {
+                    mPagerSnapHelper.attachToRecyclerView(null)
+                } else {
+                    if (AppConfig.enableMangaHorizontalScroll && !AppConfig.disableHorizontalPageSnap) {
+                        mPagerSnapHelper.attachToRecyclerView(binding.recyclerView)
+                    }
+                }
+            }
+
             R.id.menu_gray_manga -> {
                 item.isChecked = !item.isChecked
                 AppConfig.enableMangaGray = item.isChecked
@@ -689,6 +701,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
             isVisible = AppConfig.enableMangaHorizontalScroll
             isChecked = AppConfig.disableHorizontalPageSnap
         }
+        menu.findItem(R.id.menu_no_page_anim_comic).isChecked = AppConfig.comicDisablePageAnim
         menu.findItem(R.id.menu_gray_manga).isChecked = AppConfig.enableMangaGray
     }
 
@@ -738,7 +751,11 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
         }
         dx *= direction
         dy *= direction
-        binding.recyclerView.smoothScrollBy(dx, dy)
+        if (AppConfig.comicDisablePageAnim) {
+            binding.recyclerView.scrollBy(dx, dy)
+        } else {
+            binding.recyclerView.smoothScrollBy(dx, dy)
+        }
     }
 
     private fun showNumberPickerDialog(
