@@ -3,7 +3,7 @@
  */
 //全局的配置文件 
 var config = {
-	fileTypes: "txt|epub|umd", //允许上传的文件格式 "txt|epub" // |doc|docx|wps|xls|xlsx|et|ppt|pptx|dps
+	fileTypes: "txt|epub|umd|pdf|mobi|azw3|azw", //允许上传的文件格式 "txt|epub" // |doc|docx|wps|xls|xlsx|et|ppt|pptx|dps
 	//url : "http://"+location.host+"?action=addBook",//"http://localhost/t/post.php",//
 	url: "../addLocalBook",
 	fileLimitSize : 500 * 1024 *1024
