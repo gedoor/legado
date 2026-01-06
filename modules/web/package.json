@@ -22,7 +22,7 @@
     "@vueuse/core": "^11.1.0",
     "@vueuse/shared": "^11.1.0",
     "axios": "^1.7.7",
-    "element-plus": "^2.8.5",
+    "element-plus": "2.8.5",
     "hotkeys-js": "^3.13.7",
     "pinia": "^2.2.4",
     "vue": "^3.5.12",
