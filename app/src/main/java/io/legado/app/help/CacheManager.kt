@@ -61,7 +61,6 @@ object CacheManager {
             is ByteArray -> ACache.get().put(key, value, saveTime)
             else -> {
                 val cache = Cache(key, value.toString(), deadline)
-                putMemory(key, value)
                 appDb.cacheDao.insert(cache)
             }
         }
@@ -81,9 +80,6 @@ object CacheManager {
     }
 
     fun get(key: String): String? {
-        getFromMemory(key)?.let {
-            if (it is String) return it
-        }
         val cache = appDb.cacheDao.get(key)
         if (cache != null && (cache.deadline == 0L || cache.deadline > System.currentTimeMillis())) {
             return cache.value
