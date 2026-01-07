@@ -39,8 +39,8 @@ android {
                 storePassword RELEASE_STORE_PASSWORD
                 keyAlias RELEASE_KEY_ALIAS
                 keyPassword RELEASE_KEY_PASSWORD
-                v1SigningEnabled true
-                v2SigningEnabled true
+                enableV1Signing = true
+                enableV2Signing = true
                 enableV3Signing = true
                 enableV4Signing = true
             }
@@ -188,6 +188,7 @@ dependencies {
     implementation(libs.androidx.recyclerview)
     implementation(libs.androidx.viewpager2)
     implementation(libs.androidx.webkit)
+    implementation(libs.androidx.documentfile)
 
     //google
     implementation(libs.material)

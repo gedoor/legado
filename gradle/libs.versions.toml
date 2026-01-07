@@ -157,6 +157,7 @@ androidx-swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefre
 androidx-recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerview" }
 androidx-viewpager2 = { module = "androidx.viewpager2:viewpager2", version.ref = "viewpager2" }
 androidx-webkit = { module = "androidx.webkit:webkit", version.ref = "webkit" }
+androidx-documentfile = { module = "androidx.documentfile:documentfile", version = "1.1.0" }
 colorpicker = { module = "com.jaredrummler:colorpicker", version.ref = "colorpicker" }
 commons-text = { module = "org.apache.commons:commons-text", version.ref = "commonsText" }
 desugar = { group = "com.android.tools", name = "desugar_jdk_libs_nio", version.ref = "desugar" }
