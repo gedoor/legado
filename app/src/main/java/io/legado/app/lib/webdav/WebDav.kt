@@ -33,8 +33,7 @@ import java.io.FileOutputStream
 import java.io.InputStream
 import java.net.MalformedURLException
 import java.net.URL
-import java.time.LocalDateTime
-import java.time.ZoneOffset
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 
@@ -213,8 +212,8 @@ open class WebDav(
                 val lastModify: Long = kotlin.runCatching {
                     element.findNS("getlastmodified", ns)
                         .firstOrNull()?.text()?.let {
-                            LocalDateTime.parse(it, dateTimeFormatter)
-                                .toInstant(ZoneOffset.of("+8")).toEpochMilli()
+                            ZonedDateTime.parse(it, dateTimeFormatter)
+                                .toInstant().toEpochMilli()
                         }
                 }.getOrNull() ?: 0
                 var fullURL = NetworkUtils.getAbsoluteURL(baseUrl, hrefDecode)
