@@ -109,7 +109,10 @@ object SourceVerificationHelp {
     }
 
     fun getResult(sourceKey: String): String? {
-        return CacheManager.get(getVerificationResultKey(sourceKey))
+        val key = getVerificationResultKey(sourceKey)
+        val result = CacheManager.getFromMemory(key) as? String
+        CacheManager.deleteMemory(key)
+        return result
     }
 
     fun clearResult(sourceKey: String) {
