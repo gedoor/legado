@@ -65,11 +65,13 @@ object SourceVerificationHelp {
             LockSupport.parkNanos(this, waitTime)
         }
 
-        return getResult(source.getKey())!!.let {
-            it.ifBlank {
-                throw NoStackTraceException("验证结果为空")
-            }
+        val result = getResult(source.getKey())!!
+        clearResult(source.getKey())
+        result.ifBlank {
+            throw NoStackTraceException("验证结果为空")
         }
+
+        return result
     }
 
     /**
@@ -109,10 +111,7 @@ object SourceVerificationHelp {
     }
 
     fun getResult(sourceKey: String): String? {
-        val key = getVerificationResultKey(sourceKey)
-        val result = CacheManager.getFromMemory(key) as? String
-        CacheManager.deleteMemory(key)
-        return result
+        return CacheManager.getFromMemory(getVerificationResultKey(sourceKey)) as? String
     }
 
     fun clearResult(sourceKey: String) {
