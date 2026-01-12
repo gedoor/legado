@@ -2,9 +2,9 @@
   {
     "name": "百度汉语",
     "urlRule": "https://dict.baidu.com/s?wd={{key}}",
-    "showRule": "@js:var jsoup = org.jsoup.Jsoup.parse(result)\njsoup.select(\"script,#word-header,#term-header,.more-button,.disactive,#download-wrapper,#upload-dialog,#right-panel,#success-dialog,.toast-wrap,div[style^=color],.baike-feedback,#cishumean-wrapper,#syn_ant_wrapper,#baike-wrapper\").remove()\njsoup.select(\"#content-panel\").html()",
+    "showRule": "@js:var jsoup = org.jsoup.Jsoup.parse(result)\njsoup.select(\"script,#search-bar,#right-panel,#copyright\").remove()\njsoup.select(\"#poem-list-items\").html()",
     "enabled": true,
-    "sortNumber": 0
+    "sortNumber": 2
   },
   {
     "name": "海词英文",
@@ -12,5 +12,12 @@
     "showRule": "tag.body@all",
     "enabled": true,
     "sortNumber": 1
+  },
+  {
+  "name": "海词中文",
+  "urlRule": "https://hanyu.dict.cn/{{key}}",
+  "showRule": "@js:var jsoup = org.jsoup.Jsoup.parse(result)\njsoup.select(\"script,#header,#footer,#page-share,.mslide,.title,#dictHcBtn,#dictHcBtnTop,#dictHc,#dictHc,#dictHcSettingArea,#dictHcClosetip\").remove()\njsoup.select(\"#cy\").html()",
+  "enabled": true,
+  "sortNumber": 0
   }
 ]
