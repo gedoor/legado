@@ -47,10 +47,10 @@ android {
         }
     }
     defaultConfig {
-        applicationId "io.legado.app"
+        applicationId "com.legado.app"
         minSdk 21
         targetSdk 36
-        versionCode 10000 + gitCommits
+        versionCode 30000 + gitCommits
         versionName version
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         project.ext.set("archivesBaseName", name + "_" + version)
@@ -152,6 +152,9 @@ android {
             //options.compilerArgs << "-Xlint:unchecked"
         }
     }
+    lint { //忽略string翻译缺失，后面需要翻译时去掉，todo
+        disable 'MissingTranslation'
+    }
 }
 
 dependencies {
@@ -203,10 +206,18 @@ dependencies {
     implementation(libs.media.media)
     // For media playback using ExoPlayer
     implementation(libs.media3.exoplayer)
+    //implementation(libs.media3.exoplayer.hls)
+    //implementation(libs.media3.ui)
     // For loading data using the OkHttp network stack
     implementation(libs.media3.datasource.okhttp)
     // For exposing and controlling media sessions
     //implementation "androidx.media3:media3-session:$media3_version"
+
+    //videoPlayer
+    implementation(libs.gsyVideoPlayer.java)
+    implementation(libs.gsyVideoPlayer.exo2)
+    //弹幕
+    implementation (libs.danmakuFlameMaster)
 
     //Splitties
     implementation(libs.splitties.appctx)
@@ -235,6 +246,17 @@ dependencies {
     //网络
     implementation(libs.okhttp)
     implementation(fileTree(dir: 'cronetlib', include: ['*.jar', '*.aar']))
+
+    // HttpEngine provider (fixes R8 missing class: org.chromium.net.impl.HttpEngineNativeProvider)
+    def httpEngineNativeProviderVersion = project.findProperty("HttpEngineNativeProviderVersion") as String
+    if (httpEngineNativeProviderVersion) {
+        implementation("org.chromium.net:httpengine-native-provider:$httpEngineNativeProviderVersion") {
+            // Avoid pulling duplicate Cronet jars; this project bundles Cronet jars under app/cronetlib/
+            exclude group: "org.chromium.net", module: "cronet-common"
+            exclude group: "org.chromium.net", module: "cronet-shared"
+        }
+    }
+
     implementation(libs.protobuf.javalite)
 
     //Glide
@@ -289,4 +311,10 @@ dependencies {
 
     //com.github.AmrDeveloper:CodeView代码编辑已集成到应用内
     //epubLib集成到应用内
+    // 椒盐歌词
+    implementation(libs.lyricViewx)
+    // sora-editor代码编辑器,更丰富的编辑功能
+    implementation(platform(libs.soraEditor.bom))
+    implementation(libs.soraEditor.core)
+    implementation(libs.soraEditor.language.textmate)
 }

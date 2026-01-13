@@ -2,6 +2,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!--
+      httpengine-native-provider declares minSdkVersion=23 in its own manifest.
+      This project keeps minSdkVersion=21, so we explicitly override the library
+      requirement to allow manifest merging.
+
+      IMPORTANT: This only affects manifest merging. If Cronet/HttpEngine is
+      actually used on API 21/22 devices, runtime failures are possible.
+    -->
+    <uses-sdk tools:overrideLibrary="org.chromium.net.httpengine_native_provider" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
@@ -20,6 +30,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application
         android:name=".App"
@@ -160,6 +171,11 @@
         <activity
             android:name="io.legado.app.ui.book.audio.AudioPlayActivity"
             android:launchMode="singleTask" />
+        <!-- 视频播放器界面 -->
+        <activity
+            android:name="io.legado.app.ui.video.VideoPlayerActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:launchMode="singleTask" />
         <!-- 授权界面 -->
         <activity
             android:name="io.legado.app.lib.permission.PermissionActivity"
@@ -187,6 +203,12 @@
         <!-- 替换规则编辑 -->
         <activity
             android:name=".ui.replace.edit.ReplaceEditActivity"
+            android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <!-- 代码文本编辑 -->
+        <activity
+            android:name=".ui.code.CodeEditActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustResize|stateHidden" />
@@ -485,6 +507,9 @@
             android:name=".service.AudioPlayService"
             android:foregroundServiceType="mediaPlayback" />
         <service
+            android:name=".service.VideoPlayService"
+            android:foregroundServiceType="mediaPlayback" />
+        <service
             android:name=".service.DownloadService"
             android:foregroundServiceType="dataSync" />
 
@@ -510,15 +535,6 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
-        </provider>
-        <provider
-            android:name="androidx.startup.InitializationProvider"
-            android:authorities="${applicationId}.androidx-startup"
-            android:exported="false"
-            tools:node="merge">
-            <meta-data
-                android:name="androidx.emoji2.text.EmojiCompatInitializer"
-                tools:node="remove" />
         </provider>
 
         <meta-data

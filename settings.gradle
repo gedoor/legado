@@ -5,6 +5,8 @@ pluginManagement {
                 includeGroupByRegex("com\\.android.*")
                 includeGroupByRegex("com\\.google.*")
                 includeGroupByRegex("androidx.*")
+                // Required for org.chromium.net:httpengine-native-provider
+                includeGroup("org.chromium.net")
             }
         }
         //原仓库
@@ -28,6 +30,8 @@ dependencyResolutionManagement {
                 includeGroupByRegex("com\\.android.*")
                 includeGroupByRegex("com\\.google.*")
                 includeGroupByRegex("androidx.*")
+                // Required for org.chromium.net:httpengine-native-provider
+                includeGroup("org.chromium.net")
             }
         }
         maven {
