@@ -91,7 +91,7 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
     }
     private val selectImportDoc = registerForActivityResult(HandleFileContract()) {
         it.uri?.let { uri ->
-            if (uri.toString() == importFormNet) {
+            if (uri.path == "/$importFormNet") {
                 importNetConfigAlert()
             } else {
                 importConfig(uri)
