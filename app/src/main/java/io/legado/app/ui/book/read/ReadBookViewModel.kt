@@ -92,7 +92,10 @@ class ReadBookViewModel(application: Application) : BaseViewModel(application) {
             } ?: ReadBook.book
             when {
                 book != null -> initBook(book)
-                else -> ReadBook.upMsg(context.getString(R.string.no_book))
+                else -> {
+                    ReadBook.upMsg(context.getString(R.string.no_book))
+                    AppLog.put("未找到书籍\nbookUrl:$bookUrl")
+                }
             }
         }.onSuccess {
             success?.invoke()

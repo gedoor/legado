@@ -549,6 +549,10 @@ object ReadManga : CoroutineScope by MainScope() {
         mCallback?.showLoading()
     }
 
+    fun loadFail(msg: String, retry: Boolean = true) {
+        mCallback?.loadFail(msg, retry)
+    }
+
     fun onChapterListUpdated(newBook: Book) {
         if (newBook.isSameNameAuthor(book)) {
             book = newBook
@@ -622,7 +626,7 @@ object ReadManga : CoroutineScope by MainScope() {
 
     interface Callback {
         fun upContent()
-        fun loadFail(msg: String)
+        fun loadFail(msg: String, retry: Boolean = true)
         fun sureNewProgress(progress: BookProgress)
         fun showLoading()
         fun startLoad()

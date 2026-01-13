@@ -379,11 +379,12 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
         mScrollTimer.isEnabled = false
     }
 
-    override fun loadFail(msg: String) {
+    override fun loadFail(msg: String, retry: Boolean) {
         lifecycleScope.launch {
             if (loadingViewVisible) {
                 binding.llLoading.isGone = true
                 binding.llRetry.isVisible = true
+                binding.tvRetry.isVisible = retry
                 binding.tvMsg.text = msg
             } else {
                 loadMoreView.error(null, "加载失败，点击重试")
