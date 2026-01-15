@@ -65,6 +65,11 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                 return@execute
             }
             if (bookUrl.isNotBlank()) {
+                appDb.bookDao.getBook(bookUrl)?.let {
+                    inBookshelf = !it.isNotShelf
+                    upBook(it)
+                    return@execute
+                }
                 appDb.searchBookDao.getSearchBook(bookUrl)?.toBook()?.let {
                     upBook(it)
                     return@execute

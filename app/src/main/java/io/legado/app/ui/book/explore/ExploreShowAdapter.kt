@@ -7,7 +7,6 @@ import androidx.core.view.isVisible
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
-import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.databinding.ItemSearchBinding
 import io.legado.app.help.config.AppConfig
@@ -43,7 +42,7 @@ class ExploreShowAdapter(context: Context, val callBack: CallBack) :
         binding.run {
             tvName.text = item.name
             tvAuthor.text = context.getString(R.string.author_show, item.author)
-            ivInBookshelf.isVisible = callBack.isInBookshelf(item.name, item.author)
+            ivInBookshelf.isVisible = callBack.isInBookshelf(item)
             if (item.latestChapterTitle.isNullOrEmpty()) {
                 tvLasted.gone()
             } else {
@@ -73,7 +72,7 @@ class ExploreShowAdapter(context: Context, val callBack: CallBack) :
             bundle.keySet().forEach {
                 when (it) {
                     "isInBookshelf" -> ivInBookshelf.isVisible =
-                        callBack.isInBookshelf(item.name, item.author)
+                        callBack.isInBookshelf(item)
                 }
             }
         }
@@ -82,7 +81,7 @@ class ExploreShowAdapter(context: Context, val callBack: CallBack) :
     override fun registerListener(holder: ItemViewHolder, binding: ItemSearchBinding) {
         holder.itemView.setOnClickListener {
             getItem(holder.layoutPosition)?.let {
-                callBack.showBookInfo(it.toBook())
+                callBack.showBookInfo(it)
             }
         }
     }
@@ -91,8 +90,8 @@ class ExploreShowAdapter(context: Context, val callBack: CallBack) :
         /**
          * 是否已经加入书架
          */
-        fun isInBookshelf(name: String, author: String): Boolean
+        fun isInBookshelf(book: SearchBook): Boolean
 
-        fun showBookInfo(book: Book)
+        fun showBookInfo(book: SearchBook)
     }
 }
