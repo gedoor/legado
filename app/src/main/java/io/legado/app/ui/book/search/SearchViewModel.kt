@@ -88,9 +88,8 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
         val name = book.name
         val author = book.author
         val bookUrl = book.bookUrl
-        return (author.isNotBlank() && bookshelf.contains("$name-$author"))
-                || bookshelf.contains(name)
-                || bookshelf.contains(bookUrl)
+        val key = if (author.isNotBlank()) "$name-$author" else name
+        return bookshelf.contains(key) || bookshelf.contains(bookUrl)
     }
 
     /**
