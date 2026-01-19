@@ -32,7 +32,9 @@ class JsURL(url: String, baseUrl: String? = null) {
             val map = hashMapOf<String, String>()
             query.split("&").forEach {
                 val x = it.split("=", limit = 2)
-                map[x[0]] = URLDecoder.decode(x[1], "utf-8")
+                if (x.size == 2) {
+                    map[x[0]] = URLDecoder.decode(x[1], "utf-8")
+                }
             }
             map
         }
