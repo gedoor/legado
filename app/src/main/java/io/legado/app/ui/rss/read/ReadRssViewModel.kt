@@ -110,19 +110,20 @@ class ReadRssViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun refresh(finish: () -> Unit) {
-        rssArticle?.let { rssArticle ->
-            rssSource?.let {
-                val ruleContent = it.ruleContent
-                if (!ruleContent.isNullOrBlank()) {
-                    loadContent(rssArticle, ruleContent)
-                } else {
-                    finish.invoke()
-                }
-            } ?: let {
-                appCtx.toastOnUi("订阅源不存在")
-                finish.invoke()
-            }
-        } ?: finish.invoke()
+        val rssArticle = rssArticle ?: return finish.invoke()
+        if (!rssArticle.description.isNullOrBlank()) {
+            return finish.invoke()
+        }
+        val rssSource = rssSource ?: let {
+            appCtx.toastOnUi("订阅源不存在")
+            return finish.invoke()
+        }
+        val ruleContent = rssSource.ruleContent
+        if (!ruleContent.isNullOrBlank()) {
+            loadContent(rssArticle, ruleContent)
+        } else {
+            finish.invoke()
+        }
     }
 
     fun favorite() {
