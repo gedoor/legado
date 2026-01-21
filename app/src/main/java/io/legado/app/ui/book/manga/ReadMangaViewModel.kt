@@ -98,7 +98,7 @@ class ReadMangaViewModel(application: Application) : BaseViewModel(application) 
         if (ReadManga.chapterChanged) {
             // 有章节跳转不同步阅读进度
             ReadManga.chapterChanged = false
-        } else if (!isSameBook) {
+        } else {
             if (AppConfig.syncBookProgressPlus) {
                 ReadManga.syncProgress(
                     { progress -> ReadManga.mCallback?.sureNewProgress(progress) })
