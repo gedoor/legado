@@ -115,28 +115,25 @@ class ReadMangaViewModel(application: Application) : BaseViewModel(application) 
     }
 
     private suspend fun loadChapterListAwait(book: Book): Boolean {
-        ReadManga.bookSource?.let {
-            val oldBook = book.copy()
-            WebBook.getChapterListAwait(it, book, true).onSuccess { cList ->
-                if (oldBook.bookUrl == book.bookUrl) {
-                    appDb.bookDao.update(book)
-                } else {
-                    appDb.bookDao.replace(oldBook, book)
-                    BookHelp.updateCacheFolder(oldBook, book)
-                }
-                appDb.bookChapterDao.delByBook(oldBook.bookUrl)
-                appDb.bookChapterDao.insert(*cList.toTypedArray())
-                ReadManga.onChapterListUpdated(book)
-                return true
-            }.onFailure {
-                //加载章节出错
-                ReadManga.mCallback?.loadFail(appCtx.getString(R.string.error_load_toc))
-                return false
+        val bookSource = ReadManga.bookSource ?: return true
+        val oldBook = book.copy()
+        WebBook.getChapterListAwait(bookSource, book, true).onSuccess { cList ->
+            if (oldBook.bookUrl == book.bookUrl) {
+                appDb.bookDao.update(book)
+            } else {
+                appDb.bookDao.replace(oldBook, book)
+                BookHelp.updateCacheFolder(oldBook, book)
             }
+            appDb.bookChapterDao.delByBook(oldBook.bookUrl)
+            appDb.bookChapterDao.insert(*cList.toTypedArray())
+            ReadManga.onChapterListUpdated(book)
+            return true
+        }.onFailure {
+            //加载章节出错
+            ReadManga.mCallback?.loadFail(appCtx.getString(R.string.error_load_toc))
+            return false
         }
-
         return true
-
     }
 
     /**
@@ -252,7 +249,7 @@ class ReadMangaViewModel(application: Application) : BaseViewModel(application) 
         try {
             LocalBook.getBookInputStream(book)
             return true
-        } catch (e: Throwable) {
+        } catch (_: Throwable) {
             return false
         }
     }
