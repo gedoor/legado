@@ -208,6 +208,7 @@
     <string name="click_turn_page">Tap screen to turn page</string>
     <string name="page_anim">Flip animation</string>
     <string name="book_page_anim">Flip animation (book)</string>
+    <string name="book_touch_dict">Tap dict lookup (book)</string>
     <string name="disable_manga_page_anim">Disable flip animation</string>
     <string name="keep_light">Keep screen awake</string>
     <string name="back">Back</string>
@@ -1049,6 +1050,7 @@
     <string name="tag_explore_disabled">Flag: found disabled</string>
     <string name="show_read_title_addition">show read title addition area</string>
     <string name="read_bar_style_follow_page">read bar style follow page</string>
+    <string name="read_aloud_reset_paragraph_after_dict">Resume reading from paragraph start after dictionary search</string>
     <string name="rule_image_decode">Decode Image(imageDecode)</string>
     <string name="like_source">Like</string>
     <string name="not_like_source">Not like</string>
@@ -1223,6 +1225,7 @@
     <string name="system_media_control_compatibility_change">System Media Control Compatibility Change</string>
     <string name="system_media_control_compatibility_change_summary">If system media controls do not appear on the lock screen, you can try enabling this, for example on OneUI 7.0 or Vivo devices.</string>
     <string name="read_aloud_pause_resume">Pause/Resume Speech</string>
+    <string name="toggle_touch_dict">Tap dict lookup (enable/pause)</string>
     <string name="manga_epaper">墨水屏</string>
     <string name="manga_epaper_stting">墨水屏设置</string>
     <string name="manga_epaper_value">阈值</string>

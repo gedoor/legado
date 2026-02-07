@@ -217,6 +217,14 @@ data class Book(
         return config.reSegment
     }
 
+    fun setTouchDict(touchDict: Boolean) {
+        config.touchDict = touchDict
+    }
+
+    fun getTouchDict(): Boolean {
+        return config.touchDict
+    }
+
     fun setPageAnim(pageAnim: Int?) {
         config.pageAnim = pageAnim
     }
@@ -402,7 +410,8 @@ data class Book(
         var readSimulating: Boolean = false,
         var startDate: LocalDate? = null,
         var startChapter: Int? = null,     // 用户设置的起始章节
-        var dailyChapters: Int = 3    // 用户设置的每日更新章节数
+        var dailyChapters: Int = 3,    // 用户设置的每日更新章节数
+        var touchDict: Boolean = false,
     ) : Parcelable
 
     class Converters {
