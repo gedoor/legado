@@ -1,26 +1,61 @@
 package io.legado.app.web
 
 import android.graphics.Bitmap
+import android.util.Base64
 import fi.iki.elonen.NanoHTTPD
 import io.legado.app.api.ReturnData
 import io.legado.app.api.controller.BookController
 import io.legado.app.api.controller.BookSourceController
 import io.legado.app.api.controller.ReplaceRuleController
 import io.legado.app.api.controller.RssSourceController
+import io.legado.app.constant.PreferKey
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.service.WebService
 import io.legado.app.utils.GSON
 import io.legado.app.utils.LogUtils
+import io.legado.app.utils.getPrefString
 import io.legado.app.utils.stackTraceStr
 import io.legado.app.web.utils.AssetsWeb
 import kotlinx.coroutines.runBlocking
 import okio.Pipe
 import okio.buffer
+import splitties.init.appCtx
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 
 class HttpServer(port: Int) : NanoHTTPD(port) {
     private val assetsWeb = AssetsWeb("web")
+
+    private fun isAuthorized(session: IHTTPSession): Boolean {
+        val password = appCtx.getPrefString(PreferKey.webServerPassword)
+        if (password.isNullOrBlank()) {
+            return true
+        }
+        val authHeader = session.headers["authorization"] ?: return false
+        if (!authHeader.startsWith("Basic ", ignoreCase = true)) {
+            return false
+        }
+        return try {
+            val decoded = String(
+                Base64.decode(authHeader.substring(6), Base64.DEFAULT),
+                Charsets.UTF_8
+            )
+            val parts = decoded.split(":", limit = 2)
+            parts.size == 2 && parts[1] == password
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    private fun unauthorizedResponse(): Response {
+        val response = newFixedLengthResponse(
+            Response.Status.UNAUTHORIZED,
+            "text/plain",
+            "Unauthorized"
+        )
+        response.addHeader("WWW-Authenticate", "Basic realm=\"Legado\"")
+        return response
+    }
 
     override fun serve(session: IHTTPSession): Response {
         WebService.serve()
@@ -46,6 +81,9 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
                 }
 
                 Method.POST -> {
+                    if (!isAuthorized(session)) {
+                        return unauthorizedResponse()
+                    }
                     val files = HashMap<String, String>()
                     session.parseBody(files)
                     val postData = files["postData"]
@@ -72,6 +110,9 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
                 }
 
                 Method.GET -> {
+                    if (!isAuthorized(session)) {
+                        return unauthorizedResponse()
+                    }
                     val parameters = session.parameters
 
                     returnData = when (uri) {
