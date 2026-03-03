@@ -26,6 +26,8 @@ import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.mapParallelSafe
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.toastOnUi
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
@@ -98,7 +100,7 @@ class ReadMangaViewModel(application: Application) : BaseViewModel(application) 
         if (ReadManga.chapterChanged) {
             // 有章节跳转不同步阅读进度
             ReadManga.chapterChanged = false
-        } else {
+        } else if (ReadManga.inBookshelf) {
             if (AppConfig.syncBookProgressPlus) {
                 ReadManga.syncProgress(
                     { progress -> ReadManga.mCallback?.sureNewProgress(progress) })
@@ -129,6 +131,7 @@ class ReadMangaViewModel(application: Application) : BaseViewModel(application) 
             ReadManga.onChapterListUpdated(book)
             return true
         }.onFailure {
+            currentCoroutineContext().ensureActive()
             //加载章节出错
             ReadManga.mCallback?.loadFail(appCtx.getString(R.string.error_load_toc))
             return false
@@ -145,6 +148,7 @@ class ReadMangaViewModel(application: Application) : BaseViewModel(application) 
             WebBook.getBookInfoAwait(source, book, canReName = false)
             return true
         } catch (e: Throwable) {
+            currentCoroutineContext().ensureActive()
             ReadManga.mCallback?.loadFail("详情页出错: ${e.localizedMessage}")
             return false
         }
@@ -220,6 +224,7 @@ class ReadMangaViewModel(application: Application) : BaseViewModel(application) 
             } else if (progress.durChapterIndex < book.simulatedTotalChapterNum()) {
                 ReadManga.setProgress(progress)
                 AppLog.put("自动同步阅读进度成功《${book.name}》 ${progress.durChapterTitle}")
+                context.toastOnUi("已同步最新漫画阅读进度")
             }
         }
     }
