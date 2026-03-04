@@ -40,7 +40,7 @@ class RssSourceEditViewModel(application: Application) : BaseViewModel(applicati
 
     fun save(source: RssSource, success: ((RssSource) -> Unit)) {
         execute {
-            if (source.sourceName.isBlank() || source.sourceName.isBlank()) {
+            if (source.sourceUrl.isBlank() || source.sourceName.isBlank()) {
                 throw NoStackTraceException(context.getString(R.string.non_null_name_url))
             }
             val oldSource = rssSource ?: RssSource()
