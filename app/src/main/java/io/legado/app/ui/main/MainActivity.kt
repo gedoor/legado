@@ -8,6 +8,7 @@ import android.view.MenuItem
 import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.activity.viewModels
+import androidx.core.view.get
 import androidx.core.view.postDelayed
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -41,6 +42,7 @@ import io.legado.app.ui.main.explore.ExploreFragment
 import io.legado.app.ui.main.my.MyFragment
 import io.legado.app.ui.main.rss.RssFragment
 import io.legado.app.ui.widget.dialog.TextDialog
+import io.legado.app.ui.widget.text.BadgeView
 import io.legado.app.utils.isCreated
 import io.legado.app.utils.navigationBarHeight
 import io.legado.app.utils.observeEvent
@@ -51,14 +53,15 @@ import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import splitties.views.bottomPadding
 import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 /**
  * 主界面
  */
+@Suppress("PrivatePropertyName")
 class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
     BottomNavigationView.OnNavigationItemSelectedListener,
     BottomNavigationView.OnNavigationItemReselectedListener {
@@ -82,9 +85,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
     private val adapter by lazy {
         TabFragmentPageAdapter(supportFragmentManager)
     }
-    private val onUpBooksBadgeView by lazy {
-        binding.bottomNavigationView.addBadgeView(0)
-    }
+    private var onUpBooksBadgeView: BadgeView? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         upBottomMenu()
@@ -196,10 +197,10 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
     /**
      * 用户隐私与协议
      */
-    private suspend fun privacyPolicy(): Boolean = suspendCoroutine { block ->
+    private suspend fun privacyPolicy(): Boolean = suspendCancellableCoroutine sc@{ block ->
         if (LocalConfig.privacyPolicyOk) {
             block.resume(true)
-            return@suspendCoroutine
+            return@sc
         }
         val privacyPolicy = String(assets.open("privacyPolicy.md").readBytes())
         alert(getString(R.string.privacy_policy), privacyPolicy) {
@@ -217,10 +218,10 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
     /**
      * 版本更新日志
      */
-    private suspend fun upVersion() = suspendCoroutine { block ->
+    private suspend fun upVersion() = suspendCancellableCoroutine sc@{ block ->
         if (LocalConfig.versionCode == appInfo.versionCode) {
             block.resume(null)
-            return@suspendCoroutine
+            return@sc
         }
         LocalConfig.versionCode = appInfo.versionCode
         if (LocalConfig.isFirstOpenApp) {
@@ -245,10 +246,10 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
     /**
      * 设置本地密码
      */
-    private suspend fun setLocalPassword() = suspendCoroutine { block ->
+    private suspend fun setLocalPassword() = suspendCancellableCoroutine sc@{ block ->
         if (LocalConfig.password != null) {
             block.resume(null)
-            return@suspendCoroutine
+            return@sc
         }
         alert(R.string.set_local_password, R.string.set_local_password_summary) {
             val editTextBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
@@ -333,13 +334,21 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
 
     override fun observeLiveBus() {
         viewModel.onUpBooksLiveData.observe(this) {
-            onUpBooksBadgeView.setBadgeCount(it)
+            if (onUpBooksBadgeView == null) {
+                onUpBooksBadgeView = binding.bottomNavigationView.addBadgeView(0)
+            }
+            onUpBooksBadgeView!!.setBadgeCount(it)
         }
         observeEvent<String>(EventBus.RECREATE) {
             recreate()
         }
         observeEvent<Boolean>(EventBus.NOTIFY_MAIN) {
             binding.apply {
+                if (it) {
+                    bottomNavigationView.menu.clear()
+                    bottomNavigationView.inflateMenu(R.menu.main_bnv)
+                    onUpBooksBadgeView = null
+                }
                 upBottomMenu()
                 if (it) {
                     viewPagerMain.setCurrentItem(bottomMenuCount - 1, false)
@@ -400,8 +409,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
 
         override fun onPageSelected(position: Int) {
             pagePosition = position
-            binding.bottomNavigationView.menu
-                .getItem(realPositions[position]).isChecked = true
+            binding.bottomNavigationView.menu[realPositions[position]].isChecked = true
         }
 
     }
