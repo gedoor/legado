@@ -79,8 +79,8 @@ abstract class HorizontalPageDelegate(readView: ReadView) : PageDelegate(readVie
         //判断是否移动了
         if (!isMoved) {
             val deltaX = (focusX - startX).toInt()
-            val deltaY = (focusY - startY).toInt()
-            val distance = deltaX * deltaX + deltaY * deltaY
+            // 非滚动翻页动画只考虑水平距离
+            val distance = deltaX * deltaX
             isMoved = distance > slopSquare
             if (isMoved) {
                 if (sumX - startX > 0) {

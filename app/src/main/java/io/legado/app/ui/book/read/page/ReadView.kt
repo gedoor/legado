@@ -98,6 +98,9 @@ class ReadView(context: Context, attrs: AttributeSet) :
     private val slopSquare by lazy { ViewConfiguration.get(context).scaledTouchSlop }
     private var pageSlopSquare: Int = slopSquare
     var pageSlopSquare2: Int = pageSlopSquare * pageSlopSquare
+    private val hlRect = RectF()
+    private val hcRect = RectF()
+    private val hrRect = RectF()
     private val tlRect = RectF()
     private val tcRect = RectF()
     private val trRect = RectF()
@@ -107,6 +110,9 @@ class ReadView(context: Context, attrs: AttributeSet) :
     private val blRect = RectF()
     private val bcRect = RectF()
     private val brRect = RectF()
+    private val flRect = RectF()
+    private val fcRect = RectF()
+    private val frRect = RectF()
     private val boundary by lazy { BreakIterator.getWordInstance(Locale.getDefault()) }
     private val upProgressThrottle = throttle(200) { post { upProgress() } }
     val autoPager = AutoPager(this)
@@ -128,20 +134,38 @@ class ReadView(context: Context, attrs: AttributeSet) :
     }
 
     private fun setRect9x() {
-        tlRect.set(0f, 0f, width * 0.33f, height * 0.33f)
-        tcRect.set(width * 0.33f, 0f, width * 0.66f, height * 0.33f)
-        trRect.set(width * 0.36f, 0f, width.toFloat(), height * 0.33f)
-        mlRect.set(0f, height * 0.33f, width * 0.33f, height * 0.66f)
-        mcRect.set(width * 0.33f, height * 0.33f, width * 0.66f, height * 0.66f)
-        mrRect.set(width * 0.66f, height * 0.33f, width.toFloat(), height * 0.66f)
-        blRect.set(0f, height * 0.66f, width * 0.33f, height.toFloat())
-        bcRect.set(width * 0.33f, height * 0.66f, width * 0.66f, height.toFloat())
-        brRect.set(width * 0.66f, height * 0.66f, width.toFloat(), height.toFloat())
+        val h = curPage.headerHeight.toFloat()
+        val f = curPage.footerHeight.toFloat()
+        val w3 = width * 0.33f
+        val w6 = width * 0.66f
+        val hBody = height - h - f
+        val h3 = h + hBody * 0.33f
+        val h6 = h + hBody * 0.66f
+
+        hlRect.set(0f, 0f, w3, h)
+        hcRect.set(w3, 0f, w6, h)
+        hrRect.set(w6, 0f, width.toFloat(), h)
+
+        tlRect.set(0f, h, w3, h3)
+        tcRect.set(w3, h, w6, h3)
+        trRect.set(w6, h, width.toFloat(), h3)
+
+        mlRect.set(0f, h3, w3, h6)
+        mcRect.set(w3, h3, w6, h6)
+        mrRect.set(w6, h3, width.toFloat(), h6)
+
+        blRect.set(0f, h6, w3, height - f)
+        bcRect.set(w3, h6, w6, height - f)
+        brRect.set(w6, h6, width.toFloat(), height - f)
+
+        flRect.set(0f, height - f, w3, height.toFloat())
+        fcRect.set(w3, height - f, w6, height.toFloat())
+        frRect.set(w6, height - f, width.toFloat(), height.toFloat())
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        setRect9x()
+        post { setRect9x() }
         prevPage.x = -w.toFloat()
         pageDelegate?.setViewSize(w, h)
         if (w > 0 && h > 0) {
@@ -315,10 +339,21 @@ class ReadView(context: Context, attrs: AttributeSet) :
      * 长按选择
      */
     private fun onLongPress() {
+        selectWordAt(startX, startY) {
+            pressOnTextSelected = true
+        }
+    }
+
+    /**
+     * 选择指定位置的整个单词，用于点击查词典和长按选择功能
+     * @param x 触摸点X坐标
+     * @param y 触摸点Y坐标
+     * @param onWordSelected 单词选中后的回调
+     */
+    fun selectWordAt(x: Float, y: Float, onWordSelected: () -> Unit) {
         kotlin.runCatching {
-            curPage.longPress(startX, startY) { textPos: TextPos ->
+            curPage.longPress(x, y) { textPos: TextPos ->
                 isTextSelected = true
-                pressOnTextSelected = true
                 initialTextPos.upData(textPos)
                 val startPos = textPos.copy()
                 val endPos = textPos.copy()
@@ -381,16 +416,40 @@ class ReadView(context: Context, attrs: AttributeSet) :
                 }
                 curPage.selectStartMoveIndex(startPos)
                 curPage.selectEndMoveIndex(endPos)
+                onWordSelected()
             }
         }
+    }
+
+    /**
+     * 检查是否在正文区域内（T/M/B区域，不包括页眉和页脚）
+     */
+    private fun isInContentArea(x: Float, y: Float): Boolean {
+        return tlRect.contains(x, y) || tcRect.contains(x, y) || trRect.contains(x, y) ||
+               mlRect.contains(x, y) || mcRect.contains(x, y) || mrRect.contains(x, y) ||
+               blRect.contains(x, y) || bcRect.contains(x, y) || brRect.contains(x, y)
     }
 
     /**
      * 单击
      */
     private fun onSingleTapUp() {
+        val touchDictEnabled = ReadBook.book?.getTouchDict() == true
         when {
             isTextSelected -> Unit
+            // 页眉区域 - 始终正常响应
+            hlRect.contains(startX, startY) -> click(AppConfig.clickActionHTL)
+            hcRect.contains(startX, startY) -> click(AppConfig.clickActionHTC)
+            hrRect.contains(startX, startY) -> click(AppConfig.clickActionHTR)
+            // 页脚区域 - 始终正常响应
+            flRect.contains(startX, startY) -> click(AppConfig.clickActionFTL)
+            fcRect.contains(startX, startY) -> click(AppConfig.clickActionFTC)
+            frRect.contains(startX, startY) -> click(AppConfig.clickActionFTR)
+            // 正文区域 - 如果开启点击查字典模式，则触发查词典
+            touchDictEnabled && isInContentArea(startX, startY) -> {
+                callBack.onContentAreaTap(startX, startY)
+            }
+            // 正文区域 - 正常点击动作
             mcRect.contains(startX, startY) -> if (!isAbortAnim) {
                 click(AppConfig.clickActionMC)
             }
@@ -462,6 +521,8 @@ class ReadView(context: Context, attrs: AttributeSet) :
                     ReadAloud.resume(context)
                 }
             }
+
+            14 -> callBack.toggleTouchDict()
         }
     }
 
@@ -754,5 +815,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
         fun openSearchActivity(searchWord: String?)
         fun upSystemUiVisibility()
         fun sureNewProgress(progress: BookProgress)
+        fun toggleTouchDict()
+        fun onContentAreaTap(x: Float, y: Float)
     }
 }

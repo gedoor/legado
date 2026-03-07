@@ -207,6 +207,7 @@
     <string name="click_turn_page">点击翻页</string>
     <string name="page_anim">翻页动画</string>
     <string name="book_page_anim">翻页动画（本书）</string>
+    <string name="book_touch_dict">点击查字典（本书）</string>
     <string name="keep_light">屏幕超时</string>
     <string name="back">返回</string>
     <string name="menu">菜单</string>
@@ -1047,6 +1048,7 @@
     <string name="tag_explore_disabled">标志:发现已禁用</string>
     <string name="show_read_title_addition">展示顶部工具栏附加区域</string>
     <string name="read_bar_style_follow_page">工具栏样式跟随页面</string>
+    <string name="read_aloud_reset_paragraph_after_dict">查词后从段落开头恢复朗读</string>
     <string name="rule_image_decode">图片解密（imageDecode）</string>
     <string name="like_source">赞</string>
     <string name="not_like_source">踩</string>
@@ -1222,6 +1224,7 @@
     <string name="system_media_control_compatibility_change">系统媒体控件兼容性更改</string>
     <string name="system_media_control_compatibility_change_summary">当锁屏不显示系统媒体控件时可以尝试开启，比如oneui7.0或vivo等</string>
     <string name="read_aloud_pause_resume">朗读暂停/继续</string>
+    <string name="toggle_touch_dict">点击查字典（启用/暂停）</string>
     <string name="manga_epaper">墨水屏</string>
     <string name="manga_epaper_stting">墨水屏设置</string>
     <string name="manga_epaper_value">阈值</string>

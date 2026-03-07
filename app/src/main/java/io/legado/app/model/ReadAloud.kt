@@ -117,6 +117,14 @@ object ReadAloud {
         }
     }
 
+    fun resetParagraph(context: Context) {
+        if (BaseReadAloudService.isRun) {
+            val intent = Intent(context, aloudClass)
+            intent.action = IntentAction.resetParagraph
+            context.startForegroundServiceCompat(intent)
+        }
+    }
+
     fun upTtsSpeechRate(context: Context) {
         if (BaseReadAloudService.isRun) {
             val intent = Intent(context, aloudClass)

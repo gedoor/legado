@@ -37,7 +37,8 @@ class ClickActionConfigDialog : BaseDialogFragment(R.layout.dialog_click_action_
             Pair(10, getString(R.string.chapter_list)),
             Pair(11, getString(R.string.search_content)),
             Pair(12, getString(R.string.sync_book_progress_t)),
-            Pair(13, getString(R.string.read_aloud_pause_resume))
+            Pair(13, getString(R.string.read_aloud_pause_resume)),
+            Pair(14, getString(R.string.toggle_touch_dict))
         )
     }
 
@@ -62,6 +63,9 @@ class ClickActionConfigDialog : BaseDialogFragment(R.layout.dialog_click_action_
     }
 
     private fun initData() = binding.run {
+        tvHeaderLeft.text = actions[AppConfig.clickActionHTL]
+        tvHeaderCenter.text = actions[AppConfig.clickActionHTC]
+        tvHeaderRight.text = actions[AppConfig.clickActionHTR]
         tvTopLeft.text = actions[AppConfig.clickActionTL]
         tvTopCenter.text = actions[AppConfig.clickActionTC]
         tvTopRight.text = actions[AppConfig.clickActionTR]
@@ -71,11 +75,32 @@ class ClickActionConfigDialog : BaseDialogFragment(R.layout.dialog_click_action_
         tvBottomLeft.text = actions[AppConfig.clickActionBL]
         tvBottomCenter.text = actions[AppConfig.clickActionBC]
         tvBottomRight.text = actions[AppConfig.clickActionBR]
+        tvFooterLeft.text = actions[AppConfig.clickActionFTL]
+        tvFooterCenter.text = actions[AppConfig.clickActionFTC]
+        tvFooterRight.text = actions[AppConfig.clickActionFTR]
     }
 
     private fun initViewEvent() {
         binding.ivClose.setOnClickListener {
             dismissAllowingStateLoss()
+        }
+        binding.tvHeaderLeft.setOnClickListener {
+            selectAction { action ->
+                putPrefInt(PreferKey.clickActionHTL, action)
+                (it as? TextView)?.text = actions[action]
+            }
+        }
+        binding.tvHeaderCenter.setOnClickListener {
+            selectAction { action ->
+                putPrefInt(PreferKey.clickActionHTC, action)
+                (it as? TextView)?.text = actions[action]
+            }
+        }
+        binding.tvHeaderRight.setOnClickListener {
+            selectAction { action ->
+                putPrefInt(PreferKey.clickActionHTR, action)
+                (it as? TextView)?.text = actions[action]
+            }
         }
         binding.tvTopLeft.setOnClickListener {
             selectAction { action ->
@@ -128,6 +153,24 @@ class ClickActionConfigDialog : BaseDialogFragment(R.layout.dialog_click_action_
         binding.tvBottomRight.setOnClickListener {
             selectAction { action ->
                 putPrefInt(PreferKey.clickActionBR, action)
+                (it as? TextView)?.text = actions[action]
+            }
+        }
+        binding.tvFooterLeft.setOnClickListener {
+            selectAction { action ->
+                putPrefInt(PreferKey.clickActionFTL, action)
+                (it as? TextView)?.text = actions[action]
+            }
+        }
+        binding.tvFooterCenter.setOnClickListener {
+            selectAction { action ->
+                putPrefInt(PreferKey.clickActionFTC, action)
+                (it as? TextView)?.text = actions[action]
+            }
+        }
+        binding.tvFooterRight.setOnClickListener {
+            selectAction { action ->
+                putPrefInt(PreferKey.clickActionFTR, action)
                 (it as? TextView)?.text = actions[action]
             }
         }

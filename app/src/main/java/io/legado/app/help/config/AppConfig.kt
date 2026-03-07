@@ -27,6 +27,12 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
     var useAntiAlias = appCtx.getPrefBoolean(PreferKey.antiAlias)
     var userAgent: String = getPrefUserAgent()
     var isEInkMode = appCtx.getPrefString(PreferKey.themeMode) == "3"
+    var clickActionHTL = appCtx.getPrefInt(PreferKey.clickActionHTL, -1)
+    var clickActionHTC = appCtx.getPrefInt(PreferKey.clickActionHTC, -1)
+    var clickActionHTR = appCtx.getPrefInt(PreferKey.clickActionHTR, -1)
+    var clickActionFTL = appCtx.getPrefInt(PreferKey.clickActionFTL, -1)
+    var clickActionFTC = appCtx.getPrefInt(PreferKey.clickActionFTC, -1)
+    var clickActionFTR = appCtx.getPrefInt(PreferKey.clickActionFTR, -1)
     var clickActionTL = appCtx.getPrefInt(PreferKey.clickActionTL, 2)
     var clickActionTC = appCtx.getPrefInt(PreferKey.clickActionTC, 2)
     var clickActionTR = appCtx.getPrefInt(PreferKey.clickActionTR, 1)
@@ -48,6 +54,24 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
                 themeMode = appCtx.getPrefString(PreferKey.themeMode, "0")
                 isEInkMode = themeMode == "3"
             }
+
+            PreferKey.clickActionHTL -> clickActionHTL =
+                appCtx.getPrefInt(PreferKey.clickActionHTL, -1)
+
+            PreferKey.clickActionHTC -> clickActionHTC =
+                appCtx.getPrefInt(PreferKey.clickActionHTC, -1)
+
+            PreferKey.clickActionHTR -> clickActionHTR =
+                appCtx.getPrefInt(PreferKey.clickActionHTR, -1)
+
+            PreferKey.clickActionFTL -> clickActionFTL =
+                appCtx.getPrefInt(PreferKey.clickActionFTL, -1)
+
+            PreferKey.clickActionFTC -> clickActionFTC =
+                appCtx.getPrefInt(PreferKey.clickActionFTC, -1)
+
+            PreferKey.clickActionFTR -> clickActionFTR =
+                appCtx.getPrefInt(PreferKey.clickActionFTR, -1)
 
             PreferKey.clickActionTL -> clickActionTL =
                 appCtx.getPrefInt(PreferKey.clickActionTL, 2)
@@ -578,6 +602,12 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             appCtx.putPrefBoolean(PreferKey.readBarStyleFollowPage, value)
         }
 
+    var readAloudResetParagraphAfterDict: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.readAloudResetParagraphAfterDict, false)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.readAloudResetParagraphAfterDict, value)
+        }
+
     var sourceEditMaxLine: Int
         get() {
             val maxLine = appCtx.getPrefInt(PreferKey.sourceEditMaxLine, Int.MAX_VALUE)
@@ -739,4 +769,3 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
         }
 
 }
-

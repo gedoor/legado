@@ -1041,6 +1041,7 @@
     <string name="tag_explore_disabled">標誌：發現已禁用</string>
     <string name="show_read_title_addition">展示頂部工具列附加區域</string>
     <string name="read_bar_style_follow_page">工具列樣式跟隨頁面</string>
+    <string name="read_aloud_reset_paragraph_after_dict">查詞後從段落開頭恢復朗讀</string>
     <string name="rule_image_decode">圖片解密（imageDecode）</string>
     <string name="like_source">讚</string>
     <string name="not_like_source">踩</string>
