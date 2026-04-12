@@ -1,12 +1,14 @@
 # Frontend Development Guidelines
 
-> Best practices for frontend development in this project.
+> 本项目 Web 前端（modules/web，Vue 3）开发指南索引。
 
 ---
 
 ## Overview
 
-This directory contains guidelines for frontend development. Fill in each file with your project's specific conventions.
+前端位于 `modules/web/`，技术栈为 Vue 3 + TypeScript + Vite，状态管理 Pinia，UI 使用 Element Plus。
+
+前端依赖 App 内置 HTTP/WebSocket API（返回结构为 `isSuccess/errorMsg/data`）。
 
 ---
 
@@ -14,26 +16,24 @@ This directory contains guidelines for frontend development. Fill in each file w
 
 | Guide | Description | Status |
 |-------|-------------|--------|
-| [Directory Structure](./directory-structure.md) | Module organization and file layout | To fill |
-| [Component Guidelines](./component-guidelines.md) | Component patterns, props, composition | To fill |
-| [Hook Guidelines](./hook-guidelines.md) | Custom hooks, data fetching patterns | To fill |
-| [State Management](./state-management.md) | Local state, global state, server state | To fill |
-| [Quality Guidelines](./quality-guidelines.md) | Code standards, forbidden patterns | To fill |
-| [Type Safety](./type-safety.md) | Type patterns, validation | To fill |
+| [Directory Structure](./directory-structure.md) | 目录结构与分层 | Filled |
+| [Component Guidelines](./component-guidelines.md) | Vue SFC/Element Plus 组件约定 | Filled |
+| [Hook Guidelines](./hook-guidelines.md) | composables（useXxx）与数据请求模式 | Filled |
+| [State Management](./state-management.md) | Pinia 使用与状态分层 | Filled |
+| [Quality Guidelines](./quality-guidelines.md) | lint/type-check/CI 与评审清单 | Filled |
+| [Type Safety](./type-safety.md) | TS 类型组织与运行时校验点 | Filled |
 
 ---
 
-## How to Fill These Guidelines
+## Pre-Development Checklist
 
-For each guideline file:
+开始改动 `modules/web` 前，至少先读：
 
-1. Document your project's **actual conventions** (not ideals)
-2. Include **code examples** from your codebase
-3. List **forbidden patterns** and why
-4. Add **common mistakes** your team has made
-
-The goal is to help AI assistants and new team members understand how YOUR project works.
+1. `./directory-structure.md`
+2. `./hook-guidelines.md`（包含 API 合同与拦截器约束）
+3. `./type-safety.md`
+4. `./quality-guidelines.md`
 
 ---
 
-**Language**: All documentation should be written in **English**.
+**Language**: 本仓库已有大量中文文档与注释，本目录文档以中文为主（必要时夹带英文术语）。
