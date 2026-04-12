@@ -1,0 +1,4 @@
+# Codex hook runtime state
+hooks/.session-state.json*
+hooks/**/__pycache__/
+hooks/**/*.pyc

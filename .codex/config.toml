@@ -1,0 +1,10 @@
+[hooks]
+
+[[hooks.user_prompt_submit]]
+command = "python -B .codex/hooks/trellis/session_start.py"
+timeout = 10
+once = true
+
+[[hooks.pre_compact]]
+command = "python -B .codex/hooks/trellis/pre_compact.py"
+timeout = 10
