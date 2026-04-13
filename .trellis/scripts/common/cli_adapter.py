@@ -259,7 +259,18 @@ class CLIAdapter:
         mapped_agent = self.get_agent_name(agent)
 
         if self.platform == "opencode":
-            cmd = ["opencode", "run"]
+            # Windows 下全局 npm 安装通常提供的是 opencode.cmd/opencode.ps1。
+            # 由于 multi_agent 使用 subprocess.Popen(..., shell=False)，直接传 "opencode"
+            # 会因为找不到同名可执行文件而触发 FileNotFoundError。
+            import shutil
+            import sys
+
+            opencode_exe = "opencode"
+            if sys.platform == "win32":
+                # 优先用 which() 解析到绝对路径，避免 PATH/扩展名解析差异。
+                opencode_exe = shutil.which("opencode.cmd") or "opencode.cmd"
+
+            cmd = [opencode_exe, "run"]
             cmd.extend(["--agent", mapped_agent])
 
             # Note: OpenCode 'run' mode is non-interactive by default
@@ -329,7 +340,15 @@ class CLIAdapter:
             List of command arguments
         """
         if self.platform == "opencode":
-            return ["opencode", "run", "--session", session_id]
+            # 与 build_run_command 保持一致：Windows 下使用 opencode.cmd，确保 shell=False 可执行。
+            import shutil
+            import sys
+
+            opencode_exe = "opencode"
+            if sys.platform == "win32":
+                opencode_exe = shutil.which("opencode.cmd") or "opencode.cmd"
+
+            return [opencode_exe, "run", "--session", session_id]
         elif self.platform == "iflow":
             # iFlow uses -c to continue most recent conversation
             # session_id is ignored as iFlow doesn't support session IDs

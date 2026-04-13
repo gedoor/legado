@@ -40,14 +40,81 @@ from common.worktree import get_agents_dir
 # =============================================================================
 
 def is_running(pid: int | str | None) -> bool:
-    """Check if PID is running."""
+    """检查指定 PID 是否仍在运行。
+
+    在非 Windows 平台上，沿用传统的 ``os.kill(pid, 0)`` 探测方式。
+    在 Windows 平台上，``os.kill(pid, 0)`` 可能抛出 ``WinError 87``，
+    因此改用 WinAPI ``OpenProcess`` 探测进程是否存在。
+
+    Args:
+        pid: 进程 ID，允许 ``int``/可转 ``int`` 的字符串/``None``。
+
+    Returns:
+        若进程存在（或因权限不足无法打开但可判定存在）返回 ``True``，否则返回 ``False``。
+    """
+
+    def _is_running_windows(pid_int: int) -> bool:
+        """使用 WinAPI 判断进程是否存在。
+
+        说明：
+            - 使用 ``PROCESS_QUERY_LIMITED_INFORMATION (0x1000)`` 打开进程。
+            - 若 ``OpenProcess`` 返回 NULL：
+                - 当 ``GetLastError()==ERROR_ACCESS_DENIED (5)`` 时视为进程存在；
+                - 其他错误视为不存在。
+
+        Args:
+            pid_int: 进程 ID（必须为正整数）。
+
+        Returns:
+            进程存在返回 ``True``，否则返回 ``False``。
+        """
+        import ctypes
+        from ctypes import wintypes
+
+        # WinAPI 常量：最低权限查询句柄是否可打开。
+        PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
+        ERROR_ACCESS_DENIED = 5
+
+        # 使用线程局部 last_error，避免与其他 WinDLL 调用互相污染。
+        kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+
+        open_process = kernel32.OpenProcess
+        open_process.argtypes = [wintypes.DWORD, wintypes.BOOL, wintypes.DWORD]
+        open_process.restype = wintypes.HANDLE
+
+        close_handle = kernel32.CloseHandle
+        close_handle.argtypes = [wintypes.HANDLE]
+        close_handle.restype = wintypes.BOOL
+
+        handle = open_process(PROCESS_QUERY_LIMITED_INFORMATION, False, pid_int)
+        if handle:
+            # 句柄打开成功，说明进程存在；需要及时关闭句柄避免泄漏。
+            close_handle(handle)
+            return True
+
+        # 句柄打开失败：若是权限不足，也认为进程存在（符合 status 目的）。
+        last_err = ctypes.get_last_error()
+        return last_err == ERROR_ACCESS_DENIED
+
     if not pid:
         return False
+
     try:
         pid_int = int(pid)
+    except (ValueError, TypeError):
+        return False
+
+    # PID 必须为正整数。
+    if pid_int <= 0:
+        return False
+
+    if os.name == "nt":
+        return _is_running_windows(pid_int)
+
+    try:
         os.kill(pid_int, 0)
         return True
-    except (ProcessLookupError, ValueError, PermissionError, TypeError):
+    except (ProcessLookupError, PermissionError, OSError):
         return False
 
 
