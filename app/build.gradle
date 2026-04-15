@@ -146,6 +146,9 @@ android {
     }
     lint {
         checkDependencies = true
+        // 该仓库历史代码存在较多既有 Lint 问题；使用基线文件避免每次改动都被“存量问题”阻塞。
+        // 注意：基线只应覆盖“既有问题”，新增代码不应再引入新的 Lint Error。
+        baseline = file("lint-baseline.xml")
     }
     tasks.withType(JavaCompile).tap {
         configureEach {

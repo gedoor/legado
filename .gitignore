@@ -16,3 +16,8 @@ package-lock.json
 .idea/
 # Kotlin 2.0
 .kotlin/
+
+# opencode/trellis 本地运行时文件（不应提交）
+.agent-log
+.session-id
+.trellis/tasks/
