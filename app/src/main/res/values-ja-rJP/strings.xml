@@ -19,6 +19,27 @@
     <string name="menu_replace_rule">Replacement</string>
     <string name="menu_send">Send</string>
 
+    <!-- Agents（入口 + 页面骨架） -->
+    <string name="agents_title">Agents</string>
+    <string name="agents_entry">Agents</string>
+    <string name="agents_entry_desc">Agents を開く</string>
+    <string name="agents_history">履歴</string>
+    <string name="agents_settings">設定</string>
+    <string name="agents_new_session">新しいセッション</string>
+    <string name="agents_new_session_created">新しいセッションを作成しました（プレースホルダー）</string>
+    <string name="agents_input_hint">メッセージを入力…</string>
+    <string name="agents_input_empty_tip">メッセージを入力してください</string>
+    <string name="agents_context_hint_format">%1$s · %2$s</string>
+    <string name="agents_placeholder_message">Agents ページの骨組み（プレースホルダー）。</string>
+    <string name="agents_message_me_format">私：%1$s</string>
+    <string name="agents_message_echo_format">エコー：%1$s</string>
+
+    <!-- 兼容性提示（补齐缺失翻译以通过 lint） -->
+    <string name="system_media_control_compatibility_change">システムのメディアコントロール互換性の変更</string>
+    <string name="system_media_control_compatibility_change_summary">ロック画面にシステムのメディアコントロールが表示されない場合、これを有効にしてみてください（例：OneUI 7.0 や Vivo 端末）。</string>
+    <string name="read_aloud_pause_resume">読み上げの一時停止/再開</string>
+    <string name="play_mode">再生モード</string>
+
     <string name="dialog_title">Prompt</string>
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_confirm">Confirm</string>

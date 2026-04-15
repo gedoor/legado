@@ -135,6 +135,12 @@
                 android:resource="@xml/spen_remote_actions" />
         </activity>
 
+        <!-- Agents 页面（入口来自阅读页与“我的”页） -->
+        <activity
+            android:name=".ui.agents.AgentsActivity"
+            android:launchMode="standard"
+            android:windowSoftInputMode="adjustResize" />
+
         <!-- 阅读漫画界面 -->
         <activity
             android:name=".ui.book.manga.ReadMangaActivity"

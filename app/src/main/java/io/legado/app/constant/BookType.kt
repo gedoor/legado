@@ -50,7 +50,9 @@ object BookType {
 
     @Target(AnnotationTarget.VALUE_PARAMETER)
     @Retention(AnnotationRetention.SOURCE)
-    @IntDef(text, updateError, audio, image, webFile, local, archive, notShelf)
+    // 这里的类型值是位标记（bitmask），允许通过 `or` 组合多个类型。
+    // 因此 IntDef 必须声明为 flag=true，否则 lint 会把位运算结果判定为“非法常量”。
+    @IntDef(text, updateError, audio, image, webFile, local, archive, notShelf, flag = true)
     annotation class Type
 
     /**

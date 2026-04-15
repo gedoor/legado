@@ -19,6 +19,28 @@
     <string name="menu_replace_rule">Thay thế</string>
     <string name="menu_send">Gửi</string>
 
+    <!-- Agents（入口 + 页面骨架） -->
+    <string name="agents_title">Agents</string>
+    <string name="agents_entry">Agents</string>
+    <string name="agents_entry_desc">Mở Agents</string>
+    <string name="agents_history">Lịch sử</string>
+    <string name="agents_settings">Cài đặt</string>
+    <string name="agents_new_session">Tạo phiên mới</string>
+    <string name="agents_new_session_created">Đã tạo phiên mới (placeholder)</string>
+    <string name="agents_input_hint">Nhập tin nhắn…</string>
+    <string name="agents_input_empty_tip">Vui lòng nhập nội dung</string>
+    <string name="agents_context_hint_format">%1$s · %2$s</string>
+    <string name="agents_placeholder_message">Khung trang Agents (placeholder).</string>
+    <string name="agents_message_me_format">Tôi: %1$s</string>
+    <string name="agents_message_echo_format">Phản hồi: %1$s</string>
+
+    <!-- 兼容性提示（补齐缺失翻译以通过 lint） -->
+    <string name="custom_export_section">Xuất chương EPUB tuỳ chỉnh</string>
+    <string name="del_all">Xóa tất cả</string>
+    <string name="system_media_control_compatibility_change">Thay đổi tương thích điều khiển đa phương tiện hệ thống</string>
+    <string name="system_media_control_compatibility_change_summary">Nếu điều khiển phương tiện của hệ thống không xuất hiện trên màn hình khóa, bạn có thể thử bật tuỳ chọn này, ví dụ trên OneUI 7.0 hoặc thiết bị Vivo.</string>
+    <string name="read_aloud_pause_resume">Tạm dừng/Tiếp tục đọc thành tiếng</string>
+
     <string name="dialog_title">Thông báo</string>
     <string name="dialog_cancel">Hủy</string>
     <string name="dialog_confirm">Xác nhận</string>

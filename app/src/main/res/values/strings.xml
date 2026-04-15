@@ -70,6 +70,20 @@
     <string name="book_source_manage">Sources management</string>
     <string name="book_source_manage_desc">Create/Import/Edit/Manage Book sources</string>
     <string name="setting">Settings</string>
+    <!-- Agents（入口 + 页面骨架） -->
+    <string name="agents_title">Agents</string>
+    <string name="agents_entry">Agents</string>
+    <string name="agents_entry_desc">Open Agents</string>
+    <string name="agents_history">History</string>
+    <string name="agents_settings">Settings</string>
+    <string name="agents_new_session">New session</string>
+    <string name="agents_new_session_created">New session created (placeholder)</string>
+    <string name="agents_input_hint">Type a message…</string>
+    <string name="agents_input_empty_tip">Please enter a message</string>
+    <string name="agents_context_hint_format">%1$s · %2$s</string>
+    <string name="agents_placeholder_message">Agents page skeleton (placeholder).</string>
+    <string name="agents_message_me_format">Me: %1$s</string>
+    <string name="agents_message_echo_format">Echo: %1$s</string>
     <string name="theme_setting">Theme settings</string>
     <string name="theme_setting_s">Some settings related to interface or color</string>
     <string name="other_setting">Other settings</string>

@@ -134,6 +134,25 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp">
 
+            <!--
+              Agents 入口：按 PRD 要求放在搜索按钮左侧。
+              这里使用 mini FAB，与现有悬浮操作区按钮保持一致。
+            -->
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fabAgents"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:contentDescription="@string/agents_entry"
+                android:src="@drawable/ic_agents"
+                android:tint="@color/primaryText"
+                android:tooltipText="@string/agents_entry"
+                app:backgroundTint="@color/background_menu"
+                app:elevation="2dp"
+                app:fabSize="mini"
+                app:pressedTranslationZ="2dp"
+                tools:ignore="UnusedAttribute" />
+
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fabSearch"
                 android:layout_width="wrap_content"

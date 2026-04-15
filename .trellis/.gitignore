@@ -15,6 +15,9 @@
 # Task directory runtime files
 .plan-log
 
+# Trellis 任务目录（本地工作流产物；不应提交到仓库）。
+tasks/
+
 # Atomic update temp files
 *.tmp
 

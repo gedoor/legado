@@ -19,6 +19,27 @@
     <string name="menu_replace_rule">Substituição</string>
     <string name="menu_send">Enviar</string>
 
+    <!-- Agents（入口 + 页面骨架） -->
+    <string name="agents_title">Agents</string>
+    <string name="agents_entry">Agents</string>
+    <string name="agents_entry_desc">Abrir Agents</string>
+    <string name="agents_history">Histórico</string>
+    <string name="agents_settings">Configurações</string>
+    <string name="agents_new_session">Nova sessão</string>
+    <string name="agents_new_session_created">Nova sessão criada (placeholder)</string>
+    <string name="agents_input_hint">Digite uma mensagem…</string>
+    <string name="agents_input_empty_tip">Por favor, digite uma mensagem</string>
+    <string name="agents_context_hint_format">%1$s · %2$s</string>
+    <string name="agents_placeholder_message">Estrutura da página Agents (placeholder).</string>
+    <string name="agents_message_me_format">Eu: %1$s</string>
+    <string name="agents_message_echo_format">Eco: %1$s</string>
+
+    <!-- 兼容性提示（补齐缺失翻译以通过 lint） -->
+    <string name="system_media_control_compatibility_change">Alteração de compatibilidade do controle de mídia do sistema</string>
+    <string name="system_media_control_compatibility_change_summary">Se os controles de mídia do sistema não aparecerem na tela de bloqueio, você pode tentar ativar isto, por exemplo no OneUI 7.0 ou em dispositivos Vivo.</string>
+    <string name="read_aloud_pause_resume">Pausar/Retomar leitura em voz alta</string>
+    <string name="play_mode">Modo de reprodução</string>
+
     <string name="dialog_title">Aviso</string>
     <string name="dialog_cancel">Cancelar</string>
     <string name="dialog_confirm">Confirmar</string>

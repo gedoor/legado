@@ -68,6 +68,7 @@ import io.legado.app.receiver.NetworkChangedListener
 import io.legado.app.receiver.TimeBatteryReceiver
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.about.AppLogDialog
+import io.legado.app.ui.agents.AgentsActivity
 import io.legado.app.ui.book.bookmark.BookmarkDialog
 import io.legado.app.ui.book.changesource.ChangeBookSourceDialog
 import io.legado.app.ui.book.changesource.ChangeChapterSourceDialog
@@ -1192,6 +1193,23 @@ class ReadBookActivity : BaseReadBookActivity(),
                     IntentData.put("searchResultList", viewModel.searchResultList)
                 }
             }
+        }
+    }
+
+    /**
+     * 从阅读页打开 Agents 页面，并把“书名 + 章节名”作为弱提示上下文传递过去。
+     *
+     * 说明：本任务仅要求展示上下文差异，因此这里不做更多业务逻辑。
+     *
+     * Returns:
+     *   无。
+     */
+    override fun openAgents() {
+        val bookName = ReadBook.book?.name
+        val chapterName = ReadBook.curTextChapter?.title
+        startActivity<AgentsActivity> {
+            putExtra(AgentsActivity.EXTRA_BOOK_NAME, bookName)
+            putExtra(AgentsActivity.EXTRA_CHAPTER_NAME, chapterName)
         }
     }
 

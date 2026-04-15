@@ -69,6 +69,21 @@
     <string name="book_source_manage">书源管理</string>
     <string name="book_source_manage_desc">新建、导入、编辑或管理书源</string>
     <string name="setting">设置</string>
+    <!-- Agents（入口 + 页面骨架） -->
+    <string name="agents_title">Agents</string>
+    <string name="agents_entry">Agents</string>
+    <string name="agents_entry_desc">打开 Agents</string>
+    <string name="agents_history">历史会话</string>
+    <string name="agents_settings">设置</string>
+    <string name="agents_new_session">新建会话</string>
+    <string name="agents_new_session_created">已新建会话（占位）</string>
+    <string name="agents_input_hint">输入消息…</string>
+    <string name="agents_input_empty_tip">请输入内容</string>
+    <string name="agents_context_hint_format">%1$s · %2$s</string>
+    <string name="agents_placeholder_message">Agents 页面骨架（占位）。</string>
+    <string name="agents_message_me_format">我：%1$s</string>
+    <string name="agents_message_echo_format">回显：%1$s</string>
+    <string name="play_mode">播放模式</string>
     <string name="theme_setting">主题设置</string>
     <string name="theme_setting_s">与界面/颜色相关的一些设置</string>
     <string name="other_setting">其它设置</string>

@@ -195,6 +195,9 @@ class ReadMenu @JvmOverloads constructor(
         }
         fabSearch.backgroundTintList = bottomBackgroundList
         fabSearch.setColorFilter(textColor)
+        // Agents 入口：与搜索按钮保持一致的背景与图标颜色。
+        fabAgents.backgroundTintList = bottomBackgroundList
+        fabAgents.setColorFilter(textColor)
         fabAutoPage.backgroundTintList = bottomBackgroundList
         fabAutoPage.setColorFilter(textColor)
         fabReplaceRule.backgroundTintList = bottomBackgroundList
@@ -439,6 +442,13 @@ class ReadMenu @JvmOverloads constructor(
             }
         }
 
+        // Agents：从阅读页打开 Agents 全屏页面，并携带“书名 + 章节名”上下文用于展示。
+        fabAgents.setOnClickListener {
+            runMenuOut {
+                callBack.openAgents()
+            }
+        }
+
         //自动翻页
         fabAutoPage.setOnClickListener {
             runMenuOut {
@@ -571,6 +581,15 @@ class ReadMenu @JvmOverloads constructor(
         fun openReplaceRule()
         fun openChapterList()
         fun openSearchActivity(searchWord: String?)
+        /**
+         * 打开 Agents 页面（从阅读页进入）。
+         *
+         * 说明：由 Activity 决定如何获取并传递“书名 + 章节名”上下文。
+         *
+         * Returns:
+         *   无。
+         */
+        fun openAgents()
         fun openSourceEditActivity()
         fun openBookInfoActivity()
         fun showReadStyle()

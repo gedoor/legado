@@ -32,6 +32,14 @@
         android:title="@string/dict_rule"
         app:iconSpaceReserved="false" />
 
+    <!-- Agents 入口：按 PRD 要求放在“字典规则”下方。 -->
+    <io.legado.app.lib.prefs.Preference
+        android:icon="@drawable/ic_agents"
+        android:key="agents"
+        android:summary="@string/agents_entry_desc"
+        android:title="@string/agents_title"
+        app:iconSpaceReserved="false" />
+
     <io.legado.app.lib.prefs.NameListPreference
         android:defaultValue="0"
         android:entries="@array/theme_mode"

@@ -1,0 +1,23 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!--
+      Agents 图标：使用简化“对话气泡”形状作为占位。
+      颜色保持与项目内其它 ic_* 向量资源一致的灰色。
+    -->
+    <path
+        android:fillColor="#4A4B4A"
+        android:pathData="M6,4h12a2,2 0 0,1 2,2v9a2,2 0 0,1 -2,2h-5l-1.8,2.1a0.9,0.9 0 0,1 -1.4,0L8,17H6a2,2 0 0,1 -2,-2V6a2,2 0 0,1 2,-2z" />
+
+    <path
+        android:fillColor="#4A4B4A"
+        android:pathData="M8,8h8v1.5h-8z" />
+
+    <path
+        android:fillColor="#4A4B4A"
+        android:pathData="M8,11h6v1.5h-6z" />
+
+</vector>

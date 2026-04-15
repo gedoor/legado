@@ -65,7 +65,8 @@ fun View.hideSoftInput() = run {
 
 fun EditText.showSoftInput() = run {
     requestFocus()
-    inputMethodManager.showSoftInput(this, InputMethodManager.RESULT_SHOWN)
+    // flags 参数要求是 SHOW_* 系列常量；RESULT_* 是返回值常量，传入会触发 lint WrongConstant。
+    inputMethodManager.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
 }
 
 fun View.disableAutoFill() = run {

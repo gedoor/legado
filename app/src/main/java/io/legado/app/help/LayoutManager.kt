@@ -13,7 +13,8 @@ object LayoutManager {
         fun create(recyclerView: RecyclerView): RecyclerView.LayoutManager
     }
 
-    @IntDef(LinearLayoutManager.HORIZONTAL, LinearLayoutManager.VERTICAL)
+    // 方向常量使用 RecyclerView 的公开 IntDef，避免 lint 将其视为 WrongConstant。
+    @IntDef(RecyclerView.HORIZONTAL, RecyclerView.VERTICAL)
     @Retention(AnnotationRetention.SOURCE)
     annotation class Orientation
 

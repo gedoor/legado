@@ -190,6 +190,10 @@ dependencies {
     implementation(libs.androidx.webkit)
     implementation(libs.androidx.documentfile)
 
+    // androidx-startup：用于承载清单中 InitializationProvider（并允许按需移除/保留初始化器）。
+    // 说明：若缺少该依赖，AndroidManifest.xml 中对 androidx.startup.InitializationProvider 的引用会触发 lint MissingClass。
+    implementation("androidx.startup:startup-runtime:1.2.0")
+
     //google
     implementation(libs.material)
     implementation(libs.flexbox)

@@ -4,7 +4,6 @@ package io.legado.app.utils
 
 import android.content.res.ColorStateList
 import androidx.annotation.ColorInt
-import com.google.android.material.internal.NavigationMenuView
 import com.google.android.material.navigation.NavigationView
 
 fun NavigationView.setItemIconColors(
@@ -36,7 +35,8 @@ fun NavigationView.setItemTextColors(
 }
 
 fun NavigationView.disableScrollbar() {
-    val navigationMenuView = getChildAt(0) as? NavigationMenuView
-    navigationMenuView?.isVerticalScrollBarEnabled = false
+    // NavigationView 内部第 0 个子 View 通常是菜单列表容器。
+    // 这里不依赖 material 的 internal 类（RestrictedApi），仅通过 View 公共属性关闭纵向滚动条。
+    getChildAt(0)?.isVerticalScrollBarEnabled = false
 }
 
