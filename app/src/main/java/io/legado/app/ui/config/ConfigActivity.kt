@@ -12,16 +12,28 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 class ConfigActivity : VMBaseActivity<ActivityConfigBinding, ConfigViewModel>() {
 
+    companion object {
+        /**
+         * 配置页路由 tag 的 Intent extra key。
+         *
+         * 说明：
+         * - 该 key 会被多个入口（例如“其他设置”与“我的”页）复用。
+         * - 统一常量可避免手写字符串导致的跳转失败。
+         */
+        const val EXTRA_CONFIG_TAG: String = "configTag"
+    }
+
     override val binding by viewBinding(ActivityConfigBinding::inflate)
     override val viewModel by viewModels<ConfigViewModel>()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        when (val configTag = intent.getStringExtra("configTag")) {
+        when (val configTag = intent.getStringExtra(EXTRA_CONFIG_TAG)) {
             ConfigTag.OTHER_CONFIG -> replaceFragment<OtherConfigFragment>(configTag)
             ConfigTag.THEME_CONFIG -> replaceFragment<ThemeConfigFragment>(configTag)
             ConfigTag.BACKUP_CONFIG -> replaceFragment<BackupConfigFragment>(configTag)
             ConfigTag.COVER_CONFIG -> replaceFragment<CoverConfigFragment>(configTag)
             ConfigTag.WELCOME_CONFIG -> replaceFragment<WelcomeConfigFragment>(configTag)
+            ConfigTag.AGENTS_CONFIG -> replaceFragment<AgentsConfigFragment>(configTag)
             else -> finish()
         }
     }
@@ -32,7 +44,7 @@ class ConfigActivity : VMBaseActivity<ActivityConfigBinding, ConfigViewModel>() 
     }
 
     inline fun <reified T : Fragment> replaceFragment(configTag: String) {
-        intent.putExtra("configTag", configTag)
+        intent.putExtra(EXTRA_CONFIG_TAG, configTag)
         @Suppress("DEPRECATION")
         val configFragment = supportFragmentManager.findFragmentByTag(configTag)
             ?: T::class.java.newInstance()

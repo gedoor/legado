@@ -150,15 +150,15 @@ class MyFragment() : BaseFragment(R.layout.fragment_my_config), MainFragmentInte
                 "txtTocRuleManage" -> startActivity<TxtTocRuleActivity>()
                 "bookmark" -> startActivity<AllBookmarkActivity>()
                 "setting" -> startActivity<ConfigActivity> {
-                    putExtra("configTag", ConfigTag.OTHER_CONFIG)
+                    putExtra(ConfigActivity.EXTRA_CONFIG_TAG, ConfigTag.OTHER_CONFIG)
                 }
 
                 "web_dav_setting" -> startActivity<ConfigActivity> {
-                    putExtra("configTag", ConfigTag.BACKUP_CONFIG)
+                    putExtra(ConfigActivity.EXTRA_CONFIG_TAG, ConfigTag.BACKUP_CONFIG)
                 }
 
                 "theme_setting" -> startActivity<ConfigActivity> {
-                    putExtra("configTag", ConfigTag.THEME_CONFIG)
+                    putExtra(ConfigActivity.EXTRA_CONFIG_TAG, ConfigTag.THEME_CONFIG)
                 }
 
                 "fileManage" -> startActivity<FileManageActivity>()

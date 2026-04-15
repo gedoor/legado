@@ -74,6 +74,56 @@
     <string name="theme_setting_s">Some settings related to interface or color</string>
     <string name="other_setting">Other settings</string>
     <string name="other_setting_s">Some function-related settings</string>
+
+    <!-- Agents -->
+    <string name="agents_setting">Agents</string>
+    <string name="agents_setting_summary">Configure Agents connection and model params</string>
+
+    <string name="agents_category_connection">Connection</string>
+    <string name="agents_base_url_title">Base URL</string>
+    <string name="agents_base_url_summary">Optional. Must be a valid http/https URL.</string>
+    <string name="agents_api_key_title">API Key</string>
+    <string name="agents_api_key_summary">Optional. Required before sending requests.</string>
+    <string name="agents_api_key_set_summary">Set</string>
+    <string name="agents_model_title">Model</string>
+    <string name="agents_model_summary">Optional. e.g. gpt-4.1-mini</string>
+    <string name="agents_request_timeout_title">Request timeout</string>
+    <string name="agents_request_timeout_summary_default">Default: 60s</string>
+    <string name="agents_request_timeout_summary">%1$d s</string>
+
+    <string name="agents_category_model_params">Model parameters</string>
+    <string name="agents_temperature_title">Temperature</string>
+    <string name="agents_temperature_summary_default">Default: 1.0</string>
+    <string name="agents_temperature_summary">%1$.2f</string>
+    <string name="agents_max_output_tokens_title">Max output tokens</string>
+    <string name="agents_max_output_tokens_summary_default">Default: 4096</string>
+    <string name="agents_max_output_tokens_summary">%1$d</string>
+
+    <string name="agents_category_prompt">Prompt</string>
+    <string name="agents_custom_instruction_title">Custom instruction</string>
+    <string name="agents_custom_instruction_summary">Optional. Appends to the system prompt.</string>
+    <string name="agents_custom_instruction_set_summary">Set</string>
+
+    <string name="agents_category_tools">Tools</string>
+    <string name="agents_enable_bookshelf_tools_title">Bookshelf tools</string>
+    <string name="agents_enable_bookshelf_tools_summary">Allow listing/searching/reading bookshelf books</string>
+    <string name="agents_enable_loaded_chapter_tools_title">Loaded chapters tools</string>
+    <string name="agents_enable_loaded_chapter_tools_summary">Allow listing/searching/reading loaded chapters</string>
+    <string name="agents_enable_operation_rule_tools_title">Operation rule tools</string>
+    <string name="agents_enable_operation_rule_tools_summary">Allow listing/searching/reading/writing/editing rules</string>
+
+    <string name="agents_category_session">Session</string>
+    <string name="agents_auto_create_title_title">Auto create title</string>
+    <string name="agents_auto_create_title_summary">Generate a title after the first user message</string>
+    <string name="agents_history_limit_title">History limit</string>
+    <string name="agents_history_limit_summary_default">Default: 200</string>
+    <string name="agents_history_limit_summary">%1$d</string>
+
+    <string name="agents_invalid_base_url">Invalid Base URL. Only http/https is allowed.</string>
+    <string name="agents_invalid_request_timeout">Invalid timeout. Allowed range: 5-600 seconds.</string>
+    <string name="agents_invalid_temperature">Invalid temperature. Allowed range: 0-2.</string>
+    <string name="agents_invalid_max_output_tokens">Invalid max output tokens. Allowed range: 256-32768.</string>
+    <string name="agents_invalid_history_limit">Invalid history limit. Allowed range: 20-1000.</string>
     <string name="about">About</string>
     <string name="donate">Donations</string>
     <string name="exit">Exit</string>

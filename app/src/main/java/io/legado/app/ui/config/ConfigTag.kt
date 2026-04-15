@@ -8,4 +8,9 @@ object ConfigTag {
     const val COVER_CONFIG = "coverConfig"
     const val WELCOME_CONFIG = "welcomeConfig"
 
+    /**
+     * Agents 设置页。
+     */
+    const val AGENTS_CONFIG = "agentsConfig"
+
 }

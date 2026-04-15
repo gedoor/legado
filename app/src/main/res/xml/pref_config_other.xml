@@ -60,6 +60,12 @@
         app:layout="@layout/view_preference_category">
 
         <io.legado.app.lib.prefs.Preference
+            android:key="agentsConfig"
+            android:summary="@string/agents_setting_summary"
+            android:title="@string/agents_setting"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.lib.prefs.Preference
             android:key="localPassword"
             android:summary="@string/set_local_password_summary"
             android:title="@string/set_local_password" />

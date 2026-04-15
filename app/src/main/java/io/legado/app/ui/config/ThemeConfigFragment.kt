@@ -201,11 +201,11 @@ class ThemeConfigFragment : PreferenceFragment(),
             "saveNightTheme" -> alertSaveTheme(key)
 
             "coverConfig" -> startActivity<ConfigActivity> {
-                putExtra("configTag", ConfigTag.COVER_CONFIG)
+                putExtra(ConfigActivity.EXTRA_CONFIG_TAG, ConfigTag.COVER_CONFIG)
             }
 
             "welcomeStyle" -> startActivity<ConfigActivity> {
-                putExtra("configTag", ConfigTag.WELCOME_CONFIG)
+                putExtra(ConfigActivity.EXTRA_CONFIG_TAG, ConfigTag.WELCOME_CONFIG)
             }
         }
         return super.onPreferenceTreeClick(preference)

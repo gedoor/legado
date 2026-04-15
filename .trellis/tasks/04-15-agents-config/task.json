@@ -1,0 +1,44 @@
+{
+  "id": "agents-config",
+  "name": "agents-config",
+  "title": "Agents: 设置页与配置读取",
+  "description": "",
+  "status": "planning",
+  "dev_type": "backend",
+  "scope": "agents",
+  "priority": "P2",
+  "creator": "ddddddIl",
+  "assignee": "ddddddIl",
+  "createdAt": "2026-04-15",
+  "completedAt": null,
+  "branch": "feature/agents-config",
+  "base_branch": "master",
+  "worktree_path": "D:\\project\\trellis-worktrees\\feature\\agents-config",
+  "current_phase": 3,
+  "next_action": [
+    {
+      "phase": 1,
+      "action": "implement"
+    },
+    {
+      "phase": 2,
+      "action": "check"
+    },
+    {
+      "phase": 3,
+      "action": "finish"
+    },
+    {
+      "phase": 4,
+      "action": "create-pr"
+    }
+  ],
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": "04-12-add-agents-entry",
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {}
+}

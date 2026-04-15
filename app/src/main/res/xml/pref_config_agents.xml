@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <io.legado.app.lib.prefs.PreferenceCategory
+        android:title="@string/agents_category_connection"
+        app:allowDividerAbove="false"
+        app:allowDividerBelow="false"
+        app:iconSpaceReserved="false"
+        app:layout="@layout/view_preference_category">
+
+        <io.legado.app.lib.prefs.EditTextPreference
+            android:key="agentsBaseUrl"
+            android:summary="@string/agents_base_url_summary"
+            android:title="@string/agents_base_url_title"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.lib.prefs.EditTextPreference
+            android:key="agentsApiKey"
+            android:summary="@string/agents_api_key_summary"
+            android:title="@string/agents_api_key_title"
+            app:allowDividerAbove="false"
+            app:allowDividerBelow="false"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.lib.prefs.EditTextPreference
+            android:key="agentsModel"
+            android:summary="@string/agents_model_summary"
+            android:title="@string/agents_model_title"
+            app:allowDividerAbove="false"
+            app:allowDividerBelow="false"
+            app:iconSpaceReserved="false" />
+
+        <!-- 使用点击弹窗的方式设置数字范围，避免无效值写入 -->
+        <io.legado.app.lib.prefs.Preference
+            android:key="agentsRequestTimeout"
+            android:summary="@string/agents_request_timeout_summary_default"
+            android:title="@string/agents_request_timeout_title"
+            app:allowDividerAbove="false"
+            app:allowDividerBelow="false"
+            app:iconSpaceReserved="false" />
+
+    </io.legado.app.lib.prefs.PreferenceCategory>
+
+    <io.legado.app.lib.prefs.PreferenceCategory
+        android:title="@string/agents_category_model_params"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="false"
+        app:iconSpaceReserved="false"
+        app:layout="@layout/view_preference_category">
+
+        <io.legado.app.lib.prefs.Preference
+            android:key="agentsTemperature"
+            android:summary="@string/agents_temperature_summary_default"
+            android:title="@string/agents_temperature_title"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.lib.prefs.Preference
+            android:key="agentsMaxOutputTokens"
+            android:summary="@string/agents_max_output_tokens_summary_default"
+            android:title="@string/agents_max_output_tokens_title"
+            app:allowDividerAbove="false"
+            app:allowDividerBelow="false"
+            app:iconSpaceReserved="false" />
+
+    </io.legado.app.lib.prefs.PreferenceCategory>
+
+    <io.legado.app.lib.prefs.PreferenceCategory
+        android:title="@string/agents_category_prompt"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="false"
+        app:iconSpaceReserved="false"
+        app:layout="@layout/view_preference_category">
+
+        <io.legado.app.lib.prefs.EditTextPreference
+            android:key="agentsCustomInstruction"
+            android:summary="@string/agents_custom_instruction_summary"
+            android:title="@string/agents_custom_instruction_title"
+            app:iconSpaceReserved="false" />
+
+    </io.legado.app.lib.prefs.PreferenceCategory>
+
+    <io.legado.app.lib.prefs.PreferenceCategory
+        android:title="@string/agents_category_tools"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="false"
+        app:iconSpaceReserved="false"
+        app:layout="@layout/view_preference_category">
+
+        <io.legado.app.lib.prefs.SwitchPreference
+            android:defaultValue="true"
+            android:key="agentsEnableBookshelfTools"
+            android:summary="@string/agents_enable_bookshelf_tools_summary"
+            android:title="@string/agents_enable_bookshelf_tools_title"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.lib.prefs.SwitchPreference
+            android:defaultValue="true"
+            android:key="agentsEnableLoadedChapterTools"
+            android:summary="@string/agents_enable_loaded_chapter_tools_summary"
+            android:title="@string/agents_enable_loaded_chapter_tools_title"
+            app:allowDividerAbove="false"
+            app:allowDividerBelow="false"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.lib.prefs.SwitchPreference
+            android:defaultValue="true"
+            android:key="agentsEnableOperationRuleTools"
+            android:summary="@string/agents_enable_operation_rule_tools_summary"
+            android:title="@string/agents_enable_operation_rule_tools_title"
+            app:allowDividerAbove="false"
+            app:allowDividerBelow="false"
+            app:iconSpaceReserved="false" />
+
+    </io.legado.app.lib.prefs.PreferenceCategory>
+
+    <io.legado.app.lib.prefs.PreferenceCategory
+        android:title="@string/agents_category_session"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="false"
+        app:iconSpaceReserved="false"
+        app:layout="@layout/view_preference_category">
+
+        <io.legado.app.lib.prefs.SwitchPreference
+            android:defaultValue="true"
+            android:key="agentsAutoCreateTitle"
+            android:summary="@string/agents_auto_create_title_summary"
+            android:title="@string/agents_auto_create_title_title"
+            app:iconSpaceReserved="false" />
+
+        <io.legado.app.lib.prefs.Preference
+            android:key="agentsHistoryLimit"
+            android:summary="@string/agents_history_limit_summary_default"
+            android:title="@string/agents_history_limit_title"
+            app:allowDividerAbove="false"
+            app:allowDividerBelow="false"
+            app:iconSpaceReserved="false" />
+
+    </io.legado.app.lib.prefs.PreferenceCategory>
+
+</androidx.preference.PreferenceScreen>

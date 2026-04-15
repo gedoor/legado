@@ -1,0 +1,12 @@
+{"file": ".trellis/workflow.md", "reason": "Project workflow and conventions"}
+{"file": ".trellis/spec/backend/index.md", "reason": "Backend development guide"}
+{"file": ".trellis/spec/backend/directory-structure.md", "reason": "Android/Backend 目录结构约定"}
+{"file": ".trellis/spec/backend/quality-guidelines.md", "reason": "质量检查与评审清单"}
+{"file": "app/src/main/java/io/legado/app/ui/config/ConfigActivity.kt", "reason": "ConfigActivity 负责根据 ConfigTag 加载对应配置页"}
+{"file": "app/src/main/java/io/legado/app/ui/config/ConfigTag.kt", "reason": "配置页路由 tag 常量（需新增 Agents tag）"}
+{"file": "app/src/main/java/io/legado/app/ui/config/OtherConfigFragment.kt", "reason": "其他设置页（新增入口跳转到 Agents 设置）"}
+{"file": "app/src/main/res/xml/pref_config_other.xml", "reason": "其他设置 Preference XML（新增 Agents 设置入口）"}
+{"file": "app/src/main/java/io/legado/app/constant/PreferKey.kt", "reason": "偏好 key 常量集中定义（新增 agents* keys）"}
+{"file": "app/src/main/java/io/legado/app/help/config/AppConfig.kt", "reason": "统一配置读取层（扩展 agents 配置）"}
+{"file": "app/src/main/java/io/legado/app/lib/prefs/fragment/PreferenceFragment.kt", "reason": "项目 PreferenceFragment 基类范式"}
+{"file": "app/src/main/res/values/strings.xml", "reason": "新增设置项标题/说明字符串"}

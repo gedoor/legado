@@ -37,6 +37,7 @@ import io.legado.app.utils.removePref
 import io.legado.app.utils.restart
 import io.legado.app.utils.setEdgeEffectColor
 import io.legado.app.utils.showDialogFragment
+import io.legado.app.utils.startActivity
 import splitties.init.appCtx
 
 /**
@@ -87,6 +88,10 @@ class OtherConfigFragment : PreferenceFragment(),
 
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
         when (preference.key) {
+            ConfigTag.AGENTS_CONFIG -> startActivity<ConfigActivity> {
+                putExtra(ConfigActivity.EXTRA_CONFIG_TAG, ConfigTag.AGENTS_CONFIG)
+            }
+
             PreferKey.userAgent -> showUserAgentDialog()
             PreferKey.defaultBookTreeUri -> localBookTreeSelect.launch {
                 title = getString(R.string.select_book_folder)

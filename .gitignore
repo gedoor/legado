@@ -16,3 +16,7 @@ package-lock.json
 .idea/
 # Kotlin 2.0
 .kotlin/
+
+# OpenCode（本地 Agent 运行产物，不应提交）
+.agent-log
+.session-id

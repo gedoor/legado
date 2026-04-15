@@ -73,6 +73,56 @@
     <string name="theme_setting_s">与界面/颜色相关的一些设置</string>
     <string name="other_setting">其它设置</string>
     <string name="other_setting_s">与功能相关的一些设置</string>
+
+    <!-- Agents -->
+    <string name="agents_setting">Agents</string>
+    <string name="agents_setting_summary">配置 Agents 连接与模型参数</string>
+
+    <string name="agents_category_connection">连接</string>
+    <string name="agents_base_url_title">Base URL</string>
+    <string name="agents_base_url_summary">可留空；非空时必须为合法 http/https 地址</string>
+    <string name="agents_api_key_title">API Key</string>
+    <string name="agents_api_key_summary">可留空；发起请求前必须配置</string>
+    <string name="agents_api_key_set_summary">已设置</string>
+    <string name="agents_model_title">模型</string>
+    <string name="agents_model_summary">可留空，例如：gpt-4.1-mini</string>
+    <string name="agents_request_timeout_title">请求超时</string>
+    <string name="agents_request_timeout_summary_default">默认：60 秒</string>
+    <string name="agents_request_timeout_summary">%1$d 秒</string>
+
+    <string name="agents_category_model_params">模型参数</string>
+    <string name="agents_temperature_title">Temperature</string>
+    <string name="agents_temperature_summary_default">默认：1.0</string>
+    <string name="agents_temperature_summary">%1$.2f</string>
+    <string name="agents_max_output_tokens_title">最大输出 Tokens</string>
+    <string name="agents_max_output_tokens_summary_default">默认：4096</string>
+    <string name="agents_max_output_tokens_summary">%1$d</string>
+
+    <string name="agents_category_prompt">提示词</string>
+    <string name="agents_custom_instruction_title">自定义提示词</string>
+    <string name="agents_custom_instruction_summary">可留空；会追加到系统提示词末尾</string>
+    <string name="agents_custom_instruction_set_summary">已设置</string>
+
+    <string name="agents_category_tools">工具</string>
+    <string name="agents_enable_bookshelf_tools_title">书架工具</string>
+    <string name="agents_enable_bookshelf_tools_summary">允许列出/搜索/读取书架书籍</string>
+    <string name="agents_enable_loaded_chapter_tools_title">已加载章节工具</string>
+    <string name="agents_enable_loaded_chapter_tools_summary">允许列出/搜索/读取已加载章节</string>
+    <string name="agents_enable_operation_rule_tools_title">操作规则工具</string>
+    <string name="agents_enable_operation_rule_tools_summary">允许列出/搜索/读取/写入/编辑规则</string>
+
+    <string name="agents_category_session">会话</string>
+    <string name="agents_auto_create_title_title">自动生成标题</string>
+    <string name="agents_auto_create_title_summary">首条用户消息后自动生成会话标题</string>
+    <string name="agents_history_limit_title">历史上限</string>
+    <string name="agents_history_limit_summary_default">默认：200</string>
+    <string name="agents_history_limit_summary">%1$d</string>
+
+    <string name="agents_invalid_base_url">Base URL 无效，仅支持 http/https</string>
+    <string name="agents_invalid_request_timeout">请求超时无效，范围：5-600 秒</string>
+    <string name="agents_invalid_temperature">Temperature 无效，范围：0-2</string>
+    <string name="agents_invalid_max_output_tokens">最大输出 Tokens 无效，范围：256-32768</string>
+    <string name="agents_invalid_history_limit">历史上限无效，范围：20-1000</string>
     <string name="about">关于</string>
     <string name="donate">捐赠</string>
     <string name="exit">退出</string>

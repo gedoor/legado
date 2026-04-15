@@ -66,6 +66,56 @@
     <string name="theme_setting_s">同主題/顏色相關的一些設定</string>
     <string name="other_setting">其它設定</string>
     <string name="other_setting_s">與功能相關的一些設定</string>
+
+    <!-- Agents -->
+    <string name="agents_setting">Agents</string>
+    <string name="agents_setting_summary">設定 Agents 連線與模型參數</string>
+
+    <string name="agents_category_connection">連線</string>
+    <string name="agents_base_url_title">Base URL</string>
+    <string name="agents_base_url_summary">可留空；非空時必須為合法 http/https 位址</string>
+    <string name="agents_api_key_title">API Key</string>
+    <string name="agents_api_key_summary">可留空；發送請求前必須設定</string>
+    <string name="agents_api_key_set_summary">已設定</string>
+    <string name="agents_model_title">模型</string>
+    <string name="agents_model_summary">可留空，例如：gpt-4.1-mini</string>
+    <string name="agents_request_timeout_title">請求逾時</string>
+    <string name="agents_request_timeout_summary_default">預設：60 秒</string>
+    <string name="agents_request_timeout_summary">%1$d 秒</string>
+
+    <string name="agents_category_model_params">模型參數</string>
+    <string name="agents_temperature_title">Temperature</string>
+    <string name="agents_temperature_summary_default">預設：1.0</string>
+    <string name="agents_temperature_summary">%1$.2f</string>
+    <string name="agents_max_output_tokens_title">最大輸出 Tokens</string>
+    <string name="agents_max_output_tokens_summary_default">預設：4096</string>
+    <string name="agents_max_output_tokens_summary">%1$d</string>
+
+    <string name="agents_category_prompt">提示詞</string>
+    <string name="agents_custom_instruction_title">自訂提示詞</string>
+    <string name="agents_custom_instruction_summary">可留空；會追加到系統提示詞末尾</string>
+    <string name="agents_custom_instruction_set_summary">已設定</string>
+
+    <string name="agents_category_tools">工具</string>
+    <string name="agents_enable_bookshelf_tools_title">書架工具</string>
+    <string name="agents_enable_bookshelf_tools_summary">允許列出/搜尋/讀取書架書籍</string>
+    <string name="agents_enable_loaded_chapter_tools_title">已載入章節工具</string>
+    <string name="agents_enable_loaded_chapter_tools_summary">允許列出/搜尋/讀取已載入章節</string>
+    <string name="agents_enable_operation_rule_tools_title">操作規則工具</string>
+    <string name="agents_enable_operation_rule_tools_summary">允許列出/搜尋/讀取/寫入/編輯規則</string>
+
+    <string name="agents_category_session">會話</string>
+    <string name="agents_auto_create_title_title">自動產生標題</string>
+    <string name="agents_auto_create_title_summary">第一則使用者訊息後自動產生會話標題</string>
+    <string name="agents_history_limit_title">歷史上限</string>
+    <string name="agents_history_limit_summary_default">預設：200</string>
+    <string name="agents_history_limit_summary">%1$d</string>
+
+    <string name="agents_invalid_base_url">Base URL 無效，僅支援 http/https</string>
+    <string name="agents_invalid_request_timeout">請求逾時無效，範圍：5-600 秒</string>
+    <string name="agents_invalid_temperature">Temperature 無效，範圍：0-2</string>
+    <string name="agents_invalid_max_output_tokens">最大輸出 Tokens 無效，範圍：256-32768</string>
+    <string name="agents_invalid_history_limit">歷史上限無效，範圍：20-1000</string>
     <string name="about">關於</string>
     <string name="donate">捐贈</string>
     <string name="exit">退出</string>

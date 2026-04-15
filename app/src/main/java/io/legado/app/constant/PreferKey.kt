@@ -186,4 +186,42 @@ object PreferKey {
     const val showReadTitleAddition = "showReadTitleAddition"
     const val readBarStyleFollowPage = "readBarStyleFollowPage"
     const val contentSelectSpeakMod = "contentReadAloudMod"
+
+    // region Agents 配置（OpenAI 兼容协议）
+    /** Agents Base URL（允许为空；发起请求前由调用方做非空校验）。 */
+    const val agentsBaseUrl = "agentsBaseUrl"
+
+    /** Agents API Key（允许为空；发起请求前由调用方做非空校验）。 */
+    const val agentsApiKey = "agentsApiKey"
+
+    /** Agents 模型名称（例如 gpt-4.1-mini）。 */
+    const val agentsModel = "agentsModel"
+
+    /** Agents 请求超时（秒）。 */
+    const val agentsRequestTimeout = "agentsRequestTimeout"
+
+    /** Agents temperature（0-2）。 */
+    const val agentsTemperature = "agentsTemperature"
+
+    /** Agents 最大输出 token 数（256-32768）。 */
+    const val agentsMaxOutputTokens = "agentsMaxOutputTokens"
+
+    /** Agents 用户自定义提示词（追加到系统提示词末尾）。 */
+    const val agentsCustomInstruction = "agentsCustomInstruction"
+
+    /** 是否启用书架工具。 */
+    const val agentsEnableBookshelfTools = "agentsEnableBookshelfTools"
+
+    /** 是否启用已加载章节工具。 */
+    const val agentsEnableLoadedChapterTools = "agentsEnableLoadedChapterTools"
+
+    /** 是否启用操作规则工具。 */
+    const val agentsEnableOperationRuleTools = "agentsEnableOperationRuleTools"
+
+    /** 是否自动生成会话标题。 */
+    const val agentsAutoCreateTitle = "agentsAutoCreateTitle"
+
+    /** 历史消息/turn 查询上限（20-1000）。 */
+    const val agentsHistoryLimit = "agentsHistoryLimit"
+    // endregion
 }
