@@ -25,7 +25,8 @@ class ClassNameMatcher(classNames: List<String>) {
             return true
         }
         val prefix = sortedClassNames.getOrNull(-index - 2) ?: return false
-        return className.getOrNull(prefix.length) == '.' && className.startsWith(prefix)
+        val sep = className.getOrNull(prefix.length)
+        return (sep == '.' || sep == '$') && className.startsWith(prefix)
     }
 
     private fun comparePrefix(className: String, prefix: String): Int {
